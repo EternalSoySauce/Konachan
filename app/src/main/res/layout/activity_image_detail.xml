@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_size">
+
+            <FrameLayout
+                android:id="@+id/fl_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="@dimen/toolbar_size"
+                    android:layout_height="@dimen/toolbar_size"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_back"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/fl_back"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/image_id_symbol"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"/>
+
+            <FrameLayout
+                android:id="@+id/fl_save_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableLeft="@drawable/ic_download"
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:text="@string/save_image"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"/>
+            </FrameLayout>
+        </RelativeLayout>
+
+        <com.ess.konachan.view.SlidingTabLayout
+            android:id="@+id/sliding_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.ess.konachan.view.SlidingTabLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <com.ess.konachan.view.ViewPagerFixed
+        android:id="@+id/vp_image_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </com.ess.konachan.view.ViewPagerFixed>
+</android.support.design.widget.CoordinatorLayout>

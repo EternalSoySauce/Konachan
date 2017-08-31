@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="setting_search_mode_entries">
+        <item>@string/setting_search_mode_safe</item>
+        <item>@string/setting_search_mode_r18</item>
+    </string-array>
+</resources>

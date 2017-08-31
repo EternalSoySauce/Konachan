@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.SearchActivity">
+
+    <Button
+        android:id="@+id/btn_search_chinese"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="中文搜索"/>
+
+    <EditText
+        android:id="@+id/et_search_chinese"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:hint="输入角色中文全名"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"/>
+
+    <Button
+        android:id="@+id/btn_search_tags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="标签搜索"/>
+
+    <EditText
+        android:id="@+id/et_search_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:hint="多个标签用逗号隔开"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"/>
+
+    <Button
+        android:id="@+id/btn_search_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="id搜索"/>
+
+    <EditText
+        android:id="@+id/et_search_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:hint="输入图片id"
+        android:imeOptions="actionSearch"
+        android:inputType="number"
+        android:singleLine="true"/>
+</LinearLayout>

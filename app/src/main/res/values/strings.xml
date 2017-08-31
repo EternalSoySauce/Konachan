@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">Konachan</string>
+
+    <!-- Toast -->
+    <string name="back_again">再按一次退出</string>
+    <string name="no_more_load">没有更多了</string>
+    <string name="check_network">加载失败，请检查您的网络并刷新重试</string>
+    <string name="loading_image">正在获取图片信息，请稍候</string>
+
+    <!-- Notification -->
+    <string name="download_started">&#160;开始下载</string>
+    <string name="download_finished">下载完成</string>
+    <string name="download_failed">下载失败</string>
+
+    <!-- Drawer Layout -->
+    <string name="navigation_drawer_open">打开侧边栏</string>
+    <string name="navigation_drawer_close">关闭侧边栏</string>
+    <string name="nav_post">图片</string>
+    <string name="nav_pool">图集</string>
+    <string name="nav_collection">我的收藏</string>
+    <string name="nav_setting">设置与帮助</string>
+    <string name="nav_game">拼图游戏</string>
+
+    <!-- Widget -->
+    <string name="save_image">保存</string>
+
+    <!-- Image Detail -->
+    <string name="image_detail_image">图片</string>
+    <string name="image_detail_detail">详情</string>
+    <string name="image_detail_comment">评论</string>
+    <string name="image_id_symbol">#</string>
+    <string name="detail_post_title">图片</string>
+    <string name="detail_post_id">Id：</string>
+    <string name="detail_post_created_time">上传时间：</string>
+    <string name="detail_post_creator_id">用户Id：</string>
+    <string name="detail_post_author">用户名：</string>
+    <string name="detail_post_size">分辨率：</string>
+    <string name="detail_post_file_size">大小：</string>
+    <string name="detail_post_source">来源：</string>
+    <string name="detail_post_no_source">未知</string>
+    <string name="detail_post_artist">原作者：</string>
+    <string name="detail_post_no_artist">未知</string>
+    <string name="detail_post_rating">评级：</string>
+    <string name="detail_post_rating_s">Safe</string>
+    <string name="detail_post_rating_e">R18</string>
+    <string name="detail_post_rating_q">Questionable</string>
+    <string name="detail_post_score">评分：</string>
+    <string name="detail_tag_title">标签</string>
+    <string name="detail_pool_title">所属图集：</string>
+    <string name="detail_pool_id">Id：</string>
+    <string name="detail_pool_name">名称：</string>
+    <string name="detail_pool_created_time">创建时间：</string>
+    <string name="detail_pool_updated_time">最后更新：</string>
+    <string name="detail_pool_description">描述：</string>
+    <string name="detail_pool_no_description">无</string>
+    <string name="comment_no_comments">暂无评论</string>
+
+    <!-- Collection -->
+    <string name="choose_all">全选</string>
+    <string name="cancel_all">取消全选</string>
+    <string name="edit">编辑</string>
+    <string name="share">共享</string>
+    <string name="share_title">共享通过</string>
+    <string name="delete">删除</string>
+    <string name="delete_msg1">将删除&#160;</string>
+    <string name="delete_msg2">&#160;张图片。</string>
+    <string name="delete_cancel">取消</string>
+    <string name="delete_sure">删除</string>
+    <string name="reload_msg">该图片已存在于相册中，是否重新下载？</string>
+    <string name="reload_yes">是</string>
+    <string name="reload_no">否</string>
+
+    <!-- Shared Preference-->
+    <string name="setting_search_mode">浏览模式</string>
+    <string name="setting_search_mode_safe">安全模式</string>
+    <string name="setting_search_mode_r18">R18模式</string>
+
+    <!-- Surface View -->
+    <string name="current_step">步数：</string>
+</resources>
