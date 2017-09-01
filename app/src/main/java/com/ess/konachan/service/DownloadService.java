@@ -56,7 +56,7 @@ public class DownloadService extends Service {
 
         MyProgressListener listener;
         if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
-            listener = new MyProgressListener(this, imageBean);
+            listener = new MyProgressListener(this, thumbBean, imageBean, url, bitmapPath);
             listener.setNotifyThumb(thumbBean.thumbUrl);
             ProgressManager.getInstance().addResponseListener(url, listener);
             OkHttp.getInstance().addUrlToProgressListener(url, listener);

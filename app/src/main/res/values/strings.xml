@@ -10,7 +10,7 @@
     <!-- Notification -->
     <string name="download_started">&#160;开始下载</string>
     <string name="download_finished">下载完成</string>
-    <string name="download_failed">下载失败</string>
+    <string name="download_failed">下载失败，点击重试</string>
 
     <!-- Drawer Layout -->
     <string name="navigation_drawer_open">打开侧边栏</string>

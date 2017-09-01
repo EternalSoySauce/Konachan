@@ -1,7 +1,9 @@
 package com.ess.konachan.http;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
@@ -16,6 +18,9 @@ import com.bumptech.glide.request.target.Target;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.PostBean;
+import com.ess.konachan.bean.ThumbBean;
+import com.ess.konachan.global.Constants;
+import com.ess.konachan.service.DownloadService;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
 
@@ -25,17 +30,25 @@ import me.jessyan.progressmanager.body.ProgressInfo;
 public class MyProgressListener implements ProgressListener {
 
     private Context mContext;
+    private ThumbBean mThumbBean;
     private ImageBean mImageBean;
+    private String mUrl;
+    private String mBitmapPath;
 
     private String mBitmapAvailable;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mNotifyBuilder;
     private int mNotifyId;
+    private PendingIntent mPendingIntent;
 
-    public MyProgressListener(Context context, ImageBean imageBean) {
+    public MyProgressListener(Context context, ThumbBean thumbBean, ImageBean imageBean, String url, String bitmapPath) {
         mContext = context;
+        mThumbBean = thumbBean;
         mImageBean = imageBean;
+        mUrl = url;
+        mBitmapPath = bitmapPath;
         prepareNotification();
+        createReloadPendingIntent();
     }
 
     public void prepareNotification() {
@@ -56,6 +69,7 @@ public class MyProgressListener implements ProgressListener {
         mNotifyBuilder.setContentText("0B / " + mBitmapAvailable);
         mNotifyBuilder.setProgress(100, 0, false);
         mNotifyBuilder.setOngoing(true);
+        mNotifyBuilder.setContentIntent(null);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
@@ -111,6 +125,16 @@ public class MyProgressListener implements ProgressListener {
     public void onError(long id, Exception e) {
         mNotifyBuilder.setContentText(mContext.getString(R.string.download_failed));
         mNotifyBuilder.setOngoing(false);
+        mNotifyBuilder.setContentIntent(mPendingIntent);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
+    }
+
+    private void createReloadPendingIntent() {
+        Intent intent = new Intent(mContext, DownloadService.class);
+        intent.putExtra(Constants.JPEG_URL, mUrl);
+        intent.putExtra(Constants.BITMAP_PATH, mBitmapPath);
+        intent.putExtra(Constants.THUMB_BEAN, mThumbBean);
+        intent.putExtra(Constants.IMAGE_BEAN, mImageBean);
+        mPendingIntent = PendingIntent.getService(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
