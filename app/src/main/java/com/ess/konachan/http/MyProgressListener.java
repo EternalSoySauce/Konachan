@@ -135,6 +135,6 @@ public class MyProgressListener implements ProgressListener {
         intent.putExtra(Constants.BITMAP_PATH, mBitmapPath);
         intent.putExtra(Constants.THUMB_BEAN, mThumbBean);
         intent.putExtra(Constants.IMAGE_BEAN, mImageBean);
-        mPendingIntent = PendingIntent.getService(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent = PendingIntent.getService(mContext, mNotifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
