@@ -18,8 +18,6 @@ import com.bumptech.glide.request.target.Target;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.PostBean;
-import com.ess.konachan.bean.ThumbBean;
-import com.ess.konachan.global.Constants;
 import com.ess.konachan.service.DownloadService;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
@@ -30,10 +28,7 @@ import me.jessyan.progressmanager.body.ProgressInfo;
 public class MyProgressListener implements ProgressListener {
 
     private Context mContext;
-    private ThumbBean mThumbBean;
     private ImageBean mImageBean;
-    private String mUrl;
-    private String mBitmapPath;
 
     private String mBitmapAvailable;
     private NotificationManager mNotifyManager;
@@ -41,14 +36,11 @@ public class MyProgressListener implements ProgressListener {
     private int mNotifyId;
     private PendingIntent mPendingIntent;
 
-    public MyProgressListener(Context context, ThumbBean thumbBean, ImageBean imageBean, String url, String bitmapPath) {
+    public MyProgressListener(Context context, ImageBean imageBean, Intent intent) {
         mContext = context;
-        mThumbBean = thumbBean;
         mImageBean = imageBean;
-        mUrl = url;
-        mBitmapPath = bitmapPath;
         prepareNotification();
-        createReloadPendingIntent();
+        createReloadPendingIntent(intent);
     }
 
     public void prepareNotification() {
@@ -129,12 +121,10 @@ public class MyProgressListener implements ProgressListener {
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
-    private void createReloadPendingIntent() {
-        Intent intent = new Intent(mContext, DownloadService.class);
-        intent.putExtra(Constants.JPEG_URL, mUrl);
-        intent.putExtra(Constants.BITMAP_PATH, mBitmapPath);
-        intent.putExtra(Constants.THUMB_BEAN, mThumbBean);
-        intent.putExtra(Constants.IMAGE_BEAN, mImageBean);
-        mPendingIntent = PendingIntent.getService(mContext, mNotifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    private void createReloadPendingIntent(Intent intent) {
+        Intent reloadIntent = new Intent(mContext, DownloadService.class);
+        reloadIntent.putExtras(intent);
+        mPendingIntent = PendingIntent.getService(mContext, mNotifyId,
+                reloadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

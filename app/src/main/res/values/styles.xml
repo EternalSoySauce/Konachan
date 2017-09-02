@@ -20,4 +20,14 @@
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">18sp</item>
     </style>
+
+    <declare-styleable name="AutoFitLayout">
+        <attr name="scaleWidth" format="boolean"/>
+        <attr name="scaleHeight" format="boolean"/>
+        <attr name="relativeTo" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="width" value="1"/>
+            <enum name="height" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>
