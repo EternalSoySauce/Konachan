@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ess.konachan.R;
+import com.ess.konachan.bean.SearchBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.utils.FileUtils;
@@ -25,6 +26,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 public class SearchActivity extends AppCompatActivity {
@@ -35,9 +38,14 @@ public class SearchActivity extends AppCompatActivity {
     private EditText mEtSearchTags;
     private Button mBtnSearchId;
     private EditText mEtSearchId;
+    private Button mBtnSearchAdvanced;
+    private EditText mEtSearchAdvanced;
 
     // 存储着K站所有的tag，用于搜索提示
-    private ArrayList<String> mTagList = new ArrayList<>();
+    private ArrayList<SearchBean> mSearchList = new ArrayList<>();
+
+    // 当前搜索内容的下拉提示内容
+    private LinkedHashMap<String, Integer> mPromptMap = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         initView();
-        getTagList();
+        getSearchList();
     }
 
     private void initView() {
@@ -99,12 +107,12 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO 完善搜索提示（现在与K站算法不完全一样）
                 if (!TextUtils.isEmpty(s)) {
-                    for (String tag : mTagList) {
-                        if (tag.contains(s)) {
-                            Log.i("rrr", tag);
-                            // TODO 搜素提示
-                        }
+                    mPromptMap.clear();
+                    getTagList(s.toString());
+                    for (String prompt : mPromptMap.keySet()) {
+                        Log.i("rrr", prompt);
                     }
                 }
             }
@@ -128,9 +136,25 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         mEtSearchId = (EditText) findViewById(R.id.et_search_id);
+
+        mBtnSearchAdvanced = (Button) findViewById(R.id.btn_search_advanced);
+        mBtnSearchAdvanced.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String tags = mEtSearchAdvanced.getText().toString().trim();
+                Intent intent = new Intent();
+                intent.putExtra(Constants.SEARCH_TAG, tags);
+                setResult(Constants.SEARCH_CODE_ADVANCED, intent);
+                UIUtils.closeSoftInput(SearchActivity.this);
+                finish();
+            }
+        });
+
+        mEtSearchAdvanced = (EditText) findViewById(R.id.et_search_advanced);
     }
 
-    private void getTagList() {
+    // 获取json文件里所有的搜索标签
+    private void getSearchList() {
         String name = "";
         String path = getFilesDir().getPath();
         String searchMode = OkHttp.getSearchModeUrl(this);
@@ -149,12 +173,62 @@ public class SearchActivity extends AppCompatActivity {
             json = json == null ? "" : json;
             try {
                 String data = new JSONObject(json).getString("data");
-                String[] tags = data.split(" |`");
+                String[] tags = data.split(" ");
                 for (String tag : tags) {
-                    mTagList.add(tag.trim());
+                    String[] details = tag.split("`");
+                    SearchBean searchBean = new SearchBean(details[0]);
+                    searchBean.tagList.addAll(Arrays.asList(details).subList(1, details.length));
+                    mSearchList.add(searchBean);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    // 筛选当前搜索内容的提示标签，最多10个
+    // 去除"_" "-"等连字符
+    private void getTagList(String search) {
+        search = search.replaceAll("_|-", "");
+        if (!TextUtils.isEmpty(search)) {
+            int length = search.length();
+            for (int i = 0; i <= length; i++) {
+                String start = search.substring(0, length - i).toLowerCase();
+                String contain = search.substring(length - i).toLowerCase();
+                filter(start, contain);
+                if (mPromptMap.size() >= 10) {
+                    break;
+                }
+            }
+        }
+    }
+
+    // 层级筛选
+    // 例：搜索fla，筛选顺序为
+    // startWith("fla")
+    // -> startWidth("fl"), contains("a")
+    // -> startWith("f"), contains("la")
+    // -> contains("fla")
+    private void filter(String start, String contain) {
+        for (SearchBean searchBean : mSearchList) {
+            for (String tag : searchBean.tagList) {
+                boolean find = false;
+                String[] parts = tag.split("_");
+                for (String part : parts) {
+                    if (part.startsWith(start) && part.contains(contain)) {
+                        if (!mPromptMap.containsKey(tag)) {
+                            mPromptMap.put(tag, searchBean.colorId);
+                        }
+                        find = true;
+                        break;
+                    }
+                }
+                if (find) {
+                    break;
+                }
+            }
+            if (mPromptMap.size() >= 10) {
+                break;
             }
         }
     }

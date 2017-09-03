@@ -161,12 +161,12 @@ public class DetailFragment extends Fragment {
         /****************** Tags ******************/
         ViewGroup layoutTag = (ViewGroup) mRootView.findViewById(R.id.layout_tag);
         TagBean tagBean = imageBean.tags;
-        addTagViews(layoutTag, tagBean.copyright, "#DD00DD");
-        addTagViews(layoutTag, tagBean.character, "#00AA00");
-        addTagViews(layoutTag, tagBean.artist, "#CCCC00");
-        addTagViews(layoutTag, tagBean.circle, "#00BBBB");
-        addTagViews(layoutTag, tagBean.style, "#FF2020");
-        addTagViews(layoutTag, tagBean.general, "#FFFFFF");
+        addTagViews(layoutTag, tagBean.copyright, R.color.color_copyright);
+        addTagViews(layoutTag, tagBean.character, R.color.color_character);
+        addTagViews(layoutTag, tagBean.artist, R.color.color_artist);
+        addTagViews(layoutTag, tagBean.circle, R.color.color_circle);
+        addTagViews(layoutTag, tagBean.style, R.color.color_style);
+        addTagViews(layoutTag, tagBean.general, R.color.color_general);
 
         /****************** Pools ******************/
         if (imageBean.pools.length == 0) {
@@ -220,12 +220,12 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    public void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, String textColor) {
+    public void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
         for (String tag : tagList) {
             View view = View.inflate(mActivity, R.layout.textview_item_detail, null);
             TextView tvTag = (TextView) view.findViewById(R.id.tv_key);
             tvTag.setText(tag);
-            tvTag.setTextColor(Color.parseColor(textColor));
+            tvTag.setTextColor(getResources().getColor(colorId));
             parentLayout.addView(view);
             Log.i("rrr", "tag: " + tag);
         }

@@ -55,4 +55,20 @@
         android:imeOptions="actionSearch"
         android:inputType="number"
         android:singleLine="true"/>
+
+    <Button
+        android:id="@+id/btn_search_advanced"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="高级搜索"/>
+
+    <EditText
+        android:id="@+id/et_search_advanced"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:hint="支持K站所有搜索格式"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"/>
 </LinearLayout>

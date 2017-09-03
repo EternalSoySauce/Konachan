@@ -13,11 +13,13 @@ import com.ess.konachan.R;
  * version 1.0
  * 缺点：暂时只支持适配一个子View的尺寸
  * 属性：具体styles配置见最下方
- *       scaleWidth(boolean)：layout_width为定值，且此属性为true时，自动适配View的宽度
- *       scaleHeight(boolean)：layout_height为定值，且此属性为true时，自动适配View的高度
- *       relativeTo(int)：需layout_width与layout_height均为定值，此时设置为相对于某一边，
- *                        则此边相对于屏幕缩放，另一边按照原始宽高比缩放（此时scaleWidth
- *                        与scaleHeight默认生效）
+ * scaleWidth(boolean)：layout_width为定值，且此属性为true时，自动适配View的宽度
+ * scaleHeight(boolean)：layout_height为定值，且此属性为true时，自动适配View的高度
+ * relativeTo(int)：需layout_width与layout_height均为定值，此时设置为相对于某一边，
+ * 则此边相对于屏幕缩放，另一边按照原始宽高比缩放（此时scaleWidth
+ * 与scaleHeight默认生效）
+ * maxRatio(float)：最大缩放倍数
+ * minRatio(float)：最小缩放倍数
  */
 
 public class AutoFitLayout extends FrameLayout {
@@ -30,8 +32,10 @@ public class AutoFitLayout extends FrameLayout {
     private boolean mScaleHeight;  // 是否缩放高度，默认为false
     private int mRelative;    // 以哪边为基准等比缩放，默认为NONE
 
-    private static float sWidthRatio;  // 屏幕宽度与360dp的比例
-    private static float sHeightRatio; // 屏幕高度与640dp的比例
+    private float mWidthRatio;  // 屏幕宽度与360dp的比例
+    private float mHeightRatio; // 屏幕高度与640dp的比例
+    private float mMaxRatio;    // 最大缩放倍数，默认为0
+    private float mMinRatio;    // 最小缩放倍数，默认为0
 
     public AutoFitLayout(Context context) {
         this(context, null);
@@ -43,22 +47,35 @@ public class AutoFitLayout extends FrameLayout {
 
     public AutoFitLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        // 获取xml属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AutoFitLayout);
         mScaleWidth = typedArray.getBoolean(R.styleable.AutoFitLayout_scaleWidth, false);
         mScaleHeight = typedArray.getBoolean(R.styleable.AutoFitLayout_scaleHeight, false);
         mRelative = typedArray.getInt(R.styleable.AutoFitLayout_relativeTo, NONE);
+        mMaxRatio = typedArray.getFloat(R.styleable.AutoFitLayout_maxRatio, 0);
+        mMinRatio = typedArray.getFloat(R.styleable.AutoFitLayout_minRatio, 0);
         typedArray.recycle();
 
-        if (sWidthRatio <= 0) {
-            DisplayMetrics dm = getResources().getDisplayMetrics();
-            sWidthRatio = px2dp(dm, dm.widthPixels) / 360f;
-            sHeightRatio = px2dp(dm, dm.heightPixels) / 640f;
-        }
+        // 计算宽高需缩放倍数
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        mWidthRatio = balanceRatio(px2dp(dm, dm.widthPixels) / 360f);
+        mHeightRatio = balanceRatio(px2dp(dm, dm.heightPixels) / 640f);
     }
 
     private float px2dp(DisplayMetrics dm, float px) {
         float scale = dm.density;
         return px / scale + 0.5f;
+    }
+
+    // 根据最大和最小缩放比例进行取舍
+    private float balanceRatio(float ratio) {
+        if (mMaxRatio > 0 && mMaxRatio >= mMinRatio) {
+            ratio = Math.min(ratio, mMaxRatio);
+        }
+        if (mMinRatio > 0 && mMaxRatio >= mMinRatio) {
+            ratio = Math.max(ratio, mMinRatio);
+        }
+        return ratio;
     }
 
     @Override
@@ -78,18 +95,18 @@ public class AutoFitLayout extends FrameLayout {
                 && mRelative == RELATIVE_TO_WIDTH) {
             // 宽高定值，宽度按屏幕缩放，高度按比例缩放
             float scale = selfHeight / 1f / selfWidth;
-            selfWidth *= sWidthRatio;
+            selfWidth *= mWidthRatio;
             selfHeight = (int) (selfWidth * scale);
         } else if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY
                 && mRelative == RELATIVE_TO_HEIGHT) {
             // 宽高定值，高度按屏幕缩放，宽度按比例缩放
             float scale = selfWidth / 1f / selfHeight;
-            selfHeight *= sHeightRatio;
+            selfHeight *= mHeightRatio;
             selfWidth = (int) (selfHeight * scale);
         } else {
             if (widthMode == MeasureSpec.EXACTLY && mScaleWidth) {
                 // 宽度按屏幕缩放，无视高度
-                selfWidth *= sWidthRatio;
+                selfWidth *= mWidthRatio;
             } else {
                 // 无缩放，未设置mScaleWidth或layout_width="wrap_content"
                 selfWidth = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
@@ -97,7 +114,7 @@ public class AutoFitLayout extends FrameLayout {
 
             if (heightMode == MeasureSpec.EXACTLY && mScaleHeight) {
                 // 高度按屏幕缩放，无视宽度
-                selfHeight *= sHeightRatio;
+                selfHeight *= mHeightRatio;
             } else {
                 // 无缩放，未设置mScaleHeight或layout_height="wrap_content"
                 getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
@@ -119,7 +136,7 @@ public class AutoFitLayout extends FrameLayout {
 }
 
 /* <resources>
-		<declare-styleable name="AutoFitLayout">
+        <declare-styleable name="AutoFitLayout">
             <attr name="scaleWidth" format="boolean"/>
             <attr name="scaleHeight" format="boolean"/>
             <attr name="relativeTo" format="enum">
@@ -127,6 +144,8 @@ public class AutoFitLayout extends FrameLayout {
                 <enum name="width" value="1"/>
                 <enum name="height" value="2"/>
             </attr>
+            <attr name="maxRatio" format="float"/>
+            <attr name="minRatio" format="float"/>
         </declare-styleable>
 	</resources>
 */

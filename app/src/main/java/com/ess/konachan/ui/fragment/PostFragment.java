@@ -244,6 +244,12 @@ public class PostFragment extends Fragment {
                     case Constants.SEARCH_CODE_ID:
                         mCurrentTagList.add("id:" + searchTag);
                         getNewPosts(mCurrentPage);
+                        break;
+                    case Constants.SEARCH_CODE_ADVANCED:
+                        String[] tags = searchTag.split(" ");
+                        mCurrentTagList.addAll(Arrays.asList(tags));
+                        getNewPosts(mCurrentPage);
+                        break;
                 }
             }
         }

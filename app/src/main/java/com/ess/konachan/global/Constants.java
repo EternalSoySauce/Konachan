@@ -26,6 +26,7 @@ public class Constants {
     public final static int SEARCH_CODE_CHINESE = 1001;
     public final static int SEARCH_CODE_TAGS = 1002;
     public final static int SEARCH_CODE_ID = 1003;
+    public final static int SEARCH_CODE_ADVANCED = 1004;
     public final static int FULLSCREEN_CODE = 2000;
 
     // EventBus
