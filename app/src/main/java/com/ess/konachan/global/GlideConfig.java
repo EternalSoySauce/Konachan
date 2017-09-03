@@ -23,7 +23,6 @@ public class GlideConfig {
     }
 
     private RequestOptions mLoadOptions;
-    private RequestOptions mPreloadOptions;
 
     private GlideConfig() {
         mLoadOptions = new RequestOptions()
@@ -31,20 +30,10 @@ public class GlideConfig {
                 .error(R.drawable.ic_error)
                 .priority(Priority.HIGH)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-
-        mPreloadOptions = new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
     }
 
     public static GlideConfig getInstance() {
         return GlideHolder.instance;
-    }
-
-    public void preloadImage(Context context, String url) {
-        Glide.with(context.getApplicationContext())
-                .load(url)
-                .apply(mPreloadOptions)
-                .preload();
     }
 
     public void loadImage(Context context, String url, ImageView imageView) {

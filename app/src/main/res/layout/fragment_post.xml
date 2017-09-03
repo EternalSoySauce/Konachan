@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -58,4 +59,36 @@
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <toan.android.floatingactionmenu.FloatingActionsMenu
+        android:id="@+id/floating_action_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="12dp"
+        fab:fab_addButtonColorNormal="#FFFFFF"
+        fab:fab_addButtonColorPressed="#FFFF00"
+        fab:fab_addButtonPlusIconColor="#000000"
+        fab:fab_animationScroll="scale"
+        fab:fab_labelStyle="@style/fab_label_style">
+
+        <toan.android.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="#FFFFFF"
+            fab:fab_colorPressed="#FFFF00"
+            fab:fab_icon="@drawable/ic_nav_menu_home"
+            fab:fab_size="mini"
+            fab:fab_title="@string/fab_home"/>
+
+        <toan.android.floatingactionmenu.FloatingActionButton
+            android:id="@+id/fab_random"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="#FFFFFF"
+            fab:fab_colorPressed="#FFFF00"
+            fab:fab_icon="@drawable/ic_nav_menu_game"
+            fab:fab_size="mini"
+            fab:fab_title="@string/fab_random"/>
+    </toan.android.floatingactionmenu.FloatingActionsMenu>
 </android.support.design.widget.CoordinatorLayout>

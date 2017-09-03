@@ -45,6 +45,9 @@ import java.util.Arrays;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import toan.android.floatingactionmenu.FloatingActionButton;
+import toan.android.floatingactionmenu.FloatingActionsMenu;
+import toan.android.floatingactionmenu.ScrollDirectionListener;
 
 public class PostFragment extends Fragment {
 
@@ -87,6 +90,7 @@ public class PostFragment extends Fragment {
         initToolBarLayout();
         initSwipeRefreshLayout();
         initRecyclerView();
+        initFloatingButton();
         initLoadingView();
         mCurrentPage = 1;
         mCurrentTagList = new ArrayList<>();
@@ -193,6 +197,41 @@ public class PostFragment extends Fragment {
         });
     }
 
+    private void initFloatingButton() {
+        final FloatingActionsMenu menu = (FloatingActionsMenu) mRootView.findViewById(R.id.floating_action_menu);
+        menu.attachToRecyclerView(mRvPosts, new ScrollDirectionListener() {
+            @Override
+            public void onScrollDown() {
+
+            }
+
+            @Override
+            public void onScrollUp() {
+
+            }
+        });
+
+        FloatingActionButton fabHome = (FloatingActionButton) mRootView.findViewById(R.id.fab_home);
+        fabHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.collapse();
+                onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
+            }
+        });
+
+        FloatingActionButton fabRandom = (FloatingActionButton) mRootView.findViewById(R.id.fab_random);
+        fabRandom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.collapse();
+                Intent intent = new Intent();
+                intent.putExtra(Constants.SEARCH_TAG, "order:random");
+                onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
+            }
+        });
+    }
+
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
 
@@ -248,6 +287,13 @@ public class PostFragment extends Fragment {
                     case Constants.SEARCH_CODE_ADVANCED:
                         String[] tags = searchTag.split(" ");
                         mCurrentTagList.addAll(Arrays.asList(tags));
+                        getNewPosts(mCurrentPage);
+                        break;
+                    case Constants.SEARCH_CODE_HOME:
+                        getNewPosts(mCurrentPage);
+                        break;
+                    case Constants.SEARCH_CODE_RANDOM:
+                        mCurrentTagList.add(searchTag);
                         getNewPosts(mCurrentPage);
                         break;
                 }
