@@ -54,6 +54,7 @@ public class DownloadService extends Service {
         ThumbBean thumbBean = intent.getParcelableExtra(Constants.THUMB_BEAN);
         ImageBean imageBean = intent.getParcelableExtra(Constants.IMAGE_BEAN);
 
+        // 绑定下载进度监听器
         MyProgressListener listener;
         if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
             listener = new MyProgressListener(this, imageBean, intent);
@@ -66,7 +67,9 @@ public class DownloadService extends Service {
         }
 
         try {
+            // 下载
             Response response = OkHttp.getInstance().execute(url);
+            // 保存为图片
             File folder = new File(Constants.IMAGE_DIR);
             if (folder.exists() || folder.mkdirs()) {
                 InputStream inputStream = response.body().byteStream();

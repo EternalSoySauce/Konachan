@@ -117,7 +117,7 @@ public class AutoFitLayout extends FrameLayout {
                 selfHeight *= mHeightRatio;
             } else {
                 // 无缩放，未设置mScaleHeight或layout_height="wrap_content"
-                getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+                selfHeight = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
             }
         }
 
