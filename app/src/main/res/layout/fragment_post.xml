@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -29,7 +28,7 @@
                 android:layout_marginEnd="7dp"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_toolbar_search"/>
+                android:src="@drawable/ic_toolbar_search" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -50,45 +49,37 @@
                 android:paddingEnd="5dp"
                 android:paddingStart="5dp"
                 android:scrollbarStyle="outsideOverlay"
-                android:scrollbars="vertical">
-            </android.support.v7.widget.RecyclerView>
+                android:scrollbars="vertical" />
 
             <include
                 android:id="@+id/layout_load_result"
-                layout="@layout/layout_load_result"/>
+                layout="@layout/layout_load_result" />
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <toan.android.floatingactionmenu.FloatingActionsMenu
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/floating_action_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="bottom|end"
         android:layout_margin="12dp"
-        fab:fab_addButtonColorNormal="#FFFFFF"
-        fab:fab_addButtonColorPressed="#FFFF00"
-        fab:fab_addButtonPlusIconColor="#000000"
-        fab:fab_animationScroll="scale"
-        fab:fab_labelStyle="@style/fab_label_style">
+        fab:menu_fab_hide_animation="@anim/fab_hide"
+        fab:menu_fab_show_animation="@anim/fab_show">
 
-        <toan.android.floatingactionmenu.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_colorNormal="#FFFFFF"
-            fab:fab_colorPressed="#FFFF00"
-            fab:fab_icon="@drawable/ic_nav_menu_home"
-            fab:fab_size="mini"
-            fab:fab_title="@string/fab_home"/>
+            android:src="@drawable/ic_nav_menu_home"
+            fab:fab_label="@string/fab_home"
+            fab:fab_size="mini" />
 
-        <toan.android.floatingactionmenu.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_random"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_colorNormal="#FFFFFF"
-            fab:fab_colorPressed="#FFFF00"
-            fab:fab_icon="@drawable/ic_nav_menu_game"
-            fab:fab_size="mini"
-            fab:fab_title="@string/fab_random"/>
-    </toan.android.floatingactionmenu.FloatingActionsMenu>
+            android:src="@drawable/ic_nav_menu_game"
+            fab:fab_label="@string/fab_random"
+            fab:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

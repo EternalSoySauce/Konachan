@@ -33,6 +33,8 @@ import com.ess.konachan.ui.activity.MainActivity;
 import com.ess.konachan.ui.activity.SearchActivity;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.GridDividerItemDecoration;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,9 +47,6 @@ import java.util.Arrays;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import toan.android.floatingactionmenu.FloatingActionButton;
-import toan.android.floatingactionmenu.FloatingActionsMenu;
-import toan.android.floatingactionmenu.ScrollDirectionListener;
 
 public class PostFragment extends Fragment {
 
@@ -56,6 +55,7 @@ public class PostFragment extends Fragment {
     private MainActivity mActivity;
 
     private View mRootView;
+    private FloatingActionMenu mFloatingMenu;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
@@ -194,28 +194,32 @@ public class PostFragment extends Fragment {
                     Log.i("rrr", "load more");
                 }
             }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!mPostAdapter.getThumbList().isEmpty()) {
+                    switch (newState) {
+                        case RecyclerView.SCROLL_STATE_IDLE:
+                            mFloatingMenu.showMenu(true);
+                            break;
+                        case RecyclerView.SCROLL_STATE_DRAGGING:
+                            mFloatingMenu.hideMenu(true);
+                            break;
+                    }
+                }
+            }
         });
     }
 
     private void initFloatingButton() {
-        final FloatingActionsMenu menu = (FloatingActionsMenu) mRootView.findViewById(R.id.floating_action_menu);
-        menu.attachToRecyclerView(mRvPosts, new ScrollDirectionListener() {
-            @Override
-            public void onScrollDown() {
-
-            }
-
-            @Override
-            public void onScrollUp() {
-
-            }
-        });
+        mFloatingMenu = (FloatingActionMenu) mRootView.findViewById(R.id.floating_action_menu);
 
         FloatingActionButton fabHome = (FloatingActionButton) mRootView.findViewById(R.id.fab_home);
         fabHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menu.collapse();
+                mFloatingMenu.close(true);
                 onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
             }
         });
@@ -224,7 +228,7 @@ public class PostFragment extends Fragment {
         fabRandom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menu.collapse();
+                mFloatingMenu.close(true);
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SEARCH_TAG, "order:random");
                 onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
