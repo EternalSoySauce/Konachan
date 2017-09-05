@@ -106,7 +106,7 @@ public class PoolFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFragmentManager = mActivity.getSupportFragmentManager();
+        mFragmentManager = getChildFragmentManager();
         mRootView = inflater.inflate(R.layout.fragment_pool, container, false);
         initToolBarLayout();
         initSwipeRefreshLayout();

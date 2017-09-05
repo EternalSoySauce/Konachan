@@ -62,9 +62,9 @@ public class AutoFitLayout extends FrameLayout {
         mHeightRatio = balanceRatio(px2dp(dm, dm.heightPixels) / 640f);
     }
 
-    private float px2dp(DisplayMetrics dm, float px) {
+    private int px2dp(DisplayMetrics dm, float px) {
         float scale = dm.density;
-        return px / scale + 0.5f;
+        return (int) (px / scale + 0.5f);
     }
 
     // 根据最大和最小缩放比例进行取舍
