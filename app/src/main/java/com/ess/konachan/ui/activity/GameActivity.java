@@ -11,6 +11,7 @@ import com.ess.konachan.view.GameSurfaceView;
 
 public class GameActivity extends AppCompatActivity {
 
+    private GameSurfaceView mGameView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +35,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        final GameSurfaceView surfaceView = (GameSurfaceView) findViewById(R.id.surface_view_game);
+        mGameView = (GameSurfaceView) findViewById(R.id.surface_view_game);
 
         Button btnColumn3 = (Button) findViewById(R.id.btn_column_3);
         btnColumn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                surfaceView.changeColumn(3);
+                mGameView.changeColumn(3);
             }
         });
 
@@ -48,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
         btnColumn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                surfaceView.changeColumn(4);
+                mGameView.changeColumn(4);
             }
         });
 
@@ -56,7 +57,7 @@ public class GameActivity extends AppCompatActivity {
         btnColumn5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                surfaceView.changeColumn(5);
+                mGameView.changeColumn(5);
             }
         });
 
@@ -64,9 +65,14 @@ public class GameActivity extends AppCompatActivity {
         btnRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                surfaceView.restartGame();
+                mGameView.restartGame();
             }
         });
+    }
 
+    @Override
+    public void finish() {
+        super.finish();
+        mGameView.recycleBitmaps(true);
     }
 }
