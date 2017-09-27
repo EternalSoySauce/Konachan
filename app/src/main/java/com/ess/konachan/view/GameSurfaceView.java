@@ -39,7 +39,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private boolean mCompleted = false;
 
     private Bitmap mGameBitmap;
-    private ArrayList<Bitmap> mSmallBitmapList;
+    private ArrayList<Bitmap> mSplitBitmapList = new ArrayList<>();
     private ArrayList<RectF> mRectList;
 
     private Paint mPaint;
@@ -78,7 +78,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         rebuildPuzzle();
 
         mGameBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_game);
-        decodeSmallBitmaps();
+        splitBitmaps();
     }
 
     private void draw() {
@@ -93,8 +93,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             for (int col = 0; col < mColumn; col++) {
                 int rectIndex = row * mColumn + col;
                 int bitmapIndex = mCurrentState[row][col];
-                if (bitmapIndex != mSmallBitmapList.size() - 1) {
-                    canvas.drawBitmap(mSmallBitmapList.get(bitmapIndex),
+                if (bitmapIndex != 0) {
+                    canvas.drawBitmap(mSplitBitmapList.get(bitmapIndex),
                             null, mRectList.get(rectIndex), mPaint);
                 }
             }
@@ -111,14 +111,18 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         if (mCompleted) {
             y = mRectList.get(0).top - getHeight() / 10f;
             mPaint.setTextSize(UIUtils.sp2px(getContext(), 36));
-            canvas.drawText("可以啊，小伙 ！", x, y, mPaint);
+            canvas.drawText("大吉大利，晚上吃鸡 ！", x, y, mPaint);
         }
 
         getHolder().unlockCanvasAndPost(canvas);
     }
 
-    private void decodeSmallBitmaps() {
-        mSmallBitmapList = BitmapUtils.splitImage(mGameBitmap, mColumn, mColumn);
+    private void splitBitmaps() {
+        recycleBitmaps(false);
+        mSplitBitmapList = BitmapUtils.splitImage(mGameBitmap, mColumn, mColumn);
+        Bitmap lastBitmap = mSplitBitmapList.get(mSplitBitmapList.size() - 1);
+        mSplitBitmapList.remove(mSplitBitmapList.size() - 1);
+        mSplitBitmapList.add(0, lastBitmap);
     }
 
     private void resetBitmapRects() {
@@ -147,7 +151,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void changeColumn(int newColumn) {
         mColumn = newColumn;
         mPreferences.edit().putInt(Constants.GAME_COLUMN, newColumn).apply();
-        decodeSmallBitmaps();
+        splitBitmaps();
         resetBitmapRects();
         restartGame();
     }
@@ -157,6 +161,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mCurrentStep = 0;
         rebuildPuzzle();
         draw();
+    }
+
+    public void recycleBitmaps(boolean includeGameBitmap) {
+        if (includeGameBitmap) {
+            mGameBitmap.recycle();
+        }
+        for (Bitmap bitmap : mSplitBitmapList) {
+            bitmap.recycle();
+        }
+        System.gc();
     }
 
     @Override

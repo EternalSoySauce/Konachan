@@ -1,5 +1,7 @@
 package com.ess.konachan.global;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -17,9 +19,9 @@ public class EightFigurePuzzle {
         int count = column * column;
         Random random = new Random();
         ArrayList<Integer> numericList = new ArrayList<>();
-        boolean isEven = false;
+        boolean canSolved = false;
         while (true) {
-            while (!isEven) {
+            while (!canSolved) {
                 numericList.clear();
                 for (int i = 0; i < count; i++) {
                     int num = random.nextInt(count);
@@ -41,7 +43,17 @@ public class EightFigurePuzzle {
                         j++;
                     }
                 }
-                isEven = parity % 2 == 0;
+
+                // 有解条件：
+                // column为奇数，则需初始与目标状态的逆序数奇偶性相同
+                // column为偶数，则需初始与目标状态的逆序数奇偶性相同且空格位置为偶数，或逆序数奇偶性不同且空格位置为奇数
+                // 目标状态：1234...0（逆序数为偶数）
+                if (column % 2 == 1) {
+                    canSolved = parity % 2 == 0;
+                } else {
+                    canSolved = (parity % 2 == 0 && (numericList.indexOf(0) + 1) % 2 == 0)
+                            || (parity % 2 == 1 && (numericList.indexOf(0) + 1) % 2 == 1);
+                }
             }
 
             node = new Node(numericList);
@@ -55,14 +67,14 @@ public class EightFigurePuzzle {
         aimState = new int[column][column];
         for (int row = 0; row < column; row++) {
             for (int col = 0; col < column; col++) {
-                int num = row * column + col;
+                int num = (row == column - 1 && col == column - 1) ? 0 : (row * column + col + 1);
                 aimState[row][col] = num;
             }
         }
     }
 
     public boolean moveToNewState(int[][] oldState, int[] touchPos) {
-        int[] blank = node.getPosition(column * column - 1);
+        int[] blank = node.getPosition(0);
         if (blank != null) {
             int touchX = touchPos[0];
             int touchY = touchPos[1];
@@ -80,18 +92,15 @@ public class EightFigurePuzzle {
         return false;
     }
 
-    public boolean isCompleted(int[][] state) {
-        if (state != null) {
-            for (int row = 0; row < column; row++) {
-                for (int col = 0; col < column; col++) {
-                    if (state[row][col] != aimState[row][col]) {
-                        return false;
-                    }
+    public boolean isCompleted(@NonNull int[][] state) {
+        for (int row = 0; row < column; row++) {
+            for (int col = 0; col < column; col++) {
+                if (state[row][col] != aimState[row][col]) {
+                    return false;
                 }
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     private class Node {
