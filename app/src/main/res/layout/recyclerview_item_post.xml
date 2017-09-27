@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -10,31 +9,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.ess.konachan.view.AutoFitLayout
-            android:id="@+id/layout_post_thumb"
+        <com.ess.konachan.view.AutoFitImageView
+            android:id="@+id/iv_post_thumb"
             android:layout_width="165dp"
             android:layout_height="130dp"
-            app:relativeTo="width">
-
-            <ImageView
-                android:id="@+id/iv_post_thumb"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"/>
-        </com.ess.konachan.view.AutoFitLayout>
+            android:scaleType="centerCrop"
+            app:relativeTo="width" />
 
         <TextView
             android:id="@+id/tv_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/layout_post_thumb"
-            android:layout_alignStart="@+id/layout_post_thumb"
-            android:layout_below="@+id/layout_post_thumb"
+            android:layout_alignEnd="@+id/iv_post_thumb"
+            android:layout_alignStart="@+id/iv_post_thumb"
+            android:layout_below="@+id/iv_post_thumb"
             android:background="@android:color/darker_gray"
             android:gravity="center"
             android:paddingBottom="1dp"
             android:paddingTop="1dp"
             android:textColor="@android:color/black"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

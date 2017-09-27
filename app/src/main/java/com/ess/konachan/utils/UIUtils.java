@@ -5,11 +5,17 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.design.internal.NavigationMenuPresenter;
+import android.support.design.internal.NavigationMenuView;
+import android.support.design.widget.NavigationView;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 
 import java.lang.reflect.Field;
 
@@ -61,8 +67,8 @@ public class UIUtils {
     /**
      * 获取底部导航栏尺寸
      *
-     * @param activity  上下文
-     * @return  导航栏高度 Point （宽：point.x, 高：point.y）
+     * @param activity 上下文
+     * @return 导航栏高度 Point （宽：point.x, 高：point.y）
      */
     public static Point getNavigationBarSize(Activity activity) {
         Point appUsablePoint = getAppUsableScreenSize(activity);
@@ -85,8 +91,8 @@ public class UIUtils {
     /**
      * 获取用户正在使用的屏幕尺寸
      *
-     * @param activity  activity
-     * @return  屏幕使用尺寸 Point （宽：point.x, 高：point.y）
+     * @param activity activity
+     * @return 屏幕使用尺寸 Point （宽：point.x, 高：point.y）
      */
     public static Point getAppUsableScreenSize(Activity activity) {
         WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -99,8 +105,8 @@ public class UIUtils {
     /**
      * 获取屏幕实际尺寸
      *
-     * @param activity  activity
-     * @return  屏幕实际尺寸 Point （宽：point.x, 高：point.y）
+     * @param activity activity
+     * @return 屏幕实际尺寸 Point （宽：point.x, 高：point.y）
      */
     public static Point getRealScreenSize(Activity activity) {
         WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
@@ -164,17 +170,32 @@ public class UIUtils {
     }
 
     /**
-     * 关闭软键盘
+     * 显示软键盘
      *
      * @param context 上下文
+     * @param view    EditText
      */
-    public static void closeSoftInput(Activity context) {
+    public static void showSoftInput(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.
                 getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        if (imm.isActive() && context.getCurrentFocus() != null) {
-            imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
+        if (imm.isActive()) {
+            imm.showSoftInput(view, 0);
+        }
+    }
+
+    /**
+     * 关闭软键盘
+     *
+     * @param context 上下文
+     * @param view    EditText
+     */
+    public static void closeSoftInput(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (imm.isActive()) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -183,13 +204,49 @@ public class UIUtils {
      *
      * @param context 上下文
      */
-    public static void switchSoftInput(Context context) {
+    public static void toggleSoftInput(Context context) {
         InputMethodManager imm = (InputMethodManager) context.
                 getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (imm.isActive()) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,
-                    InputMethodManager.HIDE_NOT_ALWAYS);
+            imm.toggleSoftInput(0, 0);
+        }
+    }
+
+    /**
+     * 改变侧拉栏分割线高度、颜色
+     * @param navigationView 侧拉栏的navigationView
+     * @param color 颜色
+     * @param height 高度
+     */
+    public static void setNavigationMenuLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {
+        try {
+            Field fieldByPresenter = navigationView.getClass().getDeclaredField("mPresenter");
+            fieldByPresenter.setAccessible(true);
+            NavigationMenuPresenter menuPresenter = (NavigationMenuPresenter) fieldByPresenter.get(navigationView);
+            Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("mMenuView");
+            fieldByMenuView.setAccessible(true);
+            final NavigationMenuView menuView = (NavigationMenuView) fieldByMenuView.get(menuPresenter);
+            menuView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+                @Override
+                public void onChildViewAttachedToWindow(View view) {
+                    RecyclerView.ViewHolder viewHolder = menuView.getChildViewHolder(view);
+                    if (viewHolder != null && "SeparatorViewHolder".equals(viewHolder.getClass().getSimpleName()) && viewHolder.itemView != null) {
+                        if (viewHolder.itemView instanceof FrameLayout) {
+                            FrameLayout frameLayout = (FrameLayout) viewHolder.itemView;
+                            View line = frameLayout.getChildAt(0);
+                            line.setBackgroundColor(color);
+                            line.getLayoutParams().height = height;
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildViewDetachedFromWindow(View view) {
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 }

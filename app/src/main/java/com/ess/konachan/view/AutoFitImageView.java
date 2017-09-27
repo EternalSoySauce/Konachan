@@ -2,9 +2,9 @@ package com.ess.konachan.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.widget.FrameLayout;
 
 import com.ess.konachan.R;
 
@@ -21,8 +21,7 @@ import com.ess.konachan.R;
  * maxRatio(float)：最大缩放倍数
  * minRatio(float)：最小缩放倍数
  */
-
-public class AutoFitLayout extends FrameLayout {
+public class AutoFitImageView extends android.support.v7.widget.AppCompatImageView {
 
     private final static int NONE = 0;  // 两边均以屏幕尺寸为基准进行缩放
     private final static int RELATIVE_TO_WIDTH = 1;  // 以宽度为基准等比缩放高度
@@ -37,23 +36,24 @@ public class AutoFitLayout extends FrameLayout {
     private float mMaxRatio;    // 最大缩放倍数，默认为0
     private float mMinRatio;    // 最小缩放倍数，默认为0
 
-    public AutoFitLayout(Context context) {
+
+    public AutoFitImageView(Context context) {
         this(context, null);
     }
 
-    public AutoFitLayout(Context context, AttributeSet attrs) {
+    public AutoFitImageView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AutoFitLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AutoFitImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // 获取xml属性
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AutoFitLayout);
-        mScaleWidth = typedArray.getBoolean(R.styleable.AutoFitLayout_scaleWidth, false);
-        mScaleHeight = typedArray.getBoolean(R.styleable.AutoFitLayout_scaleHeight, false);
-        mRelative = typedArray.getInt(R.styleable.AutoFitLayout_relativeTo, NONE);
-        mMaxRatio = typedArray.getFloat(R.styleable.AutoFitLayout_maxRatio, 0);
-        mMinRatio = typedArray.getFloat(R.styleable.AutoFitLayout_minRatio, 0);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AutoFitImageView);
+        mScaleWidth = typedArray.getBoolean(R.styleable.AutoFitImageView_scaleWidth, false);
+        mScaleHeight = typedArray.getBoolean(R.styleable.AutoFitImageView_scaleHeight, false);
+        mRelative = typedArray.getInt(R.styleable.AutoFitImageView_relativeTo, NONE);
+        mMaxRatio = typedArray.getFloat(R.styleable.AutoFitImageView_maxRatio, 0);
+        mMinRatio = typedArray.getFloat(R.styleable.AutoFitImageView_minRatio, 0);
         typedArray.recycle();
 
         // 计算宽高需缩放倍数
@@ -62,9 +62,9 @@ public class AutoFitLayout extends FrameLayout {
         mHeightRatio = balanceRatio(px2dp(dm, dm.heightPixels) / 640f);
     }
 
-    private int px2dp(DisplayMetrics dm, float px) {
+    private float px2dp(DisplayMetrics dm, float px) {
         float scale = dm.density;
-        return (int) (px / scale + 0.5f);
+        return px / scale + 0.5f;
     }
 
     // 根据最大和最小缩放比例进行取舍
@@ -123,29 +123,5 @@ public class AutoFitLayout extends FrameLayout {
 
         // 保存缩放结果
         setMeasuredDimension(selfWidth, selfHeight);
-
-        // 计算子View的宽度和高度
-        int childWidth = selfWidth - getPaddingLeft() - getPaddingRight();
-        int childHeight = selfHeight - getPaddingBottom() - getPaddingTop();
-
-        // 作为父容器,还需要测绘子View
-        int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.EXACTLY);
-        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY);
-        measureChildren(childWidthMeasureSpec, childHeightMeasureSpec);
     }
 }
-
-/* <resources>
-        <declare-styleable name="AutoFitLayout">
-            <attr name="scaleWidth" format="boolean"/>
-            <attr name="scaleHeight" format="boolean"/>
-            <attr name="relativeTo" format="enum">
-                <enum name="none" value="0"/>
-                <enum name="width" value="1"/>
-                <enum name="height" value="2"/>
-            </attr>
-            <attr name="maxRatio" format="float"/>
-            <attr name="minRatio" format="float"/>
-        </declare-styleable>
-	</resources>
-*/

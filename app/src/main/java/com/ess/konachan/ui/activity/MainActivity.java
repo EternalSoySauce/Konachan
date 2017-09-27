@@ -22,6 +22,7 @@ import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.ui.fragment.PoolFragment;
 import com.ess.konachan.ui.fragment.PostFragment;
+import com.ess.konachan.utils.UIUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -127,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
     private void initNavMenuLayout() {
         mCurrentNavId = mCurrentNavId == 0 ? R.id.nav_post : mCurrentNavId;
         mNavigation = (NavigationView) findViewById(R.id.nav_view);
+        mNavigation.setItemTextColor(getResources().getColorStateList(R.color.nav_menu_text_color));
+        mNavigation.setItemIconTintList(getResources().getColorStateList(R.color.nav_menu_text_color));
+        mNavigation.setItemBackgroundResource(R.drawable.nav_menu_background_color);
+        UIUtils.setNavigationMenuLineStyle(mNavigation, Color.WHITE, UIUtils.dp2px(this, 0.5f));
         mNavigation.setCheckedItem(mCurrentNavId);
         mNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

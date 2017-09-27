@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SEARCH_TAG, chineseName);
                 setResult(Constants.SEARCH_CODE_CHINESE, intent);
-                UIUtils.closeSoftInput(SearchActivity.this);
+                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchChinese);
                 finish();
             }
         });
@@ -88,7 +88,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SEARCH_TAG, tags);
                 setResult(Constants.SEARCH_CODE_TAGS, intent);
-                UIUtils.closeSoftInput(SearchActivity.this);
+                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchTags);
                 finish();
             }
         });
@@ -130,7 +130,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SEARCH_TAG, tags);
                 setResult(Constants.SEARCH_CODE_ID, intent);
-                UIUtils.closeSoftInput(SearchActivity.this);
+                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchId);
                 finish();
             }
         });
@@ -145,7 +145,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(Constants.SEARCH_TAG, tags);
                 setResult(Constants.SEARCH_CODE_ADVANCED, intent);
-                UIUtils.closeSoftInput(SearchActivity.this);
+                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchAdvanced);
                 finish();
             }
         });

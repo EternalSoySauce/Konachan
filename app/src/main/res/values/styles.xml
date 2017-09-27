@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorWindowBackground</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
@@ -26,7 +27,7 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
-    <declare-styleable name="AutoFitLayout">
+    <declare-styleable name="AutoFitImageView">
         <attr name="scaleWidth" format="boolean"/>
         <attr name="scaleHeight" format="boolean"/>
         <attr name="relativeTo" format="enum">
