@@ -123,7 +123,7 @@ public class PostFragment extends Fragment {
                 } else {
                     long currentClickTime = System.currentTimeMillis();
                     if (currentClickTime - lastClickTime < 500) {
-                        mRvPosts.scrollToPosition(0);
+                        scrollToTop();
                     } else {
                         lastClickTime = currentClickTime;
                     }
@@ -144,7 +144,6 @@ public class PostFragment extends Fragment {
 
     private void initSwipeRefreshLayout() {
         mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -171,6 +170,12 @@ public class PostFragment extends Fragment {
 
         ArrayList<ThumbBean> thumbList = new ArrayList<>();
         mPostAdapter = new RecyclerPostAdapter(mActivity, thumbList);
+        mPostAdapter.setOnItemClickListener(new RecyclerPostAdapter.OnItemClickListener() {
+            @Override
+            public void onViewDetails() {
+                mFloatingMenu.close(true);
+            }
+        });
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
@@ -260,6 +265,14 @@ public class PostFragment extends Fragment {
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
+    private void scrollToTop() {
+        int smoothPos = 14;
+        if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
+            mRvPosts.scrollToPosition(smoothPos);
+        }
+        mRvPosts.smoothScrollToPosition(0);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -342,7 +355,7 @@ public class PostFragment extends Fragment {
                 if (!newList.isEmpty()) {
                     mLayoutLoadResult.setVisibility(View.GONE);
                     mPostAdapter.refreshDatas(newList);
-                    mRvPosts.scrollToPosition(0);
+                    scrollToTop();
                 } else if (mPostAdapter.getThumbList().isEmpty()) {
                     setLoadFailedImage();
                 }

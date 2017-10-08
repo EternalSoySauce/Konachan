@@ -1,7 +1,6 @@
 package com.ess.konachan.ui.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -82,7 +81,6 @@ public class DetailFragment extends Fragment {
 
     private void initView() {
         mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefresh.setEnabled(false);
 
         if (mImageBean != null) {
@@ -215,7 +213,7 @@ public class DetailFragment extends Fragment {
         if (hyperlinkValue) {
             tvValue.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             tvValue.setAutoLinkMask(Linkify.ALL);
-            tvValue.setLinkTextColor(Color.WHITE);
+            tvValue.setLinkTextColor(getResources().getColor(R.color.color_text_unselected));
             tvValue.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }

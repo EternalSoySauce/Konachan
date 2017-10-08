@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
 
         <RelativeLayout
             android:id="@+id/rl_tool_bar"
@@ -38,7 +40,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@string/image_id_symbol"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorAccent"
                 android:textSize="20sp"/>
 
             <FrameLayout
@@ -51,13 +53,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:drawableLeft="@drawable/ic_download"
                     android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/ic_download"
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="15dp"
                     android:text="@string/save_image"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/colorAccent"
                     android:textSize="18sp"/>
             </FrameLayout>
         </RelativeLayout>

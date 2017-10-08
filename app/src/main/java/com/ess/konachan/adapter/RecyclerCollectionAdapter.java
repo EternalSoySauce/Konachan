@@ -23,7 +23,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
     private ArrayList<CollectionBean> mCollectionList;
     private ArrayList<CollectionBean> mChooseList;
     private boolean mEditing;
-    private ActionListener mActionListener;
+    private OnActionListener mActionListener;
 
     public RecyclerCollectionAdapter(Context context, ArrayList<CollectionBean> collectionList) {
         mContext = context;
@@ -164,7 +164,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         }
     }
 
-    public interface ActionListener {
+    public interface OnActionListener {
         //收藏界面adapter中点击后通知进入全屏查看模式
         void onFullScreen(ImageView imageView, int position);
 
@@ -172,7 +172,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         void onEdit();
     }
 
-    public void setOnActionListener(ActionListener listener) {
+    public void setOnActionListener(OnActionListener listener) {
         mActionListener = listener;
     }
 }

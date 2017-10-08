@@ -131,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         mNavigation.setItemTextColor(getResources().getColorStateList(R.color.nav_menu_text_color));
         mNavigation.setItemIconTintList(getResources().getColorStateList(R.color.nav_menu_text_color));
         mNavigation.setItemBackgroundResource(R.drawable.nav_menu_background_color);
-        UIUtils.setNavigationMenuLineStyle(mNavigation, Color.WHITE, UIUtils.dp2px(this, 0.5f));
+        UIUtils.setNavigationMenuLineStyle(mNavigation,
+                getResources().getColor(R.color.color_text_unselected), UIUtils.dp2px(this, 0.5f));
         mNavigation.setCheckedItem(mCurrentNavId);
         mNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 lastClickTime = System.currentTimeMillis();
             } else {
                 long currentClickTime = System.currentTimeMillis();
-                if (currentClickTime - lastClickTime < 1000) {
+                if (currentClickTime - lastClickTime < 2000) {
                     super.onBackPressed();
                 } else {
                     Toast.makeText(this, R.string.back_again, Toast.LENGTH_SHORT).show();

@@ -1,7 +1,6 @@
 package com.ess.konachan.ui.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -27,6 +26,7 @@ import com.ess.konachan.ui.fragment.DetailFragment;
 import com.ess.konachan.ui.fragment.ImageFragment;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
+import com.ess.konachan.view.CustomDialog;
 import com.ess.konachan.view.SlidingTabLayout;
 
 import java.io.File;
@@ -110,7 +110,7 @@ public class ImageDetailActivity extends AppCompatActivity {
                     if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
                         downloadBitmap(url, file.getAbsolutePath());
                     } else if (file.exists()) {
-                        new MaterialDialog.Builder(ImageDetailActivity.this)
+                        new CustomDialog(ImageDetailActivity.this)
                                 .content(R.string.reload_msg)
                                 .negativeText(R.string.reload_no)
                                 .positiveText(R.string.reload_yes)
@@ -143,14 +143,17 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void initSlidingTabLayout() {
+        int colorSelected = getResources().getColor(R.color.color_text_selected);
+        int colorUnselected = getResources().getColor(R.color.color_text_unselected);
+
         SlidingTabLayout slidingTab = (SlidingTabLayout) findViewById(R.id.sliding_tab_layout);
         slidingTab.setDistributeEvenly(true);
         slidingTab.setTabViewTextSizeSp(16);
-        slidingTab.setTitleTextColor(Color.WHITE, R.color.colorPrimary);
+        slidingTab.setTitleTextColor(colorSelected, colorUnselected);
         slidingTab.setTabStripWidth(UIUtils.dp2px(this, 60));
         slidingTab.setTabStripHeight(2.5f);
         slidingTab.setTabViewPaddingDp(12);
-        slidingTab.setSelectedIndicatorColors(Color.WHITE);
+        slidingTab.setSelectedIndicatorColors(colorSelected);
         slidingTab.setViewPager(mVpImageDetail);
     }
 

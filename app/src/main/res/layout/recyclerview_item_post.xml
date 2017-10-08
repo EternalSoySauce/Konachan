@@ -23,11 +23,11 @@
             android:layout_alignEnd="@+id/iv_post_thumb"
             android:layout_alignStart="@+id/iv_post_thumb"
             android:layout_below="@+id/iv_post_thumb"
-            android:background="@android:color/darker_gray"
+            android:background="@color/color_text_bg"
             android:gravity="center"
             android:paddingBottom="1dp"
             android:paddingTop="1dp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/color_text_general"
             android:textSize="15sp" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

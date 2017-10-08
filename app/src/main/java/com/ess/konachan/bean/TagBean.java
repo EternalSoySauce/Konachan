@@ -21,7 +21,7 @@ public class TagBean implements Parcelable {
 
     public ArrayList<String> style = new ArrayList<>();      //理解不能，#FF2020
 
-    public ArrayList<String> general = new ArrayList<>();    //普通描述，#FFFFFF
+    public ArrayList<String> general = new ArrayList<>();    //普通描述，#FFFFFF (#EE8887)
 
     public TagBean(JsonObject tagArray) {
         for (Entry<String, JsonElement> entry : tagArray.entrySet()) {

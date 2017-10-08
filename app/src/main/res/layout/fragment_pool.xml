@@ -32,7 +32,7 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.ess.konachan.view.MySwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,6 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbarStyle="outsideOverlay"
+                android:scrollbarThumbVertical="@drawable/scroll_bar_thumb"
                 android:scrollbars="vertical">
             </android.support.v7.widget.RecyclerView>
 
@@ -54,13 +55,12 @@
                 android:id="@+id/layout_load_result"
                 layout="@layout/layout_load_result"/>
         </FrameLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.ess.konachan.view.MySwipeRefreshLayout>
 
     <FrameLayout
         android:id="@+id/fl_pool_post"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#EFEFEF"
         android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </FrameLayout>

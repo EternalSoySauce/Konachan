@@ -23,6 +23,7 @@ import com.ess.konachan.bean.CollectionBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
+import com.ess.konachan.view.CustomDialog;
 import com.ess.konachan.view.GridDividerItemDecoration;
 
 import java.io.File;
@@ -99,7 +100,7 @@ public class CollectionActivity extends AppCompatActivity {
                 final ArrayList<CollectionBean> deleteList = new ArrayList<>();
                 deleteList.addAll(mCollectionAdapter.getChooseList());
                 String msg = getString(R.string.delete_msg1) + deleteList.size() + getString(R.string.delete_msg2);
-                new MaterialDialog.Builder(CollectionActivity.this)
+                new CustomDialog(CollectionActivity.this)
                         .content(msg)
                         .negativeText(R.string.delete_cancel)
                         .positiveText(R.string.delete_sure)
@@ -130,7 +131,7 @@ public class CollectionActivity extends AppCompatActivity {
         mRvCollection.addItemDecoration(itemDecoration);
 
         // adapter设置 点击全屏查看 和 长按进入编辑模式 监听器
-        mCollectionAdapter.setOnActionListener(new RecyclerCollectionAdapter.ActionListener() {
+        mCollectionAdapter.setOnActionListener(new RecyclerCollectionAdapter.OnActionListener() {
             @Override
             public void onFullScreen(ImageView imageView, int position) {
                 // TODO 点击全屏查看图片缩放动画

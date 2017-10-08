@@ -1,7 +1,6 @@
 package com.ess.konachan.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,7 +22,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
 
     private Context mContext;
     private ArrayList<PoolListBean> mPoolList;
-    private ClickListener mClickListener;
+    private OnItemClickListener mItemClickListener;
     private ViewState mCurrentState;
 
     public RecyclerPoolAdapter(Context context, @NonNull ArrayList<PoolListBean> poolList) {
@@ -82,8 +81,8 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mClickListener != null) {
-                    mClickListener.onLoadPostsOfPool(poolListBean.id, poolListBean.linkToShow);
+                if (mItemClickListener != null) {
+                    mItemClickListener.onLoadPostsOfPool(poolListBean.id, poolListBean.linkToShow);
                 }
             }
         });
@@ -167,8 +166,9 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
             tvUpdateTime = (TextView) itemView.findViewById(R.id.tv_update_time);
             loadMoreView = (LVFinePoiStar) itemView.findViewById(R.id.view_load_more);
             if (loadMoreView != null) {
-                loadMoreView.setViewColor(Color.GREEN);
-                loadMoreView.setCircleColor(Color.GREEN);
+                int color = mContext.getResources().getColor(R.color.color_load_more);
+                loadMoreView.setViewColor(color);
+                loadMoreView.setCircleColor(color);
             }
         }
     }
@@ -178,12 +178,12 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         LOAD_MORE
     }
 
-    public interface ClickListener {
+    public interface OnItemClickListener {
         //加载图集里的图片列表
         void onLoadPostsOfPool(String id, String linkToShow);
     }
 
-    public void setOnClickListener(ClickListener listener) {
-        mClickListener = listener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mItemClickListener = listener;
     }
 }

@@ -76,7 +76,6 @@ public class ImageFragment extends Fragment {
 
     private void initView() {
         mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefresh.setEnabled(false);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

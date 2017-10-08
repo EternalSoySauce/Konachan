@@ -38,6 +38,7 @@ public class PoolPostFragment extends Fragment {
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
+    private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
     private String mLinkToShow;
 
@@ -78,21 +79,20 @@ public class PoolPostFragment extends Fragment {
 
     private void initSwipeRefreshLayout() {
         mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefresh.setEnabled(false);
         mSwipeRefresh.setRefreshing(true);
     }
 
     private void initRecyclerView() {
         mRvPosts = (RecyclerView) mRootView.findViewById(R.id.rv_pool_post);
-        final GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        mLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return position == layoutManager.getItemCount() - 1 ? 2 : 1;
+                return position == mLayoutManager.getItemCount() - 1 ? 2 : 1;
             }
         });
-        mRvPosts.setLayoutManager(layoutManager);
+        mRvPosts.setLayoutManager(mLayoutManager);
 
         ArrayList<ThumbBean> thumbList = new ArrayList<>();
         mPostAdapter = new RecyclerPostAdapter(getActivity(), thumbList);
@@ -134,7 +134,11 @@ public class PoolPostFragment extends Fragment {
     }
 
     public void scrollToTop() {
-        mRvPosts.scrollToPosition(0);
+        int smoothPos = 14;
+        if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
+            mRvPosts.scrollToPosition(smoothPos);
+        }
+        mRvPosts.smoothScrollToPosition(0);
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)

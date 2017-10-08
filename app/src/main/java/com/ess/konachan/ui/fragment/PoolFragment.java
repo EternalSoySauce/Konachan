@@ -146,7 +146,7 @@ public class PoolFragment extends Fragment {
                         if (isPoolPostFragmentVisible()) {
                             mPoolPostFragment.scrollToTop();
                         } else {
-                            mRvPools.scrollToPosition(0);
+                            scrollToTop();
                         }
                     } else {
                         lastClickTime = currentClickTime;
@@ -168,7 +168,6 @@ public class PoolFragment extends Fragment {
 
     private void initSwipeRefreshLayout() {
         mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -194,7 +193,7 @@ public class PoolFragment extends Fragment {
         ArrayList<PoolListBean> poolList = new ArrayList<>();
         mPoolAdapter = new RecyclerPoolAdapter(mActivity, poolList);
         mRvPools.setAdapter(mPoolAdapter);
-        mPoolAdapter.setOnClickListener(new RecyclerPoolAdapter.ClickListener() {
+        mPoolAdapter.setOnItemClickListener(new RecyclerPoolAdapter.OnItemClickListener() {
             @Override
             public void onLoadPostsOfPool(String id, String linkToShow) {
                 String title = getString(R.string.nav_pool) + " #" + id.substring(1);
@@ -247,6 +246,14 @@ public class PoolFragment extends Fragment {
         mIvLoading.setVisibility(View.GONE);
         mIvLoadFailed.setVisibility(View.VISIBLE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
+    }
+
+    private void scrollToTop() {
+        int smoothPos = 4;
+        if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
+            mRvPools.scrollToPosition(smoothPos);
+        }
+        mRvPools.smoothScrollToPosition(0);
     }
 
     private void addPoolPostFragment(String title, String linkToShow) {
@@ -340,7 +347,7 @@ public class PoolFragment extends Fragment {
                 if (!newList.isEmpty()) {
                     mLayoutLoadResult.setVisibility(View.GONE);
                     mPoolAdapter.refreshDatas(newList);
-                    mRvPools.scrollToPosition(0);
+                    scrollToTop();
                 } else if (mPoolAdapter.getPoolList().isEmpty()) {
                     setLoadFailedImage();
                 }

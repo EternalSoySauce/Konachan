@@ -2,7 +2,6 @@ package com.ess.konachan.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,6 +36,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     private Context mContext;
     private ArrayList<ThumbBean> mThumbList;
     private ArrayList<Call> mCallList;
+    private OnItemClickListener mItemClickListener;
     private ViewState mCurrentState;
 
     public RecyclerPostAdapter(Context context, @NonNull ArrayList<ThumbBean> thumbList) {
@@ -88,6 +88,10 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
                 Intent intent = new Intent(mContext, ImageDetailActivity.class);
                 intent.putExtra(Constants.THUMB_BEAN, thumbBean);
                 mContext.startActivity(intent);
+
+                if (mItemClickListener != null) {
+                    mItemClickListener.onViewDetails();
+                }
             }
         });
     }
@@ -194,8 +198,9 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
             tvSize = (TextView) itemView.findViewById(R.id.tv_size);
             loadMoreView = (LVFinePoiStar) itemView.findViewById(R.id.view_load_more);
             if (loadMoreView != null) {
-                loadMoreView.setViewColor(Color.GREEN);
-                loadMoreView.setCircleColor(Color.GREEN);
+                int color = mContext.getResources().getColor(R.color.color_load_more);
+                loadMoreView.setViewColor(color);
+                loadMoreView.setCircleColor(color);
             }
         }
     }
@@ -203,5 +208,14 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     private enum ViewState {
         NORMAL,
         LOAD_MORE
+    }
+
+    public interface OnItemClickListener {
+        //进入图片详细界面时收起fab
+        void onViewDetails();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mItemClickListener = listener;
     }
 }
