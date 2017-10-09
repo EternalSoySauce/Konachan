@@ -21,6 +21,7 @@ import com.ess.konachan.R;
 import com.ess.konachan.adapter.RecyclerCollectionAdapter;
 import com.ess.konachan.bean.CollectionBean;
 import com.ess.konachan.global.Constants;
+import com.ess.konachan.utils.BitmapUtils;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.CustomDialog;
@@ -109,9 +110,12 @@ public class CollectionActivity extends AppCompatActivity {
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                 cancelEdit(false);
                                 mCollectionAdapter.removeDatas(deleteList);
+                                mCollectionAdapter.resetChooseList();
                                 for (CollectionBean collectionBean : deleteList) {
                                     String path = collectionBean.url.replace("file://", "");
                                     FileUtils.deleteFile(path);
+                                    // 从媒体库删除图片（刷新相册）
+                                    BitmapUtils.deleteFromMediaStore(CollectionActivity.this, path);
                                 }
                             }
                         }).show();

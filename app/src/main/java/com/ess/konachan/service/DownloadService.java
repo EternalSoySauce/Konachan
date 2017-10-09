@@ -9,6 +9,7 @@ import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.MyProgressListener;
 import com.ess.konachan.http.OkHttp;
+import com.ess.konachan.utils.BitmapUtils;
 import com.ess.konachan.utils.FileUtils;
 
 import java.io.File;
@@ -66,21 +67,32 @@ public class DownloadService extends Service {
             listener.prepareNotification();
         }
 
+        // 临时下载文件
+        File tempFolder = new File(Constants.IMAGE_TEMP);
+        String tempName = bitmapPath.substring(bitmapPath.lastIndexOf("/") + 1, bitmapPath.lastIndexOf("."));
+        File tempFile = new File(tempFolder, tempName);
         try {
             // 下载
             Response response = OkHttp.getInstance().execute(url);
-            // 保存为图片
-            File folder = new File(Constants.IMAGE_DIR);
-            if (folder.exists() || folder.mkdirs()) {
+            if (tempFolder.exists() || tempFolder.mkdirs()) {
                 InputStream inputStream = response.body().byteStream();
-                File file = new File(bitmapPath);
-                FileUtils.streamToFile(inputStream, file);
+                FileUtils.streamToFile(inputStream, tempFile);
+
+                // 下载成功，保存为图片
+                File folder = new File(Constants.IMAGE_DIR);
+                if (folder.exists() || folder.mkdirs()) {
+                    File file = new File(bitmapPath);
+                    FileUtils.copyFile(tempFile, file);
+                    // 添加图片到媒体库（刷新相册）
+                    BitmapUtils.insertToMediaStore(this, file);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
             ProgressManager.getInstance().notifyOnErorr(url, e);
         } finally {
             OkHttp.getInstance().removeUrlFromDownloadQueue(url);
+            tempFile.delete();
         }
     }
 

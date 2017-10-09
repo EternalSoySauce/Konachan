@@ -215,18 +215,17 @@ public class FileUtils {
     /**
      * 复制文件，eg. 把路径为 a/img.jpg 的文件复制为路径为 b/img.jpg 的文件
      *
-     * @param fromPath 要复制的文件路径
-     * @param toPath   要保存到的目标文件路径
+     * @param fromFile 要复制的文件
+     * @param toFile   要保存到的目标文件
      * @return 是否复制成功  true/false
      */
-    public static boolean copyFile(String fromPath, String toPath) {
+    public static boolean copyFile(File fromFile, File toFile) {
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
-            File fromFile = new File(fromPath);
             if (fromFile.exists()) {
-                bis = new BufferedInputStream(new FileInputStream(fromPath));
-                bos = new BufferedOutputStream(new FileOutputStream(toPath));
+                bis = new BufferedInputStream(new FileInputStream(fromFile));
+                bos = new BufferedOutputStream(new FileOutputStream(toFile));
                 int temp;
                 while ((temp = bis.read()) != -1) {
                     bos.write(temp);
@@ -274,7 +273,7 @@ public class FileUtils {
                 }
                 return true;
             } else {
-                return copyFile(fromPath, toPath);
+                return copyFile(fromFile, toFile);
             }
         }
         return false;

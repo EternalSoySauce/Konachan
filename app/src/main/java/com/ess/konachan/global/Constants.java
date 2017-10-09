@@ -49,5 +49,6 @@ public class Constants {
 
     // Glide
     public final static String IMAGE_DIR = Environment.getExternalStorageDirectory() + "/Konachan/konachan";
+    public final static String IMAGE_TEMP = Environment.getExternalStorageDirectory() + "/Konachan/temp";
     public final static String IMAGE_HEAD = "Konachan-";
 }

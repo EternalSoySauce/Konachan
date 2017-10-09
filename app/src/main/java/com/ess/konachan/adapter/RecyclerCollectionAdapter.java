@@ -137,12 +137,16 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         }
     }
 
+    public ArrayList<CollectionBean> getCollectionList() {
+        return mCollectionList;
+    }
+
     public ArrayList<CollectionBean> getChooseList() {
         return mChooseList;
     }
 
-    public ArrayList<CollectionBean> getCollectionList() {
-        return mCollectionList;
+    public void resetChooseList() {
+        mChooseList.clear();
     }
 
     public void setEditing(boolean editing) {
