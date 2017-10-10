@@ -26,6 +26,9 @@
     <string name="fab_home">回到首页</string>
     <string name="fab_random">随机看图</string>
 
+    <!-- Search -->
+    <string name="cancel_search">取消</string>
+
     <!-- Image Detail -->
     <string name="image_detail_image">图片</string>
     <string name="image_detail_detail">详情</string>

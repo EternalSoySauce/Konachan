@@ -1,7 +1,10 @@
 package com.ess.konachan.ui.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -9,9 +12,11 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.bean.SearchBean;
@@ -32,14 +37,10 @@ import java.util.regex.Pattern;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private Button mBtnSearchChinese;
-    private EditText mEtSearchChinese;
-    private Button mBtnSearchTags;
-    private EditText mEtSearchTags;
-    private Button mBtnSearchId;
-    private EditText mEtSearchId;
-    private Button mBtnSearchAdvanced;
-    private EditText mEtSearchAdvanced;
+    private SharedPreferences mPreferences;
+    private int mCurrentSearchMode;
+
+    private EditText mEtSearch;
 
     // 存储着K站所有的tag，用于搜索提示
     private ArrayList<SearchBean> mSearchList = new ArrayList<>();
@@ -47,72 +48,97 @@ public class SearchActivity extends AppCompatActivity {
     // 当前搜索内容的下拉提示内容
     private LinkedHashMap<String, Integer> mPromptMap = new LinkedHashMap<>();
 
+    // 筛选下拉提示异步任务
+    private AsyncTask mAutoCompleteTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        initView();
-        getSearchList();
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
+
+        initViews();
+        changeEditInputType();
+        initTagList();
     }
 
-    private void initView() {
-        mBtnSearchChinese = (Button) findViewById(R.id.btn_search_chinese);
-        mBtnSearchChinese.setOnClickListener(new View.OnClickListener() {
+    private void initViews() {
+        // 下拉栏图标
+        findViewById(R.id.iv_spinner).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String chineseName = mEtSearchChinese.getText().toString().trim();
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SEARCH_TAG, chineseName);
-                setResult(Constants.SEARCH_CODE_CHINESE, intent);
-                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchChinese);
+
+            }
+        });
+
+        // 清空搜索内容
+        findViewById(R.id.iv_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEtSearch.setText("");
+            }
+        });
+
+        // 取消搜索
+        findViewById(R.id.tv_cancel_search).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
         });
 
-        mEtSearchChinese = (EditText) findViewById(R.id.et_search_chinese);
-        mEtSearchChinese.setFilters(new InputFilter[]{new InputFilter() {
-
+        mEtSearch = (EditText) findViewById(R.id.et_search);
+        mEtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                Pattern pattern = Pattern.compile("[\u4e00-\u9fa5·]+");
-                return StringUtils.filter(source.toString(), pattern);
-            }
-        }});
-
-        mBtnSearchTags = (Button) findViewById(R.id.btn_search_tags);
-        mBtnSearchTags.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tags = mEtSearchTags.getText().toString().trim();
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SEARCH_TAG, tags);
-                setResult(Constants.SEARCH_CODE_TAGS, intent);
-                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchTags);
-                finish();
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String tags = mEtSearch.getText().toString().trim();
+                    if (!TextUtils.isEmpty(tags)) {
+                        Intent intent = new Intent();
+                        intent.putExtra(Constants.SEARCH_TAG, tags);
+                        setResult(mCurrentSearchMode, intent);
+                        UIUtils.closeSoftInput(SearchActivity.this, mEtSearch);
+                        finish();
+                    }
+                }
+                return false;
             }
         });
+        mEtSearch.setFilters(new InputFilter[]{new InputFilter() {
 
-        mEtSearchTags = (EditText) findViewById(R.id.et_search_tags);
-        mEtSearchTags.setFilters(new InputFilter[]{new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                return source.toString().replace(" ", "_");
+                switch (mCurrentSearchMode) {
+                    case Constants.SEARCH_CODE_TAGS:
+                        return source.toString().replace(" ", "_");
+                    case Constants.SEARCH_CODE_CHINESE:
+                        Pattern pattern = Pattern.compile("[\u4e00-\u9fa5·]+");
+                        return StringUtils.filter(source.toString(), pattern);
+                    default:
+                        return source;
+                }
             }
         }});
-        mEtSearchTags.addTextChangedListener(new TextWatcher() {
+        mEtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO 完善搜索提示（现在与K站算法不完全一样）
-                if (!TextUtils.isEmpty(s)) {
-                    mPromptMap.clear();
-                    getTagList(s.toString());
-                    for (String prompt : mPromptMap.keySet()) {
-                        Log.i("rrr", prompt);
+                int visible = TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE;
+                findViewById(R.id.iv_clear).setVisibility(visible);
+
+                if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
+                    // TODO 完善搜索提示（现在与K站算法不完全一样）
+                    if (!TextUtils.isEmpty(s)) {
+                        if (mAutoCompleteTask != null) {
+                            mAutoCompleteTask.cancel(true);
+                        }
+                        mPromptMap.clear();
+                        mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(s.toString());
                     }
                 }
             }
@@ -121,40 +147,18 @@ public class SearchActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+    }
 
-        mBtnSearchId = (Button) findViewById(R.id.btn_search_id);
-        mBtnSearchId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tags = mEtSearchId.getText().toString().trim();
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SEARCH_TAG, tags);
-                setResult(Constants.SEARCH_CODE_ID, intent);
-                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchId);
-                finish();
-            }
-        });
-
-        mEtSearchId = (EditText) findViewById(R.id.et_search_id);
-
-        mBtnSearchAdvanced = (Button) findViewById(R.id.btn_search_advanced);
-        mBtnSearchAdvanced.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String tags = mEtSearchAdvanced.getText().toString().trim();
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SEARCH_TAG, tags);
-                setResult(Constants.SEARCH_CODE_ADVANCED, intent);
-                UIUtils.closeSoftInput(SearchActivity.this, mEtSearchAdvanced);
-                finish();
-            }
-        });
-
-        mEtSearchAdvanced = (EditText) findViewById(R.id.et_search_advanced);
+    private void changeEditInputType() {
+        if (mCurrentSearchMode == Constants.SEARCH_CODE_ID) {
+            mEtSearch.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        } else {
+            mEtSearch.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+        }
     }
 
     // 获取json文件里所有的搜索标签
-    private void getSearchList() {
+    private void initTagList() {
         String name = "";
         String path = getFilesDir().getPath();
         String searchMode = OkHttp.getSearchModeUrl(this);
@@ -229,6 +233,33 @@ public class SearchActivity extends AppCompatActivity {
             }
             if (mPromptMap.size() >= 10) {
                 break;
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAutoCompleteTask != null) {
+            mAutoCompleteTask.cancel(true);
+        }
+    }
+
+    // 异步执行筛选下拉提示操作
+    private class AutoCompleteTagAsyncTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            getTagList(params[0]);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            for (String prompt : mPromptMap.keySet()) {
+                Log.i("rrr", prompt);
             }
         }
     }

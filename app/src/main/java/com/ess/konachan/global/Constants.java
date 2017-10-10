@@ -5,6 +5,7 @@ import android.os.Environment;
 public class Constants {
 
     // Shared Preference
+    public final static String SEARCH_MODE = "searchMode";
     public final static String GAME_COLUMN = "gameColumn";
 
     // Fragment
@@ -23,9 +24,9 @@ public class Constants {
 
     // Activity Result
     public final static int SEARCH_CODE = 1000;
-    public final static int SEARCH_CODE_CHINESE = 1001;
-    public final static int SEARCH_CODE_TAGS = 1002;
-    public final static int SEARCH_CODE_ID = 1003;
+    public final static int SEARCH_CODE_TAGS = 1001;
+    public final static int SEARCH_CODE_ID = 1002;
+    public final static int SEARCH_CODE_CHINESE = 1003;
     public final static int SEARCH_CODE_ADVANCED = 1004;
     public final static int SEARCH_CODE_HOME = 1005;
     public final static int SEARCH_CODE_RANDOM = 1006;

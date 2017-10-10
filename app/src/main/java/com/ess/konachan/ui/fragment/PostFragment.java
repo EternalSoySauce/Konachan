@@ -290,9 +290,6 @@ public class PostFragment extends Fragment {
                 OkHttp.getInstance().cancelAll();
                 String searchTag = data.getStringExtra(Constants.SEARCH_TAG);
                 switch (resultCode) {
-                    case Constants.SEARCH_CODE_CHINESE:
-                        getNameFromBaidu(searchTag);
-                        break;
                     case Constants.SEARCH_CODE_TAGS:
                         mCurrentTagList.addAll(Arrays.asList(searchTag.split(",")));
                         getNewPosts(mCurrentPage);
@@ -300,6 +297,9 @@ public class PostFragment extends Fragment {
                     case Constants.SEARCH_CODE_ID:
                         mCurrentTagList.add("id:" + searchTag);
                         getNewPosts(mCurrentPage);
+                        break;
+                    case Constants.SEARCH_CODE_CHINESE:
+                        getNameFromBaidu(searchTag);
                         break;
                     case Constants.SEARCH_CODE_ADVANCED:
                         String[] tags = searchTag.split(" ");

@@ -4,71 +4,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     tools:context=".ui.activity.SearchActivity">
 
-    <Button
-        android:id="@+id/btn_search_chinese"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="中文搜索"/>
-
-    <EditText
-        android:id="@+id/et_search_chinese"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:hint="输入角色中文全名"
-        android:imeOptions="actionSearch"
-        android:singleLine="true"/>
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_search_tags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="标签搜索"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:layout_weight="1"
+            android:background="@color/color_quote_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
-    <EditText
-        android:id="@+id/et_search_tags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:hint="多个标签用逗号隔开"
-        android:imeOptions="actionSearch"
-        android:singleLine="true"/>
+            <ImageView
+                android:id="@+id/iv_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_fab_home"/>
 
-    <Button
-        android:id="@+id/btn_search_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="id搜索"/>
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/color_text_general"/>
 
-    <EditText
-        android:id="@+id/et_search_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:hint="输入图片id"
-        android:imeOptions="actionSearch"
-        android:inputType="number"
-        android:singleLine="true"/>
+            <TextView
+                android:id="@+id/iv_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x"
+                android:visibility="gone"/>
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_search_advanced"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="高级搜索"/>
-
-    <EditText
-        android:id="@+id/et_search_advanced"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:hint="支持K站所有搜索格式"
-        android:imeOptions="actionSearch"
-        android:singleLine="true"/>
+        <TextView
+            android:id="@+id/tv_cancel_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_search"
+            android:textColor="@color/colorAccent"/>
+    </LinearLayout>
 </LinearLayout>
