@@ -28,7 +28,7 @@
                 android:layout_marginEnd="7dp"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_toolbar_search"/>
+                android:src="@drawable/ic_search"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
