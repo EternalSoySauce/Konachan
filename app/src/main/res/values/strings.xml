@@ -27,6 +27,10 @@
     <string name="fab_random">随机看图</string>
 
     <!-- Search -->
+    <string name="spinner_search_tags">标签搜索</string>
+    <string name="spinner_search_id">ID搜索</string>
+    <string name="spinner_search_chinese">中文搜索</string>
+    <string name="spinner_search_advanced">高级搜索</string>
     <string name="cancel_search">取消</string>
 
     <!-- Image Detail -->

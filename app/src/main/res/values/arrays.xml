@@ -4,4 +4,11 @@
         <item>@string/setting_search_mode_safe</item>
         <item>@string/setting_search_mode_r18</item>
     </string-array>
+
+    <string-array name="spinner_list_item">
+        <item>@string/spinner_search_tags</item>
+        <item>@string/spinner_search_id</item>
+        <item>@string/spinner_search_chinese</item>
+        <item>@string/spinner_search_advanced</item>
+    </string-array>
 </resources>

@@ -6,16 +6,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ListPopupWindow;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.ess.konachan.R;
@@ -41,6 +46,9 @@ public class SearchActivity extends AppCompatActivity {
     private int mCurrentSearchMode;
 
     private EditText mEtSearch;
+    private ListPopupWindow mPopup;
+    private ArrayAdapter<String> mSpinnerAdapter;
+    private int mSelectedPos;
 
     // 存储着K站所有的tag，用于搜索提示
     private ArrayList<SearchBean> mSearchList = new ArrayList<>();
@@ -58,9 +66,11 @@ public class SearchActivity extends AppCompatActivity {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
+        mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
 
         initViews();
-        changeEditInputType();
+        initListPopupWindow();
+        changeEditAttrs();
         initTagList();
     }
 
@@ -69,7 +79,10 @@ public class SearchActivity extends AppCompatActivity {
         findViewById(R.id.iv_spinner).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mPopup.setAnchorView(v);
+                mPopup.show();
+                UIUtils.setBackgroundAlpha(SearchActivity.this, 0.4f);
+                UIUtils.closeSoftInput(SearchActivity.this, mEtSearch);
             }
         });
 
@@ -149,12 +162,59 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void changeEditInputType() {
+    private void changeEditAttrs() {
+        mEtSearch.setText("");
+        mEtSearch.setHint(mSpinnerAdapter.getItem(mSelectedPos));
         if (mCurrentSearchMode == Constants.SEARCH_CODE_ID) {
             mEtSearch.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         } else {
             mEtSearch.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         }
+    }
+
+    private void initListPopupWindow() {
+        // 选择搜索模式弹窗
+        mPopup = new ListPopupWindow(this);
+        String[] searchModeArray = getResources().getStringArray(R.array.spinner_list_item);
+        mSpinnerAdapter = new ArrayAdapter<>(this,
+                R.layout.list_item_search_popup, R.id.tv_search_mode, searchModeArray);
+        mPopup.setAdapter(mSpinnerAdapter);
+        mPopup.setSelection(mSelectedPos);
+        mPopup.setWidth(computePopupItemMaxWidth());
+        mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
+        mPopup.setModal(true);
+        mPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position != mSelectedPos) {
+                    mSelectedPos = position;
+                    mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
+                    mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
+                    changeEditAttrs();
+                }
+                mPopup.dismiss();
+            }
+        });
+        mPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                UIUtils.setBackgroundAlpha(SearchActivity.this, 1f);
+            }
+        });
+    }
+
+    // 使弹窗自适应文字宽度
+    private int computePopupItemMaxWidth() {
+        float maxWidth = 0;
+        View layout = View.inflate(this, R.layout.list_item_search_popup, null);
+        TextView tv = (TextView) layout.findViewById(R.id.tv_search_mode);
+        TextPaint paint = tv.getPaint();
+        for (int i = 0; i < mSpinnerAdapter.getCount(); i++) {
+            String item = mSpinnerAdapter.getItem(i);
+            maxWidth = Math.max(maxWidth, paint.measureText(item));
+        }
+        maxWidth += tv.getPaddingStart() + tv.getPaddingEnd();
+        return (int) maxWidth;
     }
 
     // 获取json文件里所有的搜索标签
