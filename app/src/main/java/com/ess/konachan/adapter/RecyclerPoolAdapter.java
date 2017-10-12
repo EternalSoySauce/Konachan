@@ -63,7 +63,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         GlideConfig.getInstance().loadImage(mContext, poolListBean.thumbUrl, holder.ivThumb);
 
         //图集名称
-        holder.tvName.setText(poolListBean.name);
+        holder.tvName.setText(poolListBean.name.replace("_", " "));
 
         //创建者
         holder.tvCreator.setText(poolListBean.creator);

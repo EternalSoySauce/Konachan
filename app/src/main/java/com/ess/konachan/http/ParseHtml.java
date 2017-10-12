@@ -164,7 +164,7 @@ public class ParseHtml {
                         String linkToShow = td.getElementsByTag("a").get(0).attr("href");
                         linkToShow = OkHttp.getSearchModeUrl(context) + linkToShow.substring(1);
                         pool.linkToShow = linkToShow;
-                        pool.name = td.text().replace("_", " ");
+                        pool.name = td.text();
                         break;
                     case 1:
                         pool.creator = td.text();

@@ -178,7 +178,7 @@ public class DetailFragment extends Fragment {
         setText(R.id.pool_id, R.string.detail_pool_id, poolBean.id);
 
         // 图集名称
-        setText(R.id.pool_name, R.string.detail_pool_name, poolBean.name);
+        setText(R.id.pool_name, R.string.detail_pool_name, poolBean.name.replace("_", " "));
 
         // 创建时间
         String poolCreatedTime = poolBean.createdTime;
