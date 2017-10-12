@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.ess.konachan.R;
-import com.ess.konachan.adapter.FullscreenViewPagerAdapter;
+import com.ess.konachan.adapter.ViewPagerFullscreenAdapter;
 import com.ess.konachan.bean.CollectionBean;
 import com.ess.konachan.global.Constants;
 
@@ -24,7 +24,7 @@ public class FullscreenActivity extends AppCompatActivity {
     private final static int PAGE_LIMIT = 1;
 
     private ViewPager mVpFullScreen;
-    private FullscreenViewPagerAdapter mFullScreenAdapter;
+    private ViewPagerFullscreenAdapter mFullScreenAdapter;
     private ArrayList<PhotoView> mPhotoViewList;
     private ArrayList<CollectionBean> mCollectionList;
     private int mCurrentPos;
@@ -57,7 +57,7 @@ public class FullscreenActivity extends AppCompatActivity {
         }
 
         mVpFullScreen = (ViewPager) findViewById(R.id.vp_full_screen);
-        mFullScreenAdapter = new FullscreenViewPagerAdapter(this, mPhotoViewList, mCollectionList);
+        mFullScreenAdapter = new ViewPagerFullscreenAdapter(this, mPhotoViewList, mCollectionList);
         mVpFullScreen.setAdapter(mFullScreenAdapter);
         mVpFullScreen.setCurrentItem(mCurrentPos, false);
         mVpFullScreen.setOffscreenPageLimit(PAGE_LIMIT);

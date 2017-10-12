@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 import uk.co.senab.photoview.PhotoView;
 
-public class FullscreenViewPagerAdapter extends PagerAdapter {
+public class ViewPagerFullscreenAdapter extends PagerAdapter {
 
     private Context mContext;
     private ArrayList<PhotoView> mPhotoViewList;
     private ArrayList<CollectionBean> mCollectionList;
 
-    public FullscreenViewPagerAdapter(Context context, ArrayList<PhotoView> photoViewList
+    public ViewPagerFullscreenAdapter(Context context, ArrayList<PhotoView> photoViewList
             , ArrayList<CollectionBean> collectionList) {
         mContext = context;
         mPhotoViewList = photoViewList;

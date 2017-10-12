@@ -178,7 +178,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
     public void clear() {
         mThumbList.clear();
-        notifyDataSetChanged();
+        changeToNormalState();
     }
 
     public void cancelAll() {

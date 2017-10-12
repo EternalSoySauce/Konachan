@@ -2,6 +2,7 @@ package com.ess.konachan.ui.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,12 +19,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.ess.konachan.R;
+import com.ess.konachan.adapter.ListSearchModePopupAdapter;
 import com.ess.konachan.bean.SearchBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
@@ -47,7 +48,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private EditText mEtSearch;
     private ListPopupWindow mPopup;
-    private ArrayAdapter<String> mSpinnerAdapter;
+    private ListSearchModePopupAdapter mSpinnerAdapter;
     private int mSelectedPos;
 
     // 存储着K站所有的tag，用于搜索提示
@@ -176,18 +177,20 @@ public class SearchActivity extends AppCompatActivity {
         // 选择搜索模式弹窗
         mPopup = new ListPopupWindow(this);
         String[] searchModeArray = getResources().getStringArray(R.array.spinner_list_item);
-        mSpinnerAdapter = new ArrayAdapter<>(this,
-                R.layout.list_item_search_popup, R.id.tv_search_mode, searchModeArray);
+        mSpinnerAdapter = new ListSearchModePopupAdapter(this, searchModeArray);
+        mSpinnerAdapter.setSelection(mSelectedPos);
         mPopup.setAdapter(mSpinnerAdapter);
         mPopup.setSelection(mSelectedPos);
         mPopup.setWidth(computePopupItemMaxWidth());
         mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
+        mPopup.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         mPopup.setModal(true);
         mPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position != mSelectedPos) {
                     mSelectedPos = position;
+                    mSpinnerAdapter.setSelection(position);
                     mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
                     mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
                     changeEditAttrs();
@@ -206,7 +209,7 @@ public class SearchActivity extends AppCompatActivity {
     // 使弹窗自适应文字宽度
     private int computePopupItemMaxWidth() {
         float maxWidth = 0;
-        View layout = View.inflate(this, R.layout.list_item_search_popup, null);
+        View layout = View.inflate(this, R.layout.list_item_popup_search_mode, null);
         TextView tv = (TextView) layout.findViewById(R.id.tv_search_mode);
         TextPaint paint = tv.getPaint();
         for (int i = 0; i < mSpinnerAdapter.getCount(); i++) {
