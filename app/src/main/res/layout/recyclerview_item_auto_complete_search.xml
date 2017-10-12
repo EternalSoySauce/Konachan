@@ -5,11 +5,14 @@
     android:background="@drawable/pressed_list_textview">
 
     <TextView
-        android:id="@+id/tv_search_mode"
+        android:id="@+id/tv_auto_complete"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:paddingBottom="6dp"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:paddingTop="6dp"
+        android:textColor="@color/color_text_unselected"
         android:textSize="16sp" />
 </FrameLayout>

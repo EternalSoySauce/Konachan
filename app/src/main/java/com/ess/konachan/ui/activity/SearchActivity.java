@@ -7,14 +7,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.ListSearchModePopupAdapter;
+import com.ess.konachan.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.konachan.bean.SearchBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
@@ -47,6 +49,7 @@ public class SearchActivity extends AppCompatActivity {
     private int mCurrentSearchMode;
 
     private EditText mEtSearch;
+    private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
     private ListPopupWindow mPopup;
     private ListSearchModePopupAdapter mSpinnerAdapter;
     private int mSelectedPos;
@@ -70,6 +73,7 @@ public class SearchActivity extends AppCompatActivity {
         mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
 
         initViews();
+        initCompleteSearchRecyclerView();
         initListPopupWindow();
         changeEditAttrs();
         initTagList();
@@ -153,6 +157,8 @@ public class SearchActivity extends AppCompatActivity {
                         }
                         mPromptMap.clear();
                         mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(s.toString());
+                    }else {
+                        mCompleteSearchAdapter.clear();
                     }
                 }
             }
@@ -171,6 +177,20 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             mEtSearch.setInputType(EditorInfo.TYPE_CLASS_TEXT);
         }
+    }
+
+    private void initCompleteSearchRecyclerView() {
+        RecyclerView rvCompleteSearch = (RecyclerView) findViewById(R.id.rv_auto_complete_search);
+        rvCompleteSearch.setLayoutManager(new LinearLayoutManager(this));
+        mCompleteSearchAdapter = new RecyclerCompleteSearchAdapter(new RecyclerCompleteSearchAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(String tag) {
+                mEtSearch.setText(tag);
+                mEtSearch.setSelection(tag.length());
+                mEtSearch.onEditorAction(EditorInfo.IME_ACTION_SEARCH);
+            }
+        });
+        rvCompleteSearch.setAdapter(mCompleteSearchAdapter);
     }
 
     private void initListPopupWindow() {
@@ -314,16 +334,14 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             getTagList(params[0]);
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            for (String prompt : mPromptMap.keySet()) {
-                Log.i("rrr", prompt);
-            }
+            mCompleteSearchAdapter.clear();
+            mCompleteSearchAdapter.addDatas(mPromptMap.keySet());
         }
     }
 }
