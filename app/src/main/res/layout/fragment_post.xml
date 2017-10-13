@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:fab="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 android:fitsSystemWindows="true"
-                                                 android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,6 +20,17 @@
             app:title="@string/nav_post"
             app:titleTextAppearance="@style/Toolbar.TitleText">
 
+            <TextView
+                android:id="@+id/tv_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="56dp"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp" />
+
             <ImageView
                 android:id="@+id/iv_search"
                 android:layout_width="42dp"
@@ -28,7 +39,7 @@
                 android:layout_marginEnd="7dp"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_search"/>
+                android:src="@drawable/ic_search" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -50,11 +61,11 @@
                 android:paddingStart="5dp"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbarThumbVertical="@drawable/scroll_bar_thumb"
-                android:scrollbars="vertical"/>
+                android:scrollbars="vertical" />
 
             <include
                 android:id="@+id/layout_load_result"
-                layout="@layout/layout_load_result"/>
+                layout="@layout/layout_load_result" />
         </FrameLayout>
     </com.ess.konachan.view.MySwipeRefreshLayout>
 
@@ -83,7 +94,7 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple"
             fab:fab_label="@string/fab_home"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_random"
@@ -94,6 +105,6 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple"
             fab:fab_label="@string/fab_random"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

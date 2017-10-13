@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -55,6 +56,7 @@ public class PostFragment extends Fragment {
     private MainActivity mActivity;
 
     private View mRootView;
+    private TextView mTvTag;  // 显示当前正在搜索的tag
     private FloatingActionMenu mFloatingMenu;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
@@ -65,6 +67,7 @@ public class PostFragment extends Fragment {
     private ImageView mIvLoading;
 
     private int mCurrentPage;
+    private String mCurrentTag;   // 当前正在搜索的tag
     private ArrayList<String> mCurrentTagList;
     private boolean mIsLoadingMore = false;
     private boolean mLoadMoreAgain = true;
@@ -93,6 +96,7 @@ public class PostFragment extends Fragment {
         initFloatingButton();
         initLoadingView();
         mCurrentPage = 1;
+        mCurrentTag = "";
         mCurrentTagList = new ArrayList<>();
         getNewPosts(mCurrentPage);
         return mRootView;
@@ -131,6 +135,9 @@ public class PostFragment extends Fragment {
                 }
             }
         });
+
+        // 显示当前正在搜索的tag
+        mTvTag = (TextView) mRootView.findViewById(R.id.tv_tag);
 
         //搜索
         ImageView ivSearch = (ImageView) mRootView.findViewById(R.id.iv_search);
@@ -291,12 +298,14 @@ public class PostFragment extends Fragment {
 
                 OkHttp.getInstance().cancelAll();
                 String searchTag = data.getStringExtra(Constants.SEARCH_TAG);
+                mCurrentTag = "#" + searchTag;
                 switch (resultCode) {
                     case Constants.SEARCH_CODE_TAGS:
-                        mCurrentTagList.addAll(Arrays.asList(searchTag.split(",")));
+                        mCurrentTagList.addAll(Arrays.asList(searchTag.split(",|，")));
                         getNewPosts(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_ID:
+                        mCurrentTag = "#id:" + searchTag;
                         mCurrentTagList.add("id:" + searchTag);
                         getNewPosts(mCurrentPage);
                         break;
@@ -309,6 +318,7 @@ public class PostFragment extends Fragment {
                         getNewPosts(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_HOME:
+                        mCurrentTag = "";
                         getNewPosts(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_RANDOM:
@@ -316,6 +326,7 @@ public class PostFragment extends Fragment {
                         getNewPosts(mCurrentPage);
                         break;
                 }
+                mTvTag.setText(mCurrentTag);
             }
         }
     }
