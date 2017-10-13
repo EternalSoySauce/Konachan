@@ -39,7 +39,7 @@
     <string name="image_detail_comment">评论</string>
     <string name="image_id_symbol">#</string>
     <string name="detail_post_title">图片</string>
-    <string name="detail_post_id">Id：</string>
+    <string name="detail_post_id">图片Id：</string>
     <string name="detail_post_created_time">上传时间：</string>
     <string name="detail_post_creator_id">用户Id：</string>
     <string name="detail_post_author">用户名：</string>
@@ -55,8 +55,8 @@
     <string name="detail_post_rating_q">Questionable</string>
     <string name="detail_post_score">评分：</string>
     <string name="detail_tag_title">标签</string>
-    <string name="detail_pool_title">所属图集：</string>
-    <string name="detail_pool_id">Id：</string>
+    <string name="detail_pool_title">所属图集</string>
+    <string name="detail_pool_id">图集Id：</string>
     <string name="detail_pool_name">名称：</string>
     <string name="detail_pool_created_time">创建时间：</string>
     <string name="detail_pool_updated_time">最后更新：</string>

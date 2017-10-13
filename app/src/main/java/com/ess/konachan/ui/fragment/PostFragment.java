@@ -124,6 +124,7 @@ public class PostFragment extends Fragment {
                     long currentClickTime = System.currentTimeMillis();
                     if (currentClickTime - lastClickTime < 500) {
                         scrollToTop();
+                        mFloatingMenu.close(true);
                     } else {
                         lastClickTime = currentClickTime;
                     }
@@ -136,6 +137,7 @@ public class PostFragment extends Fragment {
         ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFloatingMenu.close(true);
                 Intent searchIntent = new Intent(mActivity, SearchActivity.class);
                 startActivityForResult(searchIntent, Constants.SEARCH_CODE);
             }
