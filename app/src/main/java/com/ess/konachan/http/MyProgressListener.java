@@ -57,6 +57,7 @@ public class MyProgressListener implements ProgressListener {
             mNotifyBuilder.setTicker(ticker);
             mNotifyBuilder.setContentTitle(title);
             mNotifyBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
+            mNotifyBuilder.setAutoCancel(false);
         }
         mNotifyBuilder.setContentText("0B / " + mBitmapAvailable);
         mNotifyBuilder.setProgress(100, 0, false);
