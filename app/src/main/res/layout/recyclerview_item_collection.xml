@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"/>
 
-    <CheckBox
+    <com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox
         android:id="@+id/cb_choose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

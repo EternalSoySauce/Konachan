@@ -25,11 +25,11 @@ import com.ess.konachan.adapter.RecyclerPoolAdapter;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.PoolListBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.global.GlideConfig;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
 import com.ess.konachan.ui.activity.MainActivity;
 import com.ess.konachan.utils.UIUtils;
+import com.ess.konachan.view.GifView;
 import com.ess.konachan.view.GridDividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,7 +62,7 @@ public class PoolFragment extends Fragment {
     private RecyclerPoolAdapter mPoolAdapter;
     private View mLayoutLoadResult;
     private ImageView mIvLoadFailed;
-    private ImageView mIvLoading;
+    private GifView mIvLoading;
 
     private int mCurrentPage;
     private String mCurrentSearchName;
@@ -226,13 +226,8 @@ public class PoolFragment extends Fragment {
 
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
-
-        mIvLoading = (ImageView) mRootView.findViewById(R.id.iv_loading);
-        GlideConfig.getInstance().loadGif(mActivity, R.drawable.gif_loading, mIvLoading);
-
+        mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
         mIvLoadFailed = (ImageView) mRootView.findViewById(R.id.iv_load_failed);
-        GlideConfig.getInstance().loadImage(mActivity, R.drawable.img_load_failed, mIvLoadFailed);
-
         setLoadingGif();
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
@@ -10,12 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        android:src="@drawable/img_load_failed"/>
 
-    <ImageView
+    <com.ess.konachan.view.GifView
         android:id="@+id/iv_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
         android:layout_gravity="center"
-        android:scaleType="fitCenter"/>
+        app:src="@drawable/gif_loading"/>
 </FrameLayout>

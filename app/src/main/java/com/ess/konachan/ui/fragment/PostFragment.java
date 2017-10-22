@@ -27,12 +27,12 @@ import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.global.GlideConfig;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
 import com.ess.konachan.ui.activity.MainActivity;
 import com.ess.konachan.ui.activity.SearchActivity;
 import com.ess.konachan.utils.UIUtils;
+import com.ess.konachan.view.GifView;
 import com.ess.konachan.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -64,7 +64,7 @@ public class PostFragment extends Fragment {
     private RecyclerPostAdapter mPostAdapter;
     private View mLayoutLoadResult;
     private ImageView mIvLoadFailed;
-    private ImageView mIvLoading;
+    private GifView mIvLoading;
 
     private int mCurrentPage;
     private String mCurrentTag;   // 当前正在搜索的tag
@@ -252,13 +252,8 @@ public class PostFragment extends Fragment {
 
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
-
-        mIvLoading = (ImageView) mRootView.findViewById(R.id.iv_loading);
-        GlideConfig.getInstance().loadGif(mActivity, R.drawable.gif_loading, mIvLoading);
-
+        mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
         mIvLoadFailed = (ImageView) mRootView.findViewById(R.id.iv_load_failed);
-        GlideConfig.getInstance().loadImage(mActivity, R.drawable.img_load_failed, mIvLoadFailed);
-
         setLoadingGif();
     }
 

@@ -55,6 +55,46 @@ public class FileUtils {
     }
 
     /**
+     * 对字符串进行异或加密
+     *
+     * @param info 需要加密的字符串
+     * @param cryptographic 密钥
+     * @return 加密后的字符串
+     */
+    public static String encodeXorString(String info, String cryptographic) {
+        char[] infoArray = info.toCharArray();
+        char[] keyArray = cryptographic.toCharArray();
+        int j = 0;
+        for (int i = 0; i < infoArray.length; i++) {
+            infoArray[i] = (char) (infoArray[i] ^ keyArray[j]);
+            if (++j == keyArray.length) {
+                j = 0;
+            }
+        }
+        return String.valueOf(infoArray);
+    }
+
+    /**
+     * 对字符串进行异或解密
+     *
+     * @param info 需要解密的字符串
+     * @param cryptographic 密钥
+     * @return 解密后的字符串
+     */
+    public static String decodeXorString(String info, String cryptographic) {
+        char[] infoArray = info.toCharArray();
+        char[] keyArray = cryptographic.toCharArray();
+        int j = 0;
+        for (int i = 0; i < infoArray.length; i++) {
+            infoArray[i] = (char) (infoArray[i] ^ keyArray[j]);
+            if (++j == keyArray.length) {
+                j = 0;
+            }
+        }
+        return String.valueOf(infoArray);
+    }
+
+    /**
      * 对字符串（UTF-8编码）进行Base64加密
      *
      * @param info 需要加密的字符串
@@ -142,7 +182,7 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
-        return null;
+        return "";
     }
 
     /**

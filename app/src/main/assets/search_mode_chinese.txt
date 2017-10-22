@@ -1,0 +1,4 @@
+<span>标签搜索：<br/>&emsp;&emsp;输入英文属性描述词（如 red_hair）或者角色名字的罗马音（如 izayoi_sakuya）。<br/>&emsp;&emsp;注：此模式下输入的空格会自动转换为下划线；多个标签之间用逗号分隔。</span>
+<span>ID搜索：<br/>&emsp;&emsp;输入K站图片的id号以搜索相应图片。<br/>&emsp;&emsp;注：此模式下只可输入数字。</span>
+<span>中文搜索：<br/>&emsp;&emsp;专为国内小伙伴们提供的搜索模式，可输入想要查询角色的汉语名全称（如 爱丽丝·玛格特罗依德）。<br/>&emsp;&emsp;注：此模式下只可输入汉字和 ·，需要注意角色名不要有错别字。</span>
+<span>高级搜索：<br/>&emsp;&emsp;专为资深K站大佬提供的搜索模式。<br/>&emsp;&emsp;注：此模式下可输入任意字符；K站全部搜索代码请<a>点此查看</a>。</span>

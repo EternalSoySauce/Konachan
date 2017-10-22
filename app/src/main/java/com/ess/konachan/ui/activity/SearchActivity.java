@@ -1,14 +1,13 @@
 package com.ess.konachan.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -16,23 +15,26 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.PopupWindow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ess.konachan.R;
-import com.ess.konachan.adapter.ListSearchModePopupAdapter;
 import com.ess.konachan.adapter.RecyclerCompleteSearchAdapter;
+import com.ess.konachan.adapter.RecyclerSearchModePopupAdapter;
 import com.ess.konachan.bean.SearchBean;
 import com.ess.konachan.global.Constants;
+import com.ess.konachan.global.Data;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.StringUtils;
 import com.ess.konachan.utils.UIUtils;
+import com.jiang.android.indicatordialog.IndicatorBuilder;
+import com.jiang.android.indicatordialog.IndicatorDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,16 +45,23 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
+import static com.jiang.android.indicatordialog.IndicatorBuilder.GRAVITY_LEFT;
+
 public class SearchActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
     private int mCurrentSearchMode;
 
     private EditText mEtSearch;
+    private LinearLayout mLayoutDocSearchMode;
+    private RecyclerView mRvCompleteSearch;
     private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
-    private ListPopupWindow mPopup;
-    private ListSearchModePopupAdapter mSpinnerAdapter;
+    private IndicatorDialog mPopup;
+    private RecyclerSearchModePopupAdapter mSpinnerAdapter;
     private int mSelectedPos;
+
+    // 判断EditText是用户输入还是setText的标志位，默认为true
+    private boolean mUserInput = true;
 
     // 存储着K站所有的tag，用于搜索提示
     private ArrayList<SearchBean> mSearchList = new ArrayList<>();
@@ -72,21 +81,21 @@ public class SearchActivity extends AppCompatActivity {
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
         mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
 
-        initViews();
+        initSearchViews();
+        initSearchDocumentViews();
         initCompleteSearchRecyclerView();
         initListPopupWindow();
         changeEditAttrs();
+        changeDocumentColor();
         initTagList();
     }
 
-    private void initViews() {
+    private void initSearchViews() {
         // 下拉栏图标
         findViewById(R.id.iv_spinner).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopup.setAnchorView(v);
-                mPopup.show();
-                UIUtils.setBackgroundAlpha(SearchActivity.this, 0.4f);
+                mPopup.show(v);
                 UIUtils.closeSoftInput(SearchActivity.this, mEtSearch);
             }
         });
@@ -151,20 +160,25 @@ public class SearchActivity extends AppCompatActivity {
 
                 if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
                     // TODO 完善搜索提示（现在与K站算法不完全一样）
-                    if (!TextUtils.isEmpty(s)) {
+                    String tag = s.toString();
+                    int splitIndex = Math.max(tag.lastIndexOf(","), tag.lastIndexOf("，"));
+                    tag = tag.substring(splitIndex + 1);
+                    if (!TextUtils.isEmpty(tag) && mUserInput) {
                         if (mAutoCompleteTask != null) {
                             mAutoCompleteTask.cancel(true);
                         }
                         mPromptMap.clear();
-                        mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(s.toString());
-                    }else {
+                        mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
+                    } else {
                         mCompleteSearchAdapter.clear();
+                        mRvCompleteSearch.setVisibility(View.GONE);
                     }
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                mUserInput = true;
             }
         });
     }
@@ -179,48 +193,93 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    private void initSearchDocumentViews() {
+        ArrayList<String> docList = Data.getSearchModeDocumentList(this);
+        mLayoutDocSearchMode = (LinearLayout) findViewById(R.id.layout_doc_search_mode);
+
+        TextView tvDocSearchTag = (TextView) findViewById(R.id.tv_doc_search_tag);
+        tvDocSearchTag.setText(docList.get(0));
+
+        TextView tvDocSearchId = (TextView) findViewById(R.id.tv_doc_search_id);
+        tvDocSearchId.setText(docList.get(1));
+
+        TextView tvDocSearchChinese = (TextView) findViewById(R.id.tv_doc_search_chinese);
+        tvDocSearchChinese.setText(docList.get(2));
+
+        TextView tvDocSearchAdvanced = (TextView) findViewById(R.id.tv_doc_search_advanced);
+        tvDocSearchAdvanced.setText(docList.get(3));
+        tvDocSearchAdvanced.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void changeDocumentColor() {
+        for (int i = 0; i < mLayoutDocSearchMode.getChildCount(); i++) {
+            TextView tv = (TextView) mLayoutDocSearchMode.getChildAt(i);
+            int textColor = i == mSelectedPos ? R.color.color_text_selected : R.color.color_text_unselected;
+            tv.setTextColor(getResources().getColor(textColor));
+        }
+    }
+
     private void initCompleteSearchRecyclerView() {
-        RecyclerView rvCompleteSearch = (RecyclerView) findViewById(R.id.rv_auto_complete_search);
-        rvCompleteSearch.setLayoutManager(new LinearLayoutManager(this));
+        mRvCompleteSearch = (RecyclerView) findViewById(R.id.rv_auto_complete_search);
+        mRvCompleteSearch.setLayoutManager(new LinearLayoutManager(this));
         mCompleteSearchAdapter = new RecyclerCompleteSearchAdapter(new RecyclerCompleteSearchAdapter.onItemClickListener() {
             @Override
             public void onItemClick(String tag) {
-                mEtSearch.setText(tag);
-                mEtSearch.setSelection(tag.length());
-                mEtSearch.onEditorAction(EditorInfo.IME_ACTION_SEARCH);
+                String text = mEtSearch.getText().toString();
+                int splitIndex = Math.max(text.lastIndexOf(","), text.lastIndexOf("，"));
+                String newText = text.substring(0, splitIndex + 1) + tag;
+                mUserInput = false;
+                mEtSearch.setText(newText);
+                mEtSearch.setSelection(newText.length());
             }
         });
-        rvCompleteSearch.setAdapter(mCompleteSearchAdapter);
+        mRvCompleteSearch.setAdapter(mCompleteSearchAdapter);
     }
 
     private void initListPopupWindow() {
         // 选择搜索模式弹窗
-        mPopup = new ListPopupWindow(this);
         String[] searchModeArray = getResources().getStringArray(R.array.spinner_list_item);
-        mSpinnerAdapter = new ListSearchModePopupAdapter(this, searchModeArray);
+        mSpinnerAdapter = new RecyclerSearchModePopupAdapter(this,searchModeArray);
         mSpinnerAdapter.setSelection(mSelectedPos);
-        mPopup.setAdapter(mSpinnerAdapter);
-        mPopup.setSelection(mSelectedPos);
-        mPopup.setWidth(computePopupItemMaxWidth());
-        mPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
-        mPopup.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-        mPopup.setModal(true);
-        mPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mSpinnerAdapter.setOnItemClickListener(new RecyclerSearchModePopupAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(int position) {
                 if (position != mSelectedPos) {
                     mSelectedPos = position;
                     mSpinnerAdapter.setSelection(position);
                     mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
                     mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
+                    mCompleteSearchAdapter.clear();
+                    mRvCompleteSearch.setVisibility(View.GONE);
                     changeEditAttrs();
+                    changeDocumentColor();
                 }
                 mPopup.dismiss();
             }
         });
-        mPopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+        mPopup = new IndicatorBuilder(this)
+                .width(computePopupItemMaxWidth())
+                .height(-1)
+                .bgColor(getResources().getColor(R.color.colorPrimary))
+                .dimEnabled(false)
+                .gravity(GRAVITY_LEFT)
+                .ArrowDirection(IndicatorBuilder.TOP)
+                .ArrowRectage(0.16f)
+                .radius(8)
+                .layoutManager(new LinearLayoutManager(this))
+                .adapter(mSpinnerAdapter)
+                .create();
+        mPopup.setCanceledOnTouchOutside(true);
+        mPopup.getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
-            public void onDismiss() {
+            public void onShow(DialogInterface dialog) {
+                UIUtils.setBackgroundAlpha(SearchActivity.this, 0.4f);
+            }
+        });
+        mPopup.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
                 UIUtils.setBackgroundAlpha(SearchActivity.this, 1f);
             }
         });
@@ -229,10 +288,10 @@ public class SearchActivity extends AppCompatActivity {
     // 使弹窗自适应文字宽度
     private int computePopupItemMaxWidth() {
         float maxWidth = 0;
-        View layout = View.inflate(this, R.layout.list_item_popup_search_mode, null);
+        View layout = View.inflate(this, R.layout.recyclerview_item_popup_search_mode, null);
         TextView tv = (TextView) layout.findViewById(R.id.tv_search_mode);
         TextPaint paint = tv.getPaint();
-        for (int i = 0; i < mSpinnerAdapter.getCount(); i++) {
+        for (int i = 0; i < mSpinnerAdapter.getItemCount(); i++) {
             String item = mSpinnerAdapter.getItem(i);
             maxWidth = Math.max(maxWidth, paint.measureText(item));
         }
@@ -314,7 +373,7 @@ public class SearchActivity extends AppCompatActivity {
                     break;
                 }
             }
-            if (mPromptMap.size() >= 10) {
+            if (mPromptMap.size() >= 15) {
                 break;
             }
         }
@@ -342,6 +401,7 @@ public class SearchActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             mCompleteSearchAdapter.clear();
             mCompleteSearchAdapter.addDatas(mPromptMap.keySet());
+            mRvCompleteSearch.setVisibility(View.VISIBLE);
         }
     }
 }

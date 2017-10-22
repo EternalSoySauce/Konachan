@@ -56,7 +56,7 @@ public class CollectionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mCollectionAdapter.getEditing()) {
+        if (mCollectionAdapter.isEditing()) {
             cancelEdit(true);
         } else {
             finish();

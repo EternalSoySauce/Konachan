@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,7 +224,6 @@ public class DetailFragment extends Fragment {
             tvTag.setText(tag);
             tvTag.setTextColor(getResources().getColor(colorId));
             parentLayout.addView(view);
-            Log.i("rrr", "tag: " + tag);
         }
     }
 

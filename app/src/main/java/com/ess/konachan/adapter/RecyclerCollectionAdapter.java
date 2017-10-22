@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import com.ess.konachan.R;
@@ -14,6 +13,7 @@ import com.ess.konachan.bean.CollectionBean;
 import com.ess.konachan.global.GlideConfig;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.utils.VibratorUtils;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
 import java.util.ArrayList;
 
@@ -153,18 +153,26 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         this.mEditing = editing;
     }
 
-    public boolean getEditing() {
+    public void beginEdit(){
+
+    }
+
+    public void cancelEdit() {
+
+    }
+
+    public boolean isEditing() {
         return mEditing;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivCollection;
-        private CheckBox cbChoose;
+        private SmoothCheckBox cbChoose;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             ivCollection = (ImageView) itemView.findViewById(R.id.iv_collection);
-            cbChoose = (CheckBox) itemView.findViewById(R.id.cb_choose);
+            cbChoose = (SmoothCheckBox) itemView.findViewById(R.id.cb_choose);
         }
     }
 
