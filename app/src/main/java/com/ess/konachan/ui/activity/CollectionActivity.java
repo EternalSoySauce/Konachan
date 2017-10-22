@@ -153,6 +153,15 @@ public class CollectionActivity extends AppCompatActivity {
             public void onEdit() {
                 toggleEditView(true);
             }
+
+            @Override
+            public void onEnlarge(int position) {
+                ArrayList<CollectionBean> enlargeList = new ArrayList<>();
+                enlargeList.add(mCollectionAdapter.getCollectionList().get(position));
+                Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
+                intent.putExtra(Constants.COLLECTION_LIST, enlargeList);
+                startActivity(intent);
+            }
         });
     }
 
@@ -170,16 +179,12 @@ public class CollectionActivity extends AppCompatActivity {
 
     private void beginEdit() {
         toggleEditView(true);
-        mCollectionAdapter.setEditing(true);
-        mCollectionAdapter.notifyDataSetChanged();
+        mCollectionAdapter.beginEdit();
     }
 
     private void cancelEdit(boolean notify) {
         toggleEditView(false);
-        mCollectionAdapter.setEditing(false);
-        if (notify) {
-            mCollectionAdapter.notifyDataSetChanged();
-        }
+        mCollectionAdapter.cancelEdit(notify);
     }
 
     private ArrayList<CollectionBean> getCollectionImages() {

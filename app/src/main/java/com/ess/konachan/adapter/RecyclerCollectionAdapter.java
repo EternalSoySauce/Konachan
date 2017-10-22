@@ -40,25 +40,33 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final CollectionBean collectionBean = mCollectionList.get(position);
 
-        if (mEditing) {
-            holder.cbChoose.setVisibility(View.VISIBLE);
-            holder.cbChoose.setChecked(collectionBean.isChecked);
-            holder.cbChoose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean isChecked = holder.cbChoose.isChecked();
-                    setChooseState(collectionBean, isChecked);
-                }
-            });
-        } else {
-            holder.cbChoose.setVisibility(View.GONE);
-            holder.cbChoose.setChecked(false);
-            setChooseState(collectionBean, false);
-        }
+        // 编辑模式选择框
+        int visible = mEditing ? View.VISIBLE : View.GONE;
+        holder.cbChoose.setVisibility(visible);
+        holder.cbChoose.setChecked(mEditing && collectionBean.isChecked);
+        holder.cbChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isChecked = holder.cbChoose.isChecked();
+                setChooseState(collectionBean, isChecked);
+            }
+        });
 
+        // 编辑模式放大查看
+        holder.ivEnlarge.setVisibility(visible);
+        holder.ivEnlarge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mActionListener != null) {
+                    mActionListener.onEnlarge(position);
+                }
+            }
+        });
+
+        // 图片
         int slideLength = (int) ((UIUtils.getWindowSize(mContext)[0] - UIUtils.dp2px(mContext, 6)) / 3f);
         holder.ivCollection.getLayoutParams().width = slideLength;
         holder.ivCollection.getLayoutParams().height = slideLength;
@@ -72,7 +80,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
                     setChooseState(collectionBean, isChecked);
                 } else {
                     if (mActionListener != null) {
-                        mActionListener.onFullScreen(holder.ivCollection, holder.getAdapterPosition());
+                        mActionListener.onFullScreen(holder.ivCollection, position);
                     }
                 }
             }
@@ -149,16 +157,19 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         mChooseList.clear();
     }
 
-    public void setEditing(boolean editing) {
-        this.mEditing = editing;
+    public void beginEdit() {
+        this.mEditing = true;
+        notifyDataSetChanged();
     }
 
-    public void beginEdit(){
-
-    }
-
-    public void cancelEdit() {
-
+    public void cancelEdit(boolean notify) {
+        this.mEditing = false;
+        for (CollectionBean collectionBean : mCollectionList) {
+            setChooseState(collectionBean, false);
+        }
+        if (notify) {
+            notifyDataSetChanged();
+        }
     }
 
     public boolean isEditing() {
@@ -168,11 +179,13 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
     class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivCollection;
         private SmoothCheckBox cbChoose;
+        private ImageView ivEnlarge;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             ivCollection = (ImageView) itemView.findViewById(R.id.iv_collection);
             cbChoose = (SmoothCheckBox) itemView.findViewById(R.id.cb_choose);
+            ivEnlarge = (ImageView) itemView.findViewById(R.id.iv_enlarge);
         }
     }
 
@@ -182,6 +195,9 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
 
         //收藏界面adapter中长按后通知toolbar切换编辑模式
         void onEdit();
+
+        //收藏界面adapter中编辑模式下点击Enlarge图标放大查看图片
+        void onEnlarge(int position);
     }
 
     public void setOnActionListener(OnActionListener listener) {
