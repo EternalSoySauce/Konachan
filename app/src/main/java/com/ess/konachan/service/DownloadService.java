@@ -1,6 +1,8 @@
 package com.ess.konachan.service;
 
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
@@ -50,6 +52,13 @@ public class DownloadService extends Service {
     }
 
     private void downloadBitmap(Intent intent) {
+        if (intent == null) {
+            // 下载过程中若关闭app会导致intent为null
+            // 此时终止下载并清除所有notification
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+            return;
+        }
+
         String url = intent.getStringExtra(Constants.JPEG_URL);
         String bitmapPath = intent.getStringExtra(Constants.BITMAP_PATH);
         ThumbBean thumbBean = intent.getParcelableExtra(Constants.THUMB_BEAN);

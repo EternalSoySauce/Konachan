@@ -52,13 +52,12 @@ public class MyProgressListener implements ProgressListener {
 
             String title = mContext.getString(R.string.image_id_symbol) + mImageBean.posts[0].id;
             String ticker = title + mContext.getString(R.string.download_started);
-            mNotifyBuilder.setSmallIcon(R.mipmap.ic_launcher);
             mNotifyBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher));
             mNotifyBuilder.setTicker(ticker);
             mNotifyBuilder.setContentTitle(title);
             mNotifyBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
-            mNotifyBuilder.setAutoCancel(false);
         }
+        mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download);
         mNotifyBuilder.setContentText("0B / " + mBitmapAvailable);
         mNotifyBuilder.setProgress(100, 0, false);
         mNotifyBuilder.setOngoing(true);
@@ -108,6 +107,7 @@ public class MyProgressListener implements ProgressListener {
         if (progressInfo.isFinish()) {
             // 下载完成
             String finish = mBitmapAvailable + " / " + mContext.getString(R.string.download_finished);
+            mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
             mNotifyBuilder.setContentText(finish);
             mNotifyBuilder.setOngoing(false);
             mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
@@ -116,6 +116,7 @@ public class MyProgressListener implements ProgressListener {
 
     @Override
     public void onError(long id, Exception e) {
+        mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_failed);
         mNotifyBuilder.setContentText(mContext.getString(R.string.download_failed));
         mNotifyBuilder.setOngoing(false);
         mNotifyBuilder.setContentIntent(mPendingIntent);
