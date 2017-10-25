@@ -61,7 +61,8 @@ public class PoolFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
     private RecyclerPoolAdapter mPoolAdapter;
     private View mLayoutLoadResult;
-    private ImageView mIvLoadFailed;
+    private ImageView mIvLoadNothing;
+    private ImageView mIvLoadNoNetWork;
     private GifView mIvLoading;
 
     private int mCurrentPage;
@@ -227,19 +228,29 @@ public class PoolFragment extends Fragment {
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
         mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
-        mIvLoadFailed = (ImageView) mRootView.findViewById(R.id.iv_load_failed);
+        mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
+        mIvLoadNoNetWork = (ImageView) mRootView.findViewById(R.id.iv_load_no_network);
         setLoadingGif();
     }
 
     private void setLoadingGif() {
         mIvLoading.setVisibility(View.VISIBLE);
-        mIvLoadFailed.setVisibility(View.GONE);
+        mIvLoadNothing.setVisibility(View.GONE);
+        mIvLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
-    private void setLoadFailedImage() {
+    private void setLoadNothingImage() {
         mIvLoading.setVisibility(View.GONE);
-        mIvLoadFailed.setVisibility(View.VISIBLE);
+        mIvLoadNothing.setVisibility(View.VISIBLE);
+        mIvLoadNoNetWork.setVisibility(View.GONE);
+        mLayoutLoadResult.setVisibility(View.VISIBLE);
+    }
+
+    private void setLoadingNoNetworkImage() {
+        mIvLoading.setVisibility(View.GONE);
+        mIvLoadNothing.setVisibility(View.GONE);
+        mIvLoadNoNetWork.setVisibility(View.VISIBLE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
@@ -344,7 +355,7 @@ public class PoolFragment extends Fragment {
                     mPoolAdapter.refreshDatas(newList);
                     scrollToTop();
                 } else if (mPoolAdapter.getPoolList().isEmpty()) {
-                    setLoadFailedImage();
+                    setLoadNothingImage();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -415,7 +426,7 @@ public class PoolFragment extends Fragment {
             public void run() {
                 mPoolAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
-                setLoadFailedImage();
+                setLoadNothingImage();
             }
         });
     }
@@ -430,7 +441,7 @@ public class PoolFragment extends Fragment {
                 mIsLoadingMore = false;
                 mLoadMoreAgain = false;
                 if (mPoolAdapter.getPoolList().isEmpty()) {
-                    setLoadFailedImage();
+                    setLoadingNoNetworkImage();
                 }
 
                 mHandler.postDelayed(new Runnable() {

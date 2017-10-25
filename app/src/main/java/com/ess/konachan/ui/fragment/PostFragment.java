@@ -63,7 +63,8 @@ public class PostFragment extends Fragment {
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
     private View mLayoutLoadResult;
-    private ImageView mIvLoadFailed;
+    private ImageView mIvLoadNothing;
+    private ImageView mIvLoadNoNetWork;
     private GifView mIvLoading;
 
     private int mCurrentPage;
@@ -253,19 +254,29 @@ public class PostFragment extends Fragment {
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
         mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
-        mIvLoadFailed = (ImageView) mRootView.findViewById(R.id.iv_load_failed);
+        mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
+        mIvLoadNoNetWork = (ImageView) mRootView.findViewById(R.id.iv_load_no_network);
         setLoadingGif();
     }
 
     private void setLoadingGif() {
         mIvLoading.setVisibility(View.VISIBLE);
-        mIvLoadFailed.setVisibility(View.GONE);
+        mIvLoadNothing.setVisibility(View.GONE);
+        mIvLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
-    private void setLoadFailedImage() {
+    private void setLoadNothingImage() {
         mIvLoading.setVisibility(View.GONE);
-        mIvLoadFailed.setVisibility(View.VISIBLE);
+        mIvLoadNothing.setVisibility(View.VISIBLE);
+        mIvLoadNoNetWork.setVisibility(View.GONE);
+        mLayoutLoadResult.setVisibility(View.VISIBLE);
+    }
+
+    private void setLoadingNoNetworkImage() {
+        mIvLoading.setVisibility(View.GONE);
+        mIvLoadNothing.setVisibility(View.GONE);
+        mIvLoadNoNetWork.setVisibility(View.VISIBLE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
@@ -365,7 +376,7 @@ public class PostFragment extends Fragment {
                     mPostAdapter.refreshDatas(newList);
                     scrollToTop();
                 } else if (mPostAdapter.getThumbList().isEmpty()) {
-                    setLoadFailedImage();
+                    setLoadNothingImage();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -495,7 +506,7 @@ public class PostFragment extends Fragment {
             public void run() {
                 mPostAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
-                setLoadFailedImage();
+                setLoadNothingImage();
             }
         });
     }
@@ -510,7 +521,7 @@ public class PostFragment extends Fragment {
                 mIsLoadingMore = false;
                 mLoadMoreAgain = false;
                 if (mPostAdapter.getThumbList().isEmpty()) {
-                    setLoadFailedImage();
+                    setLoadingNoNetworkImage();
                 }
 
                 mHandler.postDelayed(new Runnable() {
