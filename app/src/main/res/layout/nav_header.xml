@@ -6,4 +6,29 @@
     android:background="@color/colorPrimary"
     android:fitsSystemWindows="true">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ToggleButton
+            android:id="@+id/btn_funny"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/toggle_button_funny"
+            android:enabled="false"
+            android:textOff=""
+            android:textOn=""/>
+
+        <com.mixiaoxiao.smoothcompoundbutton.SmoothSwitch
+            android:id="@+id/switch_search_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/switch_color"/>
+    </LinearLayout>
 </FrameLayout>

@@ -108,8 +108,9 @@ public class ParseHtml {
         if (TextUtils.isEmpty(name)) {
             Elements eleParas = doc.getElementsByClass("para");
             for (Element e : eleParas) {
+                String parentClass = e.parent().className();
                 String para = e.text();
-                if (para.contains("名")) {
+                if (para.contains("名") && !parentClass.contains("lemma-summary")) {
                     Pattern pattern = Pattern.compile("[a-zA-Z\\-]+[a-zA-Z\\s\\-]*[a-zA-Z\\-]+");
                     String filterName = StringUtils.filter(para, pattern);
                     if (!TextUtils.isEmpty(filterName)) {

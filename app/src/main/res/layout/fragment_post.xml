@@ -20,17 +20,6 @@
             app:title="@string/nav_post"
             app:titleTextAppearance="@style/Toolbar.TitleText">
 
-            <TextView
-                android:id="@+id/tv_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="56dp"
-                android:ellipsize="middle"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:textColor="@color/colorAccent"
-                android:textSize="18sp" />
-
             <ImageView
                 android:id="@+id/iv_search"
                 android:layout_width="42dp"

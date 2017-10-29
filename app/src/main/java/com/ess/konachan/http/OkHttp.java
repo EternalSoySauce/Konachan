@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.ess.konachan.R;
 import com.ess.konachan.global.Constants;
 
 import java.io.IOException;
@@ -103,6 +102,7 @@ public class OkHttp {
 
     /**
      * 判断是网络异常还是手动cancel()产生的异常
+     *
      * @param e 异常Exception
      * @return 是否为网络问题
      */
@@ -133,9 +133,7 @@ public class OkHttp {
 
     public static String getSearchModeUrl(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String key = context.getString(R.string.setting_search_mode);
-        String safeMode = context.getString(R.string.setting_search_mode_safe);
-        String searchMode = preferences.getString(key, safeMode);
-        return searchMode.equals(safeMode) ? Constants.BASE_URL_SAFE_MODE : Constants.BASE_URL_R18_MODE;
+        boolean isR18Mode = preferences.getBoolean(Constants.IS_R18_MODE, false);
+        return isR18Mode ? Constants.BASE_URL_R18_MODE : Constants.BASE_URL_SAFE_MODE;
     }
 }

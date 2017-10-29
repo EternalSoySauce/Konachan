@@ -26,12 +26,17 @@
     <string name="fab_home">回到首页</string>
     <string name="fab_random">随机看图</string>
 
-    <!-- Search -->
+    <!-- Search Activity -->
     <string name="spinner_search_tags">标签搜索</string>
     <string name="spinner_search_id">ID搜索</string>
     <string name="spinner_search_chinese">中文搜索</string>
     <string name="spinner_search_advanced">高级搜索</string>
     <string name="cancel_search">取消</string>
+    <string name="click_here">点此查看。</string>
+
+    <!-- Setting Activity -->
+    <string name="setting_tag_type_help">查看所有标签类型及其含义</string>
+    <string name="setting_advanced_search_help">查看K站高级搜索指令</string>
 
     <!-- Image Detail -->
     <string name="image_detail_image">图片</string>
@@ -64,26 +69,26 @@
     <string name="detail_pool_no_description">无</string>
     <string name="comment_no_comments">暂无评论</string>
 
-    <!-- Collection -->
-    <string name="choose_all">全选</string>
-    <string name="cancel_all">取消全选</string>
+    <!-- Collection Activity -->
+    <string name="choose_all">全部</string>
     <string name="edit">编辑</string>
     <string name="share">共享</string>
     <string name="share_title">共享通过</string>
     <string name="delete">删除</string>
-    <string name="delete_msg1">将删除&#160;</string>
-    <string name="delete_msg2">&#160;张图片。</string>
-    <string name="delete_cancel">取消</string>
-    <string name="delete_sure">删除</string>
-    <string name="reload_msg">该图片已存在于相册中，是否重新下载？</string>
-    <string name="reload_yes">是</string>
-    <string name="reload_no">否</string>
-
-    <!-- Shared Preference-->
-    <string name="setting_search_mode">浏览模式</string>
-    <string name="setting_search_mode_safe">安全模式</string>
-    <string name="setting_search_mode_r18">R18模式</string>
 
     <!-- Surface View -->
     <string name="current_step">步数：</string>
+
+    <!-- Dialog -->
+    <string name="dialog_delete_msg1">将删除&#160;</string>
+    <string name="dialog_delete_msg2">&#160;张图片。</string>
+    <string name="dialog_delete_cancel">取消</string>
+    <string name="dialog_delete_sure">删除</string>
+    <string name="dialog_reload_msg">该图片已存在于相册中，是否重新下载？</string>
+    <string name="dialog_reload_yes">是</string>
+    <string name="dialog_reload_no">否</string>
+    <string name="dialog_doc_tag_type_title">Help: Tags</string>
+    <string name="dialog_doc_advanced_search_title">Help: Cheat Sheet</string>
+    <string name="dialog_doc_sure">OK</string>
+    <string name="dialog_doc_lost">文档丢失。</string>
 </resources>

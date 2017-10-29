@@ -20,34 +20,78 @@
             app:title="@string/nav_collection"
             app:titleTextAppearance="@style/Toolbar.TitleText">
 
+            <RelativeLayout
+                android:id="@+id/layout_editing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/layout_choose_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:soundEffectsEnabled="false">
+
+                    <com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox
+                        android:id="@+id/cb_choose_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/check_box_choose_all_color"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-2dp"
+                        android:text="@string/choose_all"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="11sp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_choose_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/layout_choose_all"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    android:id="@+id/tv_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toStartOf="@+id/tv_delete"
+                    android:onClick="onClick"
+                    android:text="@string/share"
+                    android:textColor="@color/colorAccent"/>
+
+                <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:onClick="onClick"
+                    android:text="@string/delete"
+                    android:textColor="@color/colorAccent"/>
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/tv_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
+                android:onClick="onClick"
                 android:text="@string/edit"
                 android:textColor="@color/colorAccent"/>
-
-            <TextView
-                android:id="@+id/tv_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="8dp"
-                android:text="@string/delete"
-                android:textColor="@color/colorAccent"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/tv_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="8dp"
-                android:text="@string/share"
-                android:textColor="@color/colorAccent"
-                android:visibility="gone"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -59,7 +103,7 @@
         android:paddingLeft="0.75dp"
         android:paddingRight="0.75dp"
         android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"
         android:scrollbarThumbVertical="@drawable/scroll_bar_thumb"
+        android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>

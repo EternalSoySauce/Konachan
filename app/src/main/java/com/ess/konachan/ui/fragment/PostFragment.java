@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -56,7 +55,6 @@ public class PostFragment extends Fragment {
     private MainActivity mActivity;
 
     private View mRootView;
-    private TextView mTvTag;  // 显示当前正在搜索的tag
     private FloatingActionMenu mFloatingMenu;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
@@ -137,9 +135,6 @@ public class PostFragment extends Fragment {
             }
         });
 
-        // 显示当前正在搜索的tag
-        mTvTag = (TextView) mRootView.findViewById(R.id.tv_tag);
-
         //搜索
         ImageView ivSearch = (ImageView) mRootView.findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(new View.OnClickListener() {
@@ -206,7 +201,6 @@ public class PostFragment extends Fragment {
                     mIsLoadingMore = true;
                     mPostAdapter.changeToLoadMoreState();
                     loadMore();
-                    Log.i("rrr", "load more");
                 }
             }
 
@@ -332,7 +326,6 @@ public class PostFragment extends Fragment {
                         getNewPosts(mCurrentPage);
                         break;
                 }
-                mTvTag.setText(mCurrentTag);
             }
         }
     }
@@ -484,21 +477,6 @@ public class PostFragment extends Fragment {
         }
     }
 
-    //更换浏览模式后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void toggleSearchMode(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.TOGGLE_SEARCH_MODE)) {
-            OkHttp.getInstance().cancelAll();
-            mPostAdapter.clear();
-            if (!mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(true);
-            }
-            mCurrentPage = 1;
-            setLoadingGif();
-            getNewPosts(mCurrentPage);
-        }
-    }
-
     //百度或K站搜所无结果
     private void getNoData() {
         mActivity.runOnUiThread(new Runnable() {
@@ -532,6 +510,23 @@ public class PostFragment extends Fragment {
                 }, LOAD_MORE_INTERVAL);
             }
         });
+    }
+
+    //更换浏览模式后收到的通知，obj 为 null
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void toggleScanMode(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.TOGGLE_SCAN_MODE)) {
+            OkHttp.getInstance().cancelAll();
+            mPostAdapter.clear();
+            if (!mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(true);
+            }
+            mIsLoadingMore = false;
+            mLoadMoreAgain = true;
+            mCurrentPage = 1;
+            setLoadingGif();
+            getNewPosts(mCurrentPage);
+        }
     }
 
     public static PostFragment newInstance() {

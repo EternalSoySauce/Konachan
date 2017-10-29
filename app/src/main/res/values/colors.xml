@@ -11,6 +11,10 @@
     <!-- 点击选择搜索模式弹窗时的背景色 -->
     <color name="color_popup_item_pressed">#1A000000</color>
 
+    <!-- 点击设置与帮助item时的背景色 -->
+    <color name="color_setting_item_pressed">#1AFFFFFF</color>
+    <color name="color_setting_item_unpressed">#2C2C2C</color>
+
     <!-- nav选中时背景色 -->
     <color name="color_nav_item_selected_bg">#3B3B3B</color>
     <!-- 文字选中时颜色 -->
@@ -32,10 +36,18 @@
     <!-- scrollBar颜色 -->
     <color name="color_scroll_bar_thumb">#555555</color>
 
+    <!-- 程序内部hyperlink颜色 -->
+    <color name="color_link">#5E97C8</color>
+
     <!-- Dialog颜色 -->
     <color name="color_dialog_text">#F1F1F1</color>
     <color name="color_dialog_button">#EE8887</color>
     <color name="color_dialog_bg">#3B3B3B</color>
+
+    <!-- Compound Button颜色-->
+    <color name="color_compound_button_checked">#EE8887</color>
+    <color name="color_compound_button_unchecked_dark">#3B3B3B</color>
+    <color name="color_compound_button_unchecked_light">#F1F1F1</color>
 
     <color name="color_copyright">#DD00DD</color>
     <color name="color_character">#00AA00</color>

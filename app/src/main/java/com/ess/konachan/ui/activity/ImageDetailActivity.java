@@ -2,7 +2,6 @@ package com.ess.konachan.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -12,8 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.ViewPagerImageDetailAdapter;
 import com.ess.konachan.bean.ImageBean;
@@ -103,25 +100,14 @@ public class ImageDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mImageBean != null) {
-                    final String url = mImageBean.posts[0].jpegUrl;
-                    String bitmapName = Constants.IMAGE_HEAD + FileUtils.encodeMD5String(url)
+                    String url = mImageBean.posts[0].jpegUrl;
+                    String bitmapName = Constants.IMAGE_HEAD + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
                             + url.substring(url.lastIndexOf("."));
-                    final File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
+                    File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
                     if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
                         downloadBitmap(url, file.getAbsolutePath());
                     } else if (file.exists()) {
-                        new CustomDialog(ImageDetailActivity.this)
-                                .content(R.string.reload_msg)
-                                .negativeText(R.string.reload_no)
-                                .positiveText(R.string.reload_yes)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        if (!OkHttp.getInstance().isUrlInDownloadQueue(url)) {
-                                            downloadBitmap(url, file.getAbsolutePath());
-                                        }
-                                    }
-                                }).show();
+                        showPromptToReloadImageDialog(url, file.getAbsolutePath());
                     }
                 } else {
                     Toast.makeText(ImageDetailActivity.this, R.string.loading_image, Toast.LENGTH_SHORT).show();
@@ -169,6 +155,17 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     public void setImageBean(ImageBean imageBean) {
         mImageBean = imageBean;
+    }
+
+    private void showPromptToReloadImageDialog(final String imageUrl, final String filePath) {
+        CustomDialog.showPromptToReloadImage(this, new CustomDialog.OnDialogActionListener() {
+            @Override
+            public void onPositive() {
+                if (!OkHttp.getInstance().isUrlInDownloadQueue(imageUrl)) {
+                    downloadBitmap(imageUrl, filePath);
+                }
+            }
+        });
     }
 
     private void downloadBitmap(String url, String bitmapPath) {

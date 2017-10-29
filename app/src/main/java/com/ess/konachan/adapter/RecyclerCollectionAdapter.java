@@ -46,7 +46,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         // 编辑模式选择框
         int visible = mEditing ? View.VISIBLE : View.GONE;
         holder.cbChoose.setVisibility(visible);
-        holder.cbChoose.setChecked(mEditing && collectionBean.isChecked);
+        holder.cbChoose.setChecked(mEditing && collectionBean.isChecked, true, false);
         holder.cbChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,8 +76,11 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
             public void onClick(View v) {
                 if (mEditing) {
                     boolean isChecked = !holder.cbChoose.isChecked();
-                    holder.cbChoose.setChecked(isChecked);
+                    holder.cbChoose.setChecked(isChecked, true, false);
                     setChooseState(collectionBean, isChecked);
+                    if (mActionListener != null) {
+                        mActionListener.onItemClick();
+                    }
                 } else {
                     if (mActionListener != null) {
                         mActionListener.onFullScreen(holder.ivCollection, position);
@@ -139,7 +142,9 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
     private void setChooseState(CollectionBean collectionBean, boolean isChecked) {
         collectionBean.isChecked = isChecked;
         if (isChecked) {
-            mChooseList.add(collectionBean);
+            if (!mChooseList.contains(collectionBean)) {
+                mChooseList.add(collectionBean);
+            }
         } else {
             mChooseList.remove(collectionBean);
         }
@@ -153,8 +158,26 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         return mChooseList;
     }
 
-    public void resetChooseList() {
-        mChooseList.clear();
+    public int getChooseCount() {
+        return mChooseList.size();
+    }
+
+    private void resetChooseList() {
+        for (CollectionBean collectionBean : mCollectionList) {
+            setChooseState(collectionBean, false);
+        }
+    }
+
+    public void chooseAll() {
+        for (CollectionBean collectionBean : mCollectionList) {
+            setChooseState(collectionBean, true);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void cancelChooseAll() {
+        resetChooseList();
+        notifyDataSetChanged();
     }
 
     public void beginEdit() {
@@ -164,9 +187,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
 
     public void cancelEdit(boolean notify) {
         this.mEditing = false;
-        for (CollectionBean collectionBean : mCollectionList) {
-            setChooseState(collectionBean, false);
-        }
+        resetChooseList();
         if (notify) {
             notifyDataSetChanged();
         }
@@ -198,6 +219,9 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
 
         //收藏界面adapter中编辑模式下点击Enlarge图标放大查看图片
         void onEnlarge(int position);
+
+        //收藏界面adapter中编辑模式下每次点击item同步更新选中数量
+        void onItemClick();
     }
 
     public void setOnActionListener(OnActionListener listener) {

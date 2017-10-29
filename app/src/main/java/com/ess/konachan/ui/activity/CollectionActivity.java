@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.RecyclerCollectionAdapter;
 import com.ess.konachan.bean.CollectionBean;
@@ -26,6 +24,7 @@ import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.CustomDialog;
 import com.ess.konachan.view.GridDividerItemDecoration;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,11 +34,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CollectionActivity extends AppCompatActivity {
+public class CollectionActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private Toolbar mToolbar;
     private TextView mTvEdit;
-    private TextView mTvShare;
-    private TextView mTvDelete;
+    private RelativeLayout mLayoutEditing;
+    private SmoothCheckBox mCbChooseAll;
+    private TextView mTvChooseCount;
 
     private RecyclerView mRvCollection;
     private RecyclerCollectionAdapter mCollectionAdapter;
@@ -54,21 +55,13 @@ public class CollectionActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mCollectionAdapter.isEditing()) {
-            cancelEdit(true);
-        } else {
-            finish();
-        }
-    }
-
     private void initToolBarLayout() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mToolbar.setTitle(R.string.nav_collection);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationIcon(R.drawable.ic_back);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -77,50 +70,43 @@ public class CollectionActivity extends AppCompatActivity {
     }
 
     private void initEditView() {
+        mLayoutEditing = (RelativeLayout) findViewById(R.id.layout_editing);
+        findViewById(R.id.layout_choose_all).setOnClickListener(this);
+        mCbChooseAll = (SmoothCheckBox) findViewById(R.id.cb_choose_all);
+        mCbChooseAll.setOnClickListener(this);
+        mTvChooseCount = (TextView) findViewById(R.id.tv_choose_count);
         mTvEdit = (TextView) findViewById(R.id.tv_edit);
-        mTvEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                beginEdit();
-            }
-        });
+    }
 
-        mTvShare = (TextView) findViewById(R.id.tv_share);
-        mTvShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.layout_choose_all:
+                mCbChooseAll.performClick();
+                break;
+            case R.id.cb_choose_all:
+                if (mCbChooseAll.isChecked()) {
+                    mCollectionAdapter.chooseAll();
+                } else {
+                    mCollectionAdapter.cancelChooseAll();
+                }
+                mTvChooseCount.setText(String.valueOf(mCollectionAdapter.getChooseCount()));
+                break;
+            case R.id.tv_edit:
+                beginEdit();
+                break;
+            case R.id.tv_share:
                 shareImages();
                 cancelEdit(true);
-            }
-        });
-
-        mTvDelete = (TextView) findViewById(R.id.tv_delete);
-        mTvDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final ArrayList<CollectionBean> deleteList = new ArrayList<>();
+                break;
+            case R.id.tv_delete:
+                ArrayList<CollectionBean> deleteList = new ArrayList<>();
                 deleteList.addAll(mCollectionAdapter.getChooseList());
-                String msg = getString(R.string.delete_msg1) + deleteList.size() + getString(R.string.delete_msg2);
-                new CustomDialog(CollectionActivity.this)
-                        .content(msg)
-                        .negativeText(R.string.delete_cancel)
-                        .positiveText(R.string.delete_sure)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                cancelEdit(false);
-                                mCollectionAdapter.removeDatas(deleteList);
-                                mCollectionAdapter.resetChooseList();
-                                for (CollectionBean collectionBean : deleteList) {
-                                    String path = collectionBean.url.replace("file://", "");
-                                    FileUtils.deleteFile(path);
-                                    // 从媒体库删除图片（刷新相册）
-                                    BitmapUtils.deleteFromMediaStore(CollectionActivity.this, path);
-                                }
-                            }
-                        }).show();
-            }
-        });
+                String msg = getString(R.string.dialog_delete_msg1)
+                        + deleteList.size() + getString(R.string.dialog_delete_msg2);
+                showDeleteCollectionDialog(msg, deleteList);
+                break;
+        }
     }
 
     private void initRecyclerView() {
@@ -162,18 +148,44 @@ public class CollectionActivity extends AppCompatActivity {
                 intent.putExtra(Constants.COLLECTION_LIST, enlargeList);
                 startActivity(intent);
             }
+
+            @Override
+            public void onItemClick() {
+                int chooseCount = mCollectionAdapter.getChooseCount();
+                mTvChooseCount.setText(String.valueOf(chooseCount));
+                mCbChooseAll.setChecked(chooseCount == mCollectionAdapter.getItemCount(), true, false);
+            }
+        });
+    }
+
+    private void showDeleteCollectionDialog(String msg, final ArrayList<CollectionBean> deleteList) {
+        CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.OnDialogActionListener() {
+            @Override
+            public void onPositive() {
+                cancelEdit(false);
+                mCollectionAdapter.removeDatas(deleteList);
+                for (CollectionBean collectionBean : deleteList) {
+                    String path = collectionBean.url.replace("file://", "");
+                    FileUtils.deleteFile(path);
+                    // 从媒体库删除图片（刷新相册）
+                    BitmapUtils.deleteFromMediaStore(CollectionActivity.this, path);
+                }
+            }
         });
     }
 
     private void toggleEditView(boolean editing) {
         if (editing) {
             mTvEdit.setVisibility(View.GONE);
-            mTvShare.setVisibility(View.VISIBLE);
-            mTvDelete.setVisibility(View.VISIBLE);
+            mLayoutEditing.setVisibility(View.VISIBLE);
+            mCbChooseAll.setChecked(false, false, false);
+            mTvChooseCount.setText(String.valueOf(mCollectionAdapter.getChooseCount()));
+            mToolbar.setTitle("");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         } else {
             mTvEdit.setVisibility(View.VISIBLE);
-            mTvShare.setVisibility(View.GONE);
-            mTvDelete.setVisibility(View.GONE);
+            mLayoutEditing.setVisibility(View.GONE);
+            initToolBarLayout();
         }
     }
 
@@ -228,6 +240,15 @@ public class CollectionActivity extends AppCompatActivity {
         if (resultCode == Constants.FULLSCREEN_CODE && data != null) {
             int position = data.getIntExtra(Constants.FULLSCREEN_POSITION, 0);
             mRvCollection.scrollToPosition(position);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mCollectionAdapter.isEditing()) {
+            cancelEdit(true);
+        } else {
+            finish();
         }
     }
 

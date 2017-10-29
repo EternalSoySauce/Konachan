@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,7 +218,6 @@ public class PoolFragment extends Fragment {
                     mIsLoadingMore = true;
                     mPoolAdapter.changeToLoadMoreState();
                     loadMore();
-                    Log.i("rrr", "load more");
                 }
             }
         });
@@ -402,23 +400,6 @@ public class PoolFragment extends Fragment {
         });
     }
 
-    //更换浏览模式后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void toggleSearchMode(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.TOGGLE_SEARCH_MODE)) {
-            if (isPoolPostFragmentVisible()) {
-                removePoolPostFragment();
-            }
-            mPoolAdapter.clear();
-            if (!mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(true);
-            }
-            mCurrentPage = 1;
-            setLoadingGif();
-            getNewPools(mCurrentPage);
-        }
-    }
-
     //搜所无结果
     private void getNoData() {
         mActivity.runOnUiThread(new Runnable() {
@@ -452,6 +433,25 @@ public class PoolFragment extends Fragment {
                 }, LOAD_MORE_INTERVAL);
             }
         });
+    }
+
+    //更换浏览模式后收到的通知，obj 为 null
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void toggleScanMode(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.TOGGLE_SCAN_MODE)) {
+            if (isPoolPostFragmentVisible()) {
+                removePoolPostFragment();
+            }
+            mPoolAdapter.clear();
+            if (!mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(true);
+            }
+            mIsLoadingMore = false;
+            mLoadMoreAgain = true;
+            mCurrentPage = 1;
+            setLoadingGif();
+            getNewPools(mCurrentPage);
+        }
     }
 
     public static PoolFragment newInstance() {

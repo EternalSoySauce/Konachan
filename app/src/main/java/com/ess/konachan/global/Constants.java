@@ -5,6 +5,7 @@ import android.os.Environment;
 public class Constants {
 
     // Shared Preference
+    public final static String IS_R18_MODE = "isR18Mode";
     public final static String SEARCH_MODE = "searchMode";
     public final static String GAME_COLUMN = "gameColumn";
 
@@ -33,8 +34,8 @@ public class Constants {
     public final static int FULLSCREEN_CODE = 2000;
 
     // EventBus
-    public final static String TOGGLE_SEARCH_MODE = "toggleSearchMode";  //更换浏览模式后通知 recyclerHome更新adapter
-    public final static String GET_IMAGE_DETAIL = "getImageDetail";  //获取到图片详细信息后通知详情页显示信息，recyclerHome更新adapter
+    public final static String TOGGLE_SCAN_MODE = "toggleScanMode";  //更换浏览模式后通知 PostFragment和PoolFragment更新adapter
+    public final static String GET_IMAGE_DETAIL = "getImageDetail";  //获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter
 
     // Http
     public final static String BASE_URL_R18_MODE = "https://www.konachan.com/";

@@ -11,11 +11,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -33,6 +37,7 @@ import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.StringUtils;
 import com.ess.konachan.utils.UIUtils;
+import com.ess.konachan.view.CustomDialog;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 
@@ -206,9 +211,25 @@ public class SearchActivity extends AppCompatActivity {
         TextView tvDocSearchChinese = (TextView) findViewById(R.id.tv_doc_search_chinese);
         tvDocSearchChinese.setText(docList.get(2));
 
+
         TextView tvDocSearchAdvanced = (TextView) findViewById(R.id.tv_doc_search_advanced);
-        tvDocSearchAdvanced.setText(docList.get(3));
+        tvDocSearchAdvanced.setText(setLinkToShowTagTypeDoc(docList.get(3)));
         tvDocSearchAdvanced.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private SpannableString setLinkToShowTagTypeDoc(String baseText) {
+        SpannableString spanText = new SpannableString(baseText + getString(R.string.click_here));
+        spanText.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                CustomDialog.showAdvancedSearchHelpDialog(SearchActivity.this);
+            }
+        }, baseText.length(), spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spanText.setSpan(new UnderlineSpan(), baseText.length(),
+                spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spanText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.color_link)),
+                baseText.length(), spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return spanText;
     }
 
     private void changeDocumentColor() {
@@ -239,7 +260,7 @@ public class SearchActivity extends AppCompatActivity {
     private void initListPopupWindow() {
         // 选择搜索模式弹窗
         String[] searchModeArray = getResources().getStringArray(R.array.spinner_list_item);
-        mSpinnerAdapter = new RecyclerSearchModePopupAdapter(this,searchModeArray);
+        mSpinnerAdapter = new RecyclerSearchModePopupAdapter(this, searchModeArray);
         mSpinnerAdapter.setSelection(mSelectedPos);
         mSpinnerAdapter.setOnItemClickListener(new RecyclerSearchModePopupAdapter.OnItemClickListener() {
             @Override

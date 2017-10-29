@@ -17,7 +17,7 @@
         android:layout_gravity="top|start"
         android:layout_marginStart="-2.5dp"
         android:layout_marginTop="-2.5dp"
-        android:tint="@color/check_box_color"/>
+        android:tint="@color/check_box_collection_color"/>
 
     <ImageView
         android:id="@+id/iv_enlarge"

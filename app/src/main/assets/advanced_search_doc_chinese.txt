@@ -1,0 +1,116 @@
+<div>
+    <h4><font color='#006600'><b>Searching</b></font></h4>
+    <span><font-size size='18'><b>tag1 tag2</b></font-size><br/></span>
+    <span>Search for posts that have tag1 and tag2.<br/><br/></span>
+
+    <span><font-size size='18'><b>~tag1 ~tag2</b></font-size><br/></span>
+    <span>Search for posts that have tag1 or tag2.<br/><br/></span>
+
+    <span><font-size size='18'><b>-tag1</b></font-size><br/></span>
+    <span>Search for posts that don't have tag1.<br/><br/></span>
+
+    <span><font-size size='18'><b>tag1*</b></font-size><br/></span>
+    <span>Search for posts with tags that start with tag1.<br/><br/></span>
+
+    <span><font-size size='18'><b>user:bob</b></font-size><br/></span>
+    <span>Search for posts uploaded by the user Bob.<br/><br/></span>
+
+    <span><font-size size='18'><b>vote:3:bob</b></font-size><br/></span>
+    <span>Search for posts favorited by the user Bob.<br/><br/></span>
+
+    <span><font-size size='18'><b>md5:foo</b></font-size><br/></span>
+    <span>Search for posts with the MD5 hash foo.<br/><br/></span>
+
+    <span><font-size size='18'><b>rating:questionable</b></font-size><br/></span>
+    <span>Search for posts that are rated questionable.<br/><br/></span>
+
+    <span><font-size size='18'><b>-rating:questionable</b></font-size><br/></span>
+    <span>Search for posts that are not rated questionable.<br/><br/></span>
+
+    <span><font-size size='18'><b>source:http://site.com</b></font-size><br/></span>
+    <span>Search for posts with a source that starts with http://site.com.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:100</b></font-size><br/></span>
+    <span>Search for posts with an ID number of 100.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:100..</b></font-size><br/></span>
+    <span>Search for posts with an ID number of 100 or greater.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:&gt;=100</b></font-size><br/></span>
+    <span>Same as above.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:&gt;100</b></font-size><br/></span>
+    <span>Search for posts with an ID number greater than 100.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:..100</b></font-size><br/></span>
+    <span>Search for posts with an ID number of 100 or less.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:&lt;=100</b></font-size><br/></span>
+    <span>Same as above.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:&lt;100</b></font-size><br/></span>
+    <span>Search for posts with an ID number less than 100.<br/><br/></span>
+
+    <span><font-size size='18'><b>id:100..200</b></font-size><br/></span>
+    <span>Search for posts with an ID number between 100 and 200.<br/><br/></span>
+
+    <span><font-size size='18'><b>width:100</b></font-size><br/></span>
+    <span>Search for posts with a width of 100 pixels (uses same syntax as id search).<br/><br/></span>
+
+    <span><font-size size='18'><b>height:100</b></font-size><br/></span>
+    <span>Search for posts with a height of 100 pixels (uses same syntax as id search)<br/><br/></span>
+
+    <span><font-size size='18'><b>score:100</b></font-size><br/></span>
+    <span>Search for posts with a score of 100 (uses same syntax as id search).<br/><br/></span>
+
+    <span><font-size size='18'><b>mpixels:2.5..</b></font-size><br/></span>
+    <span>Search for posts with 2.5 million pixels or greater (uses same syntax as id search).<br/><br/></span>
+
+    <span><font-size size='18'><b>date:2007-01-01</b></font-size><br/></span>
+    <span>Search for posts uploaded on a certain date (uses same syntax as id search).<br/><br/></span>
+
+    <span><font-size size='18'><b>order:id</b></font-size><br/></span>
+    <span>Order search results in ascending order based on post ID.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:id_desc</b></font-size><br/></span>
+    <span>Order search results in descending order based on post ID.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:score</b></font-size><br/></span>
+    <span>Order search results in descending order based on post score.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:score_asc</b></font-size><br/></span>
+    <span>Order search results in ascending order based on post score.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:mpixels</b></font-size><br/></span>
+    <span>Order search results in descending order based on resolution.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:mpixels_asc</b></font-size><br/></span>
+    <span>Order search results in descending order based on resolution.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:landscape</b></font-size><br/></span>
+    <span>Order landscape images first.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:portrait</b></font-size><br/></span>
+    <span>Order portrait images first.<br/><br/></span>
+
+    <span><font-size size='18'><b>order:vote</b></font-size><br/></span>
+    <span>Order by when the post was voted (only valid when doing a vote search)<br/><br/></span>
+
+    <span><font-size size='18'><b>parent:1234</b></font-size><br/></span>
+    <span>Search for posts that have 1234 as a parent (and include post 1234).<br/><br/></span>
+
+    <span><font-size size='18'><b>parent:none</b></font-size><br/></span>
+    <span>Search for posts that have no parent.<br/><br/></span>
+
+    <span><font-size size='18'><font color='#FF0000'><b>gun* dress</b></font></font-size><br/></span>
+    <span>Pattern searches do not work well with other tags.<br/><br/></span>
+
+    <span><font-size size='18'><font color='#FF0000'><b>~gun dress</b></font></font-size><br/></span>
+    <span>Or searches do not work well with other tags.<br/><br/></span>
+
+    <span><font-size size='18'><font color='#FF0000'><b>rating:questionable rating:safe</b></font></font-size><br/></span>
+    <span>In general, combining the same metatags (the ones that have colons in them) will not work.<br/><br/></span>
+
+    <span><font-size size='18'><b>rating:questionable score:100.. id:..1000</b></font-size><br/></span>
+    <span>You can combine different metatags, however.</span>
+</div>
