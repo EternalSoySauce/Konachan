@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -62,7 +63,7 @@ public class PostFragment extends Fragment {
     private RecyclerPostAdapter mPostAdapter;
     private View mLayoutLoadResult;
     private ImageView mIvLoadNothing;
-    private ImageView mIvLoadNoNetWork;
+    private LinearLayout mLayoutLoadNoNetWork;
     private GifView mIvLoading;
 
     private int mCurrentPage;
@@ -249,28 +250,28 @@ public class PostFragment extends Fragment {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
         mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
         mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
-        mIvLoadNoNetWork = (ImageView) mRootView.findViewById(R.id.iv_load_no_network);
+        mLayoutLoadNoNetWork = (LinearLayout) mRootView.findViewById(R.id.layout_load_no_network);
         setLoadingGif();
     }
 
     private void setLoadingGif() {
         mIvLoading.setVisibility(View.VISIBLE);
         mIvLoadNothing.setVisibility(View.GONE);
-        mIvLoadNoNetWork.setVisibility(View.GONE);
+        mLayoutLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
     private void setLoadNothingImage() {
         mIvLoading.setVisibility(View.GONE);
         mIvLoadNothing.setVisibility(View.VISIBLE);
-        mIvLoadNoNetWork.setVisibility(View.GONE);
+        mLayoutLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
     private void setLoadingNoNetworkImage() {
         mIvLoading.setVisibility(View.GONE);
         mIvLoadNothing.setVisibility(View.GONE);
-        mIvLoadNoNetWork.setVisibility(View.VISIBLE);
+        mLayoutLoadNoNetWork.setVisibility(View.VISIBLE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
@@ -494,12 +495,13 @@ public class PostFragment extends Fragment {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 mSwipeRefresh.setRefreshing(false);
                 mIsLoadingMore = false;
                 mLoadMoreAgain = false;
                 if (mPostAdapter.getThumbList().isEmpty()) {
                     setLoadingNoNetworkImage();
+                }else {
+                    Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }
 
                 mHandler.postDelayed(new Runnable() {
