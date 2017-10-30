@@ -44,11 +44,12 @@
     <color name="color_dialog_button">#EE8887</color>
     <color name="color_dialog_bg">#3B3B3B</color>
 
-    <!-- Compound Button颜色-->
-    <color name="color_compound_button_checked">#EE8887</color>
-    <color name="color_compound_button_unchecked_dark">#3B3B3B</color>
-    <color name="color_compound_button_unchecked_light">#F1F1F1</color>
+    <!-- Checkbox Button颜色-->
+    <color name="color_checkbox_checked">#EE8887</color>
+    <color name="color_checkbox_unchecked_dark">#3B3B3B</color>
+    <color name="color_checkbox_unchecked_light">#F1F1F1</color>
 
+    <!-- Tags颜色-->
     <color name="color_copyright">#DD00DD</color>
     <color name="color_character">#00AA00</color>
     <color name="color_artist">#CCCC00</color>

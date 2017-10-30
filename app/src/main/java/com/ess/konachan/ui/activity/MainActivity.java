@@ -27,8 +27,6 @@ import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.ui.fragment.PoolFragment;
 import com.ess.konachan.ui.fragment.PostFragment;
 import com.ess.konachan.utils.UIUtils;
-import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
-import com.mixiaoxiao.smoothcompoundbutton.SmoothSwitch;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -167,14 +165,11 @@ public class MainActivity extends AppCompatActivity {
 
         final ToggleButton btnFunny = (ToggleButton) navHeader.findViewById(R.id.btn_funny);
         btnFunny.setChecked(isR18Mode);
-
-        SmoothSwitch switchSearchMode = (SmoothSwitch) navHeader.findViewById(R.id.switch_search_mode);
-        switchSearchMode.setChecked(isR18Mode, false, false);
-        switchSearchMode.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
+        btnFunny.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean checked) {
-                btnFunny.setChecked(checked);
-                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, checked).apply();
+            public void onClick(View v) {
+                boolean isChecked = btnFunny.isChecked();
+                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
                 // 发送通知到PostFragment, PoolFragment
                 EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
             }
