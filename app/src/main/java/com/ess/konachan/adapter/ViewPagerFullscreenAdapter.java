@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.ess.konachan.bean.CollectionBean;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 
 import java.util.ArrayList;
 

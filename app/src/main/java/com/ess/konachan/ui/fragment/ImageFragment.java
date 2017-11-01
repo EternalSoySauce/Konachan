@@ -21,7 +21,7 @@ import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 import com.ess.konachan.ui.activity.ImageDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;

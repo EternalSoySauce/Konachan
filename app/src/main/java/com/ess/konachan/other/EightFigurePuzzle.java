@@ -1,4 +1,4 @@
-package com.ess.konachan.global;
+package com.ess.konachan.other;
 
 import android.support.annotation.NonNull;
 

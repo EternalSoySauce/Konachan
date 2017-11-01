@@ -24,6 +24,7 @@ import com.ess.konachan.R;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
+import com.ess.konachan.other.Sound;
 import com.ess.konachan.ui.fragment.PoolFragment;
 import com.ess.konachan.ui.fragment.PostFragment;
 import com.ess.konachan.utils.UIUtils;
@@ -169,6 +170,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean isChecked = btnFunny.isChecked();
+                if (isChecked) {
+                    Sound.getInstance().playHentaiSound(MainActivity.this);
+                }
                 mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
                 // 发送通知到PostFragment, PoolFragment
                 EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
@@ -237,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Sound.getInstance().release();
         OkHttp.getInstance().cancelAll();
     }
 }

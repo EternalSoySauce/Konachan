@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.bean.CollectionBean;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.utils.VibratorUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;

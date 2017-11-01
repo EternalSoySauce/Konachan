@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.PoolListBean;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 import com.ldoublem.loadingviewlib.view.LVFinePoiStar;
 
 import java.util.ArrayList;

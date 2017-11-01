@@ -18,7 +18,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.global.EightFigurePuzzle;
+import com.ess.konachan.other.EightFigurePuzzle;
 import com.ess.konachan.R;
 import com.ess.konachan.utils.BitmapUtils;
 import com.ess.konachan.utils.UIUtils;

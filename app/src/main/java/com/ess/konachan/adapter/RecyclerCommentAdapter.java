@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.bean.CommentBean;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 
 import java.util.ArrayList;
 

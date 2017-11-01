@@ -4,6 +4,9 @@ import android.os.Environment;
 
 public class Constants {
 
+    // 用于Sound标志位
+    public static boolean sRestart = true;
+
     // Shared Preference
     public final static String IS_R18_MODE = "isR18Mode";
     public final static String SEARCH_MODE = "searchMode";

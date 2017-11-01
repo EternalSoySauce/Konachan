@@ -15,7 +15,7 @@ import com.ess.konachan.R;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.global.GlideConfig;
+import com.ess.konachan.other.GlideConfig;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
 import com.ess.konachan.ui.activity.ImageDetailActivity;

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.ess.konachan.R;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
+import com.ess.konachan.other.Sound;
 import com.ess.konachan.utils.FileUtils;
 
 import java.io.File;
@@ -24,6 +25,8 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        Sound.getInstance().playSplashWelcomeSound(this);
+
         getTagJson(Constants.SAFE_MODE_TAG_JSON_URL);
         getTagJson(Constants.R18_MODE_TAG_JSON_URL);
 
@@ -35,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        }, 1500);
+        }, 3000);
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示
