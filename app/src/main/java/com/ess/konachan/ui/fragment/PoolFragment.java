@@ -202,7 +202,7 @@ public class PoolFragment extends Fragment {
             }
         });
 
-        int space = UIUtils.dp2px(mActivity, 10);
+        int space = UIUtils.dp2px(mActivity, 12);
         mRvPools.addItemDecoration(new GridDividerItemDecoration(
                 1, GridDividerItemDecoration.VERTICAL, space, true));
 

@@ -69,6 +69,9 @@
     <string name="detail_pool_no_description">无</string>
     <string name="comment_no_comments">暂无评论</string>
 
+    <!-- Pool Detail -->
+    <string name="pool_updated_time">Updated&#160;</string>
+
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
     <string name="edit">编辑</string>
