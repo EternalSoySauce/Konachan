@@ -27,6 +27,7 @@ import com.ess.konachan.bean.PoolListBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
+import com.ess.konachan.other.Sound;
 import com.ess.konachan.ui.activity.MainActivity;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.GifView;
@@ -423,6 +424,7 @@ public class PoolFragment extends Fragment {
                 mLoadMoreAgain = false;
                 if (mPoolAdapter.getPoolList().isEmpty()) {
                     setLoadingNoNetworkImage();
+                    Sound.getInstance().playLoadNoNetworkSound(getActivity());
                 }else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }

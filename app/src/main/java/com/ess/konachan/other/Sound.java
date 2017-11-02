@@ -34,12 +34,29 @@ public class Sound {
     }
 
     // 切换到R18模式播放
-    public void playHentaiSound(Context context) {
+    public void playToggleR18ModeSound(Context context) {
         if (mMediaPlayer != null) {
             mMediaPlayer.reset();
         }
-        mMediaPlayer = MediaPlayer.create(context, R.raw.hentai);
+        mMediaPlayer = MediaPlayer.create(context, R.raw.toggle_r18_mode);
         mMediaPlayer.start();
+    }
+
+    // 切换到Safe模式播放
+    public void playToggleSafeModeSound(Context context) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.reset();
+        }
+        mMediaPlayer = MediaPlayer.create(context, R.raw.toggle_safe_mode);
+        mMediaPlayer.start();
+    }
+
+    // 网络异常时播放
+    public void playLoadNoNetworkSound(Context context) {
+        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+            mMediaPlayer = MediaPlayer.create(context, R.raw.load_no_network);
+            mMediaPlayer.start();
+        }
     }
 
     // 退出应用时释放player

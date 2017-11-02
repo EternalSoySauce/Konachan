@@ -171,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean isChecked = btnFunny.isChecked();
                 if (isChecked) {
-                    Sound.getInstance().playHentaiSound(MainActivity.this);
+                    Sound.getInstance().playToggleR18ModeSound(MainActivity.this);
+                }else {
+                    Sound.getInstance().playToggleSafeModeSound(MainActivity.this);
                 }
                 mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
                 // 发送通知到PostFragment, PoolFragment
