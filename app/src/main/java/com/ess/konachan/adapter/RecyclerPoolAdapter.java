@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.PoolListBean;
 import com.ess.konachan.other.GlideConfig;
-import com.ldoublem.loadingviewlib.view.LVFinePoiStar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +52,6 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         if (position == getItemCount() - 1) {
             ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
             params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-            holder.loadMoreView.startAnim(1500);
             return;
         }
 
@@ -155,7 +153,6 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         private TextView tvPostCount;
         private TextView tvCreateTime;
         private TextView tvUpdateTime;
-        private LVFinePoiStar loadMoreView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -165,12 +162,6 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
             tvPostCount = (TextView) itemView.findViewById(R.id.tv_post_count);
             tvCreateTime = (TextView) itemView.findViewById(R.id.tv_create_time);
             tvUpdateTime = (TextView) itemView.findViewById(R.id.tv_update_time);
-            loadMoreView = (LVFinePoiStar) itemView.findViewById(R.id.view_load_more);
-            if (loadMoreView != null) {
-                int color = mContext.getResources().getColor(R.color.color_load_more);
-                loadMoreView.setViewColor(color);
-                loadMoreView.setCircleColor(color);
-            }
         }
     }
 

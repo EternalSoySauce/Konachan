@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.ldoublem.loadingviewlib.view.LVFinePoiStar
+    <com.ess.konachan.view.GifView
         android:id="@+id/view_load_more"
         android:layout_width="36dp"
         android:layout_height="36dp"

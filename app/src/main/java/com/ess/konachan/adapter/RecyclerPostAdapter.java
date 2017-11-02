@@ -15,11 +15,10 @@ import com.ess.konachan.R;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.other.GlideConfig;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
+import com.ess.konachan.other.GlideConfig;
 import com.ess.konachan.ui.activity.ImageDetailActivity;
-import com.ldoublem.loadingviewlib.view.LVFinePoiStar;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -69,7 +68,6 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         if (position == getItemCount() - 1) {
             ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
             params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-            holder.loadMoreView.startAnim(1500);
             return;
         }
 
@@ -191,18 +189,11 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivThumb;
         private TextView tvSize;
-        private LVFinePoiStar loadMoreView;
 
         public MyViewHolder(android.view.View itemView) {
             super(itemView);
             ivThumb = (ImageView) itemView.findViewById(R.id.iv_post_thumb);
             tvSize = (TextView) itemView.findViewById(R.id.tv_size);
-            loadMoreView = (LVFinePoiStar) itemView.findViewById(R.id.view_load_more);
-            if (loadMoreView != null) {
-                int color = mContext.getResources().getColor(R.color.color_load_more);
-                loadMoreView.setViewColor(color);
-                loadMoreView.setCircleColor(color);
-            }
         }
     }
 
