@@ -14,42 +14,42 @@
 
         <include
             android:id="@+id/post_id"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_created_time"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_creator_id"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_author"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_size"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_file_size"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_source"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_artist"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_rating"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/post_score"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
     </LinearLayout>
 </android.support.v7.widget.CardView>

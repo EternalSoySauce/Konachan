@@ -6,11 +6,13 @@ public class Constants {
 
     // 用于Sound标志位
     public static boolean sRestart = true;
+    public static boolean sAllowPlaySound;
 
     // Shared Preference
     public final static String IS_R18_MODE = "isR18Mode";
     public final static String SEARCH_MODE = "searchMode";
     public final static String GAME_COLUMN = "gameColumn";
+    public final static String ALLOW_PLAY_SOUND = "allowPlaySound";
 
     // Fragment
     public final static String PAGE_TITLE = "pageTitle";
@@ -25,6 +27,7 @@ public class Constants {
     public final static String SEARCH_TAG = "SEARCH_TAG";
     public final static String FULLSCREEN_POSITION = "FULLSCREEN_POSITION";
     public final static String COLLECTION_LIST = "COLLECTION_LIST";
+    public final static String ENLARGE = "ENLARGE";
 
     // Activity Result
     public final static int SEARCH_CODE = 1000;

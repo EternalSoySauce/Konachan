@@ -4,21 +4,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 
 import com.ess.konachan.R;
 import com.ess.konachan.view.GameSurfaceView;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private GameSurfaceView mGameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
         initToolBarLayout();
-        initView();
+        initViews();
     }
 
     private void initToolBarLayout() {
@@ -34,40 +34,26 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
-    private void initView() {
+    private void initViews() {
         mGameView = (GameSurfaceView) findViewById(R.id.surface_view_game);
+    }
 
-        Button btnColumn3 = (Button) findViewById(R.id.btn_column_3);
-        btnColumn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_column_3:
                 mGameView.changeColumn(3);
-            }
-        });
-
-        Button btnColumn4 = (Button) findViewById(R.id.btn_column_4);
-        btnColumn4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.btn_column_4:
                 mGameView.changeColumn(4);
-            }
-        });
-
-        Button btnColumn5 = (Button) findViewById(R.id.btn_column_5);
-        btnColumn5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.btn_column_5:
                 mGameView.changeColumn(5);
-            }
-        });
-
-        Button btnRestart = (Button) findViewById(R.id.btn_restart);
-        btnRestart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.btn_restart:
                 mGameView.restartGame();
-            }
-        });
+                break;
+        }
     }
 
     @Override
@@ -75,4 +61,5 @@ public class GameActivity extends AppCompatActivity {
         super.finish();
         mGameView.recycleBitmaps(true);
     }
+
 }

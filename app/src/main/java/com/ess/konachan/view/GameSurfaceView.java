@@ -18,7 +18,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.other.EightFigurePuzzle;
+import com.ess.konachan.other.Sound;
+import com.ess.konachan.other.XPuzzle;
 import com.ess.konachan.R;
 import com.ess.konachan.utils.BitmapUtils;
 import com.ess.konachan.utils.UIUtils;
@@ -34,9 +35,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private SharedPreferences mPreferences;
     private int mColumn;
     private int[][] mCurrentState;
-    private EightFigurePuzzle mPuzzle;
+    private XPuzzle mPuzzle;
     private int mCurrentStep = 0;
     private boolean mCompleted = false;
+    private boolean mHasPlayedSound = false;
 
     private Bitmap mGameBitmap;
     private ArrayList<Bitmap> mSplitBitmapList = new ArrayList<>();
@@ -74,7 +76,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private void initData() {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mColumn = mPreferences.getInt(Constants.GAME_COLUMN, DEFAULT_COLUMN);
-        mPuzzle = new EightFigurePuzzle();
+        mPuzzle = new XPuzzle();
         rebuildPuzzle();
 
         mGameBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_game);
@@ -112,6 +114,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             y = mRectList.get(0).top - getHeight() / 10f;
             mPaint.setTextSize(UIUtils.sp2px(getContext(), 36));
             canvas.drawText("大吉大利，晚上吃鸡 ！", x, y, mPaint);
+            if (!mHasPlayedSound) {
+                Sound.getInstance().playGameWinSound(getContext());
+                mHasPlayedSound = true;
+            }
         }
 
         getHolder().unlockCanvasAndPost(canvas);
@@ -158,6 +164,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void restartGame() {
         mCompleted = false;
+        mHasPlayedSound = false;
         mCurrentStep = 0;
         rebuildPuzzle();
         draw();

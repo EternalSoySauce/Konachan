@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
 
         getTagJson(Constants.SAFE_MODE_TAG_JSON_URL);
@@ -38,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        }, 3000);
+        }, delay);
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示

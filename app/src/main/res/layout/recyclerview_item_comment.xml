@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_head"
             android:layout_marginTop="5dp"
-            android:background="@color/color_quote_bg"
+            android:background="@drawable/bg_comment_quote"
             android:drawablePadding="5dp"
             android:gravity="center_vertical"
             android:padding="10dp"

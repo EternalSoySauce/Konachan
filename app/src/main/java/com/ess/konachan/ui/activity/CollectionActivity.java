@@ -146,6 +146,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
                 enlargeList.add(mCollectionAdapter.getCollectionList().get(position));
                 Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
                 intent.putExtra(Constants.COLLECTION_LIST, enlargeList);
+                intent.putExtra(Constants.ENLARGE, true);
                 startActivity(intent);
             }
 

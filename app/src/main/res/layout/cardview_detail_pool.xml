@@ -14,23 +14,23 @@
 
         <include
             android:id="@+id/pool_id"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/pool_name"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/pool_created_time"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/pool_updated_time"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
         <include
             android:id="@+id/pool_description"
-            layout="@layout/textview_item_detail"/>
+            layout="@layout/layout_detail_item"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

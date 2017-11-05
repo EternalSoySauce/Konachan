@@ -15,7 +15,6 @@
             android:layout_width="342dp"
             android:layout_height="192dp"
             android:layout_centerHorizontal="true"
-            android:background="#0D121F"
             android:scaleType="centerCrop"
             app:relativeTo="width" />
 
@@ -27,7 +26,7 @@
             android:layout_alignEnd="@+id/iv_pool_thumb"
             android:layout_marginBottom="6dp"
             android:layout_marginEnd="5dp"
-            android:background="@drawable/textview_post_count_bg"
+            android:background="@drawable/bg_textview_post_count"
             android:drawablePadding="7dp"
             android:drawableStart="@drawable/ic_post_count"
             android:gravity="center"

@@ -10,15 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.ui.activity.ImageDetailActivity;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,13 +69,18 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         if (position == getItemCount() - 1) {
             ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
             params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+            holder.indicatorView.smoothToShow();
             return;
         }
 
         final ThumbBean thumbBean = mThumbList.get(position);
 
         //缩略图
-        GlideConfig.getInstance().loadImage(mContext, thumbBean.thumbUrl, holder.ivThumb);
+        GlideApp.with(mContext)
+                .load(thumbBean.thumbUrl)
+                .placeholder(R.drawable.ic_placeholder_post)
+                .priority(Priority.HIGH)
+                .into(holder.ivThumb);
 
         //尺寸
         holder.tvSize.setText(thumbBean.realSize);
@@ -161,7 +167,10 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
     private void preloadThumbnail(ArrayList<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
-            Glide.with(mContext).load(thumbBean.thumbUrl).submit();
+            GlideApp.with(mContext)
+                    .load(thumbBean.thumbUrl)
+                    .priority(Priority.NORMAL)
+                    .submit();
         }
     }
 
@@ -189,11 +198,13 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivThumb;
         private TextView tvSize;
+        private AVLoadingIndicatorView indicatorView;
 
         public MyViewHolder(android.view.View itemView) {
             super(itemView);
             ivThumb = (ImageView) itemView.findViewById(R.id.iv_post_thumb);
             tvSize = (TextView) itemView.findViewById(R.id.tv_size);
+            indicatorView = (AVLoadingIndicatorView) itemView.findViewById(R.id.view_load_more);
         }
     }
 

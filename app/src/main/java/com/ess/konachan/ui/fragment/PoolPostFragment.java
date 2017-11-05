@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.RecyclerPostAdapter;
 import com.ess.konachan.bean.ImageBean;
@@ -19,6 +19,7 @@ import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.GridDividerItemDecoration;
 
@@ -152,7 +153,10 @@ public class PoolPostFragment extends Fragment {
                 if (thumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        Glide.with(getActivity()).load(imageBean.posts[0].sampleUrl).submit();
+                        GlideApp.with(getActivity())
+                                .load(imageBean.posts[0].sampleUrl)
+                                .priority(Priority.HIGH)
+                                .submit();
                     }
                     break;
                 }

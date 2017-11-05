@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.CommentBean;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
 
 import java.util.ArrayList;
 
@@ -39,13 +40,21 @@ public class RecyclerCommentAdapter extends RecyclerView.Adapter<RecyclerComment
         CommentBean commentBean = mCommentList.get(position);
 
         //头像
-        GlideConfig.getInstance().loadImage(mContext, commentBean.headUrl, holder.ivHead);
+        GlideApp.with(mContext)
+                .load(commentBean.headUrl)
+                .placeholder(R.drawable.ic_placeholder_comment)
+                .priority(Priority.NORMAL)
+                .into(holder.ivHead);
+
         //作者
         holder.tvAuthor.setText(commentBean.author);
+
         //id
         holder.tvId.setText(commentBean.id);
+
         //时间
         holder.tvDate.setText(commentBean.date);
+
         //引用
         if (TextUtils.isEmpty(commentBean.quote)) {
             holder.tvQuote.setVisibility(View.GONE);
@@ -54,6 +63,7 @@ public class RecyclerCommentAdapter extends RecyclerView.Adapter<RecyclerComment
             holder.tvQuote.setText(commentBean.quote);
             holder.tvQuote.setMovementMethod(LinkMovementMethod.getInstance());
         }
+
         //评论
         holder.tvComment.setText(commentBean.comment);
         holder.tvComment.setMovementMethod(LinkMovementMethod.getInstance());

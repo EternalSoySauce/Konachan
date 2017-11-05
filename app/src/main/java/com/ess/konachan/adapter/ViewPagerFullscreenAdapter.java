@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.bumptech.glide.Priority;
 import com.ess.konachan.bean.CollectionBean;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,10 @@ public class ViewPagerFullscreenAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         PhotoView photoView = mPhotoViewList.get(position % mPhotoViewList.size());
         String url = mCollectionList.get(position).url;
-        GlideConfig.getInstance().loadImage(mContext, url, photoView);
+        GlideApp.with(mContext)
+                .load(url)
+                .priority(Priority.IMMEDIATE)
+                .into(photoView);
         ViewParent parent = photoView.getParent();
         if (parent != null) {
             ((ViewGroup) parent).removeView(photoView);

@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.ViewPagerFullscreenAdapter;
@@ -23,11 +24,13 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private final static int PAGE_LIMIT = 1;
 
+    private TextView mTvSerial;
     private ViewPager mVpFullScreen;
     private ViewPagerFullscreenAdapter mFullScreenAdapter;
     private ArrayList<PhotoView> mPhotoViewList;
     private ArrayList<CollectionBean> mCollectionList;
     private int mCurrentPos;
+    private boolean mEnlarge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,17 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mCollectionList = getIntent().getParcelableArrayListExtra(Constants.COLLECTION_LIST);
         mCurrentPos = getIntent().getIntExtra(Constants.FULLSCREEN_POSITION, 0);
+        mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
+
+        initViews();
         initFullScreenViewPager();
 
 //        ViewCompat.setTransitionName(mVpFullScreen, "s");
+    }
+
+    private void initViews() {
+        mTvSerial = (TextView) findViewById(R.id.tv_serial);
+        setSerial();
     }
 
     private void initFullScreenViewPager() {
@@ -66,6 +77,7 @@ public class FullscreenActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 mCurrentPos = position;
+                setSerial();
                 int childCount = mVpFullScreen.getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     PhotoView photoView = (PhotoView) mVpFullScreen.getChildAt(i);
@@ -81,6 +93,13 @@ public class FullscreenActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setSerial() {
+        if (!mEnlarge) {
+            String serial = (mCurrentPos + 1) + "/" + mCollectionList.size();
+            mTvSerial.setText(serial);
+        }
     }
 
     @Override

@@ -1,21 +1,34 @@
 package com.ess.konachan.ui.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.ess.konachan.R;
+import com.ess.konachan.global.Constants;
+import com.ess.konachan.other.Sound;
 import com.ess.konachan.view.CustomDialog;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener{
+public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private SharedPreferences mPreferences;
+
+    private SmoothCheckBox mCbAllowPlaySound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         initToolBarLayout();
+        initViews();
     }
 
     private void initToolBarLayout() {
@@ -31,13 +44,33 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private void initViews() {
+        mCbAllowPlaySound = (SmoothCheckBox) findViewById(R.id.cb_setting_allow_play_sound);
+        mCbAllowPlaySound.setChecked(Constants.sAllowPlaySound, false, false);
+        mCbAllowPlaySound.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean b) {
+                Constants.sAllowPlaySound = b;
+                mPreferences.edit().putBoolean(Constants.ALLOW_PLAY_SOUND, b).apply();
+                if (b){
+                    Sound.getInstance().playSoundEnabled(SettingActivity.this);
+                }else {
+                    Sound.getInstance().playSoundDisabled();
+                }
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.layout_tag_type_help:
+        switch (v.getId()) {
+            case R.id.layout_setting_allow_play_sound:
+                mCbAllowPlaySound.performClick();
+                break;
+            case R.id.tv_help_tag_type:
                 CustomDialog.showTagTypeHelpDialog(SettingActivity.this);
                 break;
-            case R.id.layout_advanced_search_help:
+            case R.id.tv_help_advanced_search:
                 CustomDialog.showAdvancedSearchHelpDialog(SettingActivity.this);
                 break;
         }

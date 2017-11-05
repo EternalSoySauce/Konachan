@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -21,7 +20,7 @@ import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.ui.activity.ImageDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,7 +29,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import uk.co.senab.photoview.PhotoView;
 
-public class ImageFragment extends Fragment {
+public class ImageFragment extends Fragment implements RequestListener<Drawable> {
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
@@ -38,6 +37,7 @@ public class ImageFragment extends Fragment {
 
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
+    private PhotoView mIvImage;
 
     @Override
     public void onAttach(Context context) {
@@ -93,25 +93,27 @@ public class ImageFragment extends Fragment {
     }
 
     private void loadImage() {
-        PhotoView ivImage = (PhotoView) mRootView.findViewById(R.id.iv_image);
+        mIvImage = (PhotoView) mRootView.findViewById(R.id.iv_image);
+        mIvImage.setZoomable(false);
         String url = mImageBean.posts[0].sampleUrl;
-        RequestBuilder<Drawable> listener = Glide.with(mActivity).load(url)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        mSwipeRefresh.setRefreshing(false);
-                        mSwipeRefresh.setEnabled(true);
-                        return false;
-                    }
+        GlideApp.with(mActivity)
+                .load(url)
+                .listener(this)
+                .placeholder(R.drawable.ic_placeholder_detail)
+                .priority(Priority.IMMEDIATE)
+                .into(mIvImage);
+    }
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        mSwipeRefresh.setRefreshing(false);
-                        mSwipeRefresh.setEnabled(false);
-                        return false;
-                    }
-                });
-        GlideConfig.getInstance().loadImage(listener, ivImage);
+    @Override
+    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+        loadImage();
+        return false;
+    }
+
+    @Override
+    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+        mIvImage.setZoomable(true);
+        return false;
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
@@ -138,4 +140,5 @@ public class ImageFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
+
 }

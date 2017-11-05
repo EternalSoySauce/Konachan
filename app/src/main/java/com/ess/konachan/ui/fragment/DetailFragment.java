@@ -219,7 +219,7 @@ public class DetailFragment extends Fragment {
 
     public void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
         for (String tag : tagList) {
-            View view = View.inflate(mActivity, R.layout.textview_item_detail, null);
+            View view = View.inflate(mActivity, R.layout.layout_detail_item, null);
             TextView tvTag = (TextView) view.findViewById(R.id.tv_key);
             tvTag.setText(tag);
             tvTag.setTextColor(getResources().getColor(colorId));

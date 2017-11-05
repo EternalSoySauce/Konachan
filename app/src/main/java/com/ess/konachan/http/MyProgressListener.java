@@ -9,15 +9,14 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.PostBean;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.service.DownloadService;
 import com.ess.konachan.utils.FileUtils;
 import com.ess.konachan.utils.UIUtils;
@@ -25,10 +24,11 @@ import com.ess.konachan.utils.UIUtils;
 import me.jessyan.progressmanager.ProgressListener;
 import me.jessyan.progressmanager.body.ProgressInfo;
 
-public class MyProgressListener implements ProgressListener {
+public class MyProgressListener implements ProgressListener, RequestListener<Bitmap> {
 
     private Context mContext;
     private ImageBean mImageBean;
+    private String mThumbUrl;
 
     private String mBitmapAvailable;
     private NotificationManager mNotifyManager;
@@ -76,23 +76,33 @@ public class MyProgressListener implements ProgressListener {
         return available;
     }
 
-    public void setNotifyThumb(final String thumbUrl) {
-        int size = UIUtils.dp2px(mContext, 64);
-        RequestOptions option = new RequestOptions().override(size).centerCrop();
-        Glide.with(mContext).asBitmap().load(thumbUrl).listener(new RequestListener<Bitmap>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                Glide.with(mContext).asBitmap().load(thumbUrl).listener(this);
-                return false;
-            }
+    public void setNotifyThumb(String thumbUrl) {
+        mThumbUrl = thumbUrl;
+        loadThumbnail();
+    }
 
-            @Override
-            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                mNotifyBuilder.setLargeIcon(resource);
-                mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
-                return false;
-            }
-        }).apply(option).submit();
+    private void loadThumbnail() {
+        int size = UIUtils.dp2px(mContext, 64);
+        GlideApp.with(mContext)
+                .asBitmap()
+                .load(mThumbUrl)
+                .listener(this)
+                .override(size)
+                .centerCrop()
+                .submit();
+    }
+
+    @Override
+    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+        loadThumbnail();
+        return false;
+    }
+
+    @Override
+    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+        mNotifyBuilder.setLargeIcon(resource);
+        mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
+        return false;
     }
 
     @Override
@@ -129,4 +139,5 @@ public class MyProgressListener implements ProgressListener {
         mPendingIntent = PendingIntent.getService(mContext, mNotifyId,
                 reloadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
 }

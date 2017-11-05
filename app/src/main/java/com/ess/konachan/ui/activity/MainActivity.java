@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -24,12 +25,15 @@ import com.ess.konachan.R;
 import com.ess.konachan.bean.MsgBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.other.Sound;
 import com.ess.konachan.ui.fragment.PoolFragment;
 import com.ess.konachan.ui.fragment.PostFragment;
 import com.ess.konachan.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigation = (NavigationView) findViewById(R.id.nav_view);
         mNavigation.setItemTextColor(getResources().getColorStateList(R.color.nav_menu_text_color));
         mNavigation.setItemIconTintList(getResources().getColorStateList(R.color.nav_menu_text_color));
-        mNavigation.setItemBackgroundResource(R.drawable.nav_menu_background_color);
+        mNavigation.setItemBackgroundResource(R.drawable.bg_nav_menu);
         UIUtils.setNavigationMenuLineStyle(mNavigation,
                 getResources().getColor(R.color.color_text_unselected), UIUtils.dp2px(this, 0.5f));
         mNavigation.setCheckedItem(mCurrentNavId);
@@ -164,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         boolean isR18Mode = mPreferences.getBoolean(Constants.IS_R18_MODE, false);
         View navHeader = mNavigation.getHeaderView(0);
 
+        // 切换 Safe/R18 模式
         final ToggleButton btnFunny = (ToggleButton) navHeader.findViewById(R.id.btn_funny);
         btnFunny.setChecked(isR18Mode);
         btnFunny.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean isChecked = btnFunny.isChecked();
                 if (isChecked) {
                     Sound.getInstance().playToggleR18ModeSound(MainActivity.this);
-                }else {
+                } else {
                     Sound.getInstance().playToggleSafeModeSound(MainActivity.this);
                 }
                 mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
@@ -180,6 +185,17 @@ public class MainActivity extends AppCompatActivity {
                 EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
             }
         });
+
+        // 图片对应一周7天
+        final ImageView ivExtra = (ImageView) navHeader.findViewById(R.id.iv_extra);
+        GlideApp.with(this).load(getExtraImageSrcId()).into(ivExtra);
+    }
+
+    private int getExtraImageSrcId() {
+        Calendar calendar = Calendar.getInstance();
+        int serial = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        String srcName = "ic_extra_" + serial;
+        return getResources().getIdentifier(srcName, "drawable", getPackageName());
     }
 
     public void toggleDrawerLayout() {

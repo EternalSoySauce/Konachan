@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/colorPrimary"
-    android:fitsSystemWindows="true">
+             android:layout_width="match_parent"
+             android:layout_height="200dp"
+             android:background="@color/colorPrimary"
+             android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/iv_extra"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"/>
 
     <ToggleButton
         android:id="@+id/btn_funny"
@@ -13,6 +19,5 @@
         android:layout_margin="16dp"
         android:background="@drawable/toggle_button_funny"
         android:textOff=""
-        android:textOn="" />
-
+        android:textOn=""/>
 </FrameLayout>

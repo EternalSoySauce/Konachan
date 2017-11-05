@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".ui.activity.GameActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -36,6 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
+            android:onClick="onClick"
             android:text="3 × 3"/>
 
         <Button
@@ -43,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
+            android:onClick="onClick"
             android:text="4 × 4"/>
 
         <Button
@@ -50,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
+            android:onClick="onClick"
             android:text="5 × 5"/>
 
         <Button
@@ -57,6 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
+            android:onClick="onClick"
             android:text="重新开始"/>
     </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

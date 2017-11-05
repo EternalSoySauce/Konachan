@@ -34,14 +34,31 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="@string/check_network"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/color_text_unselected"
             android:textSize="16sp"/>
     </LinearLayout>
 
-    <com.ess.konachan.view.GifView
-        android:id="@+id/iv_loading"
-        android:layout_width="260dp"
-        android:layout_height="260dp"
+    <LinearLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:src="@drawable/gif_loading"/>
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.ess.konachan.view.GifView
+            android:layout_width="100dp"
+            android:layout_height="147dp"
+            android:layout_marginStart="7dp"
+            app:src="@drawable/gif_loading"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:gravity="center"
+            android:text="@string/loading"
+            android:textColor="@color/color_text_unselected"
+            android:textSize="16sp"/>
+    </LinearLayout>
 </FrameLayout>

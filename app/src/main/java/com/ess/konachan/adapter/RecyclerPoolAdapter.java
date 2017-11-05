@@ -9,10 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.PoolListBean;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,13 +53,18 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         if (position == getItemCount() - 1) {
             ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
             params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+            holder.indicatorView.smoothToShow();
             return;
         }
 
         final PoolListBean poolListBean = mPoolList.get(position);
 
         //缩略图
-        GlideConfig.getInstance().loadImage(mContext, poolListBean.thumbUrl, holder.ivThumb);
+        GlideApp.with(mContext)
+                .load(poolListBean.thumbUrl)
+                .placeholder(R.drawable.ic_placeholder_pool)
+                .priority(Priority.HIGH)
+                .into(holder.ivThumb);
 
         //图集名称
         holder.tvName.setText(poolListBean.name.replace("_", " "));
@@ -127,7 +133,10 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
 
     private void preloadThumbnail(ArrayList<PoolListBean> poolList) {
         for (PoolListBean poolListBean : poolList) {
-            Glide.with(mContext).load(poolListBean.thumbUrl).submit();
+            GlideApp.with(mContext)
+                    .load(poolListBean.thumbUrl)
+                    .priority(Priority.NORMAL)
+                    .submit();
         }
     }
 
@@ -153,6 +162,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         private TextView tvPostCount;
         private TextView tvCreateTime;
         private TextView tvUpdateTime;
+        private AVLoadingIndicatorView indicatorView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -162,6 +172,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
             tvPostCount = (TextView) itemView.findViewById(R.id.tv_post_count);
             tvCreateTime = (TextView) itemView.findViewById(R.id.tv_create_time);
             tvUpdateTime = (TextView) itemView.findViewById(R.id.tv_update_time);
+            indicatorView = (AVLoadingIndicatorView) itemView.findViewById(R.id.view_load_more);
         }
     }
 

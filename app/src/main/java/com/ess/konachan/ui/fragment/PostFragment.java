@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.adapter.RecyclerPostAdapter;
 import com.ess.konachan.bean.ImageBean;
@@ -29,11 +29,11 @@ import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
 import com.ess.konachan.http.ParseHtml;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.other.Sound;
 import com.ess.konachan.ui.activity.MainActivity;
 import com.ess.konachan.ui.activity.SearchActivity;
 import com.ess.konachan.utils.UIUtils;
-import com.ess.konachan.view.GifView;
 import com.ess.konachan.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -65,7 +65,7 @@ public class PostFragment extends Fragment {
     private View mLayoutLoadResult;
     private ImageView mIvLoadNothing;
     private LinearLayout mLayoutLoadNoNetWork;
-    private GifView mIvLoading;
+    private LinearLayout mLayoutLoading;
 
     private int mCurrentPage;
     private String mCurrentTag;   // 当前正在搜索的tag
@@ -249,28 +249,28 @@ public class PostFragment extends Fragment {
 
     private void initLoadingView() {
         mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
-        mIvLoading = (GifView) mRootView.findViewById(R.id.iv_loading);
+        mLayoutLoading = (LinearLayout) mRootView.findViewById(R.id.layout_loading);
         mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
         mLayoutLoadNoNetWork = (LinearLayout) mRootView.findViewById(R.id.layout_load_no_network);
         setLoadingGif();
     }
 
     private void setLoadingGif() {
-        mIvLoading.setVisibility(View.VISIBLE);
+        mLayoutLoading.setVisibility(View.VISIBLE);
         mIvLoadNothing.setVisibility(View.GONE);
         mLayoutLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
     private void setLoadNothingImage() {
-        mIvLoading.setVisibility(View.GONE);
+        mLayoutLoading.setVisibility(View.GONE);
         mIvLoadNothing.setVisibility(View.VISIBLE);
         mLayoutLoadNoNetWork.setVisibility(View.GONE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
     private void setLoadingNoNetworkImage() {
-        mIvLoading.setVisibility(View.GONE);
+        mLayoutLoading.setVisibility(View.GONE);
         mIvLoadNothing.setVisibility(View.GONE);
         mLayoutLoadNoNetWork.setVisibility(View.VISIBLE);
         mLayoutLoadResult.setVisibility(View.VISIBLE);
@@ -471,7 +471,10 @@ public class PostFragment extends Fragment {
                 if (thumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        Glide.with(mActivity).load(imageBean.posts[0].sampleUrl).submit();
+                        GlideApp.with(mActivity)
+                                .load(imageBean.posts[0].sampleUrl)
+                                .priority(Priority.HIGH)
+                                .submit();
                     }
                     break;
                 }
@@ -487,6 +490,7 @@ public class PostFragment extends Fragment {
                 mPostAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
                 setLoadNothingImage();
+                Sound.getInstance().playLoadNothingSound(getActivity());
             }
         });
     }

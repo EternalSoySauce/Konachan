@@ -6,14 +6,12 @@
     <color name="colorWindowBackground">#222222</color>
 
     <!-- 点击按钮时的ripple颜色 -->
-    <color name="color_ripple">#30FFFFFF</color>
+    <color name="color_ripple_button">#30FFFFFF</color>
+    <!-- 点击Setting里的item时的ripple颜色-->
+    <color name="color_ripple_setting_item">#33F1F1F1</color>
 
     <!-- 点击选择搜索模式弹窗时的背景色 -->
     <color name="color_popup_item_pressed">#1A000000</color>
-
-    <!-- 点击设置与帮助item时的背景色 -->
-    <color name="color_setting_item_pressed">#1AFFFFFF</color>
-    <color name="color_setting_item_unpressed">#2C2C2C</color>
 
     <!-- nav选中时背景色 -->
     <color name="color_nav_item_selected_bg">#3B3B3B</color>
@@ -48,6 +46,7 @@
     <color name="color_checkbox_checked">#EE8887</color>
     <color name="color_checkbox_unchecked_dark">#3B3B3B</color>
     <color name="color_checkbox_unchecked_light">#F1F1F1</color>
+    <color name="color_checkbox_unchecked_general">#A9A9A9</color>
 
     <!-- Tags颜色-->
     <color name="color_copyright">#DD00DD</color>

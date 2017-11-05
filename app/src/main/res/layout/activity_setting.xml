@@ -24,7 +24,6 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -32,46 +31,89 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/layout_tag_type_help"
+            <com.balysv.materialripple.MaterialRippleLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="@drawable/pressed_list_textview_setting"
-                android:onClick="onClick">
+                android:layout_height="64dp"
+                app:mrl_rippleColor="@color/color_ripple_setting_item"
+                app:mrl_rippleDelayClick="false"
+                app:mrl_rippleOverlay="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="16dp"
-                    android:text="@string/setting_tag_type_help"
-                    android:textColor="@color/color_text_unselected"
-                    android:textSize="16sp"/>
-
-                <View
+                <FrameLayout
+                    android:id="@+id/layout_setting_allow_play_sound"
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginStart="16dp"
-                    android:background="#33F1F1F1"/>
-            </FrameLayout>
+                    android:layout_height="match_parent"
+                    android:onClick="onClick">
 
-            <FrameLayout
-                android:id="@+id/layout_advanced_search_help"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/setting_allow_play_sound"
+                        android:textColor="@color/color_text_unselected"
+                        android:textSize="15sp"/>
+
+                    <com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox
+                        android:id="@+id/cb_setting_allow_play_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:clickable="false"
+                        android:tint="@color/check_box_setting_color"/>
+                </FrameLayout>
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:background="@drawable/pressed_list_textview_setting"
-                android:onClick="onClick">
+                android:layout_height="0.5dp"
+                android:background="@color/color_ripple_setting_item"/>
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                app:mrl_rippleColor="@color/color_ripple_setting_item"
+                app:mrl_rippleOverlay="true">
 
                 <TextView
+                    android:id="@+id/tv_help_tag_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="16dp"
-                    android:text="@string/setting_advanced_search_help"
+                    android:onClick="onClick"
+                    android:text="@string/setting_help_tag_type"
                     android:textColor="@color/color_text_unselected"
-                    android:textSize="16sp"/>
-            </FrameLayout>
+                    android:textSize="15sp"/>
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/color_ripple_setting_item"/>
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                app:mrl_rippleColor="@color/color_ripple_setting_item"
+                app:mrl_rippleOverlay="true">
+
+                <TextView
+                    android:id="@+id/tv_help_advanced_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:onClick="onClick"
+                    android:text="@string/setting_help_advanced_search"
+                    android:textColor="@color/color_text_unselected"
+                    android:textSize="15sp"/>
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/color_ripple_setting_item"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

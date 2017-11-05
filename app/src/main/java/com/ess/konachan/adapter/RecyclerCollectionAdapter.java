@@ -8,9 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.CollectionBean;
-import com.ess.konachan.other.GlideConfig;
+import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.utils.VibratorUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
@@ -70,7 +71,11 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         int slideLength = (int) ((UIUtils.getWindowSize(mContext)[0] - UIUtils.dp2px(mContext, 6)) / 3f);
         holder.ivCollection.getLayoutParams().width = slideLength;
         holder.ivCollection.getLayoutParams().height = slideLength;
-        GlideConfig.getInstance().loadImage(mContext, collectionBean.url, holder.ivCollection);
+        GlideApp.with(mContext)
+                .load(collectionBean.url)
+                .priority(Priority.HIGH)
+                .into(holder.ivCollection);
+
         holder.ivCollection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +93,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
                 }
             }
         });
+
         holder.ivCollection.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -103,6 +109,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
                 return false;
             }
         });
+
         holder.ivCollection.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
