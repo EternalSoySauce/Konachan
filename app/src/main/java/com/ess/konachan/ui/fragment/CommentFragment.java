@@ -125,9 +125,13 @@ public class CommentFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                ArrayList<CommentBean> commentList = ParseHtml.getCommentList(mActivity, html);
-                setCommentList(commentList);
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    ArrayList<CommentBean> commentList = ParseHtml.getCommentList(mActivity, html);
+                    setCommentList(commentList);
+                } else {
+                    getCommentList();
+                }
                 response.close();
             }
         });

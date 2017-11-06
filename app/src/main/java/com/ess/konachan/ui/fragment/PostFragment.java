@@ -344,13 +344,17 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                try {
-                    ArrayList<ThumbBean> thumbList = ParseHtml.getThumbList(html);
-                    refreshThumbList(thumbList);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    getNoData();
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    try {
+                        ArrayList<ThumbBean> thumbList = ParseHtml.getThumbList(html);
+                        refreshThumbList(thumbList);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        getNoData();
+                    }
+                } else {
+                    checkNetwork();
                 }
                 response.close();
             }
@@ -391,14 +395,18 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                ArrayList<ThumbBean> thumbList = new ArrayList<>();
-                try {
-                    String html = response.body().string();
-                    thumbList.addAll(ParseHtml.getThumbList(html));
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                } finally {
-                    addMoreThumbList(thumbList);
+                if (response.isSuccessful()) {
+                    ArrayList<ThumbBean> thumbList = new ArrayList<>();
+                    try {
+                        String html = response.body().string();
+                        thumbList.addAll(ParseHtml.getThumbList(html));
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    } finally {
+                        addMoreThumbList(thumbList);
+                    }
+                } else {
+                    checkNetwork();
                 }
                 response.close();
             }
@@ -437,23 +445,27 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                String name = ParseHtml.getNameFromBaidu(html);
-                if (!TextUtils.isEmpty(name)) {
-                    String tag1 = "~" + name;
-                    mCurrentTagList.add(tag1);
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    String name = ParseHtml.getNameFromBaidu(html);
+                    if (!TextUtils.isEmpty(name)) {
+                        String tag1 = "~" + name;
+                        mCurrentTagList.add(tag1);
 
-                    String[] split = name.split("_");
-                    StringBuilder tag2 = new StringBuilder("~");
-                    for (int i = split.length - 1; i >= 0; i--) {
-                        tag2.append(split[i]).append("_");
+                        String[] split = name.split("_");
+                        StringBuilder tag2 = new StringBuilder("~");
+                        for (int i = split.length - 1; i >= 0; i--) {
+                            tag2.append(split[i]).append("_");
+                        }
+                        tag2.replace(tag2.length() - 1, tag2.length(), "");
+                        mCurrentTagList.add(tag2.toString());
+                        getNewPosts(mCurrentPage);
+                        Log.i("rrr", "name: " + name);
+                    } else {
+                        getNoData();
                     }
-                    tag2.replace(tag2.length() - 1, tag2.length(), "");
-                    mCurrentTagList.add(tag2.toString());
-                    getNewPosts(mCurrentPage);
-                    Log.i("rrr", "name: " + name);
                 } else {
-                    getNoData();
+                    checkNetwork();
                 }
                 response.close();
             }
@@ -506,7 +518,7 @@ public class PostFragment extends Fragment {
                 if (mPostAdapter.getThumbList().isEmpty()) {
                     setLoadingNoNetworkImage();
                     Sound.getInstance().playLoadNoNetworkSound(getActivity());
-                }else {
+                } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }
 

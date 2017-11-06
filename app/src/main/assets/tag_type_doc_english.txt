@@ -8,22 +8,24 @@
     <span><br/><font color='#FF2020'>· Style</font></span>
     <span><br/><font color='#EE8887'>· General (default type)</font></span>
 
-        <h6"><font color='#DD00DD'>Copyright</font></h6>
+    <div>
+        <h6><font color='#DD00DD'>Copyright</font></h6>
         <p>Copyright tags identify the name of the anime, game, visual novel or some sort of copyrighted setting.</p>
+     </div>
 
     <div>
         <h6><font color='#00AA00'>Character</font></h6>
-        <p>Character tags identify the character(s) in the post. <i>(Use the Naming Order described above.)</i></p>
+        <p>Character tags identify the character(s) in the post.</p>
     </div>
 
     <div>
-		<h6"><font color='#CCCC00'>Artist</font></h6>
+        <h6><font color='#CCCC00'>Artist</font></h6>
         <p>Artist tags identify the artist. This doesn't mean the artist of the original copyrighted artwork (for example, you wouldn't use the <code><font color='#CCCC00'>takeuchi_takashi</font></code> tag on a picture of Tohsaka Rin drawn by <code><font color='#CCCC00'>kazenokaze</font></code>).</p>
     </div>
 
     <div>
         <h6><font color='#00BBBB'>Circle</font></h6>
-        <p>Circle tags are meta-copyrights. Most are artist circles (artist collectives) or studios like <code><font color='#00BBBB'>key</font></code> which are in a way also artist circles. Also included are publications like <code><font color='#00BBBB'>Megami</font></code> and <code>NyanType</font></code>. These are used ONLY for official artwork (produced or published by...) unless otherwise stated in the wiki (eg. <font color='#EE8887'>Nintendo</font> is an exception).</p>
+        <p>Circle tags are meta-copyrights. Most are artist circles (artist collectives) or studios like <code><font color='#00BBBB'>key</font></code> which are in a way also artist circles. Also included are publications like <code><font color='#00BBBB'>Megami</font></code> and <code><font color='#00BBBB'>NyanType</font></code>. These are used ONLY for official artwork (produced or published by...) unless otherwise stated in the wiki (eg. <font color='#EE8887'>Nintendo</font> is an exception).</p>
         <p>Konachan also uses circle tags for collective copyrights such as the <code><font color='#00BBBB'>monogatari_(series)</font></code> where it's not an actual copyright in of itself, but rather a group of related copyrights.</p>
     </div>
 

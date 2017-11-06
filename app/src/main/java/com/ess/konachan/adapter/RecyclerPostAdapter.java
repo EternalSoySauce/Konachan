@@ -153,10 +153,15 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        String html = response.body().string();
-                        String json = ParseHtml.getImageDetailJson(html);
-                        // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
-                        EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
+                        if (response.isSuccessful()) {
+                            String html = response.body().string();
+                            String json = ParseHtml.getImageDetailJson(html);
+                            // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
+                            EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
+                        } else {
+                            Call newCall = OkHttp.getInstance().connect(thumbBean.linkToShow, this);
+                            mCallList.add(newCall);
+                        }
                         response.close();
                     }
                 });

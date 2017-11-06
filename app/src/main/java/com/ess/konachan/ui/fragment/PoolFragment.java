@@ -329,11 +329,15 @@ public class PoolFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                ArrayList<PoolListBean> poolList = getPoolList(mActivity, html);
-                refreshPoolList(poolList);
-                if (poolList.isEmpty()) {
-                    getNoData();
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    ArrayList<PoolListBean> poolList = getPoolList(mActivity, html);
+                    refreshPoolList(poolList);
+                    if (poolList.isEmpty()) {
+                        getNoData();
+                    }
+                } else {
+                    checkNetwork();
                 }
                 response.close();
             }
@@ -374,8 +378,12 @@ public class PoolFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                addMorePoolList(ParseHtml.getPoolList(mActivity, html));
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    addMorePoolList(ParseHtml.getPoolList(mActivity, html));
+                } else {
+                    checkNetwork();
+                }
                 response.close();
             }
         });
@@ -425,7 +433,7 @@ public class PoolFragment extends Fragment {
                 if (mPoolAdapter.getPoolList().isEmpty()) {
                     setLoadingNoNetworkImage();
                     Sound.getInstance().playLoadNoNetworkSound(getActivity());
-                }else {
+                } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }
 

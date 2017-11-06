@@ -119,15 +119,19 @@ public class PoolPostFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                final String html = response.body().string();
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSwipeRefresh.setRefreshing(false);
-                            mPostAdapter.refreshDatas(ParseHtml.getThumbListOfPool(html));
-                        }
-                    });
+                if (response.isSuccessful()) {
+                    final String html = response.body().string();
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSwipeRefresh.setRefreshing(false);
+                                mPostAdapter.refreshDatas(ParseHtml.getThumbListOfPool(html));
+                            }
+                        });
+                    }
+                }else {
+                    mCall = OkHttp.getInstance().connect(mLinkToShow, this);
                 }
                 response.close();
             }

@@ -1,47 +1,47 @@
 <div>
-    <h4><font color='#006600'>Types</font></h4>
-    There are six types of tags with the following sort hierarchy:
-    <span><br/><font color='#DD00DD'>· Copyright</font></span>
-    <span><br/><font color='#00AA00'>· Character</font></span>
-    <span><br/><font color='#CCCC00'>· Artist</font></span>
-    <span><br/><font color='#00BBBB'>· Circle</font></span>
-    <span><br/><font color='#FF2020'>· Style</font></span>
-    <span><br/><font color='#EE8887'>· General (default type)</font></span>
+    <h4><font color='#006600'>类型</font></h4>
+    一共有6种类型的标签按照以下层次排序：
+    <span><br/><font color='#DD00DD'>· 版权</font></span>
+    <span><br/><font color='#00AA00'>· 角色</font></span>
+    <span><br/><font color='#CCCC00'>· 作者</font></span>
+    <span><br/><font color='#00BBBB'>· 圈子</font></span>
+    <span><br/><font color='#FF2020'>· 风格</font></span>
+    <span><br/><font color='#EE8887'>· 普通（默认类型）</font></span>
 
     <div>
-        <h6><font color='#DD00DD'>Copyright</font></h6>
-        <p>Copyright tags identify the name of the anime, game, visual novel or some sort of copyrighted setting.</p>
+        <h6><font color='#DD00DD'>版权</font></h6>
+        <p>版权标签标识动画、游戏、视觉小说或某种受版权保护的的名称。</p>
      </div>
 
     <div>
-        <h6><font color='#00AA00'>Character</font></h6>
-        <p>Character tags identify the character(s) in the post. <i>(Use the Naming Order described above.)</i></p>
+        <h6><font color='#00AA00'>角色</font></h6>
+        <p>角色标签标识图片中的各个人物。</p>
     </div>
 
     <div>
-        <h6><font color='#CCCC00'>Artist</font></h6>
-        <p>Artist tags identify the artist. This doesn't mean the artist of the original copyrighted artwork (for example, you wouldn't use the <code><font color='#CCCC00'>takeuchi_takashi</font></code> tag on a picture of Tohsaka Rin drawn by <code><font color='#CCCC00'>kazenokaze</font></code>).</p>
+        <h6><font color='#CCCC00'>作者</font></h6>
+        <p>作者标签标识该图片的作者。这并不代表他是官方原作的作者（例如，你不应该在 <code><font color='#CCCC00'>kazenokaze（P站画师）</font></code>画的远坂凛的图片上使用 <code><font color='#CCCC00'>takeuchi_takashi（武内崇）</font></code>标签）。</p>
     </div>
 
     <div>
-        <h6><font color='#00BBBB'>Circle</font></h6>
-        <p>Circle tags are meta-copyrights. Most are artist circles (artist collectives) or studios like <code><font color='#00BBBB'>key</font></code> which are in a way also artist circles. Also included are publications like <code><font color='#00BBBB'>Megami</font></code> and <code>NyanType</font></code>. These are used ONLY for official artwork (produced or published by...) unless otherwise stated in the wiki (eg. <font color='#EE8887'>Nintendo</font> is an exception).</p>
-        <p>Konachan also uses circle tags for collective copyrights such as the <code><font color='#00BBBB'>monogatari_(series)</font></code> where it's not an actual copyright in of itself, but rather a group of related copyrights.</p>
+        <h6><font color='#00BBBB'>圈子</font></h6>
+        <p>圈子标签是元版权。大多数是作者圈（作者集体）或者像 <code><font color='#00BBBB'>key社</font></code> 这样的工作室。还包括如 <code><font color='#00BBBB'>Megami</font></code> 和 <code><font color='#00BBBB'>NyanType</font></code> 这种杂志刊物。除非维基百科中另有说明，否则这些内容仅用于官方作品（由...制作或发布）（<font color='#EE8887'>任天堂</font>就是个例外）。</p>
+        <p>K站还使用圈子标签来表示集体版权，例如 <code><font color='#00BBBB'>物语（系列）</font></code>，它本身并没有真正的版权，但相对来说也算是拥有版权的。</p>
     </div>
 
     <div>
-        <h6><font color='#FF2020'>Style</font></h6>
-        <p>Style tags are used to tag things that do not fall under one of the other types. These include things like artistic styles, image descriptors, holiday themes and vocaloid songs.</p>
-        <p>Vocaloid songs are tagged when an image is created for or contains references to a particular song or it's official artwork. Tags for vocaloid songs should end in <code><font color='#FF2020'>_(vocaloid)</font></code>.</p>
+        <h6><font color='#FF2020'>风格</font></h6>
+        <p>风格标签用于标识不属于其他类型的东西。其中包括艺术风格、图片描述、假日主题和Vocaloid歌曲。</p>
+        <p>Vocaloid歌曲标签在图片创建时被添加，或包含对特定歌曲或其官方艺术作品的引用。Vocaloid歌曲标签以 <code><font color='#FF2020'>_(vocaloid)</font></code> 结尾。</p>
     </div>
 
     <div>
-        <h6><font color='#EE8887'>General</font></h6>
-        <p>General tags are used to tag an object (eg. book), action (eg. kiss), environment (eg. landscape) or color (eg. green).</p>
+        <h6><font color='#EE8887'>普通</font></h6>
+        <p>普通标签用于标识物体（如书本）、动作（如接吻）、环境（如风景）或颜色（如绿色）。</p>
     </div>
 
     <div>
-        <h6><font color='#FFFFFF'>Ambiguous Flag</font></h6>
-        <p>Any tag can be flagged <i>ambiguous</i>, that is the <i>ambiguous</i> flag is separate from the tag type. When a search is performed using a tag flagged <i>ambiguous</i>, such will be noted above the results and possible corrections will be listed.</p>
+        <h6><font color='#FFFFFF'>模糊标识</font></h6>
+        <p>任何标签都可被标记为 <i>模糊</i>，也就是说 <i>模糊</i> 标识与标签类型是分开的。当使用标记为 <i>模糊</i> 的标签进行搜索时，会在结果上面注明，并尽可能地列出正确的结果。</p>
 	</div>
 </div>
