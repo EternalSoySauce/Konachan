@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.ess.konachan.R;
+import com.ess.konachan.listener.OnTouchScaleListener;
 import com.ess.konachan.view.GameSurfaceView;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -36,6 +37,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initViews() {
         mGameView = (GameSurfaceView) findViewById(R.id.surface_view_game);
+
+        OnTouchScaleListener touchListener = new OnTouchScaleListener(0.9f);
+        findViewById(R.id.btn_column_3).setOnTouchListener(touchListener);
+        findViewById(R.id.btn_column_4).setOnTouchListener(touchListener);
+        findViewById(R.id.btn_column_5).setOnTouchListener(touchListener);
+        findViewById(R.id.btn_restart).setOnTouchListener(touchListener);
     }
 
     @Override
@@ -57,9 +64,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void finish() {
-        super.finish();
+    protected void onDestroy() {
+        super.onDestroy();
         mGameView.recycleBitmaps(true);
     }
-
 }

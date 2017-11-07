@@ -82,7 +82,10 @@
     <string name="delete">删除</string>
 
     <!-- Surface View -->
-    <string name="current_step">步数：</string>
+    <string name="game_column_3">3 × 3</string>
+    <string name="game_column_4">4 × 4</string>
+    <string name="game_column_5">5 × 5</string>
+    <string name="game_current_step">步数：</string>
 
     <!-- Dialog -->
     <string name="dialog_delete_msg1">将删除&#160;</string>

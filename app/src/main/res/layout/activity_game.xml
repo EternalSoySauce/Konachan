@@ -34,34 +34,41 @@
 
         <Button
             android:id="@+id/btn_column_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
             android:layout_gravity="top|start"
+            android:background="@drawable/ic_button_game"
             android:onClick="onClick"
-            android:text="3 × 3"/>
+            android:text="@string/game_column_3"
+            android:textColor="@color/colorAccent"/>
 
         <Button
             android:id="@+id/btn_column_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
             android:layout_gravity="top|center_horizontal"
+            android:background="@drawable/ic_button_game"
             android:onClick="onClick"
-            android:text="4 × 4"/>
+            android:text="@string/game_column_4"
+            android:textColor="@color/colorAccent"/>
 
         <Button
             android:id="@+id/btn_column_5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
             android:layout_gravity="top|end"
+            android:background="@drawable/ic_button_game"
             android:onClick="onClick"
-            android:text="5 × 5"/>
+            android:text="@string/game_column_5"
+            android:textColor="@color/colorAccent"/>
 
         <Button
             android:id="@+id/btn_restart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:onClick="onClick"
-            android:text="重新开始"/>
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/ic_restart"
+            android:onClick="onClick"/>
     </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -103,7 +103,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         //记录当前步数
-        String step = getContext().getString(R.string.current_step) + mCurrentStep;
+        String step = getContext().getString(R.string.game_current_step) + mCurrentStep;
         float x = getWidth() / 2f;
         float y = mRectList.get(mRectList.size() - 1).bottom + getHeight() / 15f;
         mPaint.setTextSize(UIUtils.sp2px(getContext(), 18));

@@ -3,7 +3,6 @@ package com.ess.konachan.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,6 +10,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Priority;
 import com.ess.konachan.R;
 import com.ess.konachan.bean.CollectionBean;
+import com.ess.konachan.listener.OnTouchScaleListener;
 import com.ess.konachan.other.GlideApp;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.utils.VibratorUtils;
@@ -110,24 +110,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
             }
         });
 
-        holder.ivCollection.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        holder.itemView.setScaleX(0.96f);
-                        holder.itemView.setScaleY(0.96f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        holder.itemView.setScaleX(1f);
-                        holder.itemView.setScaleY(1f);
-                        break;
-                }
-                return false;
-            }
-        });
-
+        holder.ivCollection.setOnTouchListener(new OnTouchScaleListener(0.96f));
     }
 
     @Override
