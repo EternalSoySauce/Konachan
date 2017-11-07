@@ -26,7 +26,7 @@
     <div>
         <h6><font color='#00BBBB'>圈子</font></h6>
         <p>圈子标签是元版权。大多数是作者圈（作者集体）或者像 <code><font color='#00BBBB'>key社</font></code> 这样的工作室。还包括如 <code><font color='#00BBBB'>Megami</font></code> 和 <code><font color='#00BBBB'>NyanType</font></code> 这种杂志刊物。除非维基百科中另有说明，否则这些内容仅用于官方作品（由...制作或发布）（<font color='#EE8887'>任天堂</font>就是个例外）。</p>
-        <p>K站还使用圈子标签来表示集体版权，例如 <code><font color='#00BBBB'>物语（系列）</font></code>，它本身并没有真正的版权，但相对来说也算是拥有版权的。</p>
+        <p>K站还使用圈子标签来表示集体版权，例如 <code><font color='#00BBBB'>monogatari_(series)</font></code>，它本身并没有真正的版权，但相对来说也算是拥有版权的。</p>
     </div>
 
     <div>
