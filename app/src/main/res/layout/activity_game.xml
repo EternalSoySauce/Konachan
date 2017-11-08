@@ -22,53 +22,93 @@
             app:titleTextAppearance="@style/Toolbar.TitleText"/>
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.ess.konachan.view.GameSurfaceView
             android:id="@+id/surface_view_game"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-        <Button
-            android:id="@+id/btn_column_3"
-            android:layout_width="65dp"
-            android:layout_height="40dp"
-            android:layout_gravity="top|start"
-            android:background="@drawable/ic_button_game"
-            android:onClick="onClick"
-            android:text="@string/game_column_3"
-            android:textColor="@color/colorAccent"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_column_4"
-            android:layout_width="65dp"
-            android:layout_height="40dp"
-            android:layout_gravity="top|center_horizontal"
-            android:background="@drawable/ic_button_game"
-            android:onClick="onClick"
-            android:text="@string/game_column_4"
-            android:textColor="@color/colorAccent"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
-        <Button
-            android:id="@+id/btn_column_5"
-            android:layout_width="65dp"
-            android:layout_height="40dp"
-            android:layout_gravity="top|end"
-            android:background="@drawable/ic_button_game"
-            android:onClick="onClick"
-            android:text="@string/game_column_5"
-            android:textColor="@color/colorAccent"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
 
-        <Button
-            android:id="@+id/btn_restart"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/ic_restart"
-            android:onClick="onClick"/>
-    </FrameLayout>
+                <Button
+                    android:id="@+id/btn_column_3"
+                    android:layout_width="65dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/ic_button_game"
+                    android:onClick="onClick"
+                    android:text="@string/game_column_3"
+                    android:textColor="@color/color_text_unselected"/>
+
+                <Button
+                    android:id="@+id/btn_column_4"
+                    android:layout_width="65dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/ic_button_game"
+                    android:onClick="onClick"
+                    android:text="@string/game_column_4"
+                    android:textColor="@color/color_text_unselected"/>
+
+                <Button
+                    android:id="@+id/btn_column_5"
+                    android:layout_width="65dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/ic_button_game"
+                    android:onClick="onClick"
+                    android:text="@string/game_column_5"
+                    android:textColor="@color/color_text_unselected"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/btn_restart"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/ic_restart"
+                android:onClick="onClick"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/iv_game"
+                android:layout_width="120dp"
+                android:layout_height="120dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

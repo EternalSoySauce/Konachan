@@ -1,9 +1,11 @@
 package com.ess.konachan.ui.activity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.ess.konachan.R;
 import com.ess.konachan.listener.OnTouchScaleListener;
@@ -12,6 +14,7 @@ import com.ess.konachan.view.GameSurfaceView;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private GameSurfaceView mGameView;
+    private ImageView mIvGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +22,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
 
         initToolBarLayout();
+        initGameSurfaceView();
         initViews();
     }
 
@@ -35,8 +39,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void initViews() {
+    private void initGameSurfaceView() {
         mGameView = (GameSurfaceView) findViewById(R.id.surface_view_game);
+        mGameView.setOnActionListener(new GameSurfaceView.OnActionListener() {
+            @Override
+            public void onChangeBitmap(Bitmap bitmap) {
+                mIvGame.setImageBitmap(bitmap);
+            }
+        });
+    }
+
+    private void initViews() {
+        mIvGame = (ImageView) findViewById(R.id.iv_game);
+        mIvGame.setImageBitmap(mGameView.getGameBitmap());
 
         OnTouchScaleListener touchListener = new OnTouchScaleListener(0.9f);
         findViewById(R.id.btn_column_3).setOnTouchListener(touchListener);

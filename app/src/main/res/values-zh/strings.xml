@@ -16,8 +16,8 @@
     <!-- Drawer Layout -->
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>
-    <string name="nav_post">Image</string>
-    <string name="nav_pool">Album</string>
+    <string name="nav_post">图片</string>
+    <string name="nav_pool">图集</string>
     <string name="nav_collection">我的收藏</string>
     <string name="nav_setting">设置与帮助</string>
     <string name="nav_game">拼图游戏</string>
