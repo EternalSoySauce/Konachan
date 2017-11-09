@@ -72,7 +72,7 @@
     <string name="comment_no_comments">暂无评论</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time">Updated&#160;</string>
+    <string name="pool_updated_time" translatable="false">Updated&#160;</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
@@ -93,14 +93,15 @@
     <!-- Dialog -->
     <string name="dialog_delete_msg1">将删除&#160;</string>
     <string name="dialog_delete_msg2">&#160;张图片。</string>
+    <string name="dialog_delete_msg3">&#160;张图片。</string>
     <string name="dialog_delete_cancel">取消</string>
     <string name="dialog_delete_sure">删除</string>
     <string name="dialog_reload_msg">该图片已存在于相册中，是否重新下载？</string>
     <string name="dialog_reload_yes">是</string>
     <string name="dialog_reload_no">否</string>
-    <string name="dialog_doc_tag_type_title">Help: Tags</string>
-    <string name="dialog_doc_advanced_search_title">Help: Cheat Sheet</string>
-    <string name="dialog_doc_sure">OK</string>
+    <string name="dialog_doc_tag_type_title">帮助：标签</string>
+    <string name="dialog_doc_advanced_search_title">帮助：指令表</string>
+    <string name="dialog_doc_sure" translatable="false">OK</string>
     <string name="dialog_doc_lost">文档丢失。</string>
 
 </resources>

@@ -212,7 +212,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,
                 outValue, true);
         textView.setBackgroundResource(outValue.resourceId);
-        textView.setAllCaps(true);
+        textView.setAllCaps(false);
 
         int padding = (int) (tabViewPaddingDp * getResources().getDisplayMetrics().density);
         textView.setPadding(padding, padding, padding, padding);

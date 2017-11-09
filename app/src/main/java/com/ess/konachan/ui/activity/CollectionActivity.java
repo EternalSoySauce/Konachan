@@ -102,8 +102,9 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             case R.id.tv_delete:
                 ArrayList<CollectionBean> deleteList = new ArrayList<>();
                 deleteList.addAll(mCollectionAdapter.getChooseList());
-                String msg = getString(R.string.dialog_delete_msg1)
-                        + deleteList.size() + getString(R.string.dialog_delete_msg2);
+                String msg = getString(R.string.dialog_delete_msg1) + deleteList.size();
+                msg += deleteList.size() <= 1 ? getString(R.string.dialog_delete_msg2)
+                        : getString(R.string.dialog_delete_msg3);
                 showDeleteCollectionDialog(msg, deleteList);
                 break;
         }

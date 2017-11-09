@@ -21,12 +21,12 @@ import java.util.Locale;
 
 public class Data {
 
-    private final static String TXT_SEARCH_MODE_CHINESE = "search_mode_chinese.txt";
-    private final static String TXT_SEARCH_MODE_ENGLISH = "search_mode_english.txt";
-    private final static String TXT_TAG_TYPE_DOC_CHINESE = "tag_type_doc_chinese.txt";
-    private final static String TXT_TAG_TYPE_DOC_ENGLISH = "tag_type_doc_english.txt";
-    private final static String TXT_ADVANCED_SEARCH_DOC_CHINESE = "advanced_search_doc_chinese.txt";
-    private final static String TXT_ADVANCED_SEARCH_DOC_ENGLISH = "advanced_search_doc_english.txt";
+    private final static String TXT_SEARCH_MODE_CHINESE = "search_mode_chinese";
+    private final static String TXT_SEARCH_MODE_ENGLISH = "search_mode_english";
+    private final static String TXT_TAG_TYPE_DOC_CHINESE = "tag_type_doc_chinese";
+    private final static String TXT_TAG_TYPE_DOC_ENGLISH = "tag_type_doc_english";
+    private final static String TXT_ADVANCED_SEARCH_DOC_CHINESE = "advanced_search_doc_chinese";
+    private final static String TXT_ADVANCED_SEARCH_DOC_ENGLISH = "advanced_search_doc_english";
 
     // 搜索界面显示“搜索模式说明”
     public static ArrayList<String> getSearchModeDocumentList(Context context) {
@@ -35,7 +35,8 @@ public class Data {
         InputStream is = null;
         try {
             is = context.getAssets().open(fileName);
-            String html = FileUtils.streamToString(is);
+            String html = FileUtils.decodeXorString(FileUtils.streamToString(is),
+                    FileUtils.encodeMD5String(fileName));
             Document document = Jsoup.parse(html);
             Elements modes = document.getElementsByTag("span");
             for (Element mode : modes) {
@@ -61,7 +62,8 @@ public class Data {
         InputStream is = null;
         try {
             is = context.getAssets().open(fileName);
-            String html = FileUtils.streamToString(is);
+            String html = FileUtils.decodeXorString(FileUtils.streamToString(is),
+                    FileUtils.encodeMD5String(fileName));
             return Html.fromHtml(html);
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,7 +85,8 @@ public class Data {
         InputStream is = null;
         try {
             is = context.getAssets().open(fileName);
-            String html = FileUtils.streamToString(is);
+            String html = FileUtils.decodeXorString(FileUtils.streamToString(is),
+                    FileUtils.encodeMD5String(fileName));
             return Html.fromHtml(html, null, new HtmlFontSizeTagHandler(context));
         } catch (IOException e) {
             e.printStackTrace();
