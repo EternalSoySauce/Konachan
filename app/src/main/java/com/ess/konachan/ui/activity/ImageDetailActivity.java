@@ -1,13 +1,12 @@
 package com.ess.konachan.ui.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -19,6 +18,7 @@ import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
+import com.ess.konachan.other.CheckPermission;
 import com.ess.konachan.service.DownloadService;
 import com.ess.konachan.ui.fragment.CommentFragment;
 import com.ess.konachan.ui.fragment.DetailFragment;
@@ -31,14 +31,6 @@ import com.ess.konachan.view.SlidingTabLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
-
-@RuntimePermissions
 public class ImageDetailActivity extends AppCompatActivity {
 
     private ThumbBean mThumbBean;
@@ -47,6 +39,8 @@ public class ImageDetailActivity extends AppCompatActivity {
     private ViewPager mVpImageDetail;
     private ArrayList<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
+
+    private CheckPermission mCheckPermissionUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,26 +98,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         if (mImageBean != null) {
             setId(mImageBean);
         }
-
-        FrameLayout flSaveImage = (FrameLayout) findViewById(R.id.fl_save_image);
-        flSaveImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mImageBean != null) {
-                    String url = mImageBean.posts[0].jpegUrl;
-                    String bitmapName = Constants.IMAGE_HEAD + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
-                            + url.substring(url.lastIndexOf("."));
-                    File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
-                    if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
-                        downloadBitmap(url, file.getAbsolutePath());
-                    } else if (file.exists()) {
-                        showPromptToReloadImageDialog(url, file.getAbsolutePath());
-                    }
-                } else {
-                    Toast.makeText(ImageDetailActivity.this, R.string.loading_image, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     private void initViewPager() {
@@ -188,26 +162,33 @@ public class ImageDetailActivity extends AppCompatActivity {
         OkHttp.getInstance().addUrlToDownloadQueue(url);
     }
 
-    @NeedsPermission({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    void showNeedForStorage() {
+    private void saveImage() {
+        if (mImageBean != null) {
+            String url = mImageBean.posts[0].jpegUrl;
+            String bitmapName = Constants.IMAGE_HEAD + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
+                    + url.substring(url.lastIndexOf("."));
+            File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
+            if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
+                downloadBitmap(url, file.getAbsolutePath());
+            } else if (file.exists()) {
+                showPromptToReloadImageDialog(url, file.getAbsolutePath());
+            }
+        } else {
+            Toast.makeText(this, R.string.loading_image, Toast.LENGTH_SHORT).show();
+        }
     }
 
-    @OnShowRationale({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    void showRationaleForStorage(final PermissionRequest request) {
-    }
-
-    @OnPermissionDenied({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    void showDeniedForStorage() {
-    }
-
-    @OnNeverAskAgain({Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    void showNeverAskForStorage() {
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // NOTE: delegate the permission handling to generated method
-        ImageDetailActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    // fl_save_image点击事件
+    public void saveImage(View view) {
+        if (mCheckPermissionUtil == null) {
+            mCheckPermissionUtil = new CheckPermission(this, new CheckPermission.OnPermissionListener() {
+                @Override
+                public void onGranted() {
+                    saveImage();
+                    Log.i("rrr","granted");
+                }
+            });
+        }
+        mCheckPermissionUtil.checkStoragePermission();
     }
 }

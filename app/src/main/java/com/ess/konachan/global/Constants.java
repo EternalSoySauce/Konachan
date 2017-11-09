@@ -38,6 +38,7 @@ public class Constants {
     public final static int SEARCH_CODE_HOME = 1005;
     public final static int SEARCH_CODE_RANDOM = 1006;
     public final static int FULLSCREEN_CODE = 2000;
+    public final static int STORAGE_PERMISSION_CODE = 3000;
 
     // EventBus
     public final static String TOGGLE_SCAN_MODE = "toggleScanMode";  //更换浏览模式后通知 PostFragment和PoolFragment更新adapter
