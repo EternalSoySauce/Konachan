@@ -1,6 +1,6 @@
 package com.ess.konachan.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,13 +20,13 @@ import java.util.Iterator;
 
 public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapter.MyViewHolder> {
 
-    private Context mContext;
+    private Activity mActivity;
     private ArrayList<PoolListBean> mPoolList;
     private OnItemClickListener mItemClickListener;
     private ViewState mCurrentState;
 
-    public RecyclerPoolAdapter(Context context, @NonNull ArrayList<PoolListBean> poolList) {
-        mContext = context;
+    public RecyclerPoolAdapter(Activity activity, @NonNull ArrayList<PoolListBean> poolList) {
+        mActivity = activity;
         mPoolList = poolList;
     }
 
@@ -34,7 +34,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = viewType == ViewState.NORMAL.ordinal() ? R.layout.recyclerview_item_pool
                 : R.layout.layout_load_more;
-        View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(mActivity).inflate(layoutId, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
@@ -60,7 +60,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         final PoolListBean poolListBean = mPoolList.get(position);
 
         //缩略图
-        GlideApp.with(mContext)
+        GlideApp.with(mActivity)
                 .load(poolListBean.thumbUrl)
                 .placeholder(R.drawable.ic_placeholder_pool)
                 .priority(Priority.HIGH)
@@ -79,7 +79,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         holder.tvCreateTime.setText(poolListBean.createTime);
 
         //上传时间
-        String update = mContext.getString(R.string.pool_updated_time) + poolListBean.updateTime;
+        String update = mActivity.getString(R.string.pool_updated_time) + poolListBean.updateTime;
         holder.tvUpdateTime.setText(update);
 
         //点击加载图片列表
@@ -133,10 +133,12 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
 
     private void preloadThumbnail(ArrayList<PoolListBean> poolList) {
         for (PoolListBean poolListBean : poolList) {
-            GlideApp.with(mContext)
-                    .load(poolListBean.thumbUrl)
-                    .priority(Priority.NORMAL)
-                    .submit();
+            if (!mActivity.isDestroyed()) {
+                GlideApp.with(mActivity)
+                        .load(poolListBean.thumbUrl)
+                        .priority(Priority.NORMAL)
+                        .submit();
+            }
         }
     }
 

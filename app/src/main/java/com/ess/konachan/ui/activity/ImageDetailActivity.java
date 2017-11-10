@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -18,12 +17,12 @@ import com.ess.konachan.bean.ImageBean;
 import com.ess.konachan.bean.ThumbBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.http.OkHttp;
-import com.ess.konachan.other.CheckPermission;
 import com.ess.konachan.service.DownloadService;
 import com.ess.konachan.ui.fragment.CommentFragment;
 import com.ess.konachan.ui.fragment.DetailFragment;
 import com.ess.konachan.ui.fragment.ImageFragment;
 import com.ess.konachan.utils.FileUtils;
+import com.ess.konachan.utils.PermissionUtils;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.CustomDialog;
 import com.ess.konachan.view.SlidingTabLayout;
@@ -40,7 +39,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     private ArrayList<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
 
-    private CheckPermission mCheckPermissionUtil;
+    private PermissionUtils mPermissionUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +141,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void showPromptToReloadImageDialog(final String imageUrl, final String filePath) {
-        CustomDialog.showPromptToReloadImage(this, new CustomDialog.OnDialogActionListener() {
+        CustomDialog.showPromptToReloadImage(this, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
                 if (!OkHttp.getInstance().isUrlInDownloadQueue(imageUrl)) {
@@ -180,15 +179,14 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     // fl_save_image点击事件
     public void saveImage(View view) {
-        if (mCheckPermissionUtil == null) {
-            mCheckPermissionUtil = new CheckPermission(this, new CheckPermission.OnPermissionListener() {
+        if (mPermissionUtil == null) {
+            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.SimplePermissionListener() {
                 @Override
                 public void onGranted() {
                     saveImage();
-                    Log.i("rrr","granted");
                 }
             });
         }
-        mCheckPermissionUtil.checkStoragePermission();
+        mPermissionUtil.checkStoragePermission();
     }
 }

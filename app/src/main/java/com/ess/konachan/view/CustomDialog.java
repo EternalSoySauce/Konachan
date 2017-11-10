@@ -94,7 +94,76 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .show();
     }
 
+    /**
+     * 需要SD卡权限时的提示
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showNeedStoragePermissionDialog(Context context, final OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_permission_rationale_title)
+                .content(R.string.dialog_permission_rationale_msg)
+                .cancelable(false)
+                .canceledOnTouchOutside(false)
+                .negativeText(R.string.dialog_permission_rationale_deny)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        listener.onNegative();
+                    }
+                })
+                .positiveText(R.string.dialog_permission_rationale_grant)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        listener.onPositive();
+                    }
+                }).show();
+    }
+
+    /**
+     * 跳转至系统权限设置界面提示
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showGoToSettingDialog(Context context, final OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_permission_setting_title)
+                .content(R.string.dialog_permission_setting_msg)
+                .cancelable(false)
+                .canceledOnTouchOutside(false)
+                .negativeText(R.string.dialog_permission_setting_cancel)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        listener.onNegative();
+                    }
+                })
+                .positiveText(R.string.dialog_permission_setting_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        listener.onPositive();
+                    }
+                }).show();
+    }
+
     public interface OnDialogActionListener {
         void onPositive();
+
+        void onNegative();
+    }
+
+    public static class SimpleDialogActionListener implements OnDialogActionListener {
+
+        @Override
+        public void onPositive() {
+        }
+
+        @Override
+        public void onNegative() {
+        }
     }
 }

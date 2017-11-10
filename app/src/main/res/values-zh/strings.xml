@@ -72,7 +72,7 @@
     <string name="comment_no_comments">暂无评论</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time" translatable="false">Updated&#160;</string>
+    <string name="pool_updated_time">Updated&#160;</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
@@ -101,7 +101,15 @@
     <string name="dialog_reload_no">否</string>
     <string name="dialog_doc_tag_type_title">帮助：标签</string>
     <string name="dialog_doc_advanced_search_title">帮助：指令表</string>
-    <string name="dialog_doc_sure" translatable="false">OK</string>
+    <string name="dialog_doc_sure">OK</string>
     <string name="dialog_doc_lost">文档丢失。</string>
+    <string name="dialog_permission_rationale_title">权限请求</string>
+    <string name="dialog_permission_rationale_msg">应用需要SD卡权限进行保存、读取、删除图片操作。</string>
+    <string name="dialog_permission_rationale_grant">允许</string>
+    <string name="dialog_permission_rationale_deny">拒绝</string>
+    <string name="dialog_permission_setting_title">权限请求失败</string>
+    <string name="dialog_permission_setting_msg">应用请求SD卡权限失败，您可以到系统设置界面手动设置权限。</string>
+    <string name="dialog_permission_setting_ok">跳转</string>
+    <string name="dialog_permission_setting_cancel">取消</string>
 
 </resources>

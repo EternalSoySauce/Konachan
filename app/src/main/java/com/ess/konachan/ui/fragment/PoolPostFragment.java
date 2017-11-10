@@ -157,10 +157,12 @@ public class PoolPostFragment extends Fragment {
                 if (thumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        GlideApp.with(getActivity())
-                                .load(imageBean.posts[0].sampleUrl)
-                                .priority(Priority.HIGH)
-                                .submit();
+                        if (!getActivity().isDestroyed()) {
+                            GlideApp.with(getActivity())
+                                    .load(imageBean.posts[0].sampleUrl)
+                                    .priority(Priority.HIGH)
+                                    .submit();
+                        }
                     }
                     break;
                 }

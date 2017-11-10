@@ -483,10 +483,12 @@ public class PostFragment extends Fragment {
                 if (thumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        GlideApp.with(mActivity)
-                                .load(imageBean.posts[0].sampleUrl)
-                                .priority(Priority.HIGH)
-                                .submit();
+                        if (!getActivity().isDestroyed()) {
+                            GlideApp.with(mActivity)
+                                    .load(imageBean.posts[0].sampleUrl)
+                                    .priority(Priority.HIGH)
+                                    .submit();
+                        }
                     }
                     break;
                 }

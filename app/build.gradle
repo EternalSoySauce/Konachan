@@ -7,8 +7,8 @@ android {
         applicationId "com.ess.konachan"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 9
-        versionName "3.0"
+        versionCode 10
+        versionName "3.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -72,7 +72,7 @@
     <string name="comment_no_comments">No comment</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time" translatable="false">Updated&#160;</string>
+    <string name="pool_updated_time">Updated&#160;</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">All</string>
@@ -101,7 +101,15 @@
     <string name="dialog_reload_no">Cancel</string>
     <string name="dialog_doc_tag_type_title">Help: Tags</string>
     <string name="dialog_doc_advanced_search_title">Help: Cheat Sheet</string>
-    <string name="dialog_doc_sure" translatable="false">OK</string>
+    <string name="dialog_doc_sure">OK</string>
     <string name="dialog_doc_lost">Document might be lost.</string>
+    <string name="dialog_permission_rationale_title">Permission request</string>
+    <string name="dialog_permission_rationale_msg">Application needs STORAGE permission to save, read and delete pictures.</string>
+    <string name="dialog_permission_rationale_grant">Grant</string>
+    <string name="dialog_permission_rationale_deny">Deny</string>
+    <string name="dialog_permission_setting_title">Permission request failed</string>
+    <string name="dialog_permission_setting_msg">Application request STORAGE permission failed. You can manually set permission to the system settings interface.</string>
+    <string name="dialog_permission_setting_ok">Go to</string>
+    <string name="dialog_permission_setting_cancel">Cancel</string>
 
 </resources>

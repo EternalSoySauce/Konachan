@@ -21,6 +21,7 @@ import com.ess.konachan.bean.CollectionBean;
 import com.ess.konachan.global.Constants;
 import com.ess.konachan.utils.BitmapUtils;
 import com.ess.konachan.utils.FileUtils;
+import com.ess.konachan.utils.PermissionUtils;
 import com.ess.konachan.utils.UIUtils;
 import com.ess.konachan.view.CustomDialog;
 import com.ess.konachan.view.GridDividerItemDecoration;
@@ -45,14 +46,33 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView mRvCollection;
     private RecyclerCollectionAdapter mCollectionAdapter;
 
+    private PermissionUtils mPermissionUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
 
-        initToolBarLayout();
-        initEditView();
-        initRecyclerView();
+        checkStoragePermission();
+    }
+
+    private void checkStoragePermission() {
+        if (mPermissionUtil == null) {
+            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.OnPermissionListener() {
+                @Override
+                public void onGranted() {
+                    initToolBarLayout();
+                    initEditView();
+                    initRecyclerView();
+                }
+
+                @Override
+                public void onDenied() {
+                    finish();
+                }
+            });
+        }
+        mPermissionUtil.checkStoragePermission();
     }
 
     private void initToolBarLayout() {
@@ -161,7 +181,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void showDeleteCollectionDialog(String msg, final ArrayList<CollectionBean> deleteList) {
-        CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.OnDialogActionListener() {
+        CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
                 cancelEdit(false);
@@ -239,9 +259,15 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // 退出全屏回调
         if (resultCode == Constants.FULLSCREEN_CODE && data != null) {
             int position = data.getIntExtra(Constants.FULLSCREEN_POSITION, 0);
             mRvCollection.scrollToPosition(position);
+        }
+
+        // 检查权限回调
+        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
+            mPermissionUtil.checkStoragePermission();
         }
     }
 

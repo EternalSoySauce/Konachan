@@ -15,6 +15,7 @@
             android:layout_width="342dp"
             android:layout_height="192dp"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_bottom_line_pool"
             android:scaleType="centerCrop"
             app:relativeTo="width" />
 

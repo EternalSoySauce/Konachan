@@ -1,6 +1,6 @@
 package com.ess.konachan.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -33,14 +33,14 @@ import okhttp3.Response;
 
 public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapter.MyViewHolder> {
 
-    private Context mContext;
+    private Activity mActivity;
     private ArrayList<ThumbBean> mThumbList;
     private ArrayList<Call> mCallList;
     private OnItemClickListener mItemClickListener;
     private ViewState mCurrentState;
 
-    public RecyclerPostAdapter(Context context, @NonNull ArrayList<ThumbBean> thumbList) {
-        mContext = context;
+    public RecyclerPostAdapter(Activity activity, @NonNull ArrayList<ThumbBean> thumbList) {
+        mActivity = activity;
         mThumbList = thumbList;
         mCallList = new ArrayList<>();
         getImageDetail(thumbList);
@@ -50,7 +50,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = viewType == ViewState.NORMAL.ordinal() ? R.layout.recyclerview_item_post
                 : R.layout.layout_load_more;
-        View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(mActivity).inflate(layoutId, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
@@ -76,7 +76,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         final ThumbBean thumbBean = mThumbList.get(position);
 
         //缩略图
-        GlideApp.with(mContext)
+        GlideApp.with(mActivity)
                 .load(thumbBean.thumbUrl)
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
@@ -89,9 +89,9 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ImageDetailActivity.class);
+                Intent intent = new Intent(mActivity, ImageDetailActivity.class);
                 intent.putExtra(Constants.THUMB_BEAN, thumbBean);
-                mContext.startActivity(intent);
+                mActivity.startActivity(intent);
 
                 if (mItemClickListener != null) {
                     mItemClickListener.onViewDetails();
@@ -172,10 +172,12 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
     private void preloadThumbnail(ArrayList<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
-            GlideApp.with(mContext)
-                    .load(thumbBean.thumbUrl)
-                    .priority(Priority.NORMAL)
-                    .submit();
+            if (!mActivity.isDestroyed()) {
+                GlideApp.with(mActivity)
+                        .load(thumbBean.thumbUrl)
+                        .priority(Priority.NORMAL)
+                        .submit();
+            }
         }
     }
 
