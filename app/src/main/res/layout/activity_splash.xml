@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     android:background="@color/colorWindowBackground"
     android:gravity="center"
-    android:orientation="vertical"
-    tools:context="com.ess.konachan.ui.activity.SplashActivity">
+    android:orientation="vertical">
 
-    <com.ess.konachan.view.AutoFitImageView
+    <com.ess.wallpaper.view.AutoFitImageView
         android:id="@+id/iv_icon"
         android:layout_width="267.5dp"
         android:layout_height="208.5dp"

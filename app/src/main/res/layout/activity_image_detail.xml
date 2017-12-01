@@ -65,17 +65,17 @@
             </FrameLayout>
         </RelativeLayout>
 
-        <com.ess.konachan.view.SlidingTabLayout
+        <com.ess.wallpaper.view.SlidingTabLayout
             android:id="@+id/sliding_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.ess.konachan.view.SlidingTabLayout>
+        </com.ess.wallpaper.view.SlidingTabLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <com.ess.konachan.view.ViewPagerFixed
+    <com.ess.wallpaper.view.ViewPagerFixed
         android:id="@+id/vp_image_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    </com.ess.konachan.view.ViewPagerFixed>
+    </com.ess.wallpaper.view.ViewPagerFixed>
 </android.support.design.widget.CoordinatorLayout>
