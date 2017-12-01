@@ -117,11 +117,8 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
             Iterator<PoolListBean> iterator = poolList.iterator();
             while (iterator.hasNext()) {
                 PoolListBean newData = iterator.next();
-                for (PoolListBean poolListBean : mPoolList) {
-                    if (newData.thumbUrl.equals(poolListBean.thumbUrl)) {
-                        iterator.remove();
-                        break;
-                    }
+                if (mPoolList.contains(newData)) {
+                    iterator.remove();
                 }
             }
 

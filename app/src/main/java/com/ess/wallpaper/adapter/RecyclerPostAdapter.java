@@ -124,11 +124,8 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
             Iterator<ThumbBean> iterator = thumbList.iterator();
             while (iterator.hasNext()) {
                 ThumbBean newData = iterator.next();
-                for (ThumbBean thumbBean : mThumbList) {
-                    if (newData.thumbUrl.equals(thumbBean.thumbUrl)) {
-                        iterator.remove();
-                        break;
-                    }
+                if (mThumbList.contains(newData)) {
+                    iterator.remove();
                 }
             }
 

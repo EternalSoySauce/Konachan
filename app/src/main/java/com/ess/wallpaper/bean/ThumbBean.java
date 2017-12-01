@@ -3,7 +3,7 @@ package com.ess.wallpaper.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ThumbBean implements Parcelable{
+public class ThumbBean implements Parcelable {
 
     public String thumbUrl;
     public String realSize;
@@ -47,4 +47,18 @@ public class ThumbBean implements Parcelable{
             return new ThumbBean[size];
         }
     };
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof ThumbBean) {
+            ThumbBean thumbBean = (ThumbBean) obj;
+            return !(this.thumbUrl == null || thumbBean.thumbUrl == null) && this.thumbUrl.equals(thumbBean.thumbUrl);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return thumbUrl.hashCode();
+    }
 }

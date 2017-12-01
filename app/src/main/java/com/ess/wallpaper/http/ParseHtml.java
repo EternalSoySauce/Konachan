@@ -28,9 +28,11 @@ public class ParseHtml {
         Document doc = Jsoup.parse(html);
         Elements elements = doc.getElementById("post-list-posts").getElementsByTag("li");
         for (Element e : elements) {
-            String thumbUrl = "http:" + e.getElementsByTag("img").attr("src");
+            String thumbUrl = e.getElementsByTag("img").attr("src");
             if (thumbUrl.contains("deleted-preview")) {
                 continue;
+            } else if (!thumbUrl.startsWith("http")) {
+                thumbUrl = "https:" + thumbUrl;
             }
             String realSize = "";
             Elements directLink = e.getElementsByClass("directlink-res");
@@ -51,7 +53,9 @@ public class ParseHtml {
             String json = div.getElementsByTag("script").get(0).html();
             json = json.substring(json.indexOf("{"), json.lastIndexOf("}") + 1);
             json = json.replace("\\/", "/");
-            json = json.replace("//konachan", "http://konachan");
+            if (!json.contains("http://konachan") && !json.contains("https://konachan")) {
+                json = json.replace("//konachan", "https://konachan");
+            }
             return json;
         } catch (NullPointerException e) {
             e.printStackTrace();
