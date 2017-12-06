@@ -12,7 +12,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,20 +20,20 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Priority;
+import com.ess.wallpaper.R;
 import com.ess.wallpaper.adapter.RecyclerPostAdapter;
+import com.ess.wallpaper.bean.ImageBean;
 import com.ess.wallpaper.bean.MsgBean;
+import com.ess.wallpaper.bean.ThumbBean;
 import com.ess.wallpaper.global.Constants;
 import com.ess.wallpaper.http.OkHttp;
 import com.ess.wallpaper.http.ParseHtml;
+import com.ess.wallpaper.other.GlideApp;
+import com.ess.wallpaper.other.Sound;
 import com.ess.wallpaper.ui.activity.MainActivity;
 import com.ess.wallpaper.ui.activity.SearchActivity;
 import com.ess.wallpaper.utils.UIUtils;
 import com.ess.wallpaper.view.GridDividerItemDecoration;
-import com.ess.wallpaper.R;
-import com.ess.wallpaper.bean.ImageBean;
-import com.ess.wallpaper.bean.ThumbBean;
-import com.ess.wallpaper.other.GlideApp;
-import com.ess.wallpaper.other.Sound;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -460,7 +459,6 @@ public class PostFragment extends Fragment {
                         tag2.replace(tag2.length() - 1, tag2.length(), "");
                         mCurrentTagList.add(tag2.toString());
                         getNewPosts(mCurrentPage);
-                        Log.i("rrr", "name: " + name);
                     } else {
                         getNoData();
                     }
