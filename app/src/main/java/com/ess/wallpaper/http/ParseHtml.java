@@ -147,7 +147,9 @@ public class ParseHtml {
                         JsonObject json = new JsonParser().parse(line).getAsJsonObject();
                         String thumbUrl = json.get("sample_url").getAsString();
                         thumbUrl = thumbUrl.replace("\\/", "/");
-                        thumbUrl = "https:" + thumbUrl;
+                        if (!thumbUrl.startsWith("http")) {
+                            thumbUrl = "https:" + thumbUrl;
+                        }
                         poolListBean.thumbUrl = thumbUrl;
                     } else if (line.startsWith("var hover_row = $")) {
                         line = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
