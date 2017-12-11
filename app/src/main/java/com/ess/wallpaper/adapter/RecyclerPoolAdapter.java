@@ -13,6 +13,7 @@ import com.bumptech.glide.Priority;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.bean.PoolListBean;
 import com.ess.wallpaper.other.GlideApp;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
 
         //缩略图
         GlideApp.with(mActivity)
-                .load(poolListBean.thumbUrl)
+                .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
                 .placeholder(R.drawable.ic_placeholder_pool)
                 .priority(Priority.HIGH)
                 .into(holder.ivThumb);
@@ -132,7 +133,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         for (PoolListBean poolListBean : poolList) {
             if (!mActivity.isDestroyed()) {
                 GlideApp.with(mActivity)
-                        .load(poolListBean.thumbUrl)
+                        .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
                         .priority(Priority.NORMAL)
                         .submit();
             }

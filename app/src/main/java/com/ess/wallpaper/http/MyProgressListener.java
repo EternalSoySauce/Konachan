@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.wallpaper.bean.PostBean;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.ess.wallpaper.utils.UIUtils;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.bean.ImageBean;
@@ -85,7 +86,7 @@ public class MyProgressListener implements ProgressListener, RequestListener<Bit
         int size = UIUtils.dp2px(mContext, 64);
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(mThumbUrl)
+                .load(MyGlideModule.makeGlideUrl(mThumbUrl))
                 .listener(this)
                 .override(size)
                 .centerCrop()

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Priority;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.ess.wallpaper.view.GridDividerItemDecoration;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.adapter.RecyclerPostAdapter;
@@ -159,7 +160,7 @@ public class PoolPostFragment extends Fragment {
                         thumbBean.imageBean = imageBean;
                         if (!getActivity().isDestroyed()) {
                             GlideApp.with(getActivity())
-                                    .load(imageBean.posts[0].sampleUrl)
+                                    .load(MyGlideModule.makeGlideUrl(imageBean.posts[0].sampleUrl))
                                     .priority(Priority.HIGH)
                                     .submit();
                         }

@@ -464,6 +464,25 @@ public class PoolFragment extends Fragment {
         }
     }
 
+    //切换搜图网站后收到的通知，obj 为 null
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeBaseUrl(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.CHANGE_BASE_URL)) {
+            if (isPoolPostFragmentVisible()) {
+                removePoolPostFragment();
+            }
+            mPoolAdapter.clear();
+            if (!mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(true);
+            }
+            mIsLoadingMore = false;
+            mLoadMoreAgain = true;
+            mCurrentPage = 1;
+            setLoadingGif();
+            getNewPools(mCurrentPage);
+        }
+    }
+
     public static PoolFragment newInstance() {
         PoolFragment fragment = new PoolFragment();
         return fragment;

@@ -18,6 +18,7 @@ import com.bumptech.glide.request.target.Target;
 import com.ess.wallpaper.bean.MsgBean;
 import com.ess.wallpaper.bean.ThumbBean;
 import com.ess.wallpaper.global.Constants;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.ess.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.bean.ImageBean;
@@ -97,7 +98,7 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
         mIvImage.setZoomable(false);
         String url = mImageBean.posts[0].sampleUrl;
         GlideApp.with(mActivity)
-                .load(url)
+                .load(MyGlideModule.makeGlideUrl(url))
                 .listener(this)
                 .placeholder(R.drawable.ic_placeholder_detail)
                 .priority(Priority.IMMEDIATE)

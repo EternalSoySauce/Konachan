@@ -164,7 +164,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     private void saveImage() {
         if (mImageBean != null) {
             String url = mImageBean.posts[0].jpegUrl;
-            String bitmapName = Constants.IMAGE_HEAD + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
+            String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
                     + url.substring(url.lastIndexOf("."));
             File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
             if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
@@ -175,6 +175,20 @@ public class ImageDetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, R.string.loading_image, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String getImageHead() {
+        String imgHead = "";
+        String baseUrl = OkHttp.getBaseUrl(this);
+        switch (baseUrl) {
+            case Constants.BASE_URL_KONACHAN:
+                imgHead = Constants.IMAGE_HEAD_KONACHAN;
+                break;
+            case Constants.BASE_URL_YANDE:
+                imgHead = Constants.IMAGE_HEAD_YANDE;
+                break;
+        }
+        return imgHead;
     }
 
     // fl_save_image点击事件

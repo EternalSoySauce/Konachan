@@ -28,8 +28,8 @@ public class SplashActivity extends AppCompatActivity {
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
 
-        getTagJson(Constants.SAFE_MODE_TAG_JSON_URL);
-        getTagJson(Constants.R18_MODE_TAG_JSON_URL);
+        getTagJson(Constants.TAG_JSON_URL_KONACHAN);
+        getTagJson(Constants.TAG_JSON_URL_YANDE);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -54,8 +54,8 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String html = response.body().string();
-                if (html.startsWith("{\"version\"")) {
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
                     String path = getFilesDir().getPath();
                     String name = FileUtils.encodeMD5String(url);
                     File file = new File(path, name);

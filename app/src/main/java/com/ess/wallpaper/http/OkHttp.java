@@ -122,18 +122,17 @@ public class OkHttp {
         for (String tag : tagList) {
             tags.append(tag).append("+");
         }
-        return getSearchModeUrl(context) + "post?page=" + page + "&tags=" + tags;
+        return getBaseUrl(context) + "post?page=" + page + "&tags=" + tags;
     }
 
     // 搜索图集
     public static String getPoolUrl(Context context, int page, String name) {
         name = name == null ? "" : name;
-        return getSearchModeUrl(context) + "pool?page=" + page + "&query=" + name;
+        return getBaseUrl(context) + "pool?page=" + page + "&query=" + name;
     }
 
-    public static String getSearchModeUrl(Context context) {
+    public static String getBaseUrl(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isR18Mode = preferences.getBoolean(Constants.IS_R18_MODE, false);
-        return isR18Mode ? Constants.BASE_URL_R18_MODE : Constants.BASE_URL_SAFE_MODE;
+        return preferences.getString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN);
     }
 }

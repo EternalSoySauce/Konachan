@@ -27,17 +27,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ess.wallpaper.adapter.RecyclerSearchModePopupAdapter;
-import com.ess.wallpaper.utils.StringUtils;
-import com.ess.wallpaper.view.CustomDialog;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.adapter.RecyclerCompleteSearchAdapter;
+import com.ess.wallpaper.adapter.RecyclerSearchModePopupAdapter;
 import com.ess.wallpaper.bean.SearchBean;
 import com.ess.wallpaper.global.Constants;
-import com.ess.wallpaper.global.Data;
+import com.ess.wallpaper.global.DocData;
 import com.ess.wallpaper.http.OkHttp;
 import com.ess.wallpaper.utils.FileUtils;
+import com.ess.wallpaper.utils.StringUtils;
 import com.ess.wallpaper.utils.UIUtils;
+import com.ess.wallpaper.view.CustomDialog;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 
@@ -199,7 +199,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initSearchDocumentViews() {
-        ArrayList<String> docList = Data.getSearchModeDocumentList(this);
+        ArrayList<String> docList = DocData.getSearchModeDocumentList(this);
         mLayoutDocSearchMode = (LinearLayout) findViewById(R.id.layout_doc_search_mode);
 
         TextView tvDocSearchTag = (TextView) findViewById(R.id.tv_doc_search_tag);
@@ -324,13 +324,13 @@ public class SearchActivity extends AppCompatActivity {
     private void initTagList() {
         String name = "";
         String path = getFilesDir().getPath();
-        String searchMode = OkHttp.getSearchModeUrl(this);
-        switch (searchMode) {
-            case Constants.BASE_URL_SAFE_MODE:
-                name = FileUtils.encodeMD5String(Constants.SAFE_MODE_TAG_JSON_URL);
+        String baseUrl = OkHttp.getBaseUrl(this);
+        switch (baseUrl) {
+            case Constants.BASE_URL_KONACHAN:
+                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN);
                 break;
-            case Constants.BASE_URL_R18_MODE:
-                name = FileUtils.encodeMD5String(Constants.R18_MODE_TAG_JSON_URL);
+            case Constants.BASE_URL_YANDE:
+                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_YANDE);
                 break;
         }
 

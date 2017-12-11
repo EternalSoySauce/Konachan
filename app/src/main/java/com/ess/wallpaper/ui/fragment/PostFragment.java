@@ -29,6 +29,7 @@ import com.ess.wallpaper.global.Constants;
 import com.ess.wallpaper.http.OkHttp;
 import com.ess.wallpaper.http.ParseHtml;
 import com.ess.wallpaper.other.GlideApp;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.ess.wallpaper.other.Sound;
 import com.ess.wallpaper.ui.activity.MainActivity;
 import com.ess.wallpaper.ui.activity.SearchActivity;
@@ -483,7 +484,7 @@ public class PostFragment extends Fragment {
                         thumbBean.imageBean = imageBean;
                         if (!getActivity().isDestroyed()) {
                             GlideApp.with(mActivity)
-                                    .load(imageBean.posts[0].sampleUrl)
+                                    .load(MyGlideModule.makeGlideUrl(imageBean.posts[0].sampleUrl))
                                     .priority(Priority.HIGH)
                                     .submit();
                         }
@@ -536,6 +537,23 @@ public class PostFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void toggleScanMode(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.TOGGLE_SCAN_MODE)) {
+            OkHttp.getInstance().cancelAll();
+            mPostAdapter.clear();
+            if (!mSwipeRefresh.isRefreshing()) {
+                mSwipeRefresh.setRefreshing(true);
+            }
+            mIsLoadingMore = false;
+            mLoadMoreAgain = true;
+            mCurrentPage = 1;
+            setLoadingGif();
+            getNewPosts(mCurrentPage);
+        }
+    }
+
+    //切换搜图网站后收到的通知，obj 为 null
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeBaseUrl(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.CHANGE_BASE_URL)) {
             OkHttp.getInstance().cancelAll();
             mPostAdapter.clear();
             if (!mSwipeRefresh.isRefreshing()) {

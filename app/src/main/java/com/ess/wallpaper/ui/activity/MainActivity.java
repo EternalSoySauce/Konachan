@@ -165,12 +165,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initNavHeaderLayout() {
-        boolean isR18Mode = mPreferences.getBoolean(Constants.IS_R18_MODE, false);
+//        boolean isR18Mode = mPreferences.getBoolean(Constants.IS_R18_MODE, false);
+        String baseUrl = OkHttp.getBaseUrl(this);
         View navHeader = mNavigation.getHeaderView(0);
 
         // 切换 Safe/R18 模式
         final ToggleButton btnFunny = (ToggleButton) navHeader.findViewById(R.id.btn_funny);
-        btnFunny.setChecked(isR18Mode);
+//        btnFunny.setChecked(isR18Mode);
+        btnFunny.setChecked(baseUrl.equals(Constants.BASE_URL_YANDE));
         btnFunny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,9 +182,14 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Sound.getInstance().playToggleSafeModeSound(MainActivity.this);
                 }
-                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
+//                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
+//                // 发送通知到PostFragment, PoolFragment
+//                EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
+
+                String newBaseUrl = isChecked ? Constants.BASE_URL_YANDE : Constants.BASE_URL_KONACHAN;
+                mPreferences.edit().putString(Constants.BASE_URL, newBaseUrl).apply();
                 // 发送通知到PostFragment, PoolFragment
-                EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
+                EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
             }
         });
 

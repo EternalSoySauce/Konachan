@@ -14,6 +14,7 @@ import com.bumptech.glide.Priority;
 import com.ess.wallpaper.bean.CommentBean;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.other.GlideApp;
+import com.ess.wallpaper.other.MyGlideModule;
 
 import java.util.ArrayList;
 
@@ -41,7 +42,7 @@ public class RecyclerCommentAdapter extends RecyclerView.Adapter<RecyclerComment
 
         //头像
         GlideApp.with(mContext)
-                .load(commentBean.headUrl)
+                .load(MyGlideModule.makeGlideUrl(commentBean.headUrl))
                 .placeholder(R.drawable.ic_placeholder_comment)
                 .priority(Priority.NORMAL)
                 .into(holder.ivHead);

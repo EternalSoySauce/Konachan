@@ -5,9 +5,9 @@ import android.text.Html;
 import android.text.TextUtils;
 
 import com.ess.wallpaper.bean.CommentBean;
-import com.ess.wallpaper.utils.StringUtils;
 import com.ess.wallpaper.bean.PoolListBean;
 import com.ess.wallpaper.bean.ThumbBean;
+import com.ess.wallpaper.utils.StringUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -71,9 +71,15 @@ public class ParseHtml {
             String id = "#" + e.attr("id");
             String author = e.getElementsByTag("h6").get(0).text();
             String date = e.getElementsByClass("date").get(0).attr("title");
-            String headUrl = e.getElementsByClass("avatar").get(0).attr("src");
-            headUrl = headUrl.startsWith("//konachan") ? "https:" + headUrl
-                    : OkHttp.getSearchModeUrl(context) + headUrl;
+            String headUrl = "";
+            Elements avatars = e.getElementsByClass("avatar");
+            if (!avatars.isEmpty()) {
+                headUrl = avatars.get(0).attr("src");
+                if (!headUrl.startsWith("http")) {
+                    headUrl = headUrl.startsWith("//") ? "https:" + headUrl
+                            : OkHttp.getBaseUrl(context) + headUrl;
+                }
+            }
             Element body = e.getElementsByClass("body").get(0);
             Elements blockquote = body.select("blockquote");
             CharSequence quote = Html.fromHtml(blockquote.select("div").html());
@@ -169,7 +175,7 @@ public class ParseHtml {
                 switch (index) {
                     case 0:
                         String linkToShow = td.getElementsByTag("a").get(0).attr("href");
-                        linkToShow = OkHttp.getSearchModeUrl(context) + linkToShow.substring(1);
+                        linkToShow = OkHttp.getBaseUrl(context) + linkToShow.substring(1);
                         pool.linkToShow = linkToShow;
                         pool.name = td.text();
                         break;

@@ -14,6 +14,7 @@ import com.bumptech.glide.Priority;
 import com.ess.wallpaper.bean.MsgBean;
 import com.ess.wallpaper.http.OkHttp;
 import com.ess.wallpaper.http.ParseHtml;
+import com.ess.wallpaper.other.MyGlideModule;
 import com.ess.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.wallpaper.R;
 import com.ess.wallpaper.bean.ThumbBean;
@@ -77,7 +78,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
         //缩略图
         GlideApp.with(mActivity)
-                .load(thumbBean.thumbUrl)
+                .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
                 .into(holder.ivThumb);
@@ -171,7 +172,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         for (ThumbBean thumbBean : thumbList) {
             if (!mActivity.isDestroyed()) {
                 GlideApp.with(mActivity)
-                        .load(thumbBean.thumbUrl)
+                        .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                         .priority(Priority.NORMAL)
                         .submit();
             }

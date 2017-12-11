@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.wallpaper.R;
-import com.ess.wallpaper.global.Data;
+import com.ess.wallpaper.global.DocData;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -68,7 +68,7 @@ public class CustomDialog extends MaterialDialog.Builder {
     public static void showTagTypeHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
         TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
-        tvContent.setText(Data.getTagTypeHelpDoc(context));
+        tvContent.setText(DocData.getTagTypeHelpDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_doc_tag_type_title)
@@ -85,7 +85,7 @@ public class CustomDialog extends MaterialDialog.Builder {
     public static void showAdvancedSearchHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
         TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
-        tvContent.setText(Data.getAdvancedSearchDoc(context));
+        tvContent.setText(DocData.getAdvancedSearchDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_doc_advanced_search_title)

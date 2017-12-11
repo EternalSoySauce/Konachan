@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Data {
+public class DocData {
 
     private final static String TXT_SEARCH_MODE_CHINESE = "search_mode_chinese";
     private final static String TXT_SEARCH_MODE_ENGLISH = "search_mode_english";
