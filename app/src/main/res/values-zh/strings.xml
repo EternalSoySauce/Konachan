@@ -14,6 +14,8 @@
     <string name="download_failed">下载失败，点击重试</string>
 
     <!-- Drawer Layout -->
+    <string name="base_konachan">Konachan</string>
+    <string name="base_yande">Yande</string>
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>
     <string name="nav_post">图片</string>
@@ -38,7 +40,7 @@
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">允许播放语音</string>
     <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
-    <string name="setting_help_advanced_search">查看K站高级搜索指令</string>
+    <string name="setting_help_advanced_search">查看高级搜索指令表</string>
 
     <!-- Image Detail -->
     <string name="image_detail_image">图片</string>

@@ -47,6 +47,7 @@
     <color name="color_checkbox_unchecked_dark">#3B3B3B</color>
     <color name="color_checkbox_unchecked_light">#F1F1F1</color>
     <color name="color_checkbox_unchecked_general">#A9A9A9</color>
+    <color name="color_checkbox_unchecked_drawer">#5C5C5C</color>
 
     <!-- Tags颜色-->
     <color name="color_copyright">#DD00DD</color>

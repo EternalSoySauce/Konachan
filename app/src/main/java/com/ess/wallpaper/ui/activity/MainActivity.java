@@ -30,6 +30,8 @@ import com.ess.wallpaper.other.Sound;
 import com.ess.wallpaper.ui.fragment.PoolFragment;
 import com.ess.wallpaper.ui.fragment.PostFragment;
 import com.ess.wallpaper.utils.UIUtils;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
+import com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -165,14 +167,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initNavHeaderLayout() {
-//        boolean isR18Mode = mPreferences.getBoolean(Constants.IS_R18_MODE, false);
-        String baseUrl = OkHttp.getBaseUrl(this);
+        boolean isR18Mode = mPreferences.getBoolean(Constants.IS_R18_MODE, false);
         View navHeader = mNavigation.getHeaderView(0);
 
         // 切换 Safe/R18 模式
         final ToggleButton btnFunny = (ToggleButton) navHeader.findViewById(R.id.btn_funny);
-//        btnFunny.setChecked(isR18Mode);
-        btnFunny.setChecked(baseUrl.equals(Constants.BASE_URL_YANDE));
+        btnFunny.setChecked(isR18Mode);
         btnFunny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,20 +182,48 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Sound.getInstance().playToggleSafeModeSound(MainActivity.this);
                 }
-//                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
-//                // 发送通知到PostFragment, PoolFragment
-//                EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
+                mPreferences.edit().putBoolean(Constants.IS_R18_MODE, isChecked).apply();
+                // 发送通知到PostFragment, PoolFragment
+                EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCAN_MODE, null));
 
                 String newBaseUrl = isChecked ? Constants.BASE_URL_YANDE : Constants.BASE_URL_KONACHAN;
-                mPreferences.edit().putString(Constants.BASE_URL, newBaseUrl).apply();
-                // 发送通知到PostFragment, PoolFragment
-                EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
+
             }
         });
 
         // 图片对应一周7天
         final ImageView ivExtra = (ImageView) navHeader.findViewById(R.id.iv_extra);
         GlideApp.with(this).load(getExtraImageSrcId()).into(ivExtra);
+
+        // 切换搜图网站
+        String baseUrl = OkHttp.getBaseUrl(this);
+        SmoothRadioButton rbKonachan = (SmoothRadioButton) navHeader.findViewById(R.id.rb_konachan);
+        rbKonachan.setChecked(baseUrl.equals(Constants.BASE_URL_KONACHAN), false, false);
+        rbKonachan.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean b) {
+                if (b) {
+                    toggleDrawerLayout();
+                    mPreferences.edit().putString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN).apply();
+                    // 发送通知到PostFragment, PoolFragment
+                    EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
+                }
+            }
+        });
+
+        SmoothRadioButton rbYande = (SmoothRadioButton) navHeader.findViewById(R.id.rb_yande);
+        rbYande.setChecked(baseUrl.equals(Constants.BASE_URL_YANDE), false, false);
+        rbYande.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean b) {
+                if (b) {
+                    toggleDrawerLayout();
+                    mPreferences.edit().putString(Constants.BASE_URL, Constants.BASE_URL_YANDE).apply();
+                    // 发送通知到PostFragment, PoolFragment
+                    EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
+                }
+            }
+        });
     }
 
     private int getExtraImageSrcId() {

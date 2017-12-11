@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/colorPrimary"
-    android:fitsSystemWindows="true">
+             android:layout_width="match_parent"
+             android:layout_height="200dp"
+             android:background="@color/colorPrimary"
+             android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/iv_extra"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"/>
 
     <ToggleButton
         android:id="@+id/btn_funny"
@@ -20,5 +20,29 @@
         android:background="@drawable/toggle_button_funny"
         android:textOff=""
         android:textOn=""
-        android:visibility="visible" />
+        android:visibility="gone"/>
+
+    <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="5dp">
+
+        <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
+            android:id="@+id/rb_konachan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/base_konachan"
+            android:textColor="@color/check_box_drawer_header_color"
+            android:tint="@color/check_box_drawer_header_color"/>
+
+        <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
+            android:id="@+id/rb_yande"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/base_yande"
+            android:textColor="@color/check_box_drawer_header_color"
+            android:tint="@color/check_box_drawer_header_color"/>
+    </com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup>
 </FrameLayout>
