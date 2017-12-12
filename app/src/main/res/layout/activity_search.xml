@@ -5,7 +5,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="@color/colorPrimaryDark"
-             tools:context="com.ess.wallpaper.ui.activity.SearchActivity">
+             tools:context="com.ess.kanime.ui.activity.SearchActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.ess.wallpaper.ui.activity.GameActivity">
+    tools:context="com.ess.kanime.ui.activity.GameActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.ess.wallpaper.view.GameSurfaceView
+        <com.ess.kanime.view.GameSurfaceView
             android:id="@+id/surface_view_game"
             android:layout_width="match_parent"
             android:layout_height="0dp"
