@@ -32,7 +32,7 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.ess.kanime.view.MySwipeRefreshLayout
+    <com.ess.anime.view.MySwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,7 +56,7 @@
                 android:id="@+id/layout_load_result"
                 layout="@layout/layout_load_result" />
         </FrameLayout>
-    </com.ess.kanime.view.MySwipeRefreshLayout>
+    </com.ess.anime.view.MySwipeRefreshLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/floating_action_menu"

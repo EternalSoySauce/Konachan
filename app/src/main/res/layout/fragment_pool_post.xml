@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ess.kanime.view.MySwipeRefreshLayout
+<com.ess.anime.view.MySwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
@@ -14,4 +14,4 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb"
         android:scrollbars="vertical"/>
-</com.ess.kanime.view.MySwipeRefreshLayout>
+</com.ess.anime.view.MySwipeRefreshLayout>

@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.ess.kanime.view.AutoFitImageView
+        <com.ess.anime.view.AutoFitImageView
             android:id="@+id/iv_post_thumb"
             android:layout_width="165dp"
             android:layout_height="130dp"

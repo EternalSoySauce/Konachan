@@ -14,7 +14,8 @@
     <string name="download_failed">下载失败，点击重试</string>
 
     <!-- Drawer Layout -->
-    <string name="base_konachan">Konachan</string>
+    <string name="base_konachan_s">Konachan(.net)</string>
+    <string name="base_konachan_e">Konachan(.com)</string>
     <string name="base_yande">Yande</string>
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>

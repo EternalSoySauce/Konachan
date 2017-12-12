@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="200dp"
-             android:background="@color/colorPrimary"
-             android:fitsSystemWindows="true">
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/colorPrimary"
+    android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/iv_extra"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#33FFFFFF" />
 
     <ToggleButton
         android:id="@+id/btn_funny"
@@ -20,9 +25,10 @@
         android:background="@drawable/toggle_button_funny"
         android:textOff=""
         android:textOn=""
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup
+        android:id="@+id/rg_change_base_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -30,19 +36,27 @@
         android:layout_marginStart="5dp">
 
         <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
-            android:id="@+id/rb_konachan"
-            android:layout_width="wrap_content"
+            android:id="@+id/rb_konachan_s"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/base_konachan"
+            android:text="@string/base_konachan_s"
             android:textColor="@color/check_box_drawer_header_color"
-            android:tint="@color/check_box_drawer_header_color"/>
+            android:tint="@color/check_box_drawer_header_color" />
+
+        <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
+            android:id="@+id/rb_konachan_e"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/base_konachan_e"
+            android:textColor="@color/check_box_drawer_header_color"
+            android:tint="@color/check_box_drawer_header_color" />
 
         <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
             android:id="@+id/rb_yande"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/base_yande"
             android:textColor="@color/check_box_drawer_header_color"
-            android:tint="@color/check_box_drawer_header_color"/>
+            android:tint="@color/check_box_drawer_header_color" />
     </com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup>
 </FrameLayout>
