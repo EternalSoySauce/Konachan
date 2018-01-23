@@ -189,6 +189,9 @@ public class ImageDetailActivity extends AppCompatActivity {
             case Constants.BASE_URL_YANDE:
                 imgHead = Constants.IMAGE_HEAD_YANDE;
                 break;
+            case Constants.BASE_URL_LOLIBOORU:
+                imgHead = Constants.IMAGE_HEAD_LOLIBOORU;
+                break;
         }
         return imgHead;
     }

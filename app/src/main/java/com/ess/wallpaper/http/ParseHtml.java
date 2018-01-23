@@ -53,9 +53,12 @@ public class ParseHtml {
             String json = div.getElementsByTag("script").get(0).html();
             json = json.substring(json.indexOf("{"), json.lastIndexOf("}") + 1);
             json = json.replace("\\/", "/");
+            // konachan两种模式url格式总会不同
             if (!json.contains("http://konachan") && !json.contains("https://konachan")) {
                 json = json.replace("//konachan", "https://konachan");
             }
+            // lolibooru要把最后的"votes":[]统一为"votes":{}
+            json = json.replace("\"votes\":[]", "\"votes\":{}");
             return json;
         } catch (NullPointerException e) {
             e.printStackTrace();

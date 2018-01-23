@@ -336,6 +336,9 @@ public class SearchActivity extends AppCompatActivity {
             case Constants.BASE_URL_YANDE:
                 name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_YANDE);
                 break;
+            case Constants.BASE_URL_LOLIBOORU:
+                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_LOLIBOORU);
+                break;
         }
 
         File file = new File(path, name);
@@ -347,9 +350,11 @@ public class SearchActivity extends AppCompatActivity {
                 String[] tags = data.split(" ");
                 for (String tag : tags) {
                     String[] details = tag.split("`");
-                    SearchBean searchBean = new SearchBean(details[0]);
-                    searchBean.tagList.addAll(Arrays.asList(details).subList(1, details.length));
-                    mSearchList.add(searchBean);
+                    if (details.length > 1) {
+                        SearchBean searchBean = new SearchBean(details[0]);
+                        searchBean.tagList.addAll(Arrays.asList(details).subList(1, details.length));
+                        mSearchList.add(searchBean);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

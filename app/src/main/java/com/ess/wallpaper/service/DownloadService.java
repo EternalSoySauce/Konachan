@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.ess.wallpaper.bean.ImageBean;
+import com.ess.wallpaper.bean.ThumbBean;
 import com.ess.wallpaper.global.Constants;
 import com.ess.wallpaper.http.MyProgressListener;
 import com.ess.wallpaper.http.OkHttp;
 import com.ess.wallpaper.utils.BitmapUtils;
-import com.ess.wallpaper.bean.ImageBean;
-import com.ess.wallpaper.bean.ThumbBean;
 import com.ess.wallpaper.utils.FileUtils;
 
 import java.io.File;
@@ -94,6 +94,8 @@ public class DownloadService extends Service {
                     FileUtils.copyFile(tempFile, file);
                     // 添加图片到媒体库（刷新相册）
                     BitmapUtils.insertToMediaStore(this, file);
+                    // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
+                    listener.performFinish();
                 }
             }
         } catch (IOException e) {

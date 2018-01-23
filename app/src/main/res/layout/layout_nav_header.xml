@@ -58,5 +58,13 @@
             android:text="@string/base_yande"
             android:textColor="@color/check_box_drawer_header_color"
             android:tint="@color/check_box_drawer_header_color" />
+
+        <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
+            android:id="@+id/rb_lolibooru"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/base_lolibooru"
+            android:textColor="@color/check_box_drawer_header_color"
+            android:tint="@color/check_box_drawer_header_color" />
     </com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup>
 </FrameLayout>

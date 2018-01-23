@@ -115,14 +115,11 @@ public class MyProgressListener implements ProgressListener, RequestListener<Bit
         mNotifyBuilder.setContentText(content);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
 
-        if (progressInfo.isFinish()) {
-            // 下载完成
-            String finish = mBitmapAvailable + " / " + mContext.getString(R.string.download_finished);
-            mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
-            mNotifyBuilder.setContentText(finish);
-            mNotifyBuilder.setOngoing(false);
-            mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
-        }
+        // 由于lolibooru监听不到下载进度，所以将下载完成操作移动到service中执行通知
+//        if (progressInfo.isFinish()) {
+//            // 下载完成
+//            performFinish();
+//        }
     }
 
     @Override
@@ -139,6 +136,15 @@ public class MyProgressListener implements ProgressListener, RequestListener<Bit
         reloadIntent.putExtras(intent);
         mPendingIntent = PendingIntent.getService(mContext, mNotifyId,
                 reloadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public void performFinish() {
+        String finish = mBitmapAvailable + " / " + mContext.getString(R.string.download_finished);
+        mNotifyBuilder.setProgress(100, 100, false);
+        mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
+        mNotifyBuilder.setContentText(finish);
+        mNotifyBuilder.setOngoing(false);
+        mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
 }

@@ -181,12 +181,12 @@ public class DetailFragment extends Fragment {
 
         // 创建时间
         String poolCreatedTime = poolBean.createdTime;
-        poolCreatedTime = poolCreatedTime.substring(0, poolCreatedTime.lastIndexOf(".")).replace("T", " ");
+        poolCreatedTime = formatPoolTime(poolCreatedTime);
         setText(R.id.pool_created_time, R.string.detail_pool_created_time, poolCreatedTime);
 
         // 最后更新时间
         String poolUpdatedTime = poolBean.updatedTime;
-        poolUpdatedTime = poolUpdatedTime.substring(0, poolUpdatedTime.lastIndexOf(".")).replace("T", " ");
+        poolUpdatedTime = formatPoolTime(poolUpdatedTime);
         setText(R.id.pool_updated_time, R.string.detail_pool_updated_time, poolUpdatedTime);
 
         // 图集简介
@@ -217,7 +217,7 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    public void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
+    private void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
         for (String tag : tagList) {
             View view = View.inflate(mActivity, R.layout.layout_detail_item, null);
             TextView tvTag = (TextView) view.findViewById(R.id.tv_key);
@@ -225,6 +225,12 @@ public class DetailFragment extends Fragment {
             tvTag.setTextColor(getResources().getColor(colorId));
             parentLayout.addView(view);
         }
+    }
+
+    // konachan,yandere格式：2017-09-19T19:42:58.325Z
+    // lolibooru格式：2017-11-23 05:14:44
+    private String formatPoolTime(String time) {
+        return time.contains(".") ? time.substring(0, time.lastIndexOf(".")).replace("T", " ") : time;
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
