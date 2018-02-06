@@ -339,6 +339,9 @@ public class SearchActivity extends AppCompatActivity {
             case Constants.BASE_URL_LOLIBOORU:
                 name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_LOLIBOORU);
                 break;
+            case Constants.BASE_URL_DANBOORU:
+                // Danbooru没有搜索提示
+                break;
         }
 
         File file = new File(path, name);

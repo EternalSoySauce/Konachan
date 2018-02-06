@@ -17,9 +17,9 @@ public class TagBean implements Parcelable {
 
     public ArrayList<String> artist = new ArrayList<>();     //此作品的作者（非官方原作者），#CCCC00
 
-    public ArrayList<String> circle = new ArrayList<>();     //理解不能，#00BBBB
+    public ArrayList<String> circle = new ArrayList<>();     //元版权方（非正规版权），#00BBBB
 
-    public ArrayList<String> style = new ArrayList<>();      //理解不能，#FF2020
+    public ArrayList<String> style = new ArrayList<>();      //独特风格类型（如_vocaloid），#FF2020
 
     public ArrayList<String> general = new ArrayList<>();    //普通描述，#FFFFFF (#EE8887)
 

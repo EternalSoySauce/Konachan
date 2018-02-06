@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.ess.wallpaper.bean.CommentBean;
 import com.ess.wallpaper.bean.PoolListBean;
 import com.ess.wallpaper.bean.ThumbBean;
+import com.ess.wallpaper.global.Constants;
 import com.ess.wallpaper.utils.StringUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -26,6 +27,17 @@ public class ParseHtml {
     public static ArrayList<ThumbBean> getThumbList(String html) throws NullPointerException {
         ArrayList<ThumbBean> thumbList = new ArrayList<>();
         Document doc = Jsoup.parse(html);
+        String webTitle = doc.getElementsByTag("title").text();
+        if (webTitle.toLowerCase().contains("danbooru")) {
+            getDanbooruThumbList(doc, thumbList);
+        } else {
+            getGeneralThumbList(doc, thumbList);
+        }
+        return thumbList;
+    }
+
+    // Konachan,Yande,Lolibooru通用
+    private static void getGeneralThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
         Elements elements = doc.getElementById("post-list-posts").getElementsByTag("li");
         for (Element e : elements) {
             String thumbUrl = e.getElementsByTag("img").attr("src");
@@ -43,7 +55,23 @@ public class ParseHtml {
             linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
             thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
         }
-        return thumbList;
+    }
+
+    // Danbooru专用
+    private static void getDanbooruThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
+        Elements elements = doc.getElementById("posts").getElementsByTag("article");
+        for (Element e : elements) {
+            String thumbUrl = e.getElementsByTag("img").attr("src");
+            if (!thumbUrl.startsWith("http")) {
+                thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
+            }
+            String realSize = e.attr("data-width") + " x " + e.attr("data-height");
+            String linkToShow = e.getElementsByTag("a").attr("href");
+            if (!linkToShow.startsWith("http")) {
+                linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
+            }
+            thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+        }
     }
 
     public static String getImageDetailJson(String html) {
@@ -58,6 +86,7 @@ public class ParseHtml {
                 json = json.replace("//konachan", "https://konachan");
             }
             // lolibooru要把最后的"votes":[]统一为"votes":{}
+            // TODO 目前为止votes这一属性全部为空，但不排除某一天某个网站有了投票活动，到时后再改replace（懒癌）
             json = json.replace("\"votes\":[]", "\"votes\":{}");
             return json;
         } catch (NullPointerException e) {
