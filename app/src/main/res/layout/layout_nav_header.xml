@@ -16,16 +16,13 @@
         android:layout_height="match_parent"
         android:background="#33FFFFFF" />
 
-    <ToggleButton
+    <Button
         android:id="@+id/btn_funny"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_gravity="end"
         android:layout_margin="16dp"
-        android:background="@drawable/toggle_button_funny"
-        android:textOff=""
-        android:textOn=""
-        android:visibility="gone" />
+        android:background="@drawable/emoji_funny" />
 
     <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioGroup
         android:id="@+id/rg_change_base_url"
@@ -33,7 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="5dp"
-        android:layout_marginStart="5dp">
+        android:layout_marginStart="5dp"
+        android:visibility="gone">
 
         <com.mixiaoxiao.smoothcompoundbutton.SmoothRadioButton
             android:id="@+id/rb_konachan_s"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ess.wallpaper.view.ViewPagerFixed
+    <com.ess.anime.wallpaper.view.ViewPagerFixed
         android:id="@+id/vp_full_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -8,4 +8,11 @@
         <item>@string/spinner_search_advanced</item>
     </string-array>
 
+    <string-array name="website_list_item">
+        <item>@string/base_konachan_s</item>
+        <item>@string/base_konachan_e</item>
+        <item>@string/base_yande</item>
+        <item>@string/base_lolibooru</item>
+      <!--  <item>@string/base_danbooru</item>-->
+    </string-array>
 </resources>

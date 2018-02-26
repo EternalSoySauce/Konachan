@@ -14,8 +14,8 @@
     <string name="download_failed">Download failed, click to try again</string>
 
     <!-- Drawer Layout -->
-    <string name="base_konachan_s">Konachan(.net)</string>
-    <string name="base_konachan_e">Konachan(.com)</string>
+    <string name="base_konachan_s">Konachan(safe)</string>
+    <string name="base_konachan_e">Konachan(r18)</string>
     <string name="base_yande">Yande</string>
     <string name="base_lolibooru">Lolibooru</string>
     <string name="base_danbooru">Danbooru</string>
@@ -116,5 +116,7 @@
     <string name="dialog_permission_setting_msg">Application request STORAGE permission failed. You can manually set permission to the system settings interface.</string>
     <string name="dialog_permission_setting_ok">Go to</string>
     <string name="dialog_permission_setting_cancel">Cancel</string>
+    <string name="dialog_change_base_url_title">Change website</string>
+    <string name="dialog_change_base_url_cancel">Cancel</string>
 
 </resources>

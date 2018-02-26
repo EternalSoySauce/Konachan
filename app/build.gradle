@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "com.ess.wallpaper"
+        applicationId "com.ess.anime.wallpaper"
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 5

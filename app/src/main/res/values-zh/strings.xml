@@ -14,8 +14,8 @@
     <string name="download_failed">下载失败，点击重试</string>
 
     <!-- Drawer Layout -->
-    <string name="base_konachan_s">Konachan(.net)</string>
-    <string name="base_konachan_e">Konachan(.com)</string>
+    <string name="base_konachan_s">Konachan(safe)</string>
+    <string name="base_konachan_e">Konachan(r18)</string>
     <string name="base_yande">Yande</string>
     <string name="base_lolibooru">Lolibooru</string>
     <string name="base_danbooru">Danbooru</string>
@@ -116,5 +116,6 @@
     <string name="dialog_permission_setting_msg">应用请求SD卡权限失败，您可以到系统设置界面手动设置权限。</string>
     <string name="dialog_permission_setting_ok">跳转</string>
     <string name="dialog_permission_setting_cancel">取消</string>
-
+    <string name="dialog_change_base_url_title">切换网站</string>
+    <string name="dialog_change_base_url_cancel">取消</string>
 </resources>
