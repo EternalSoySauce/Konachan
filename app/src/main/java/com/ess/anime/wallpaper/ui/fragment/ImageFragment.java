@@ -15,14 +15,14 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ImageBean;
-import com.ess.anime.wallpaper.other.GlideApp;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,8 +107,13 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
 
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-        loadImage();
-        return false;
+        mIvImage.post(new Runnable() {
+            @Override
+            public void run() {
+                loadImage();
+            }
+        });
+        return true;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -9,10 +10,12 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.global.DocData;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.service.DownloadApkService;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -191,6 +194,28 @@ public class CustomDialog extends MaterialDialog.Builder {
                 })
                 .alwaysCallSingleChoiceCallback()
                 .show();
+    }
+
+    /**
+     * 版本更新提示
+     *
+     * @param context 上下文
+     * @param apkBean 新版本信息
+     */
+    public static void showUpdateDialog(final Context context, final ApkBean apkBean) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title("检测到新版本 "+apkBean.versionName)
+                .content("更新内容：\n" + apkBean.updatedContentZh)
+                .negativeText(R.string.dialog_permission_setting_cancel)
+                .positiveText(R.string.dialog_permission_setting_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Intent intent = new Intent(context, DownloadApkService.class);
+                        intent.putExtra(Constants.APK_BEAN, apkBean);
+                        context.startService(intent);
+                    }
+                }).show();
     }
 
     public interface OnDialogActionListener {

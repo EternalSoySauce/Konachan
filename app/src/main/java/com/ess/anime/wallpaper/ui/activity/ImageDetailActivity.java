@@ -18,7 +18,7 @@ import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.service.DownloadService;
+import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
@@ -153,7 +153,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void downloadBitmap(String url, String bitmapPath) {
-        Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadService.class);
+        Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
         downloadIntent.putExtra(Constants.JPEG_URL, url);
         downloadIntent.putExtra(Constants.BITMAP_PATH, bitmapPath);
         downloadIntent.putExtra(Constants.THUMB_BEAN, mThumbBean);
