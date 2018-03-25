@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.ApkBean;
+import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.Firebase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.other.Sound;
@@ -30,6 +34,10 @@ import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
@@ -49,9 +57,10 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mCurrentFragment;
 
     private SharedPreferences mPreferences;
+    private boolean mIsForeground;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
@@ -78,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             changeContentMainFragment(mFrgPost);
         }
+
+        mIsForeground = true;
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -172,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Sound.getInstance().playToggleR18ModeSound(MainActivity.this);
-                CustomDialog.showChangeBaseUrlDialog(MainActivity.this,new CustomDialog.SimpleDialogActionListener(){
+                CustomDialog.showChangeBaseUrlDialog(MainActivity.this, new CustomDialog.SimpleDialogActionListener() {
                     @Override
                     public void onPositive() {
                         super.onPositive();
@@ -274,9 +286,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            mIsForeground = false;
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        mIsForeground = false;
+        EventBus.getDefault().unregister(this);
         Sound.getInstance().release();
         OkHttp.getInstance().cancelAll();
+        Firebase.getInstance().cancelAll();
+    }
+
+    // 检查到新版本后收到的通知, obj 为 ApkBean
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void showUpdateDialog(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.CHECK_UPDATE) && mIsForeground) {
+            EventBus.getDefault().removeAllStickyEvents();
+            ApkBean apkBean = (ApkBean) msgBean.obj;
+            CustomDialog.showUpdateDialog(this, apkBean);
+        }
     }
 }

@@ -18,6 +18,7 @@ public class Constants {
     public final static String PAGE_TITLE = "pageTitle";
 
     // Intent
+    public final static String APK_BEAN = "APK_BEAN";
     public final static String THUMB_BEAN = "THUMB_BEAN";
     public final static String IMAGE_BEAN = "IMAGE_BEAN";
     public final static String LINK_TO_SHOW = "LINK_TO_SHOW";
@@ -41,6 +42,7 @@ public class Constants {
     public final static int STORAGE_PERMISSION_CODE = 3000;
 
     // EventBus
+    public final static String CHECK_UPDATE = "checkUpdate";  //检测到新版本后通知 MainActivity
     public final static String TOGGLE_SCAN_MODE = "toggleScanMode";  //更换浏览模式后通知 PostFragment和PoolFragment更新adapter
     public final static String CHANGE_BASE_URL = "changeBaseUrl";  //切换搜图网站后通知 PostFragment和PoolFragment更新adapter
     public final static String GET_IMAGE_DETAIL = "getImageDetail";  //获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter

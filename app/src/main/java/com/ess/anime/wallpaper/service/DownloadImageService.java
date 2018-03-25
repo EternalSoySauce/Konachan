@@ -9,7 +9,7 @@ import android.os.IBinder;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.MyProgressListener;
+import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import me.jessyan.progressmanager.ProgressManager;
 import okhttp3.Response;
 
-public class DownloadService extends Service {
+public class DownloadImageService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -65,14 +65,14 @@ public class DownloadService extends Service {
         ImageBean imageBean = intent.getParcelableExtra(Constants.IMAGE_BEAN);
 
         // 绑定下载进度监听器
-        MyProgressListener listener;
+        DownloadImageProgressListener listener;
         if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
-            listener = new MyProgressListener(this, imageBean, intent);
+            listener = new DownloadImageProgressListener(this, imageBean, intent);
             listener.setNotifyThumb(thumbBean.thumbUrl);
             ProgressManager.getInstance().addResponseListener(url, listener);
             OkHttp.getInstance().addUrlToProgressListener(url, listener);
         } else {
-            listener = OkHttp.getInstance().getProgressListener(url);
+            listener = (DownloadImageProgressListener) OkHttp.getInstance().getProgressListener(url);
             listener.prepareNotification();
         }
 

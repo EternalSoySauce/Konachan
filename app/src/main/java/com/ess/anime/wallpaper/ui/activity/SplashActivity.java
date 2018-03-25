@@ -5,9 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.Firebase;
+import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
@@ -29,6 +30,8 @@ public class SplashActivity extends AppCompatActivity {
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
 
+        Firebase.getInstance().checkUpdate();
+
         for (String url : Constants.TAG_JSON_URLS) {
             getTagJson(url);
         }
@@ -42,6 +45,8 @@ public class SplashActivity extends AppCompatActivity {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         }, delay);
+
+        Constants.sRestart = false;
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示

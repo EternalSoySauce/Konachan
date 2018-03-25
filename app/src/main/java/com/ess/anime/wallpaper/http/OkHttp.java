@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import me.jessyan.progressmanager.ProgressListener;
 import me.jessyan.progressmanager.ProgressManager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,7 +41,7 @@ public class OkHttp {
     private ArrayList<String> mUrlInQueueList = new ArrayList<>();
 
     // 需要避免进度监听器重复添加的url保存在这里
-    private HashMap<String, MyProgressListener> mUrlInListenerMap = new HashMap<>();
+    private HashMap<String, ProgressListener> mUrlInListenerMap = new HashMap<>();
 
     private OkHttp() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -82,7 +83,7 @@ public class OkHttp {
     }
 
     // 添加需要避免进度监听器重复添加的url
-    public void addUrlToProgressListener(String url, MyProgressListener listener) {
+    public void addUrlToProgressListener(String url, ProgressListener listener) {
         mUrlInListenerMap.put(url, listener);
     }
 
@@ -92,7 +93,7 @@ public class OkHttp {
     }
 
     // 获取url所对应的进度监听器
-    public MyProgressListener getProgressListener(String url) {
+    public ProgressListener getProgressListener(String url) {
         return mUrlInListenerMap.get(url);
     }
 

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "491433090819",
+    "firebase_url": "https://k-anime-wallpaper.firebaseio.com",
+    "project_id": "k-anime-wallpaper",
+    "storage_bucket": "k-anime-wallpaper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491433090819:android:8c63f2772fe7dfdf",
+        "android_client_info": {
+          "package_name": "com.ess.anime.wallpaper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491433090819-jum4lcv1ehdcnviuhlq8g2vnea4fcho7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYpeHM5oGL7in_KhNTbeKS8DNFDyQVmPc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
