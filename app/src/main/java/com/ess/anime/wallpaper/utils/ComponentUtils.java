@@ -5,9 +5,14 @@ import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -126,5 +131,24 @@ public class ComponentUtils {
             e.printStackTrace();
         }
         return versionCode;
+    }
+
+    public static void installApk(Context context, File apkFile) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri contentUri = FileProvider.getUriForFile(context,
+                        context.getPackageName()+".fileprovider"
+                        , apkFile);
+                intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+            } else {
+                intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+            }
+            context.startActivity(intent);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
     }
 }
