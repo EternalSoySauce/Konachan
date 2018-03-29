@@ -18,13 +18,13 @@ import com.google.firebase.storage.StreamDownloadTask;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class Firebase {
+public class FireBase {
 
     private static class FirebaseHolder {
-        private static final Firebase instance = new Firebase();
+        private static final FireBase instance = new FireBase();
     }
 
-    public static Firebase getInstance() {
+    public static FireBase getInstance() {
         return FirebaseHolder.instance;
     }
 
@@ -34,7 +34,7 @@ public class Firebase {
 
     private Context mContext = mStorage.getApp().getApplicationContext();
 
-    private Firebase() {
+    private FireBase() {
     }
 
     public void checkUpdate() {

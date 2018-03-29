@@ -7,6 +7,7 @@ import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadApkProgressListener;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
 import java.io.File;
@@ -44,13 +45,13 @@ public class DownloadApkService extends IntentService {
             listener.prepareNotification();
         }
 
-        // 临时下载文件
-        File apkFile = new File(getExternalFilesDir(null), apkBean.apkName);
         try {
             // 下载
+            File apkFile = new File(getExternalFilesDir(null), apkBean.apkName);
             Response response = OkHttp.getInstance().execute(url);
             InputStream inputStream = response.body().byteStream();
             FileUtils.streamToFile(inputStream, apkFile);
+            ComponentUtils.installApk(this, apkFile);
         } catch (IOException e) {
             e.printStackTrace();
             ProgressManager.getInstance().notifyOnErorr(url, e);

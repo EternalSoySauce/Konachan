@@ -26,7 +26,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.Firebase;
+import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.other.Sound;
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         Sound.getInstance().release();
         OkHttp.getInstance().cancelAll();
-        Firebase.getInstance().cancelAll();
+        FireBase.getInstance().cancelAll();
     }
 
     // 检查到新版本后收到的通知, obj 为 ApkBean

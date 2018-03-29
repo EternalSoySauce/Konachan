@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.Firebase;
+import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
 
-        Firebase.getInstance().checkUpdate();
+        FireBase.getInstance().checkUpdate();
 
         for (String url : Constants.TAG_JSON_URLS) {
             getTagJson(url);
