@@ -6,13 +6,21 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.other.Sound;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.view.CustomDialog;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
+
+import java.io.File;
 
 public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,13 +60,16 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean b) {
                 Constants.sAllowPlaySound = b;
                 mPreferences.edit().putBoolean(Constants.ALLOW_PLAY_SOUND, b).apply();
-                if (b){
+                if (b) {
                     Sound.getInstance().playSoundEnabled(SettingActivity.this);
-                }else {
+                } else {
                     Sound.getInstance().playSoundDisabled();
                 }
             }
         });
+
+        TextView tvCurrentVersion = (TextView) findViewById(R.id.tv_current_version);
+        tvCurrentVersion.setText(getString(R.string.setting_current_version, ComponentUtils.getVersionName(this)));
     }
 
     @Override
@@ -73,6 +84,28 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.tv_help_advanced_search:
                 CustomDialog.showAdvancedSearchHelpDialog(SettingActivity.this);
                 break;
+            case R.id.layout_check_update:
+                checkUpdate();
+                break;
         }
+    }
+
+    private void checkUpdate() {
+        File file = new File(getExternalFilesDir(null), FireBase.UPDATE_FILE_NAME);
+        if (file.exists()) {
+            String json = FileUtils.fileToString(file);
+            ApkBean apkBean = ApkBean.getApkDetailFromJson(this, json);
+            if (apkBean.versionCode > ComponentUtils.getVersionCode(this)) {
+                CustomDialog.showUpdateDialog(this, apkBean);
+            } else {
+                showNoNewVersionToast();
+            }
+        } else {
+            showNoNewVersionToast();
+        }
+    }
+
+    private void showNoNewVersionToast() {
+        Toast.makeText(this, R.string.check_no_new_version, Toast.LENGTH_SHORT).show();
     }
 }

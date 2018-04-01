@@ -1,22 +1,29 @@
 package com.ess.anime.wallpaper.http;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.bean.UserBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StreamDownloadTask;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 
 public class FireBase {
 
@@ -28,11 +35,17 @@ public class FireBase {
         return FirebaseHolder.instance;
     }
 
+    public final static String UPDATE_FILE_NAME = "latest_version";
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef = mStorage.getReference();
     private StreamDownloadTask mCheckUpdateTask;
 
+    private FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+    private Task<DocumentSnapshot> mCheckUserTask;
+    private Task<Void> mAddUserTask;
+
     private Context mContext = mStorage.getApp().getApplicationContext();
+    private SharedPreferences mPreference = PreferenceManager.getDefaultSharedPreferences(mContext);
 
     private FireBase() {
     }
@@ -40,7 +53,7 @@ public class FireBase {
     public void checkUpdate() {
         cancelCheckUpdate();
 
-        StorageReference islandRef = mStorageRef.child("latest_version");
+        StorageReference islandRef = mStorageRef.child(UPDATE_FILE_NAME);
         mCheckUpdateTask = islandRef.getStream();
         mCheckUpdateTask.addOnSuccessListener(new OnSuccessListener<StreamDownloadTask.TaskSnapshot>() {
             @Override
@@ -49,33 +62,67 @@ public class FireBase {
                     @Override
                     public void run() {
                         String json = FileUtils.streamToString(taskSnapshot.getStream());
-                        Log.i("rrr", "load txt Success  " + json);
-                        ApkBean apkBean = ApkBean.getApkDetailFromJson(json);
+                        FileUtils.stringToFile(json, new File(mContext.getExternalFilesDir(null), UPDATE_FILE_NAME));
+                        ApkBean apkBean = ApkBean.getApkDetailFromJson(mContext, json);
                         if (apkBean.versionCode > ComponentUtils.getVersionCode(mContext)) {
-                            Log.i("rrr", "has new version  " + apkBean.versionName);
-//                    FileUtils.streamToFile(taskSnapshot.getStream(),new File(mContext.getExternalFilesDir(null),"updata"));
                             // 发送通知到 MainActivity
                             EventBus.getDefault().postSticky(new MsgBean(Constants.CHECK_UPDATE, apkBean));
                         }
                     }
                 }).start();
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        })/*.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 if (exception instanceof StorageException
                         && ((StorageException) exception).getErrorCode() == StorageException.ERROR_CANCELED) {
                     return;
                 }
-                Log.i("rrr", "load txt failed " + exception.getMessage());
             }
-        });
+        })*/;
     }
 
     private void cancelCheckUpdate() {
         if (mCheckUpdateTask != null) {
             mCheckUpdateTask.cancel();
         }
+    }
+
+    public void checkToAddUser() {
+        if (mCheckUserTask != null || mAddUserTask != null
+                || mPreference.getBoolean(Constants.ALREADY_ADD_USER, false)) {
+            return;
+        }
+
+        UserBean user = new UserBean(mContext);
+        String docId = FileUtils.encodeMD5String(user.id);
+        DocumentReference docRef = mDatabase.collection("users").document(docId);
+        checkUser(docRef, user);
+    }
+
+    private void checkUser(final DocumentReference docRef, final UserBean user) {
+        mCheckUserTask = docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document == null || !document.exists()) {
+                        addUser(docRef, user);
+                    }else {
+                        mPreference.edit().putBoolean(Constants.ALREADY_ADD_USER, true).apply();
+                    }
+                }
+            }
+        });
+    }
+
+    private void addUser(DocumentReference docRef, UserBean user) {
+        mAddUserTask = docRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                mPreference.edit().putBoolean(Constants.ALREADY_ADD_USER, true).apply();
+            }
+        });
     }
 
     public void cancelAll() {

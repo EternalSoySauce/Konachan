@@ -10,7 +10,10 @@ import android.support.v7.app.NotificationCompat;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.service.DownloadApkService;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+
+import java.io.File;
 
 import me.jessyan.progressmanager.ProgressListener;
 import me.jessyan.progressmanager.body.ProgressInfo;
@@ -24,7 +27,8 @@ public class DownloadApkProgressListener implements ProgressListener {
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mNotifyBuilder;
     private int mNotifyId;
-    private PendingIntent mPendingIntent;
+    private PendingIntent mReloadIntent;
+    private PendingIntent mInstallIntent;
 
     public DownloadApkProgressListener(Context context, ApkBean apkBean, Intent intent) {
         mContext = context;
@@ -34,6 +38,7 @@ public class DownloadApkProgressListener implements ProgressListener {
     }
 
     public void prepareNotification() {
+        // TODO 适配8.0
         if (mNotifyBuilder == null) {
             mFileAvailable = FileUtils.computeFileSize(mApkBean.apkSize);
             mNotifyBuilder = new NotificationCompat.Builder(mContext);
@@ -66,6 +71,7 @@ public class DownloadApkProgressListener implements ProgressListener {
 
         if (progressInfo.isFinish()) {
             // 下载完成
+            createInstallPendingIntent();
             performFinish();
         }
     }
@@ -75,15 +81,26 @@ public class DownloadApkProgressListener implements ProgressListener {
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_failed);
         mNotifyBuilder.setContentText(mContext.getString(R.string.download_failed));
         mNotifyBuilder.setOngoing(false);
-        mNotifyBuilder.setContentIntent(mPendingIntent);
+        mNotifyBuilder.setContentIntent(mReloadIntent);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
     private void createReloadPendingIntent(Intent intent) {
         Intent reloadIntent = new Intent(mContext, DownloadApkService.class);
         reloadIntent.putExtras(intent);
-        mPendingIntent = PendingIntent.getService(mContext, mNotifyId,
+        mReloadIntent = PendingIntent.getService(mContext, mNotifyId,
                 reloadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void createInstallPendingIntent() {
+        File apkFile = new File(mApkBean.localFilePath);
+        if (apkFile.exists()) {
+            Intent installIntent = ComponentUtils.installApk(mContext, apkFile, false);
+            if (installIntent != null) {
+                mInstallIntent = PendingIntent.getActivity(mContext, mNotifyId,
+                        installIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+        }
     }
 
     public void performFinish() {
@@ -92,6 +109,7 @@ public class DownloadApkProgressListener implements ProgressListener {
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
         mNotifyBuilder.setContentText(finish);
         mNotifyBuilder.setOngoing(false);
+        mNotifyBuilder.setContentIntent(mInstallIntent);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 

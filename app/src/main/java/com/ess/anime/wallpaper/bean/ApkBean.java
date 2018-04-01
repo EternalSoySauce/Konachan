@@ -1,9 +1,16 @@
 package com.ess.anime.wallpaper.bean;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.UUID;
 
 public class ApkBean implements Parcelable {
 
@@ -21,9 +28,12 @@ public class ApkBean implements Parcelable {
 
     public String updatedContentZh;
 
-    public static ApkBean getApkDetailFromJson(String json) {
-        Gson gson = new Gson();
-        return gson.fromJson(json, ApkBean.class);
+    public String localFilePath;
+
+    public static ApkBean getApkDetailFromJson(Context context, String json) {
+        ApkBean apkBean = new Gson().fromJson(json, ApkBean.class);
+        apkBean.localFilePath = context.getExternalFilesDir(null) + "/" + apkBean.apkName;
+        return apkBean;
     }
 
     protected ApkBean(Parcel in) {
@@ -34,6 +44,24 @@ public class ApkBean implements Parcelable {
         apkSize = in.readLong();
         updatedContentEn = in.readString();
         updatedContentZh = in.readString();
+        localFilePath = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(versionCode);
+        dest.writeString(versionName);
+        dest.writeString(apkName);
+        dest.writeString(apkUrl);
+        dest.writeLong(apkSize);
+        dest.writeString(updatedContentEn);
+        dest.writeString(updatedContentZh);
+        dest.writeString(localFilePath);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ApkBean> CREATOR = new Creator<ApkBean>() {
@@ -48,19 +76,34 @@ public class ApkBean implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
+    private static String sID = null;
+    private static final String INSTALLATION = "INSTALLATION";
+
+    public synchronized static String id(Context context) {
+        if (sID == null) {
+            File installation = new File(context.getFilesDir(), INSTALLATION);
+            try {
+                if (!installation.exists()) writeInstallationFile(installation);
+                sID = readInstallationFile(installation);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return sID;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(versionCode);
-        dest.writeString(versionName);
-        dest.writeString(apkName);
-        dest.writeString(apkUrl);
-        dest.writeLong(apkSize);
-        dest.writeString(updatedContentEn);
-        dest.writeString(updatedContentZh);
+    private static String readInstallationFile(File installation) throws IOException {
+        RandomAccessFile f = new RandomAccessFile(installation, "r");
+        byte[] bytes = new byte[(int) f.length()];
+        f.readFully(bytes);
+        f.close();
+        return new String(bytes);
+    }
+
+    private static void writeInstallationFile(File installation) throws IOException {
+        FileOutputStream out = new FileOutputStream(installation);
+        String id = UUID.randomUUID().toString();
+        out.write(id.getBytes());
+        out.close();
     }
 }

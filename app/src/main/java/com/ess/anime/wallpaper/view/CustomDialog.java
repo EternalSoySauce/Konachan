@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
@@ -16,11 +17,15 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.global.DocData;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.service.DownloadApkService;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.FileUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -203,17 +208,26 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param apkBean 新版本信息
      */
     public static void showUpdateDialog(final Context context, final ApkBean apkBean) {
+        String updateContent = Locale.getDefault().getCountry().equals("CN")
+                ? apkBean.updatedContentZh : apkBean.updatedContentEn;
         MaterialDialog dialog = new CustomDialog(context)
-                .title("检测到新版本 "+apkBean.versionName)
-                .content("更新内容：\n" + apkBean.updatedContentZh)
-                .negativeText(R.string.dialog_permission_setting_cancel)
-                .positiveText(R.string.dialog_permission_setting_ok)
+                .title(context.getString(R.string.dialog_update_title))
+                .titleGravity(GravityEnum.CENTER)
+                .content(context.getString(R.string.dialog_update_msg, apkBean.versionName,
+                        FileUtils.computeFileSize(apkBean.apkSize), updateContent))
+                .negativeText(R.string.dialog_update_ignore)
+                .positiveText(R.string.dialog_update_update)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Intent intent = new Intent(context, DownloadApkService.class);
-                        intent.putExtra(Constants.APK_BEAN, apkBean);
-                        context.startService(intent);
+                        File apkFile = new File(apkBean.localFilePath);
+                        if (apkFile.exists()) {
+                            ComponentUtils.installApk(context, apkFile, true);
+                        } else {
+                            Intent intent = new Intent(context, DownloadApkService.class);
+                            intent.putExtra(Constants.APK_BEAN, apkBean);
+                            context.startService(intent);
+                        }
                     }
                 }).show();
     }

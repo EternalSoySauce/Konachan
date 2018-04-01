@@ -47,11 +47,11 @@ public class DownloadApkService extends IntentService {
 
         try {
             // 下载
-            File apkFile = new File(getExternalFilesDir(null), apkBean.apkName);
+            File apkFile = new File(apkBean.localFilePath);
             Response response = OkHttp.getInstance().execute(url);
             InputStream inputStream = response.body().byteStream();
             FileUtils.streamToFile(inputStream, apkFile);
-            ComponentUtils.installApk(this, apkFile);
+            ComponentUtils.installApk(this, apkFile, true);
         } catch (IOException e) {
             e.printStackTrace();
             ProgressManager.getInstance().notifyOnErorr(url, e);

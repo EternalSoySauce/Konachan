@@ -7,6 +7,7 @@
     <string name="check_network">Load failed. Please check your network and pull to refresh again.</string>
     <string name="loading">Don\'t worry, it\'s OK right away.</string>
     <string name="loading_image">Obtaining image information, please wait.</string>
+    <string name="check_no_new_version">Currently is the latest version</string>
 
     <!-- Notification -->
     <string name="download_started">&#160;Start download</string>
@@ -44,6 +45,8 @@
     <string name="setting_allow_play_sound">Allow to play sound</string>
     <string name="setting_help_tag_type">See all tag types and meanings</string>
     <string name="setting_help_advanced_search">See cheat sheet of advanced search</string>
+    <string name="setting_check_update">Check update</string>
+    <string name="setting_current_version">Current version: %s</string>
 
     <!-- Image Detail -->
     <string name="image_detail_image">Image</string>
@@ -118,5 +121,10 @@
     <string name="dialog_permission_setting_cancel">Cancel</string>
     <string name="dialog_change_base_url_title">Change website</string>
     <string name="dialog_change_base_url_cancel">Cancel</string>
+    <string name="dialog_update_title">New version detected</string>
+    <string name="dialog_update_msg" formatted="false">Version: %1$s\nApk size: %2$s\n\nUpdate
+        content:\n%3$s</string>
+    <string name="dialog_update_ignore">Ignore</string>
+    <string name="dialog_update_update">Update</string>
 
 </resources>

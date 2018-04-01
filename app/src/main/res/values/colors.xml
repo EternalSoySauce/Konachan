@@ -24,6 +24,8 @@
     <color name="color_text_bg">#373737</color>
     <!-- TextView普通文字颜色 -->
     <color name="color_text_general">#8F8F8F</color>
+    <!-- TextView浅色文字颜色 -->
+    <color name="color_text_light">#59F1F1F1</color>
 
     <!-- Comment中quote的背景色 -->
     <color name="color_quote_bg">#5C5C5C</color>

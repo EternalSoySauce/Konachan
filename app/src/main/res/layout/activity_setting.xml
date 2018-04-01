@@ -2,10 +2,8 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.ess.wallpaper.ui.activity.SettingActivity">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -108,6 +106,43 @@
                     android:text="@string/setting_help_advanced_search"
                     android:textColor="@color/color_text_unselected"
                     android:textSize="15sp"/>
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/color_ripple_setting_item"/>
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                app:mrl_rippleColor="@color/color_ripple_setting_item"
+                app:mrl_rippleOverlay="true">
+
+                <LinearLayout
+                    android:id="@+id/layout_check_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:onClick="onClick"
+                    android:orientation="vertical"
+                    android:paddingEnd="0dp"
+                    android:paddingStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_check_update"
+                        android:textColor="@color/color_text_unselected"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_current_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_light"
+                        android:textSize="12sp"/>
+                </LinearLayout>
             </com.balysv.materialripple.MaterialRippleLayout>
 
             <View

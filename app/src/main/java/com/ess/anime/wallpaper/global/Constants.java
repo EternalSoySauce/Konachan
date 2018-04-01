@@ -13,6 +13,7 @@ public class Constants {
     public final static String SEARCH_MODE = "searchMode";
     public final static String GAME_COLUMN = "gameColumn";
     public final static String ALLOW_PLAY_SOUND = "allowPlaySound";
+    public final static String ALREADY_ADD_USER = "alreadyAddUser";
 
     // Fragment
     public final static String PAGE_TITLE = "pageTitle";

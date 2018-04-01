@@ -30,6 +30,7 @@ public class SplashActivity extends AppCompatActivity {
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
 
+        FireBase.getInstance().checkToAddUser();
         FireBase.getInstance().checkUpdate();
 
         for (String url : Constants.TAG_JSON_URLS) {

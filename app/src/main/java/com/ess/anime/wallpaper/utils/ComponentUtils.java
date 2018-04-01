@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 
 import java.io.File;
@@ -116,7 +117,7 @@ public class ComponentUtils {
     }
 
     /**
-     * 获取手机总内存大小
+     * 获取app版本号
      *
      * @param context 上下文
      * @return app版本号
@@ -133,22 +134,61 @@ public class ComponentUtils {
         return versionCode;
     }
 
-    public static void installApk(Context context, File apkFile) {
+    /**
+     * 获取app版本名
+     *
+     * @param context 上下文
+     * @return app版本名
+     */
+    public static String getVersionName(Context context) {
+        String versionName = "";
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+            versionName = packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
+    }
+
+    /**
+     * 安装apk
+     *
+     * @param context 上下文
+     * @param apkFile apk文件
+     * @param start   是否直接启动安装
+     * @return intent
+     */
+    public static Intent installApk(Context context, File apkFile, boolean start) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Uri contentUri = FileProvider.getUriForFile(context,
-                        context.getPackageName()+".fileprovider"
+                        context.getPackageName() + ".fileprovider"
                         , apkFile);
                 intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
             } else {
                 intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
             }
-            context.startActivity(intent);
-        }catch (IllegalArgumentException e){
+            if (start) {
+                context.startActivity(intent);
+            }
+            return intent;
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
+            return null;
         }
+    }
+
+    /**
+     * 获取设备Android Id
+     * @param context 上下文
+     * @return Android Id
+     */
+    public static String getAndroidId(Context context) {
+        return Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }
