@@ -38,7 +38,6 @@ public class DownloadApkProgressListener implements ProgressListener {
     }
 
     public void prepareNotification() {
-        // TODO 适配8.0
         if (mNotifyBuilder == null) {
             mFileAvailable = FileUtils.computeFileSize(mApkBean.apkSize);
             mNotifyBuilder = new NotificationCompat.Builder(mContext);
