@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -199,6 +201,28 @@ public class CustomDialog extends MaterialDialog.Builder {
                 })
                 .alwaysCallSingleChoiceCallback()
                 .show();
+    }
+
+    public static void showChooseToDownloadDialog(final Context context,final Map<CharSequence,Integer> itemMap) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.save_image)
+                .negativeText(android.R.string.cancel)
+                .positiveText(R.string.dialog_download_sure)
+                .items(itemMap.keySet())
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                        for (CharSequence item : text) {
+                            Log.i("rrr", "item " + item);
+                            switch (itemMap.get(item)) {
+                                case 0:
+                                case 1:
+                                case 2:
+                            }
+                        }
+                        return false;
+                    }
+                }).show();
     }
 
     /**

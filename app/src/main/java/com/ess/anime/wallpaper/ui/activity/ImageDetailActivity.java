@@ -11,10 +11,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerImageDetailAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
+import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
@@ -25,10 +25,13 @@ import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.PermissionUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.SlidingTabLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ImageDetailActivity extends AppCompatActivity {
 
@@ -141,6 +144,51 @@ public class ImageDetailActivity extends AppCompatActivity {
         mImageBean = imageBean;
     }
 
+    private void showChooseToDownloadDialog() {
+        if (mImageBean != null) {
+            CustomDialog.showChooseToDownloadDialog(this, makeDownloadChosenMap());
+        } else {
+            Toast.makeText(this, R.string.loading_image, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Map<CharSequence, Integer> makeDownloadChosenMap() {
+        PostBean postBean = mImageBean.posts[0];
+        Map<CharSequence, Integer> itemMap = new LinkedHashMap<>();
+        String desc;
+        if (postBean.sampleFileSize != 0) {
+            desc = getString(R.string.dialog_download_sample,
+                    postBean.sampleWidth, postBean.sampleHeight,
+                    FileUtils.computeFileSize(postBean.sampleFileSize),
+                    postBean.sampleUrl.substring(postBean.sampleUrl.lastIndexOf(".") + 1));
+            if (makeFileToSave(postBean.sampleUrl).exists()) {
+                desc = getString(R.string.dialog_download_already, desc);
+            }
+            itemMap.put(desc, 0);
+        }
+
+        desc = getString(R.string.dialog_download_large,
+                postBean.jpegWidth, postBean.jpegHeight,
+                FileUtils.computeFileSize(postBean.fileSize),
+                postBean.fileUrl.substring(postBean.fileUrl.lastIndexOf(".") + 1));
+        if (makeFileToSave(postBean.fileUrl).exists()) {
+            desc = getString(R.string.dialog_download_already, desc);
+        }
+        itemMap.put(desc, 1);
+
+        if (postBean.jpegFileSize != 0) {
+            desc = getString(R.string.dialog_download_origin,
+                    postBean.jpegWidth, postBean.jpegHeight,
+                    FileUtils.computeFileSize(postBean.jpegFileSize),
+                    postBean.jpegUrl.substring(postBean.jpegUrl.lastIndexOf(".") + 1));
+            if (makeFileToSave(postBean.jpegUrl).exists()) {
+                desc = getString(R.string.dialog_download_already, desc);
+            }
+            itemMap.put(desc, 2);
+        }
+        return itemMap;
+    }
+
     private void showPromptToReloadImageDialog(final String imageUrl, final String filePath) {
         CustomDialog.showPromptToReloadImage(this, new CustomDialog.SimpleDialogActionListener() {
             @Override
@@ -163,19 +211,21 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void saveImage() {
-        if (mImageBean != null) {
-            String url = mImageBean.posts[0].jpegUrl;
-            String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
-                    + url.substring(url.lastIndexOf("."));
-            File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
-            if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
-                downloadBitmap(url, file.getAbsolutePath());
-            } else if (file.exists()) {
-                showPromptToReloadImageDialog(url, file.getAbsolutePath());
-            }
-        } else {
-            Toast.makeText(this, R.string.loading_image, Toast.LENGTH_SHORT).show();
-        }
+//            String url = mImageBean.posts[0].jpegUrl;
+//            String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
+//                    + url.substring(url.lastIndexOf("."));
+//            File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
+//            if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
+//                downloadBitmap(url, file.getAbsolutePath());
+//            } else if (file.exists()) {
+//                showPromptToReloadImageDialog(url, file.getAbsolutePath());
+//            }
+    }
+
+    private File makeFileToSave(String url) {
+        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
+                + url.substring(url.lastIndexOf("."));
+        return new File(Constants.IMAGE_DIR, bitmapName);
     }
 
     private String getImageHead() {
@@ -205,7 +255,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             mPermissionUtil = new PermissionUtils(this, new PermissionUtils.SimplePermissionListener() {
                 @Override
                 public void onGranted() {
-                    saveImage();
+                    showChooseToDownloadDialog();
                 }
             });
         }

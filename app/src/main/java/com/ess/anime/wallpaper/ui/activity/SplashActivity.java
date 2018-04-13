@@ -11,6 +11,7 @@ import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         getWindow().setBackgroundDrawable(null);
+        UIUtils.hideBar(this, true);
 
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
