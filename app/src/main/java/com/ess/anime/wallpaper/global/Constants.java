@@ -22,10 +22,9 @@ public class Constants {
     public final static String APK_BEAN = "APK_BEAN";
     public final static String THUMB_BEAN = "THUMB_BEAN";
     public final static String IMAGE_BEAN = "IMAGE_BEAN";
+    public final static String DOWNLOAD_BEAN = "DOWNLOAD_BEAN";
     public final static String LINK_TO_SHOW = "LINK_TO_SHOW";
     public final static String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
-    public final static String JPEG_URL = "JPEG_URL";
-    public final static String BITMAP_PATH = "BITMAP_PATH";
     public final static String SEARCH_TAG = "SEARCH_TAG";
     public final static String FULLSCREEN_POSITION = "FULLSCREEN_POSITION";
     public final static String COLLECTION_LIST = "COLLECTION_LIST";

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +12,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
+import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.global.DocData;
@@ -24,10 +24,10 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -203,23 +203,20 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .show();
     }
 
-    public static void showChooseToDownloadDialog(final Context context,final Map<CharSequence,Integer> itemMap) {
+    public static void showChooseToDownloadDialog(final Context context, final List<DownloadBean> itemList, final OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.save_image)
-                .negativeText(android.R.string.cancel)
+                .negativeText(R.string.dialog_download_cancel)
                 .positiveText(R.string.dialog_download_sure)
-                .items(itemMap.keySet())
+                .items(itemList)
                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        for (CharSequence item : text) {
-                            Log.i("rrr", "item " + item);
-                            switch (itemMap.get(item)) {
-                                case 0:
-                                case 1:
-                                case 2:
-                            }
+                        List<DownloadBean> chosenList = new ArrayList<>();
+                        for (int index : which) {
+                            chosenList.add(itemList.get(index));
                         }
+                        listener.onDownloadChosen(chosenList);
                         return false;
                     }
                 }).show();
@@ -260,6 +257,8 @@ public class CustomDialog extends MaterialDialog.Builder {
         void onPositive();
 
         void onNegative();
+
+        void onDownloadChosen(List<DownloadBean> chosenList);
     }
 
     public static class SimpleDialogActionListener implements OnDialogActionListener {
@@ -270,6 +269,10 @@ public class CustomDialog extends MaterialDialog.Builder {
 
         @Override
         public void onNegative() {
+        }
+
+        @Override
+        public void onDownloadChosen(List<DownloadBean> chosenList) {
         }
     }
 }

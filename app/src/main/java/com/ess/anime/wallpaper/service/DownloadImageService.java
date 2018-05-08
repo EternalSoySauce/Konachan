@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.ess.anime.wallpaper.bean.ImageBean;
-import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
@@ -59,16 +58,14 @@ public class DownloadImageService extends Service {
             return;
         }
 
-        String url = intent.getStringExtra(Constants.JPEG_URL);
-        String bitmapPath = intent.getStringExtra(Constants.BITMAP_PATH);
-        ThumbBean thumbBean = intent.getParcelableExtra(Constants.THUMB_BEAN);
-        ImageBean imageBean = intent.getParcelableExtra(Constants.IMAGE_BEAN);
+        DownloadBean downloadBean = intent.getParcelableExtra(Constants.DOWNLOAD_BEAN);
+        String url = downloadBean.downloadUrl;
+        String savePath = downloadBean.savePath;
 
         // 绑定下载进度监听器
         DownloadImageProgressListener listener;
         if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
-            listener = new DownloadImageProgressListener(this, imageBean, intent);
-            listener.setNotifyThumb(thumbBean.thumbUrl);
+            listener = new DownloadImageProgressListener(this, downloadBean, intent);
             ProgressManager.getInstance().addResponseListener(url, listener);
             OkHttp.getInstance().addUrlToProgressListener(url, listener);
         } else {
@@ -78,7 +75,7 @@ public class DownloadImageService extends Service {
 
         // 临时下载文件
         File tempFolder = new File(Constants.IMAGE_TEMP);
-        String tempName = bitmapPath.substring(bitmapPath.lastIndexOf("/") + 1, bitmapPath.lastIndexOf("."));
+        String tempName = savePath.substring(savePath.lastIndexOf("/") + 1, savePath.lastIndexOf("."));
         File tempFile = new File(tempFolder, tempName);
         try {
             // 下载
@@ -90,7 +87,7 @@ public class DownloadImageService extends Service {
                 // 下载成功，保存为图片
                 File folder = new File(Constants.IMAGE_DIR);
                 if (folder.exists() || folder.mkdirs()) {
-                    File file = new File(bitmapPath);
+                    File file = new File(savePath);
                     FileUtils.copyFile(tempFile, file);
                     // 添加图片到媒体库（刷新相册）
                     BitmapUtils.insertToMediaStore(this, file);

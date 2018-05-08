@@ -14,8 +14,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ImageBean;
-import com.ess.anime.wallpaper.bean.PostBean;
+import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.service.DownloadImageService;
@@ -29,9 +28,7 @@ import me.jessyan.progressmanager.body.ProgressInfo;
 public class DownloadImageProgressListener implements ProgressListener, RequestListener<Bitmap> {
 
     private Context mContext;
-    private ImageBean mImageBean;
-    private String mThumbUrl;
-
+    private DownloadBean mDownloadBean;
     private String mBitmapAvailable;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mNotifyBuilder;
@@ -39,23 +36,24 @@ public class DownloadImageProgressListener implements ProgressListener, RequestL
     private PendingIntent mReloadPendingIntent;
     private PendingIntent mJumpPendingIntent;
 
-    public DownloadImageProgressListener(Context context, ImageBean imageBean, Intent intent) {
+    public DownloadImageProgressListener(Context context, DownloadBean downloadBean, Intent intent) {
         mContext = context;
-        mImageBean = imageBean;
+        mDownloadBean = downloadBean;
         prepareNotification();
         createReloadPendingIntent(intent);
         createJumpPendingIntent();
+        loadThumbnail();
     }
 
     public void prepareNotification() {
         if (mNotifyBuilder == null) {
-            mBitmapAvailable = getBitmapAvailable(mImageBean);
+            mBitmapAvailable = FileUtils.computeFileSize(mDownloadBean.downloadSize);
             mNotifyBuilder = new NotificationCompat.Builder(mContext);
             mNotifyId = (int) System.currentTimeMillis();
             mNotifyManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String title = mContext.getString(R.string.image_id_symbol) + mImageBean.posts[0].id;
-            String ticker = title + mContext.getString(R.string.download_started);
+            String title = mDownloadBean.downloadTitle;
+            String ticker = mContext.getString(R.string.download_started, title);
             mNotifyBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_notification_download_large));
             mNotifyBuilder.setTicker(ticker);
             mNotifyBuilder.setContentTitle(title);
@@ -69,27 +67,11 @@ public class DownloadImageProgressListener implements ProgressListener, RequestL
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
-    private String getBitmapAvailable(ImageBean imageBean) {
-        String available;
-        PostBean postBean = imageBean.posts[0];
-        if (postBean.jpegFileSize != 0) {
-            available = FileUtils.computeFileSize(postBean.jpegFileSize);
-        } else {
-            available = FileUtils.computeFileSize(postBean.fileSize);
-        }
-        return available;
-    }
-
-    public void setNotifyThumb(String thumbUrl) {
-        mThumbUrl = thumbUrl;
-        loadThumbnail();
-    }
-
     private void loadThumbnail() {
         int size = UIUtils.dp2px(mContext, 64);
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(MyGlideModule.makeGlideUrl(mThumbUrl))
+                .load(MyGlideModule.makeGlideUrl(mDownloadBean.thumbUrl))
                 .listener(this)
                 .override(size)
                 .centerCrop()
@@ -148,7 +130,7 @@ public class DownloadImageProgressListener implements ProgressListener, RequestL
     }
 
     public void performFinish() {
-        String finish = mBitmapAvailable + " / " + mContext.getString(R.string.download_finished);
+        String finish = mContext.getString(R.string.download_finished, mBitmapAvailable);
         mNotifyBuilder.setProgress(100, 100, false);
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
         mNotifyBuilder.setContentText(finish);

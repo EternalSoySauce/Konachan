@@ -104,7 +104,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         // 记录当前步数
-        String step = getContext().getString(R.string.game_current_step) + mCurrentStep;
+        String step = getContext().getString(R.string.game_current_step, mCurrentStep);
         float x = mRectList.get(0).left / 2f + getWidth() / 4f;
         float y = mRectList.get(0).top * 0.7f;
         mPaint.setColor(getResources().getColor(R.color.color_text_unselected));

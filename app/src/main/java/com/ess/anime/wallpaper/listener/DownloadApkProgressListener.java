@@ -45,7 +45,7 @@ public class DownloadApkProgressListener implements ProgressListener {
             mNotifyManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
             String title = mContext.getString(R.string.app_name);
-            String ticker = title + mContext.getString(R.string.download_started);
+            String ticker = mContext.getString(R.string.download_started, title);
             mNotifyBuilder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher));
             mNotifyBuilder.setTicker(ticker);
             mNotifyBuilder.setContentTitle(title);
@@ -103,7 +103,7 @@ public class DownloadApkProgressListener implements ProgressListener {
     }
 
     public void performFinish() {
-        String finish = mFileAvailable + " / " + mContext.getString(R.string.download_finished);
+        String finish = mContext.getString(R.string.download_finished, mFileAvailable);
         mNotifyBuilder.setProgress(100, 100, false);
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
         mNotifyBuilder.setContentText(finish);

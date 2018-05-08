@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerImageDetailAdapter;
+import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
@@ -30,8 +32,7 @@ import com.ess.anime.wallpaper.view.SlidingTabLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 public class ImageDetailActivity extends AppCompatActivity {
 
@@ -43,6 +44,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager;
 
     private PermissionUtils mPermissionUtil;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,80 +148,102 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     private void showChooseToDownloadDialog() {
         if (mImageBean != null) {
-            CustomDialog.showChooseToDownloadDialog(this, makeDownloadChosenMap());
+            CustomDialog.showChooseToDownloadDialog(this, makeDownloadChosenList(), new CustomDialog.SimpleDialogActionListener() {
+                @Override
+                public void onDownloadChosen(List<DownloadBean> chosenList) {
+                    saveImage(chosenList);
+                }
+            });
         } else {
             Toast.makeText(this, R.string.loading_image, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private Map<CharSequence, Integer> makeDownloadChosenMap() {
+    private List<DownloadBean> makeDownloadChosenList() {
         PostBean postBean = mImageBean.posts[0];
-        Map<CharSequence, Integer> itemMap = new LinkedHashMap<>();
+        List<DownloadBean> downloadList = new ArrayList<>();
+        File file;
         String desc;
+        boolean exists;
         if (postBean.sampleFileSize != 0) {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
                     postBean.sampleUrl.substring(postBean.sampleUrl.lastIndexOf(".") + 1));
-            if (makeFileToSave(postBean.sampleUrl).exists()) {
+            file = makeFileToSave(postBean.sampleUrl);
+            exists = file.exists();
+            if (exists) {
                 desc = getString(R.string.dialog_download_already, desc);
             }
-            itemMap.put(desc, 0);
+            downloadList.add(new DownloadBean(0, postBean.sampleUrl, postBean.sampleFileSize,
+                    getString(R.string.download_title_sample, postBean.id), mThumbBean.thumbUrl,
+                    file.getAbsolutePath(), exists, desc));
         }
 
         desc = getString(R.string.dialog_download_large,
                 postBean.jpegWidth, postBean.jpegHeight,
                 FileUtils.computeFileSize(postBean.fileSize),
                 postBean.fileUrl.substring(postBean.fileUrl.lastIndexOf(".") + 1));
-        if (makeFileToSave(postBean.fileUrl).exists()) {
+        file = makeFileToSave(postBean.fileUrl);
+        exists = file.exists();
+        if (exists) {
             desc = getString(R.string.dialog_download_already, desc);
         }
-        itemMap.put(desc, 1);
+        downloadList.add(new DownloadBean(1, postBean.fileUrl, postBean.fileSize,
+                getString(R.string.download_title_large, postBean.id), mThumbBean.thumbUrl,
+                file.getAbsolutePath(), exists, desc));
 
         if (postBean.jpegFileSize != 0) {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),
                     postBean.jpegUrl.substring(postBean.jpegUrl.lastIndexOf(".") + 1));
-            if (makeFileToSave(postBean.jpegUrl).exists()) {
+            file = makeFileToSave(postBean.jpegUrl);
+            exists = file.exists();
+            if (exists) {
                 desc = getString(R.string.dialog_download_already, desc);
             }
-            itemMap.put(desc, 2);
+            downloadList.add(new DownloadBean(2, postBean.jpegUrl, postBean.jpegFileSize,
+                    getString(R.string.download_title_origin, postBean.id), mThumbBean.thumbUrl,
+                    file.getAbsolutePath(), exists, desc));
         }
-        return itemMap;
+        return downloadList;
     }
 
-    private void showPromptToReloadImageDialog(final String imageUrl, final String filePath) {
+    private void saveImage(List<DownloadBean> downloadList) {
+        for (DownloadBean downloadBean : downloadList) {
+            if (downloadBean.fileExists) {
+                showPromptToReloadImageDialog(downloadList);
+                return;
+            }
+        }
+        downloadBitmaps(downloadList);
+    }
+
+    private void showPromptToReloadImageDialog(final List<DownloadBean> downloadList) {
         CustomDialog.showPromptToReloadImage(this, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
-                if (!OkHttp.getInstance().isUrlInDownloadQueue(imageUrl)) {
-                    downloadBitmap(imageUrl, filePath);
-                }
+                downloadBitmaps(downloadList);
             }
         });
     }
 
-    private void downloadBitmap(String url, String bitmapPath) {
-        Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
-        downloadIntent.putExtra(Constants.JPEG_URL, url);
-        downloadIntent.putExtra(Constants.BITMAP_PATH, bitmapPath);
-        downloadIntent.putExtra(Constants.THUMB_BEAN, mThumbBean);
-        downloadIntent.putExtra(Constants.IMAGE_BEAN, mImageBean);
-        startService(downloadIntent);
-        OkHttp.getInstance().addUrlToDownloadQueue(url);
-    }
-
-    private void saveImage() {
-//            String url = mImageBean.posts[0].jpegUrl;
-//            String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
-//                    + url.substring(url.lastIndexOf("."));
-//            File file = new File(Constants.IMAGE_DIR + "/" + bitmapName);
-//            if (!file.exists() && !OkHttp.getInstance().isUrlInDownloadQueue(url)) {
-//                downloadBitmap(url, file.getAbsolutePath());
-//            } else if (file.exists()) {
-//                showPromptToReloadImageDialog(url, file.getAbsolutePath());
-//            }
+    private void downloadBitmaps(List<DownloadBean> downloadList) {
+        for (int i = 0; i < downloadList.size(); i++) {
+            final DownloadBean downloadBean = downloadList.get(i);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!OkHttp.getInstance().isUrlInDownloadQueue(downloadBean.downloadUrl)) {
+                        Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
+                        downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
+                        startService(downloadIntent);
+                        OkHttp.getInstance().addUrlToDownloadQueue(downloadBean.downloadUrl);
+                    }
+                }
+            }, i * 100);
+        }
     }
 
     private File makeFileToSave(String url) {

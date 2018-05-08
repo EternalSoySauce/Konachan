@@ -10,8 +10,8 @@
     <string name="check_no_new_version">当前已是最新版本</string>
 
     <!-- Notification -->
-    <string name="download_started">&#160;开始下载</string>
-    <string name="download_finished">下载完成</string>
+    <string name="download_started">%s开始下载</string>
+    <string name="download_finished">%s / 下载完成</string>
     <string name="download_failed">下载失败，点击重试</string>
 
     <!-- Drawer Layout -->
@@ -93,18 +93,16 @@
     <string name="game_column_3">3 × 3</string>
     <string name="game_column_4">4 × 4</string>
     <string name="game_column_5">5 × 5</string>
-    <string name="game_current_step">步数：</string>
+    <string name="game_current_step">步数：%d</string>
     <string name="game_best_step">最佳：</string>
     <string name="game_none_best_step">无</string>
     <string name="game_completed">恭喜！</string>
 
     <!-- Dialog -->
-    <string name="dialog_delete_msg1">将删除&#160;</string>
-    <string name="dialog_delete_msg2">&#160;张图片。</string>
-    <string name="dialog_delete_msg3">&#160;张图片。</string>
+    <string name="dialog_delete_msg">将删除 %d 张图片。</string>
     <string name="dialog_delete_cancel">取消</string>
     <string name="dialog_delete_sure">删除</string>
-    <string name="dialog_reload_msg">该图片已存在于相册中，是否重新下载？</string>
+    <string name="dialog_reload_msg">部分图片已存在于相册中，是否重新下载？</string>
     <string name="dialog_reload_yes">是</string>
     <string name="dialog_reload_no">否</string>
     <string name="dialog_doc_tag_type_title">帮助：标签</string>

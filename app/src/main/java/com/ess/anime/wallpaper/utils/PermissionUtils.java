@@ -36,7 +36,7 @@ public class PermissionUtils implements RationaleListener {
 
     @Override
     public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
-        CustomDialog.showNeedStoragePermissionDialog(mActivity, new CustomDialog.OnDialogActionListener() {
+        CustomDialog.showNeedStoragePermissionDialog(mActivity, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
                 rationale.resume();
@@ -66,7 +66,7 @@ public class PermissionUtils implements RationaleListener {
         } else {
             // 用户点击确定后会打开App的设置页面让用户授权。
             final SettingService settingService = AndPermission.defineSettingDialog(mActivity, Constants.STORAGE_PERMISSION_CODE);
-            CustomDialog.showGoToSettingDialog(mActivity, new CustomDialog.OnDialogActionListener() {
+            CustomDialog.showGoToSettingDialog(mActivity, new CustomDialog.SimpleDialogActionListener() {
                 @Override
                 public void onPositive() {
                     settingService.execute();

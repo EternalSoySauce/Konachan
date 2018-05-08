@@ -10,9 +10,12 @@
     <string name="check_no_new_version">Currently is the latest version</string>
 
     <!-- Notification -->
-    <string name="download_started">&#160;Start download</string>
-    <string name="download_finished">Download completed</string>
+    <string name="download_started">%s Start download</string>
+    <string name="download_finished">%s / Download completed</string>
     <string name="download_failed">Download failed, click to try again</string>
+    <string name="download_title_sample">#%s (Sample)</string>
+    <string name="download_title_large">#%s (Large)</string>
+    <string name="download_title_origin">#%s (Origin)</string>
 
     <!-- Drawer Layout -->
     <string name="base_konachan_s">Konachan(safe)</string>
@@ -93,15 +96,13 @@
     <string name="game_column_3">3 × 3</string>
     <string name="game_column_4">4 × 4</string>
     <string name="game_column_5">5 × 5</string>
-    <string name="game_current_step">Step:&#160;</string>
+    <string name="game_current_step">Step: %d</string>
     <string name="game_best_step">Best:&#160;</string>
     <string name="game_none_best_step">none</string>
     <string name="game_completed">Congratulations!</string>
 
     <!-- Dialog -->
-    <string name="dialog_delete_msg1"/>
-    <string name="dialog_delete_msg2">&#160;image will be deleted</string>
-    <string name="dialog_delete_msg3">&#160;images will be deleted</string>
+    <string name="dialog_delete_msg">%d image(s) will be deleted.</string>
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_delete_sure">Delete</string>
     <string name="dialog_download_sample">Sample %1$d x %2$d %3$s (%4$s)</string>
@@ -109,7 +110,9 @@
     <string name="dialog_download_origin">Origin %1$d x %2$d %3$s (%4$s)</string>
     <string name="dialog_download_already">%s (Downloaded)</string>
     <string name="dialog_download_sure">Download</string>
-    <string name="dialog_reload_msg">This image already exists in the album. Do you want to download again?</string>
+    <string name="dialog_download_cancel">Cancel</string>
+    <string name="dialog_reload_msg">Some of these images already exist in the album. Do you want
+        to download again?</string>
     <string name="dialog_reload_yes">Download</string>
     <string name="dialog_reload_no">Cancel</string>
     <string name="dialog_doc_tag_type_title">Help: Tags</string>
