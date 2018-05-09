@@ -39,7 +39,7 @@
     <string name="spinner_search_chinese">中文搜索</string>
     <string name="spinner_search_advanced">高级搜索</string>
     <string name="cancel_search">取消</string>
-    <string name="click_here">点此查看。</string>
+    <string name="click_here">%s点此查看。</string>
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">允许播放语音</string>
@@ -80,7 +80,7 @@
     <string name="comment_no_comments">暂无评论</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time">Updated&#160;</string>
+    <string name="pool_updated_time">Updated %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>

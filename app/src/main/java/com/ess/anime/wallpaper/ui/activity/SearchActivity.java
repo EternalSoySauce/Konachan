@@ -219,7 +219,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private SpannableString setLinkToShowTagTypeDoc(String baseText) {
-        SpannableString spanText = new SpannableString(baseText + getString(R.string.click_here));
+        SpannableString spanText = new SpannableString(getString(R.string.click_here, baseText));
         spanText.setSpan(new ClickableSpan() {
             @Override
             public void onClick(View widget) {

@@ -42,7 +42,7 @@
     <string name="spinner_search_chinese">Search Chinese</string>
     <string name="spinner_search_advanced">Advanced Search</string>
     <string name="cancel_search">Cancel</string>
-    <string name="click_here">click here.</string>
+    <string name="click_here">%sclick here.</string>
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">Allow to play sound</string>
@@ -83,7 +83,7 @@
     <string name="comment_no_comments">No comment</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time">Updated&#160;</string>
+    <string name="pool_updated_time">Updated %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">All</string>

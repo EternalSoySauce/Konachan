@@ -80,7 +80,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         holder.tvCreateTime.setText(poolListBean.createTime);
 
         //上传时间
-        String update = mActivity.getString(R.string.pool_updated_time) + poolListBean.updateTime;
+        String update = mActivity.getString(R.string.pool_updated_time, poolListBean.updateTime);
         holder.tvUpdateTime.setText(update);
 
         //点击加载图片列表
