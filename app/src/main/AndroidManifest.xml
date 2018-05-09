@@ -36,6 +36,7 @@
         <activity
             android:name=".ui.activity.ImageDetailActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <service android:name=".service.DownloadImageService"/>
@@ -76,7 +77,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"/>
         </provider>
 
         <meta-data

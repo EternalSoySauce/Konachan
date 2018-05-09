@@ -1,7 +1,6 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -15,25 +14,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.ess.anime.wallpaper.utils.BitmapUtils;
-import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.CustomDialog;
-import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.PermissionUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.view.CustomDialog;
+import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class CollectionActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -130,7 +123,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private void initRecyclerView() {
         mRvCollection = (RecyclerView) findViewById(R.id.rv_collection);
         mRvCollection.setLayoutManager(new GridLayoutManager(this, 3));
-        mCollectionAdapter = new RecyclerCollectionAdapter(this, getCollectionImages());
+        mCollectionAdapter = new RecyclerCollectionAdapter(this, CollectionBean.getCollectionImages());
         mRvCollection.setAdapter(mCollectionAdapter);
         int spanHor = UIUtils.dp2px(this, 0.75f);
         int spanVer = UIUtils.dp2px(this, 1.5f);
@@ -147,7 +140,6 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
                         CollectionActivity.this, new Pair<View, String>(imageView, "s"));
                 Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
                 intent.putExtra(Constants.FULLSCREEN_POSITION, position);
-                intent.putExtra(Constants.COLLECTION_LIST, mCollectionAdapter.getCollectionList());
                 startActivityForResult(intent, Constants.FULLSCREEN_CODE);
 //                ActivityCompat.startActivityForResult(CollectionActivity.this, intent,
 //                        Constants.FULLSCREEN_CODE, compat.toBundle());
@@ -218,28 +210,6 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         mCollectionAdapter.cancelEdit(notify);
     }
 
-    private ArrayList<CollectionBean> getCollectionImages() {
-        ArrayList<CollectionBean> collectionList = new ArrayList<>();
-        File folder = new File(Constants.IMAGE_DIR);
-        if (folder.exists() && !folder.isFile()) {
-            List<File> imageFiles = Arrays.asList(folder.listFiles());
-            Collections.sort(imageFiles, new FileOrderComparator());
-            for (File file : imageFiles) {
-                String imagePath = file.getAbsolutePath();
-                String imageUrl = "file://" + imagePath;
-                try {
-                    ExifInterface exifInterface = new ExifInterface(imagePath);
-                    String width = exifInterface.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);
-                    String height = exifInterface.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);
-                    collectionList.add(new CollectionBean(imageUrl, width, height));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return collectionList;
-    }
-
     public void shareImages() {
         ArrayList<Uri> uriList = new ArrayList<>();
         for (CollectionBean collectionBean : mCollectionAdapter.getChooseList()) {
@@ -277,12 +247,4 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    class FileOrderComparator implements Comparator<File> {
-
-        @Override
-        public int compare(File lhs, File rhs) {
-            return lhs.lastModified() < rhs.lastModified() ? 1
-                    : (lhs.lastModified() > rhs.lastModified() ? -1 : 0);
-        }
-    }
 }

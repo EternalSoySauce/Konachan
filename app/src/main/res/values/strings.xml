@@ -106,7 +106,7 @@
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_delete_sure">Delete</string>
     <string name="dialog_download_sample">Sample %1$d x %2$d %3$s (%4$s)</string>
-    <string name="dialog_download_large">Large %1$d x %2$d %3$s (%4$s)</string>
+    <string name="dialog_download_large">Large %3$s\n%1$d x %2$d (%4$s)</string>
     <string name="dialog_download_origin">Origin %1$d x %2$d %3$s (%4$s)</string>
     <string name="dialog_download_already">%s (Downloaded)</string>
     <string name="dialog_download_sure">Download</string>

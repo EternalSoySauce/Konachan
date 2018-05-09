@@ -37,9 +37,13 @@ public class FullscreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fullscreen);
 
-        mCollectionList = getIntent().getParcelableArrayListExtra(Constants.COLLECTION_LIST);
-        mCurrentPos = getIntent().getIntExtra(Constants.FULLSCREEN_POSITION, 0);
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
+        if (mEnlarge) {
+            mCollectionList = getIntent().getParcelableArrayListExtra(Constants.COLLECTION_LIST);
+        }else {
+            mCollectionList = CollectionBean.getCollectionImages();
+            mCurrentPos = getIntent().getIntExtra(Constants.FULLSCREEN_POSITION, 0);
+        }
 
         initViews();
         initFullScreenViewPager();
