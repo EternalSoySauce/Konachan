@@ -10,6 +10,7 @@
     <string name="check_no_new_version">当前已是最新版本</string>
     <string name="already_first_image">已经是第一张了</string>
     <string name="already_last_image">已经是最后一张了</string>
+    <string name="cannot_set_as_wallpaper">无法设置为壁纸</string>
 
     <!-- Notification -->
     <string name="download_started">%s开始下载</string>
@@ -91,6 +92,11 @@
     <string name="share_title">共享通过</string>
     <string name="delete">删除</string>
 
+    <!-- Fullscreen Activity -->
+    <string name="action_wallpaper">设为壁纸</string>
+    <string name="action_share">分享到其他应用</string>
+    <string name="action_cancel">取消</string>
+
     <!-- Surface View -->
     <string name="game_column_3">3 × 3</string>
     <string name="game_column_4">4 × 4</string>
@@ -122,7 +128,7 @@
     <string name="dialog_change_base_url_title">切换网站</string>
     <string name="dialog_change_base_url_cancel">取消</string>
     <string name="dialog_update_title">检测到新版本</string>
-    <string name="dialog_update_msg"  formatted="false">版本：%1$s\n更新包体积：%2$s\n\n更新内容：\n%3$s</string>
+    <string name="dialog_update_msg" formatted="false">版本：%1$s\n更新包体积：%2$s\n\n更新内容：\n%3$s</string>
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
 </resources>

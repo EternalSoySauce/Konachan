@@ -15,6 +15,8 @@ import java.util.List;
 
 public class CollectionBean implements Parcelable {
 
+    public String filePath;
+
     public String url;
 
     public int width;
@@ -23,18 +25,20 @@ public class CollectionBean implements Parcelable {
 
     public boolean isChecked;
 
-    public CollectionBean(String url, int width, int height) {
-        this(url, width, height, false);
+    public CollectionBean(String filePath, int width, int height) {
+        this(filePath, width, height, false);
     }
 
-    public CollectionBean(String url, int width, int height, boolean isChecked) {
-        this.url = url;
+    public CollectionBean(String filePath, int width, int height, boolean isChecked) {
+        this.filePath = filePath;
+        this.url = "file://" + filePath;
         this.width = width;
         this.height = height;
         this.isChecked = isChecked;
     }
 
     protected CollectionBean(Parcel in) {
+        filePath = in.readString();
         url = in.readString();
         width = in.readInt();
         height = in.readInt();
@@ -43,6 +47,7 @@ public class CollectionBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(url);
+        dest.writeString(filePath);
         dest.writeInt(width);
         dest.writeInt(height);
     }
@@ -93,11 +98,10 @@ public class CollectionBean implements Parcelable {
 
     public static CollectionBean createCollectionFromFile(File file) {
         String imagePath = file.getAbsolutePath();
-        String imageUrl = "file://" + imagePath;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imagePath, options);
-        return new CollectionBean(imageUrl, options.outWidth, options.outHeight);
+        return new CollectionBean(imagePath, options.outWidth, options.outHeight);
     }
 
     static class FileOrderComparator implements Comparator<File> {

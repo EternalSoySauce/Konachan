@@ -218,7 +218,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         mCollectionAdapter.cancelEdit(notify);
     }
 
-    public void shareImages() {
+    private void shareImages() {
         ArrayList<Uri> uriList = new ArrayList<>();
         for (CollectionBean collectionBean : mCollectionAdapter.getChooseList()) {
             Uri uri = Uri.parse(collectionBean.url);
@@ -227,7 +227,6 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         intent.setType("image/*");
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
     }
 

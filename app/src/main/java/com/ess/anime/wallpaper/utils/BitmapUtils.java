@@ -1,8 +1,10 @@
 package com.ess.anime.wallpaper.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -366,4 +368,55 @@ public class BitmapUtils {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         context.getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=?", new String[]{path});
     }
+
+    /**
+     * Gets the content:// URI from the given corresponding path to a file
+     *
+     * @param context   上下文
+     * @param imageFile 图片文件
+     * @return content Uri
+     */
+    public static Uri getContentUriFromFile(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.Media._ID},
+                MediaStore.Images.Media.DATA + "=?", new String[]{filePath}, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(uri, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(uri, values);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Gets the corresponding path to a file from the given content:// URI
+     *
+     * @param context    上下文
+     * @param contentUri The content:// URI to find the file path from
+     * @return the file path as a string
+     */
+    public static String getFilePathFromContentUri(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] project = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(contentUri, project, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
 }

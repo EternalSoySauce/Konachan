@@ -10,6 +10,7 @@
     <string name="check_no_new_version">Currently is the latest version</string>
     <string name="already_first_image">It is already the first image</string>
     <string name="already_last_image">It is already the last image</string>
+    <string name="cannot_set_as_wallpaper">Can not set as wallpaper</string>
 
     <!-- Notification -->
     <string name="download_started">%s Start download</string>
@@ -93,6 +94,11 @@
     <string name="share">Share</string>
     <string name="share_title">Shared via</string>
     <string name="delete">Delete</string>
+
+    <!-- Fullscreen Activity -->
+    <string name="action_wallpaper">Set as wallpaper</string>
+    <string name="action_share">Share to</string>
+    <string name="action_cancel">Cancel</string>
 
     <!-- Surface View -->
     <string name="game_column_3">3 × 3</string>
