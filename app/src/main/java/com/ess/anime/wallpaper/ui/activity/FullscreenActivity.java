@@ -10,10 +10,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
+import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.utils.UIUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -32,6 +37,8 @@ public class FullscreenActivity extends AppCompatActivity {
     private int mCurrentPos;
     private boolean mEnlarge;
 
+    private boolean forResult = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,15 +47,22 @@ public class FullscreenActivity extends AppCompatActivity {
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
         if (mEnlarge) {
             mCollectionList = getIntent().getParcelableArrayListExtra(Constants.COLLECTION_LIST);
-        }else {
+        } else {
             mCollectionList = CollectionBean.getCollectionImages();
             mCurrentPos = getIntent().getIntExtra(Constants.FULLSCREEN_POSITION, 0);
         }
 
         initViews();
         initFullScreenViewPager();
+        EventBus.getDefault().register(this);
 
 //        ViewCompat.setTransitionName(mVpFullScreen, "s");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UIUtils.hideBar(this, true);
     }
 
     private void initViews() {
@@ -108,14 +122,31 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        Intent intent = new Intent();
-        intent.putExtra(Constants.FULLSCREEN_POSITION, mCurrentPos);
-        setResult(Constants.FULLSCREEN_CODE, intent);
+        if (forResult) {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.FULLSCREEN_POSITION, mCurrentPos);
+            setResult(Constants.FULLSCREEN_CODE, intent);
+        }
         super.finish();
     }
 
     @Override
     public void onBackPressed() {
         ActivityCompat.finishAfterTransition(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    // 收藏夹本地文件发生变动后收到的通知，obj 为 null
+    @Subscribe
+    public void localFilesChanged(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.LOCAL_FILES_CHANGED)) {
+            forResult = false;
+            finish();
+        }
     }
 }

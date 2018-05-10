@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.global.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
 import com.ess.anime.wallpaper.other.MyGlideModule;
@@ -66,7 +67,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
         if (position == getItemCount() - 1) {
             ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
             params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
@@ -90,6 +91,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ImageDataHolder.setThumbList(mThumbList, position);
                 Intent intent = new Intent(mActivity, ImageDetailActivity.class);
                 intent.putExtra(Constants.THUMB_BEAN, thumbBean);
                 mActivity.startActivity(intent);

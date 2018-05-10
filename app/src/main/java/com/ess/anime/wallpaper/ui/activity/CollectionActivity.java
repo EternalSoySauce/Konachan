@@ -17,7 +17,9 @@ import android.widget.TextView;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
+import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.PermissionUtils;
@@ -26,9 +28,12 @@ import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 import java.util.ArrayList;
 
-public class CollectionActivity extends AppCompatActivity implements View.OnClickListener {
+public class CollectionActivity extends AppCompatActivity implements View.OnClickListener, LocalCollectionsListener.OnFilesChangedListener {
 
     private Toolbar mToolbar;
     private TextView mTvEdit;
@@ -40,6 +45,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private RecyclerCollectionAdapter mCollectionAdapter;
 
     private PermissionUtils mPermissionUtil;
+    private LocalCollectionsListener mFilesListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,8 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
                     initToolBarLayout();
                     initEditView();
                     initRecyclerView();
+                    mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
+                    mFilesListener.startWatching();
                 }
 
                 @Override
@@ -224,6 +232,43 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onFileAdded(final File file) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mCollectionAdapter.isEditing()) {
+                    cancelEdit(false);
+                }
+                CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
+                if (!mCollectionAdapter.getCollectionList().contains(collectionBean)) {
+                    mCollectionAdapter.addData(collectionBean);
+                }
+                mRvCollection.scrollToPosition(0);
+                // 发送通知到FullscreenActivity
+                EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
+            }
+        });
+    }
+
+    @Override
+    public void onFileRemoved(final File file) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mCollectionAdapter.isEditing()) {
+                    cancelEdit(false);
+                }
+                CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
+                if (mCollectionAdapter.getCollectionList().contains(collectionBean)) {
+                    mCollectionAdapter.removeData(collectionBean);
+                }
+                // 发送通知到FullscreenActivity
+                EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
+            }
+        });
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 退出全屏回调
@@ -247,4 +292,11 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mFilesListener != null) {
+            mFilesListener.stopWatching();
+        }
+    }
 }

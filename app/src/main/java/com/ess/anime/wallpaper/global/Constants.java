@@ -24,6 +24,7 @@ public class Constants {
     public final static String IMAGE_BEAN = "IMAGE_BEAN";
     public final static String DOWNLOAD_BEAN = "DOWNLOAD_BEAN";
     public final static String LINK_TO_SHOW = "LINK_TO_SHOW";
+    public final static String CURRENT_PAGE = "CURRENT_PAGE";
     public final static String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
     public final static String SEARCH_TAG = "SEARCH_TAG";
     public final static String FULLSCREEN_POSITION = "FULLSCREEN_POSITION";
@@ -42,10 +43,11 @@ public class Constants {
     public final static int STORAGE_PERMISSION_CODE = 3000;
 
     // EventBus
-    public final static String CHECK_UPDATE = "checkUpdate";  //检测到新版本后通知 MainActivity
-    public final static String TOGGLE_SCAN_MODE = "toggleScanMode";  //更换浏览模式后通知 PostFragment和PoolFragment更新adapter
-    public final static String CHANGE_BASE_URL = "changeBaseUrl";  //切换搜图网站后通知 PostFragment和PoolFragment更新adapter
-    public final static String GET_IMAGE_DETAIL = "getImageDetail";  //获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter
+    public final static String CHECK_UPDATE = "checkUpdate";  // 检测到新版本后通知 MainActivity
+    public final static String TOGGLE_SCAN_MODE = "toggleScanMode";  // 更换浏览模式后通知 PostFragment和PoolFragment更新adapter
+    public final static String CHANGE_BASE_URL = "changeBaseUrl";  // 切换搜图网站后通知 PostFragment和PoolFragment更新adapter
+    public final static String GET_IMAGE_DETAIL = "getImageDetail";  // 获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter
+    public final static String LOCAL_FILES_CHANGED = "localFilesChanged";  // 收藏夹本地文件发生变动后通知FullscreenActivity退出页面
 
     // Http
     public final static String BASE_URL_KONACHAN_S = "https://www.konachan.net/";

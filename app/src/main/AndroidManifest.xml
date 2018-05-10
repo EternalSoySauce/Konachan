@@ -36,7 +36,6 @@
         <activity
             android:name=".ui.activity.ImageDetailActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <service android:name=".service.DownloadImageService"/>

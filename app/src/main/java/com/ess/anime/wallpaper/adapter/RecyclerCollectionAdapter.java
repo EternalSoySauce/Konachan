@@ -118,6 +118,21 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         return mCollectionList == null ? 0 : mCollectionList.size();
     }
 
+    public void addData(CollectionBean collectionBean) {
+        mCollectionList.add(0, collectionBean);
+        notifyItemInserted(0);
+        notifyItemRangeChanged(0, mCollectionList.size());
+    }
+
+    public void removeData(CollectionBean collectionBean) {
+        int position = mCollectionList.indexOf(collectionBean);
+        if (position != -1) {
+            mCollectionList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(0, mCollectionList.size());
+        }
+    }
+
     public void removeDatas(ArrayList<CollectionBean> deleteList) {
         for (CollectionBean collectionBean : deleteList) {
             int position = mCollectionList.indexOf(collectionBean);

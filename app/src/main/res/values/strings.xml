@@ -8,6 +8,8 @@
     <string name="loading">Don\'t worry, it\'s OK right away.</string>
     <string name="loading_image">Obtaining image information, please wait.</string>
     <string name="check_no_new_version">Currently is the latest version</string>
+    <string name="already_first_image">It is already the first image</string>
+    <string name="already_last_image">It is already the last image</string>
 
     <!-- Notification -->
     <string name="download_started">%s Start download</string>
@@ -106,7 +108,7 @@
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_delete_sure">Delete</string>
     <string name="dialog_download_sample">Sample %1$d x %2$d %3$s (%4$s)</string>
-    <string name="dialog_download_large">Large %3$s\n%1$d x %2$d (%4$s)</string>
+    <string name="dialog_download_large">Large&#160;&#160;&#160;%3$s\n%1$d x %2$d&#160;&#160;&#160;%4$s</string>
     <string name="dialog_download_origin">Origin %1$d x %2$d %3$s (%4$s)</string>
     <string name="dialog_download_already">%s (Downloaded)</string>
     <string name="dialog_download_sure">Download</string>

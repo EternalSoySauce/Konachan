@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +27,7 @@
                     android:layout_width="@dimen/toolbar_size"
                     android:layout_height="@dimen/toolbar_size"
                     android:scaleType="center"
-                    android:src="@drawable/ic_back"/>
+                    android:src="@drawable/ic_back" />
             </FrameLayout>
 
             <TextView
@@ -41,10 +40,9 @@
                 android:maxLines="1"
                 android:text="@string/image_id_symbol"
                 android:textColor="@color/colorAccent"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <FrameLayout
-                android:id="@+id/fl_save_image"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
@@ -61,21 +59,40 @@
                     android:padding="15dp"
                     android:text="@string/save_image"
                     android:textColor="@color/colorAccent"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
             </FrameLayout>
         </RelativeLayout>
 
         <com.ess.anime.wallpaper.view.SlidingTabLayout
             android:id="@+id/sliding_tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.ess.anime.wallpaper.view.SlidingTabLayout>
+            android:layout_height="wrap_content" />
     </android.support.design.widget.AppBarLayout>
 
     <com.ess.anime.wallpaper.view.ViewPagerFixed
         android:id="@+id/vp_image_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    </com.ess.anime.wallpaper.view.ViewPagerFixed>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <ImageView
+        android:id="@+id/iv_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="30dp"
+        android:alpha="0.7"
+        android:onClick="previousImage"
+        android:src="@drawable/ic_image_previous" />
+
+    <ImageView
+        android:id="@+id/iv_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="30dp"
+        android:alpha="0.7"
+        android:onClick="nextImage"
+        android:src="@drawable/ic_image_next" />
+
 </android.support.design.widget.CoordinatorLayout>

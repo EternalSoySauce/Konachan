@@ -16,8 +16,11 @@ import java.util.List;
 public class CollectionBean implements Parcelable {
 
     public String url;
+
     public int width;
+
     public int height;
+
     public boolean isChecked;
 
     public CollectionBean(String url, int width, int height) {
@@ -35,7 +38,6 @@ public class CollectionBean implements Parcelable {
         url = in.readString();
         width = in.readInt();
         height = in.readInt();
-        isChecked = in.readByte() != 0;
     }
 
     @Override
@@ -43,7 +45,6 @@ public class CollectionBean implements Parcelable {
         dest.writeString(url);
         dest.writeInt(width);
         dest.writeInt(height);
-        dest.writeByte((byte) (isChecked ? 1 : 0));
     }
 
     @Override
@@ -63,6 +64,20 @@ public class CollectionBean implements Parcelable {
         }
     };
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof CollectionBean) {
+            CollectionBean collectionBean = (CollectionBean) obj;
+            return !(this.url == null || collectionBean.url == null) && this.url.equals(collectionBean.url);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return url.hashCode();
+    }
+
     public static ArrayList<CollectionBean> getCollectionImages() {
         ArrayList<CollectionBean> collectionList = new ArrayList<>();
         File folder = new File(Constants.IMAGE_DIR);
@@ -70,15 +85,19 @@ public class CollectionBean implements Parcelable {
             List<File> imageFiles = Arrays.asList(folder.listFiles());
             Collections.sort(imageFiles, new FileOrderComparator());
             for (File file : imageFiles) {
-                String imagePath = file.getAbsolutePath();
-                String imageUrl = "file://" + imagePath;
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeFile(imagePath, options);
-                collectionList.add(new CollectionBean(imageUrl, options.outWidth, options.outHeight));
+                collectionList.add(createCollectionFromFile(file));
             }
         }
         return collectionList;
+    }
+
+    public static CollectionBean createCollectionFromFile(File file) {
+        String imagePath = file.getAbsolutePath();
+        String imageUrl = "file://" + imagePath;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+        return new CollectionBean(imageUrl, options.outWidth, options.outHeight);
     }
 
     static class FileOrderComparator implements Comparator<File> {
