@@ -97,8 +97,7 @@
 
     <!-- Fullscreen Activity -->
     <string name="action_wallpaper">Set as wallpaper</string>
-    <string name="action_share">Share to</string>
-    <string name="action_cancel">Cancel</string>
+    <string name="action_share">Share to others</string>
 
     <!-- Surface View -->
     <string name="game_column_3">3 × 3</string>

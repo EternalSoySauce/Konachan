@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,8 +33,8 @@ import java.util.ArrayList;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class FullscreenActivity extends AppCompatActivity
-        implements PhotoViewAttacher.OnViewTapListener, View.OnLongClickListener {
+public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener,
+        PhotoViewAttacher.OnViewTapListener, View.OnLongClickListener {
 
     private final static int PAGE_LIMIT = 1;
 
@@ -116,12 +117,26 @@ public class FullscreenActivity extends AppCompatActivity
     }
 
     @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_back:
+                onBackPressed();
+                break;
+
+            case R.id.iv_menu:
+                mActionSheet.show();
+                break;
+        }
+    }
+
+    @Override
     public void onViewTap(View view, float x, float y) {
         onBackPressed();
     }
 
     @Override
     public boolean onLongClick(View v) {
+        v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         mActionSheet.show();
         return true;
     }
