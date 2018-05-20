@@ -108,9 +108,9 @@ public class OkHttp {
      * @return 是否为网络问题
      */
     public static boolean isNetworkProblem(Exception e) {
-        return !e.getMessage().equals(CANCEL_EXCEPTION)
+        return e == null || (!e.getMessage().equals(CANCEL_EXCEPTION)
                 && !e.getMessage().equals(SOCKET_CLOSED)
-                && !e.getMessage().equals(RESET_STREAM);
+                && !e.getMessage().equals(RESET_STREAM));
     }
 
     // 通过tags搜索图片

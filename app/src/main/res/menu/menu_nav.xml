@@ -31,6 +31,12 @@
     <group
         android:id="@+id/g3"
         android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_sauce_nao"
+            android:icon="@drawable/ic_nav_menu_game"
+            android:title="@string/nav_sauce_nao"/>
+
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_nav_menu_game"

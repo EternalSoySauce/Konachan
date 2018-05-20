@@ -32,6 +32,7 @@
     <string name="nav_pool">Album</string>
     <string name="nav_collection">Favorites</string>
     <string name="nav_setting">Setting &amp; Help</string>
+    <string name="nav_sauce_nao">SauceNAO</string>
     <string name="nav_game">Puzzle Game</string>
 
     <!-- Widget -->

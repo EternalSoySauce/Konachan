@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.ess.anime.wallpaper">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -60,14 +61,19 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activity.GameActivity"
+            android:name=".ui.activity.FullscreenActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:theme="@style/AppTheme.Fullscreen"/>
+
+        <activity
+            android:name=".ui.activity.SauceNaoActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activity.FullscreenActivity"
+            android:name=".ui.activity.GameActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:theme="@style/AppTheme.Fullscreen"/>
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

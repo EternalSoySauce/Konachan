@@ -29,6 +29,7 @@
     <string name="nav_pool">图集</string>
     <string name="nav_collection">我的收藏</string>
     <string name="nav_setting">设置与帮助</string>
+    <string name="nav_sauce_nao">SauceNAO</string>
     <string name="nav_game">拼图游戏</string>
 
     <!-- Widget -->

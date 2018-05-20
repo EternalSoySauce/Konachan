@@ -134,16 +134,16 @@ public class MainActivity extends AppCompatActivity {
                         changeContentMainFragment(mFrgPool);
                         break;
                     case R.id.nav_collection:
-                        Intent collectionIntent = new Intent(MainActivity.this, CollectionActivity.class);
-                        startActivity(collectionIntent);
+                        startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                         break;
                     case R.id.nav_setting:
-                        Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(settingIntent);
+                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                        break;
+                    case R.id.nav_sauce_nao:
+                        startActivity(new Intent(MainActivity.this, SauceNaoActivity.class));
                         break;
                     case R.id.nav_game:
-                        Intent gameIntent = new Intent(MainActivity.this, GameActivity.class);
-                        startActivity(gameIntent);
+                        startActivity(new Intent(MainActivity.this, GameActivity.class));
                         break;
                 }
                 mCurrentNavId = 0;
