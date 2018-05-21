@@ -42,10 +42,10 @@ public class SauceNaoActivity extends AppCompatActivity {
                 .setAgentWebParent((ViewGroup) findViewById(R.id.layout_web_view),
                         new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(getResources().getColor(R.color.color_text_selected))
+                .setMainFrameErrorView(View.inflate(this,R.layout.layout_webview_error,null))
                 .createAgentWeb()
                 .ready()
                 .go("http://saucenao.com/");
-
     }
 
     @Override

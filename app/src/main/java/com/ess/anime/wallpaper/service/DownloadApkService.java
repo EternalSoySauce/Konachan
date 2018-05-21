@@ -45,10 +45,11 @@ public class DownloadApkService extends IntentService {
             listener.prepareNotification();
         }
 
+        Response response = null;
         try {
             // 下载
             File apkFile = new File(apkBean.localFilePath);
-            Response response = OkHttp.getInstance().execute(url);
+            response = OkHttp.getInstance().execute(url);
             InputStream inputStream = response.body().byteStream();
             FileUtils.streamToFile(inputStream, apkFile);
             ComponentUtils.installApk(this, apkFile, true);
@@ -56,6 +57,9 @@ public class DownloadApkService extends IntentService {
             e.printStackTrace();
             ProgressManager.getInstance().notifyOnErorr(url, e);
         } finally {
+            if (response != null) {
+                response.close();
+            }
             OkHttp.getInstance().removeUrlFromDownloadQueue(url);
         }
     }

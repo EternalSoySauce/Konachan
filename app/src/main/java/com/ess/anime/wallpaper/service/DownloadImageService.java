@@ -77,9 +77,11 @@ public class DownloadImageService extends Service {
         File tempFolder = new File(Constants.IMAGE_TEMP);
         String tempName = savePath.substring(savePath.lastIndexOf("/") + 1, savePath.lastIndexOf("."));
         File tempFile = new File(tempFolder, tempName);
+
+        // 下载
+        Response response = null;
         try {
-            // 下载
-            Response response = OkHttp.getInstance().execute(url);
+            response = OkHttp.getInstance().execute(url);
             if (tempFolder.exists() || tempFolder.mkdirs()) {
                 InputStream inputStream = response.body().byteStream();
                 FileUtils.streamToFile(inputStream, tempFile);
@@ -99,6 +101,9 @@ public class DownloadImageService extends Service {
             e.printStackTrace();
             ProgressManager.getInstance().notifyOnErorr(url, e);
         } finally {
+            if (response != null) {
+                response.close();
+            }
             OkHttp.getInstance().removeUrlFromDownloadQueue(url);
             tempFile.delete();
         }
