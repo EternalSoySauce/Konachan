@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.ValueCallback;
@@ -235,7 +234,7 @@ public class FileChooser {
         };
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     private void openFileChooserInternal() {
 
 
