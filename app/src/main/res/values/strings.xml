@@ -114,10 +114,10 @@
     <string name="dialog_delete_msg">%d image(s) will be deleted.</string>
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_delete_sure">Delete</string>
-    <string name="dialog_download_sample">Sample %1$d x %2$d %3$s (%4$s)</string>
-    <string name="dialog_download_large">Large&#160;&#160;&#160;%3$s\n%1$d x %2$d&#160;&#160;&#160;%4$s</string>
-    <string name="dialog_download_origin">Origin %1$d x %2$d %3$s (%4$s)</string>
-    <string name="dialog_download_already">%s (Downloaded)</string>
+    <string name="dialog_download_sample">Sample&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x %2$d</string>
+    <string name="dialog_download_large">Large&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x %2$d</string>
+    <string name="dialog_download_origin">Origin&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x %2$d</string>
+    <string name="dialog_download_already">%s&#160;&#160;&#160;(Downloaded)</string>
     <string name="dialog_download_sure">Download</string>
     <string name="dialog_download_cancel">Cancel</string>
     <string name="dialog_reload_msg">Some of these images already exist in the album. Do you want
