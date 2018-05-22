@@ -121,8 +121,8 @@
     <string name="dialog_download_origin">原图&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
         %2$d</string>
     <string name="dialog_download_already">%s&#160;&#160;&#160;(已下载)</string>
-    <string name="dialog_download_sure">Download</string>
-    <string name="dialog_download_cancel">Cancel</string>
+    <string name="dialog_download_sure">下载</string>
+    <string name="dialog_download_cancel">取消</string>
     <string name="dialog_reload_msg">部分图片已存在于相册中，是否重新下载？</string>
     <string name="dialog_reload_yes">是</string>
     <string name="dialog_reload_no">否</string>

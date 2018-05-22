@@ -203,6 +203,12 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .show();
     }
 
+    /**
+     * 选择尺寸下载图片
+     * @param context 上下文
+     * @param itemList 三种尺寸详细数据
+     * @param listener 事件监听器
+     */
     public static void showChooseToDownloadDialog(final Context context, final List<DownloadBean> itemList, final OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.save_image)
