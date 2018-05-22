@@ -53,7 +53,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:11.8.0'
     compile 'com.google.firebase:firebase-firestore:11.8.0'
     compile 'com.just.agentweb:agentweb:4.0.2'
-    compile 'com.just.agentweb:filechooser:4.0.2'
+    compile project(path: ':agentweb-filechooser')
     compile project(path: ':actionSheetDialog')
 }
 

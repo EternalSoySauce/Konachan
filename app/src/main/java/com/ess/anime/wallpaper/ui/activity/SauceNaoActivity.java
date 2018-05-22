@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +10,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.utils.PermissionUtils;
 import com.just.agentweb.AgentWeb;
 
 public class SauceNaoActivity extends AppCompatActivity {
 
     private AgentWeb mAgentWeb;
+    private PermissionUtils mPermissionUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -21,7 +25,24 @@ public class SauceNaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sauce_nao);
 
         initToolBarLayout();
-        initWebView();
+        checkStoragePermission();
+    }
+
+    private void checkStoragePermission() {
+        if (mPermissionUtil == null) {
+            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.OnPermissionListener() {
+                @Override
+                public void onGranted() {
+                    initWebView();
+                }
+
+                @Override
+                public void onDenied() {
+                    finish();
+                }
+            });
+        }
+        mPermissionUtil.checkStoragePermission();
     }
 
     private void initToolBarLayout() {
@@ -42,7 +63,7 @@ public class SauceNaoActivity extends AppCompatActivity {
                 .setAgentWebParent((ViewGroup) findViewById(R.id.layout_web_view),
                         new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(getResources().getColor(R.color.color_text_selected))
-                .setMainFrameErrorView(View.inflate(this,R.layout.layout_webview_error,null))
+                .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
                 .createAgentWeb()
                 .ready()
                 .go("http://saucenao.com/");
@@ -50,26 +71,41 @@ public class SauceNaoActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mAgentWeb.getWebLifeCycle().onPause();
+        if (mAgentWeb != null) {
+            mAgentWeb.getWebLifeCycle().onPause();
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        mAgentWeb.getWebLifeCycle().onResume();
+        if (mAgentWeb != null) {
+            mAgentWeb.getWebLifeCycle().onResume();
+        }
         super.onResume();
     }
 
     @Override
     protected void onDestroy() {
-        mAgentWeb.getWebLifeCycle().onDestroy();
+        if (mAgentWeb != null) {
+            mAgentWeb.getWebLifeCycle().onDestroy();
+        }
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        if (!mAgentWeb.back()) {
+        if (mAgentWeb == null || !mAgentWeb.back()) {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 检查权限回调
+        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
+            mPermissionUtil.checkStoragePermission();
         }
     }
 }
