@@ -79,6 +79,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     private void initViews() {
         mTvSerial = (TextView) findViewById(R.id.tv_serial);
         setSerial();
+        if (mEnlarge) {
+            findViewById(R.id.iv_menu).setVisibility(View.GONE);
+        }
     }
 
     private void initFullScreenViewPager() {
@@ -137,7 +140,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onLongClick(View v) {
         v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-        mActionSheet.show();
+        if (!mEnlarge) {
+            mActionSheet.show();
+        }
         return true;
     }
 
