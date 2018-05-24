@@ -197,27 +197,6 @@ public class MainActivity extends AppCompatActivity {
         // 图片对应一周7天
         final ImageView ivExtra = (ImageView) navHeader.findViewById(R.id.iv_extra);
         GlideApp.with(this).load(getExtraImageSrcId()).into(ivExtra);
-
-        // 切换搜图网站
-//        String baseUrl = OkHttp.getBaseUrl(this);
-//        final List<String> baseList = Arrays.asList(Constants.BASE_URLS);
-//        final SmoothRadioGroup rgChangeBaseUrl = (SmoothRadioGroup) navHeader.findViewById(R.id.rg_change_base_url);
-//        rgChangeBaseUrl.check(rgChangeBaseUrl.getChildAt(baseList.indexOf(baseUrl)).getId());
-//        rgChangeBaseUrl.setOnCheckedChangeListener(new SmoothRadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(SmoothRadioGroup smoothRadioGroup, int id) {
-//                toggleDrawerLayout();
-//                for (int i = 0; i < rgChangeBaseUrl.getChildCount(); i++) {
-//                    View child = rgChangeBaseUrl.getChildAt(i);
-//                    if (child.getId() == id) {
-//                        mPreferences.edit().putString(Constants.BASE_URL, baseList.get(i)).apply();
-//                        // 发送通知到PostFragment, PoolFragment
-//                        EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
-//                        break;
-//                    }
-//                }
-//            }
-//        });
     }
 
     private int getExtraImageSrcId() {

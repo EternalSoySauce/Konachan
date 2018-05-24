@@ -50,12 +50,12 @@ public class Constants {
     public final static String LOCAL_FILES_CHANGED = "localFilesChanged";  // 收藏夹本地文件发生变动后通知FullscreenActivity退出页面
 
     // Http
+    public final static String BASE_URL_BAIDU = "https://baike.baidu.com/item/";
     public final static String BASE_URL_KONACHAN_S = "https://www.konachan.net/";
     public final static String BASE_URL_KONACHAN_E = "https://www.konachan.com/";
     public final static String BASE_URL_YANDE = "https://yande.re/";
     public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
     public final static String BASE_URL_DANBOORU = "https://www.idanbooru.com/";
-    public final static String BASE_URL_BAIDU = "https://baike.baidu.com/item/";
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
     public final static String TAG_JSON_URL_KONACHAN_E = "https://konachan.com/tag/summary.json";
     public final static String TAG_JSON_URL_YANDE = "https://yande.re/tag/summary.json";

@@ -75,8 +75,17 @@ public class ParseHtml {
     }
 
     public static String getImageDetailJson(String html) {
+        Document doc = Jsoup.parse(html);
+        String webTitle = doc.getElementsByTag("title").text();
+        if (webTitle.toLowerCase().contains("danbooru")) {
+            return getDanbooruImageDetailJson(doc);
+        } else {
+            return getGeneralImageDetailJson(doc);
+        }
+    }
+
+    private static String getGeneralImageDetailJson(Document doc) {
         try {
-            Document doc = Jsoup.parse(html);
             Element div = doc.getElementById("post-view");
             String json = div.getElementsByTag("script").get(0).html();
             json = json.substring(json.indexOf("{"), json.lastIndexOf("}") + 1);
@@ -89,6 +98,19 @@ public class ParseHtml {
             // TODO 目前为止votes这一属性全部为空，但不排除某一天某个网站有了投票活动，到时后再改replace（懒癌）
             json = json.replace("\"votes\":[]", "\"votes\":{}");
             return json;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private static String getDanbooruImageDetailJson(Document doc) {
+        try {
+            Element section = doc.getElementById("image-container");
+            String id = section.attr("data-id");
+            String tags = section.attr("data-tags");
+            String source = section.attr("data-normalized-source");
+            return "";
         } catch (NullPointerException e) {
             e.printStackTrace();
             return "";

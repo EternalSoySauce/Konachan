@@ -13,6 +13,6 @@
         <item>@string/base_konachan_e</item>
         <item>@string/base_yande</item>
         <item>@string/base_lolibooru</item>
-      <!--  <item>@string/base_danbooru</item>-->
+        <item>@string/base_danbooru</item>
     </string-array>
 </resources>
