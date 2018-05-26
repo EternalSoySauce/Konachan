@@ -99,7 +99,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        OnTouchAlphaListener listener = new OnTouchAlphaListener(1f,0.7f);
+        OnTouchAlphaListener listener = new OnTouchAlphaListener(1f, 0.7f);
         findViewById(R.id.iv_previous).setOnTouchListener(listener);
         findViewById(R.id.iv_next).setOnTouchListener(listener);
     }
@@ -210,7 +210,7 @@ public class ImageDetailActivity extends AppCompatActivity {
                 file.getAbsolutePath(), exists, desc));
 
         // 2.Origin size
-        if (postBean.jpegFileSize != 0) {
+        if (postBean.jpegFileSize != 0 && !postBean.fileUrl.equals(postBean.jpegUrl)) {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),

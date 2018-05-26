@@ -155,7 +155,7 @@ public class PoolPostFragment extends Fragment {
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
             ArrayList<ThumbBean> thumbList = mPostAdapter.getThumbList();
             for (ThumbBean thumbBean : thumbList) {
-                if (thumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
+                if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
                         if (!getActivity().isDestroyed()) {

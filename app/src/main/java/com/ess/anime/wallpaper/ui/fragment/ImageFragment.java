@@ -128,7 +128,7 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
         if (msgBean.msg.equals(Constants.GET_IMAGE_DETAIL)) {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
-            if (mThumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
+            if (mThumbBean.checkImageBelongs(imageBean)) {
                 mImageBean = imageBean;
                 loadImage();
                 mSwipeRefresh.setRefreshing(false);

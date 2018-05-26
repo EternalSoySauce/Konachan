@@ -27,7 +27,7 @@ public class PostBean implements Parcelable {
 
     public String md5;  //md5加密码
 
-    @SerializedName(value = "apkSize", alternate = "file_size")
+    @SerializedName(value = "fileSize", alternate = "file_size")
     public long fileSize;  //大图页面显示的尺寸，图片文件大小（作为备用值）
 
     @SerializedName(value = "fileUrl", alternate = "file_url")

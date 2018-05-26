@@ -239,7 +239,7 @@ public class DetailFragment extends Fragment {
         if (msgBean.msg.equals(Constants.GET_IMAGE_DETAIL)) {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
-            if (mThumbBean.thumbUrl.equals(imageBean.posts[0].previewUrl)) {
+            if (mThumbBean.checkImageBelongs(imageBean)) {
                 loadDetail(imageBean);
                 mSwipeRefresh.setRefreshing(false);
                 mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);

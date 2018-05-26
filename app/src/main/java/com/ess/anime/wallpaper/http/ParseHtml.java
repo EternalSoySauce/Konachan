@@ -107,10 +107,53 @@ public class ParseHtml {
     private static String getDanbooruImageDetailJson(Document doc) {
         try {
             Element section = doc.getElementById("image-container");
+            Element image = doc.getElementById("image");
             String id = section.attr("data-id");
             String tags = section.attr("data-tags");
+            String creatorId = section.attr("data-uploader-id");
             String source = section.attr("data-normalized-source");
-            return "";
+            String score = section.attr("data-score");
+            String md5 = section.attr("data-md5");
+            String fileUrl = section.attr("data-large-file-url");
+            String previewUrl = section.attr("data-preview-file-url");
+            String sampleUrl = image.attr("src");
+            String sampleWidth = image.attr("width");
+            String sampleHeight = image.attr("height");
+            String jpegUrl = section.attr("data-file-url");
+            String jpegWidth = image.attr("data-large-width");
+            String jpegHeight = image.attr("data-large-height");
+            String rating = section.attr("data-rating");
+            String hasChildren = section.attr("data-has-children");
+            String parentId = section.attr("data-parent-id");
+            String width = image.attr("data-original-width");
+            String height = image.attr("data-original-height");
+            String flagDetail = section.attr("data-flags");
+            return "{\"posts\":[{" +
+                    "\"id\":" + id + "," +
+                    "\"tags\":\"" + tags + "\"," +
+                    "\"creator_id\":" + creatorId + "," +
+                    "\"source\":\"" + source + "\"," +
+                    "\"score\":" + score + "," +
+                    "\"md5\":\"" + md5 + "\"," +
+                    "\"file_url\":\"" + fileUrl + "\"," +
+                    "\"preview_url\":\"" + previewUrl + "\"," +
+                    "\"sample_url\":\"" + sampleUrl + "\"," +
+                    "\"sample_width\":" + sampleWidth + "," +
+                    "\"sample_height\":" + sampleHeight + "," +
+                    "\"jpeg_url\":\"" + jpegUrl + "\"," +
+                    "\"jpeg_width\":" + jpegWidth + "," +
+                    "\"jpeg_height\":" + jpegHeight + "," +
+                    "\"rating\":\"" + rating + "\"," +
+                    "\"has_children\":" + hasChildren + "," +
+                    "\"parent_id\":\"" + parentId + "\"," +
+                    "\"width\":" + width + "," +
+                    "\"height\":" + height + "," +
+                    "\"flag_detail\":\"" + flagDetail + "\"" +
+                    "}]," +
+                    "\"pools\":[]," +
+                    "\"pool_posts\":[]," +
+                    "\"tags\":{}," +
+                    "\"votes\":{}}";
         } catch (NullPointerException e) {
             e.printStackTrace();
             return "";

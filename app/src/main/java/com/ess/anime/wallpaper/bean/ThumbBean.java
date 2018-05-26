@@ -16,6 +16,18 @@ public class ThumbBean implements Parcelable {
         this.linkToShow = linkToShow;
     }
 
+    // 判断ImageBean是否为此ThumbBean所属
+    public boolean checkImageBelongs(ImageBean imageBean) {
+        try {
+            String previewUrl = imageBean.posts[0].previewUrl;
+            previewUrl = previewUrl.substring(previewUrl.lastIndexOf("/"));
+            return thumbUrl.contains(previewUrl);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     protected ThumbBean(Parcel in) {
         thumbUrl = in.readString();
         realSize = in.readString();
