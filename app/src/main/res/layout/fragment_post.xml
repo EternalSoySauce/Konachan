@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:fab="http://schemas.android.com/apk/res-auto"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:fitsSystemWindows="true"
+                                                 android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:layout_marginEnd="7dp"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_search" />
+                android:src="@drawable/ic_search"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -38,24 +38,15 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_post"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_post"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
-                android:scrollbarStyle="outsideOverlay"
-                android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb"
-                android:scrollbars="vertical" />
-
-            <include
-                android:id="@+id/layout_load_result"
-                layout="@layout/layout_load_result" />
-        </FrameLayout>
+            android:layout_height="match_parent"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb"
+            android:scrollbars="vertical"/>
     </com.ess.anime.wallpaper.view.MySwipeRefreshLayout>
 
     <com.github.clans.fab.FloatingActionMenu
@@ -67,12 +58,12 @@
         app:menu_colorNormal="@color/colorPrimary"
         app:menu_colorPressed="@color/colorPrimary"
         app:menu_colorRipple="@color/color_ripple_button"
+        app:menu_labels_colorRipple="@color/color_ripple_button"
         app:menu_labels_textColor="@color/colorAccent"
         fab:menu_fab_hide_animation="@anim/fab_hide"
         fab:menu_fab_show_animation="@anim/fab_show"
         fab:menu_labels_colorNormal="@color/colorPrimaryDark"
-        fab:menu_labels_colorPressed="@color/colorPrimaryDark"
-        app:menu_labels_colorRipple="@color/color_ripple_button">
+        fab:menu_labels_colorPressed="@color/colorPrimaryDark">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_home"
@@ -83,7 +74,7 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple_button"
             fab:fab_label="@string/fab_home"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_random"
@@ -94,6 +85,6 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple_button"
             fab:fab_label="@string/fab_random"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"/>
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

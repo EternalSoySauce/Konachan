@@ -17,20 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.PoolListBean;
-import com.ess.anime.wallpaper.other.Sound;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,10 +57,6 @@ public class PoolFragment extends Fragment {
     private RecyclerView mRvPools;
     private LinearLayoutManager mLayoutManager;
     private RecyclerPoolAdapter mPoolAdapter;
-    private View mLayoutLoadResult;
-    private ImageView mIvLoadNothing;
-    private LinearLayout mLayoutLoadNoNetWork;
-    private LinearLayout mLayoutLoading;
 
     private int mCurrentPage;
     private String mCurrentSearchName;
@@ -111,7 +106,6 @@ public class PoolFragment extends Fragment {
         initSwipeRefreshLayout();
         initPoolPostFragment();
         initRecyclerView();
-        initLoadingView();
         mCurrentPage = 1;
         getNewPools(mCurrentPage);
         return mRootView;
@@ -174,7 +168,7 @@ public class PoolFragment extends Fragment {
             public void onRefresh() {
                 getNewPools(1);
                 if (mPoolAdapter.getPoolList().isEmpty()) {
-                    setLoadingGif();
+                    mPoolAdapter.showLoading();
                 }
             }
         });
@@ -192,6 +186,7 @@ public class PoolFragment extends Fragment {
         ArrayList<PoolListBean> poolList = new ArrayList<>();
         mPoolAdapter = new RecyclerPoolAdapter(mActivity, poolList);
         mRvPools.setAdapter(mPoolAdapter);
+        mPoolAdapter.showLoading();
         mPoolAdapter.setOnItemClickListener(new RecyclerPoolAdapter.OnItemClickListener() {
             @Override
             public void onLoadPostsOfPool(String id, String linkToShow) {
@@ -211,44 +206,15 @@ public class PoolFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
-                int totalCount = mLayoutManager.getItemCount();
-                if (totalCount != 1 && lastVisiblePosition >= totalCount - 6
+                int totalCount = mPoolAdapter.getDataListSize();
+                if (totalCount > 0 && lastVisiblePosition >= totalCount - 5
                         && !mIsLoadingMore && mLoadMoreAgain) {
                     mIsLoadingMore = true;
-                    mPoolAdapter.changeToLoadMoreState();
+                    mPoolAdapter.showLoadMore();
                     loadMore();
                 }
             }
         });
-    }
-
-    private void initLoadingView() {
-        mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
-        mLayoutLoading = (LinearLayout) mRootView.findViewById(R.id.layout_loading);
-        mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
-        mLayoutLoadNoNetWork = (LinearLayout) mRootView.findViewById(R.id.layout_load_no_network);
-        setLoadingGif();
-    }
-
-    private void setLoadingGif() {
-        mLayoutLoading.setVisibility(View.VISIBLE);
-        mIvLoadNothing.setVisibility(View.GONE);
-        mLayoutLoadNoNetWork.setVisibility(View.GONE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
-    }
-
-    private void setLoadNothingImage() {
-        mLayoutLoading.setVisibility(View.GONE);
-        mIvLoadNothing.setVisibility(View.VISIBLE);
-        mLayoutLoadNoNetWork.setVisibility(View.GONE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
-    }
-
-    private void setLoadingNoNetworkImage() {
-        mLayoutLoading.setVisibility(View.GONE);
-        mIvLoadNothing.setVisibility(View.GONE);
-        mLayoutLoadNoNetWork.setVisibility(View.VISIBLE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
     }
 
     private void scrollToTop() {
@@ -352,11 +318,10 @@ public class PoolFragment extends Fragment {
             @Override
             public void run() {
                 if (!newList.isEmpty()) {
-                    mLayoutLoadResult.setVisibility(View.GONE);
                     mPoolAdapter.refreshDatas(newList);
                     scrollToTop();
                 } else if (mPoolAdapter.getPoolList().isEmpty()) {
-                    setLoadNothingImage();
+                    mPoolAdapter.showNoData();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -397,7 +362,7 @@ public class PoolFragment extends Fragment {
             @Override
             public void run() {
                 mPoolAdapter.loadMoreDatas(newList);
-                mPoolAdapter.changeToNormalState();
+                mPoolAdapter.showNormal();
                 if (newList.isEmpty()) {
                     Toast.makeText(mActivity, R.string.no_more_load, Toast.LENGTH_SHORT).show();
                 } else {
@@ -414,7 +379,7 @@ public class PoolFragment extends Fragment {
             public void run() {
                 mPoolAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
-                setLoadNothingImage();
+                mPoolAdapter.showNoData();
                 Sound.getInstance().playLoadNothingSound(getActivity());
             }
         });
@@ -429,7 +394,7 @@ public class PoolFragment extends Fragment {
                 mIsLoadingMore = false;
                 mLoadMoreAgain = false;
                 if (mPoolAdapter.getPoolList().isEmpty()) {
-                    setLoadingNoNetworkImage();
+                    mPoolAdapter.showNoNetwork();
                     Sound.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
@@ -443,25 +408,6 @@ public class PoolFragment extends Fragment {
                 }, LOAD_MORE_INTERVAL);
             }
         });
-    }
-
-    //更换浏览模式后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void toggleScanMode(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.TOGGLE_SCAN_MODE)) {
-            if (isPoolPostFragmentVisible()) {
-                removePoolPostFragment();
-            }
-            mPoolAdapter.clear();
-            if (!mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(true);
-            }
-            mIsLoadingMore = false;
-            mLoadMoreAgain = true;
-            mCurrentPage = 1;
-            setLoadingGif();
-            getNewPools(mCurrentPage);
-        }
     }
 
     //切换搜图网站后收到的通知，obj 为 null
@@ -478,7 +424,7 @@ public class PoolFragment extends Fragment {
             mIsLoadingMore = false;
             mLoadMoreAgain = true;
             mCurrentPage = 1;
-            setLoadingGif();
+            mPoolAdapter.showLoading();
             getNewPools(mCurrentPage);
         }
     }

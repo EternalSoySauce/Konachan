@@ -40,17 +40,20 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int totalLines;
-        if (parent.getChildCount() % span == 0) {
-            totalLines = parent.getAdapter().getItemCount() / span;
+        int itemCount = parent.getAdapter().getItemCount();
+        if (itemCount % span == 0) {
+            totalLines = itemCount / span;
         } else {
-            totalLines = parent.getAdapter().getItemCount() / span + 1;
+            totalLines = itemCount / span + 1;
         }
         int currentLine = parent.getChildAdapterPosition(view) / span + 1;
 
-        if (orientation == VERTICAL) {
-            drawVertical(outRect, currentLine, totalLines);
-        } else if (orientation == HORIZONTAL) {
-            drawHorizontal(outRect, currentLine, totalLines);
+        if (view.getLayoutParams().height != 0) {
+            if (orientation == VERTICAL) {
+                drawVertical(outRect, currentLine, totalLines);
+            } else if (orientation == HORIZONTAL) {
+                drawHorizontal(outRect, currentLine, totalLines);
+            }
         }
     }
 

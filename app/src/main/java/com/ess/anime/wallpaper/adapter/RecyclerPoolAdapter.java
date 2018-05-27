@@ -3,9 +3,7 @@ package com.ess.anime.wallpaper.adapter;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,45 +17,67 @@ import com.wang.avi.AVLoadingIndicatorView;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapter.MyViewHolder> {
+public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolAdapter.MyViewHolder> {
 
     private Activity mActivity;
     private ArrayList<PoolListBean> mPoolList;
     private OnItemClickListener mItemClickListener;
-    private ViewState mCurrentState;
 
     public RecyclerPoolAdapter(Activity activity, @NonNull ArrayList<PoolListBean> poolList) {
+        super(activity);
         mActivity = activity;
         mPoolList = poolList;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layoutId = viewType == ViewState.NORMAL.ordinal() ? R.layout.recyclerview_item_pool
-                : R.layout.layout_load_more;
-        View view = LayoutInflater.from(mActivity).inflate(layoutId, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+    public int bindLoadMoreLayoutRes() {
+        return R.layout.layout_load_more;
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
-            return ViewState.LOAD_MORE.ordinal();
-        } else {
-            return ViewState.NORMAL.ordinal();
-        }
+    public int bindLoadingLayoutRes() {
+        return R.layout.layout_loading;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        if (position == getItemCount() - 1) {
-            ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
-            params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-            holder.indicatorView.smoothToShow();
-            return;
-        }
+    public int bindNoDataLayoutRes() {
+        return R.layout.layout_load_nothing;
+    }
 
+    @Override
+    public int bindNoNetworkLayoutRes() {
+        return R.layout.layout_load_no_network;
+    }
+
+    @Override
+    public int bindNormalLayoutRes() {
+        return R.layout.recyclerview_item_pool;
+    }
+
+    @Override
+    public MyViewHolder onCreateViewHolder(View view) {
+        return new MyViewHolder(view);
+    }
+
+    @Override
+    public void onBindLoadMoreHolder(MyViewHolder holder, int layoutPos) {
+        holder.indicatorView.smoothToShow();
+    }
+
+    @Override
+    public void onBindLoadingHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNoDataHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNoNetworkHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNormalHolder(MyViewHolder holder, int position) {
         final PoolListBean poolListBean = mPoolList.get(position);
 
         //缩略图
@@ -95,8 +115,8 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
     }
 
     @Override
-    public int getItemCount() {
-        return mPoolList.size() + 1;
+    public int getDataListSize() {
+        return getPoolList().size();
     }
 
     public ArrayList<PoolListBean> getPoolList() {
@@ -104,7 +124,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
     }
 
     public void loadMoreDatas(ArrayList<PoolListBean> poolList) {
-        int position = getItemCount() - 1;
+        int position = getDataListSize();
         addDatas(position, poolList);
     }
 
@@ -124,7 +144,7 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
             }
 
             mPoolList.addAll(position, poolList);
-            notifyDataSetChanged();
+            showNormal();
             preloadThumbnail(poolList);
         }
     }
@@ -140,19 +160,9 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
         }
     }
 
-    public void changeToLoadMoreState() {
-        mCurrentState = ViewState.LOAD_MORE;
-        notifyDataSetChanged();
-    }
-
-    public void changeToNormalState() {
-        mCurrentState = ViewState.NORMAL;
-        notifyDataSetChanged();
-    }
-
     public void clear() {
         mPoolList.clear();
-        notifyDataSetChanged();
+        showNormal();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -166,13 +176,13 @@ public class RecyclerPoolAdapter extends RecyclerView.Adapter<RecyclerPoolAdapte
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            ivThumb = (ImageView) itemView.findViewById(R.id.iv_pool_thumb);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
-            tvCreator = (TextView) itemView.findViewById(R.id.tv_creator);
-            tvPostCount = (TextView) itemView.findViewById(R.id.tv_post_count);
-            tvCreateTime = (TextView) itemView.findViewById(R.id.tv_create_time);
-            tvUpdateTime = (TextView) itemView.findViewById(R.id.tv_update_time);
-            indicatorView = (AVLoadingIndicatorView) itemView.findViewById(R.id.view_load_more);
+            ivThumb = itemView.findViewById(R.id.iv_pool_thumb);
+            tvName = itemView.findViewById(R.id.tv_name);
+            tvCreator = itemView.findViewById(R.id.tv_creator);
+            tvPostCount = itemView.findViewById(R.id.tv_post_count);
+            tvCreateTime = itemView.findViewById(R.id.tv_create_time);
+            tvUpdateTime = itemView.findViewById(R.id.tv_update_time);
+            indicatorView = itemView.findViewById(R.id.view_load_more);
         }
     }
 

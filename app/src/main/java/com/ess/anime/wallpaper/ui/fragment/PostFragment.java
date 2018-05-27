@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Priority;
@@ -62,10 +61,6 @@ public class PostFragment extends Fragment {
     private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
-    private View mLayoutLoadResult;
-    private ImageView mIvLoadNothing;
-    private LinearLayout mLayoutLoadNoNetWork;
-    private LinearLayout mLayoutLoading;
 
     private int mCurrentPage;
     private String mCurrentTag;   // 当前正在搜索的tag
@@ -95,7 +90,6 @@ public class PostFragment extends Fragment {
         initSwipeRefreshLayout();
         initRecyclerView();
         initFloatingButton();
-        initLoadingView();
         mCurrentPage = 1;
         mCurrentTag = "";
         mCurrentTagList = new ArrayList<>();
@@ -158,7 +152,7 @@ public class PostFragment extends Fragment {
             public void onRefresh() {
                 getNewPosts(1);
                 if (mPostAdapter.getThumbList().isEmpty()) {
-                    setLoadingGif();
+                    mPostAdapter.showLoading();
                 }
             }
         });
@@ -166,24 +160,24 @@ public class PostFragment extends Fragment {
 
     private void initRecyclerView() {
         mRvPosts = (RecyclerView) mRootView.findViewById(R.id.rv_post);
-        mLayoutManager = new GridLayoutManager(mActivity, 2);
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position == mLayoutManager.getItemCount() - 1 ? 2 : 1;
-            }
-        });
-        mRvPosts.setLayoutManager(mLayoutManager);
-
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
-        mPostAdapter = new RecyclerPostAdapter(mActivity, thumbList);
+        mPostAdapter = new RecyclerPostAdapter(mActivity, new ArrayList<ThumbBean>());
         mPostAdapter.setOnItemClickListener(new RecyclerPostAdapter.OnItemClickListener() {
             @Override
             public void onViewDetails() {
                 mFloatingMenu.close(true);
             }
         });
+        mPostAdapter.showLoading();
         mRvPosts.setAdapter(mPostAdapter);
+
+        mLayoutManager = new GridLayoutManager(mActivity, 2);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
+            }
+        });
+        mRvPosts.setLayoutManager(mLayoutManager);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
         int spaceVer = UIUtils.dp2px(mActivity, 10);
@@ -197,11 +191,11 @@ public class PostFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
-                int totalCount = mLayoutManager.getItemCount();
-                if (totalCount != 1 && lastVisiblePosition >= totalCount - 11
+                int totalCount = mPostAdapter.getDataListSize();
+                if (totalCount > 0 && lastVisiblePosition >= totalCount - 10
                         && !mIsLoadingMore && mLoadMoreAgain) {
                     mIsLoadingMore = true;
-                    mPostAdapter.changeToLoadMoreState();
+                    mPostAdapter.showLoadMore();
                     loadMore();
                 }
             }
@@ -247,35 +241,6 @@ public class PostFragment extends Fragment {
         });
     }
 
-    private void initLoadingView() {
-        mLayoutLoadResult = mRootView.findViewById(R.id.layout_load_result);
-        mLayoutLoading = (LinearLayout) mRootView.findViewById(R.id.layout_loading);
-        mIvLoadNothing = (ImageView) mRootView.findViewById(R.id.iv_load_nothing);
-        mLayoutLoadNoNetWork = (LinearLayout) mRootView.findViewById(R.id.layout_load_no_network);
-        setLoadingGif();
-    }
-
-    private void setLoadingGif() {
-        mLayoutLoading.setVisibility(View.VISIBLE);
-        mIvLoadNothing.setVisibility(View.GONE);
-        mLayoutLoadNoNetWork.setVisibility(View.GONE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
-    }
-
-    private void setLoadNothingImage() {
-        mLayoutLoading.setVisibility(View.GONE);
-        mIvLoadNothing.setVisibility(View.VISIBLE);
-        mLayoutLoadNoNetWork.setVisibility(View.GONE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
-    }
-
-    private void setLoadingNoNetworkImage() {
-        mLayoutLoading.setVisibility(View.GONE);
-        mIvLoadNothing.setVisibility(View.GONE);
-        mLayoutLoadNoNetWork.setVisibility(View.VISIBLE);
-        mLayoutLoadResult.setVisibility(View.VISIBLE);
-    }
-
     private void scrollToTop() {
         int smoothPos = 14;
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
@@ -296,7 +261,7 @@ public class PostFragment extends Fragment {
                 mCurrentPage = 1;
                 mCurrentTagList.clear();
                 mIsLoadingMore = false;
-                setLoadingGif();
+                mPostAdapter.showLoading();
 
                 OkHttp.getInstance().cancelAll();
                 String searchTag = data.getStringExtra(Constants.SEARCH_TAG);
@@ -371,11 +336,10 @@ public class PostFragment extends Fragment {
             @Override
             public void run() {
                 if (!newList.isEmpty()) {
-                    mLayoutLoadResult.setVisibility(View.GONE);
                     mPostAdapter.refreshDatas(newList);
                     scrollToTop();
                 } else if (mPostAdapter.getThumbList().isEmpty()) {
-                    setLoadNothingImage();
+                    mPostAdapter.showNoData();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -423,7 +387,7 @@ public class PostFragment extends Fragment {
             @Override
             public void run() {
                 mPostAdapter.loadMoreDatas(newList);
-                mPostAdapter.changeToNormalState();
+                mPostAdapter.showNormal();
                 if (newList.isEmpty()) {
                     Toast.makeText(mActivity, R.string.no_more_load, Toast.LENGTH_SHORT).show();
                 } else {
@@ -502,7 +466,7 @@ public class PostFragment extends Fragment {
             public void run() {
                 mPostAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
-                setLoadNothingImage();
+                mPostAdapter.showNoData();
                 Sound.getInstance().playLoadNothingSound(getActivity());
             }
         });
@@ -517,7 +481,7 @@ public class PostFragment extends Fragment {
                 mIsLoadingMore = false;
                 mLoadMoreAgain = false;
                 if (mPostAdapter.getThumbList().isEmpty()) {
-                    setLoadingNoNetworkImage();
+                    mPostAdapter.showNoNetwork();
                     Sound.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
@@ -533,23 +497,6 @@ public class PostFragment extends Fragment {
         });
     }
 
-    //更换浏览模式后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void toggleScanMode(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.TOGGLE_SCAN_MODE)) {
-            OkHttp.getInstance().cancelAll();
-            mPostAdapter.clear();
-            if (!mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(true);
-            }
-            mIsLoadingMore = false;
-            mLoadMoreAgain = true;
-            mCurrentPage = 1;
-            setLoadingGif();
-            getNewPosts(mCurrentPage);
-        }
-    }
-
     //切换搜图网站后收到的通知，obj 为 null
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeBaseUrl(MsgBean msgBean) {
@@ -562,7 +509,7 @@ public class PostFragment extends Fragment {
             mIsLoadingMore = false;
             mLoadMoreAgain = true;
             mCurrentPage = 1;
-            setLoadingGif();
+            mPostAdapter.showLoading();
             getNewPosts(mCurrentPage);
         }
     }

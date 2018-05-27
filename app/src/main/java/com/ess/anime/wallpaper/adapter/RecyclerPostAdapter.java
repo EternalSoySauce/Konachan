@@ -4,23 +4,21 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.global.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.other.GlideApp;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,15 +31,15 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapter.MyViewHolder> {
+public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostAdapter.MyViewHolder> {
 
     private Activity mActivity;
     private ArrayList<ThumbBean> mThumbList;
     private ArrayList<Call> mCallList;
     private OnItemClickListener mItemClickListener;
-    private ViewState mCurrentState;
 
     public RecyclerPostAdapter(Activity activity, @NonNull ArrayList<ThumbBean> thumbList) {
+        super(activity);
         mActivity = activity;
         mThumbList = thumbList;
         mCallList = new ArrayList<>();
@@ -49,32 +47,54 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layoutId = viewType == ViewState.NORMAL.ordinal() ? R.layout.recyclerview_item_post
-                : R.layout.layout_load_more;
-        View view = LayoutInflater.from(mActivity).inflate(layoutId, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+    public int bindLoadMoreLayoutRes() {
+        return R.layout.layout_load_more;
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
-            return ViewState.LOAD_MORE.ordinal();
-        } else {
-            return ViewState.NORMAL.ordinal();
-        }
+    public int bindLoadingLayoutRes() {
+        return R.layout.layout_loading;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
-        if (position == getItemCount() - 1) {
-            ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
-            params.height = mCurrentState == ViewState.LOAD_MORE ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-            holder.indicatorView.smoothToShow();
-            return;
-        }
+    public int bindNoDataLayoutRes() {
+        return R.layout.layout_load_nothing;
+    }
 
+    @Override
+    public int bindNoNetworkLayoutRes() {
+        return R.layout.layout_load_no_network;
+    }
+
+    @Override
+    public int bindNormalLayoutRes() {
+        return R.layout.recyclerview_item_post;
+    }
+
+    @Override
+    public MyViewHolder onCreateViewHolder(View view) {
+        return new MyViewHolder(view);
+    }
+
+    @Override
+    public void onBindLoadMoreHolder(MyViewHolder holder, int layoutPos) {
+        holder.indicatorView.smoothToShow();
+    }
+
+    @Override
+    public void onBindLoadingHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNoDataHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNoNetworkHolder(MyViewHolder holder, int layoutPos) {
+    }
+
+    @Override
+    public void onBindNormalHolder(MyViewHolder holder, final int position) {
         final ThumbBean thumbBean = mThumbList.get(position);
 
         //缩略图
@@ -104,8 +124,8 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     }
 
     @Override
-    public int getItemCount() {
-        return mThumbList.size() + 1;
+    public int getDataListSize() {
+        return getThumbList().size();
     }
 
     public ArrayList<ThumbBean> getThumbList() {
@@ -113,7 +133,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
     }
 
     public void loadMoreDatas(ArrayList<ThumbBean> imageList) {
-        int position = getItemCount() - 1;
+        int position = getDataListSize();
         addDatas(position, imageList);
     }
 
@@ -133,7 +153,7 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
             }
 
             mThumbList.addAll(position, thumbList);
-            notifyDataSetChanged();
+            showNormal();
             getImageDetail(thumbList);
             preloadThumbnail(thumbList);
         }
@@ -181,19 +201,9 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
         }
     }
 
-    public void changeToLoadMoreState() {
-        mCurrentState = ViewState.LOAD_MORE;
-        notifyDataSetChanged();
-    }
-
-    public void changeToNormalState() {
-        mCurrentState = ViewState.NORMAL;
-        notifyDataSetChanged();
-    }
-
     public void clear() {
         mThumbList.clear();
-        changeToNormalState();
+        showNormal();
     }
 
     public void cancelAll() {
@@ -209,15 +219,10 @@ public class RecyclerPostAdapter extends RecyclerView.Adapter<RecyclerPostAdapte
 
         public MyViewHolder(android.view.View itemView) {
             super(itemView);
-            ivThumb = (ImageView) itemView.findViewById(R.id.iv_post_thumb);
-            tvSize = (TextView) itemView.findViewById(R.id.tv_size);
-            indicatorView = (AVLoadingIndicatorView) itemView.findViewById(R.id.view_load_more);
+            ivThumb = itemView.findViewById(R.id.iv_post_thumb);
+            tvSize = itemView.findViewById(R.id.tv_size);
+            indicatorView = itemView.findViewById(R.id.view_load_more);
         }
-    }
-
-    private enum ViewState {
-        NORMAL,
-        LOAD_MORE
     }
 
     public interface OnItemClickListener {
