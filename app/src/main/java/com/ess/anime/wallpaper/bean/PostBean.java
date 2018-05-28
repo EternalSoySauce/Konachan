@@ -106,6 +106,9 @@ public class PostBean implements Parcelable {
     @SerializedName(value = "flagDetail", alternate = "flag_detail")
     public String flagDetail;  //（未知用处）（只有一部分有这个key）
 
+    public PostBean() {
+    }
+
     protected PostBean(Parcel in) {
         id = in.readString();
         tags = in.readString();

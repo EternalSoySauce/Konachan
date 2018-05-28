@@ -48,7 +48,7 @@ public class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         }
         int currentLine = parent.getChildAdapterPosition(view) / span + 1;
 
-        if (view.getLayoutParams().height != 0) {
+        if (view.getLayoutParams().height != 0 && view.getLayoutParams().height != 1) {
             if (orientation == VERTICAL) {
                 drawVertical(outRect, currentLine, totalLines);
             } else if (orientation == HORIZONTAL) {
