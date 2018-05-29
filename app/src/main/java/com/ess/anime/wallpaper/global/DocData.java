@@ -103,7 +103,7 @@ public class DocData {
     }
 
     // 判断当前语种是否为汉语
-    private static boolean isChinese() {
-        return "zh".equalsIgnoreCase(Locale.getDefault().getLanguage());
+    public static boolean isChinese() {
+        return Locale.getDefault().getCountry().equals("CN");
     }
 }

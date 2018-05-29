@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+
 public class ImageBean implements Parcelable {
 
     public PostBean[] posts;  //图片信息
@@ -70,6 +72,7 @@ public class ImageBean implements Parcelable {
     public static class ImageJsonBuilder {
 
         private PostBean postBean = new PostBean();
+        private TagBean tagBean = new TagBean();
 
         public ImageJsonBuilder id(String id) {
             postBean.id = id;
@@ -316,50 +319,101 @@ public class ImageBean implements Parcelable {
             return this;
         }
 
+        public ImageJsonBuilder addCopyrightTags(String... copyrightTags) {
+            tagBean.copyright.addAll(Arrays.asList(copyrightTags));
+            return this;
+        }
+
+        public ImageJsonBuilder addCharacterTags(String... characterTags) {
+            tagBean.character.addAll(Arrays.asList(characterTags));
+            return this;
+        }
+
+        public ImageJsonBuilder addArtistTags(String... artistTags) {
+            tagBean.artist.addAll(Arrays.asList(artistTags));
+            return this;
+        }
+
+        public ImageJsonBuilder addCircleTags(String... circleTags) {
+            tagBean.circle.addAll(Arrays.asList(circleTags));
+            return this;
+        }
+
+        public ImageJsonBuilder addStyleTags(String... styleTags) {
+            tagBean.style.addAll(Arrays.asList(styleTags));
+            return this;
+        }
+
+        public ImageJsonBuilder addGeneralTags(String... generalTags) {
+            tagBean.general.addAll(Arrays.asList(generalTags));
+            return this;
+        }
+
         public String build() {
-            return "{\"posts\":[{" +
-                    "\"id\":" + postBean.id + "," +
-                    "\"tags\":\"" + postBean.tags + "\"," +
-                    "\"createdTime\":" + postBean.createdTime + "," +
-                    "\"creator_id\":" + postBean.creatorId + "," +
-                    "\"author\":\"" + postBean.author + "\"," +
-                    "\"change\":\"" + postBean.change + "\"," +
-                    "\"source\":\"" + postBean.source + "\"," +
-                    "\"score\":" + postBean.score + "," +
-                    "\"md5\":\"" + postBean.md5 + "\"," +
-                    "\"fileSize\":" + postBean.fileSize + "," +
-                    "\"file_url\":\"" + postBean.fileUrl + "\"," +
-                    "\"isShownInIndex\":" + postBean.isShownInIndex + "," +
-                    "\"preview_url\":\"" + postBean.previewUrl + "\"," +
-                    "\"previewWidth\":" + postBean.previewWidth + "," +
-                    "\"previewHeight\":" + postBean.previewHeight + "," +
-                    "\"actualPreviewWidth\":" + postBean.actualPreviewWidth + "," +
-                    "\"actualPreviewHeight\":" + postBean.actualPreviewHeight + "," +
-                    "\"sample_url\":\"" + postBean.sampleUrl + "\"," +
-                    "\"sample_width\":" + postBean.sampleWidth + "," +
-                    "\"sample_height\":" + postBean.sampleHeight + "," +
-                    "\"sampleFileSize\":" + postBean.sampleFileSize + "," +
-                    "\"jpeg_url\":\"" + postBean.jpegUrl + "\"," +
-                    "\"jpeg_width\":" + postBean.jpegWidth + "," +
-                    "\"jpeg_height\":" + postBean.jpegHeight + "," +
-                    "\"jpegFileSize\":" + postBean.jpegFileSize + "," +
-                    "\"rating\":\"" + postBean.rating + "\"," +
-                    "\"has_children\":" + postBean.hasChildren + "," +
-                    "\"parent_id\":\"" + postBean.parentId + "\"," +
-                    "\"status\":\"" + postBean.status + "\"," +
-                    "\"width\":" + postBean.width + "," +
-                    "\"height\":" + postBean.height + "," +
-                    "\"isHeld\":" + postBean.isHeld + "," +
-                    "\"framesPendingString\":\"" + postBean.framesPendingString + "\"," +
-                    "\"framesPending\":[" +/* postBean.framesPending[0] +*/ "]," +
-                    "\"framesString\":\"" + postBean.framesString + "\"," +
-                    "\"frames\":[" + /*postBean.frames[0] +*/ "]," +
-                    "\"flag_detail\":\"" + postBean.flagDetail + "\"" +
-                    "}]," +
-                    "\"pools\":[]," +
-                    "\"pool_posts\":[]," +
-                    "\"tags\":{}," +
-                    "\"votes\":{}}";
+            StringBuilder json = new StringBuilder()
+                    .append("{\"posts\":[{")
+                    .append("\"id\":").append(postBean.id).append(",")
+                    .append("\"tags\":\"").append(postBean.tags).append("\",")
+                    .append("\"createdTime\":").append(postBean.createdTime).append(",")
+                    .append("\"creator_id\":").append(postBean.creatorId).append(",")
+                    .append("\"author\":\"").append(postBean.author).append("\",")
+                    .append("\"change\":\"").append(postBean.change).append("\",")
+                    .append("\"source\":\"").append(postBean.source).append("\",")
+                    .append("\"score\":").append(postBean.score).append(",")
+                    .append("\"md5\":\"").append(postBean.md5).append("\",")
+                    .append("\"fileSize\":").append(postBean.fileSize).append(",")
+                    .append("\"file_url\":\"").append(postBean.fileUrl).append("\",")
+                    .append("\"isShownInIndex\":").append(postBean.isShownInIndex).append(",")
+                    .append("\"preview_url\":\"").append(postBean.previewUrl).append("\",")
+                    .append("\"previewWidth\":").append(postBean.previewWidth).append(",")
+                    .append("\"previewHeight\":").append(postBean.previewHeight).append(",")
+                    .append("\"actualPreviewWidth\":").append(postBean.actualPreviewWidth).append(",")
+                    .append("\"actualPreviewHeight\":").append(postBean.actualPreviewHeight).append(",")
+                    .append("\"sample_url\":\"").append(postBean.sampleUrl).append("\",")
+                    .append("\"sample_width\":").append(postBean.sampleWidth).append(",")
+                    .append("\"sample_height\":").append(postBean.sampleHeight).append(",")
+                    .append("\"sampleFileSize\":").append(postBean.sampleFileSize).append(",")
+                    .append("\"jpeg_url\":\"").append(postBean.jpegUrl).append("\",")
+                    .append("\"jpeg_width\":").append(postBean.jpegWidth).append(",")
+                    .append("\"jpeg_height\":").append(postBean.jpegHeight).append(",")
+                    .append("\"jpegFileSize\":").append(postBean.jpegFileSize).append(",")
+                    .append("\"rating\":\"").append(postBean.rating).append("\",")
+                    .append("\"has_children\":").append(postBean.hasChildren).append(",")
+                    .append("\"parent_id\":\"").append(postBean.parentId).append("\",")
+                    .append("\"status\":\"").append(postBean.status).append("\",")
+                    .append("\"width\":").append(postBean.width).append(",")
+                    .append("\"height\":").append(postBean.height).append(",")
+                    .append("\"isHeld\":").append(postBean.isHeld).append(",")
+                    .append("\"framesPendingString\":\"").append(postBean.framesPendingString).append("\",")
+                    .append("\"framesPending\":[").append(/* postBean.framesPending[0] ).append(*/ "],")
+                    .append("\"framesString\":\"").append(postBean.framesString).append("\",")
+                    .append("\"frames\":[").append( /*postBean.frames[0] ).append(*/ "],")
+                    .append("\"flag_detail\":\"").append(postBean.flagDetail).append("\"")
+                    .append("}],")
+                    .append("\"pools\":[],")
+                    .append("\"pool_posts\":[],")
+                    .append("\"tags\":{");
+            for (String copyright : tagBean.copyright) {
+                json.append("\"").append(copyright).append("\":\"copyright\",");
+            }
+            for (String character : tagBean.character) {
+                json.append("\"").append(character).append("\":\"character\",");
+            }
+            for (String artist : tagBean.artist) {
+                json.append("\"").append(artist).append("\":\"artist\",");
+            }
+            for (String circle : tagBean.circle) {
+                json.append("\"").append(circle).append("\":\"circle\",");
+            }
+            for (String style : tagBean.style) {
+                json.append("\"").append(style).append("\":\"style\",");
+            }
+            for (String general : tagBean.general) {
+                json.append("\"").append(general).append("\":\"general\",");
+            }
+            json.deleteCharAt(json.length() - 1);
+            json.append("},").append("\"votes\":{}}");
+            return json.toString().replace("\\", "\\\\");
         }
     }
 }

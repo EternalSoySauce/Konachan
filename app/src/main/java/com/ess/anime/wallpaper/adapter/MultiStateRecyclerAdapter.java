@@ -68,38 +68,30 @@ public abstract class MultiStateRecyclerAdapter<VH extends RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(VH holder, int position) {
         // 设置View.GONE 扔会占位，所以只能设置高度为0 来控制显示
-        // 然而全部长宽设为0会出现无法触发SwipeRefresh下拉刷新的bug，所以将size设为1，并setVisibility();
+        // 然而recycler第一个item高度为0会出现无法触发SwipeRefresh下拉刷新的bug，所以将size设为1，并setVisibility();
         // GridDividerItemDecoration中对应高度为0或1的item不设置offset
-        boolean isCurrentState;
         if (getItemViewType(position) == ViewState.LOAD_MORE.ordinal()) {
-            isCurrentState = mViewState == ViewState.LOAD_MORE;
-            int size = isCurrentState ? ViewGroup.LayoutParams.WRAP_CONTENT : 1;
-            holder.itemView.getLayoutParams().height = size;
-            holder.itemView.setVisibility(isCurrentState ? View.VISIBLE : View.GONE);
+            boolean  isLoadMoreState = mViewState == ViewState.LOAD_MORE;
+            holder.itemView.getLayoutParams().height = isLoadMoreState ? ViewGroup.LayoutParams.WRAP_CONTENT : 1;
+            holder.itemView.setVisibility(isLoadMoreState ? View.VISIBLE : View.GONE);
             onBindLoadMoreHolder(holder, position);
             return;
         } else if (getItemViewType(position) == ViewState.LOADING.ordinal()) {
-            isCurrentState = mViewState == ViewState.LOADING;
-            int size = isCurrentState ? ViewGroup.LayoutParams.MATCH_PARENT : 1;
+            int size = mViewState == ViewState.LOADING ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
             holder.itemView.getLayoutParams().width = size;
             holder.itemView.getLayoutParams().height = size;
-            holder.itemView.setVisibility(isCurrentState ? View.VISIBLE : View.GONE);
             onBindLoadingHolder(holder, position);
             return;
         } else if (getItemViewType(position) == ViewState.NO_DATA.ordinal()) {
-            isCurrentState = mViewState == ViewState.NO_DATA;
-            int size = isCurrentState ? ViewGroup.LayoutParams.MATCH_PARENT : 1;
+            int size =  mViewState == ViewState.NO_DATA ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
             holder.itemView.getLayoutParams().width = size;
             holder.itemView.getLayoutParams().height = size;
-            holder.itemView.setVisibility(isCurrentState ? View.VISIBLE : View.GONE);
             onBindNoDataHolder(holder, position);
             return;
         } else if (getItemViewType(position) == ViewState.NO_NETWORK.ordinal()) {
-            isCurrentState = mViewState == ViewState.NO_NETWORK;
-            int size = isCurrentState ? ViewGroup.LayoutParams.MATCH_PARENT : 1;
+            int size = mViewState == ViewState.NO_NETWORK ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
             holder.itemView.getLayoutParams().width = size;
             holder.itemView.getLayoutParams().height = size;
-            holder.itemView.setVisibility(isCurrentState ? View.VISIBLE : View.GONE);
             onBindNoNetworkHolder(holder, position);
             return;
         }

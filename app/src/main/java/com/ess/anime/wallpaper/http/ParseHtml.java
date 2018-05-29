@@ -107,31 +107,44 @@ public class ParseHtml {
 
     private static String getDanbooruImageDetailJson(Document doc) {
         try {
-            Element section = doc.getElementById("image-container");
+            Element container = doc.getElementById("image-container");
             Element image = doc.getElementById("image");
-            return new ImageBean.ImageJsonBuilder()
-                    .id(section.attr("data-id"))
-                    .tags(section.attr("data-tags"))
-                    .creatorId(section.attr("data-uploader-id"))
-                    .source(section.attr("data-normalized-source"))
-                    .score(section.attr("data-score"))
-                    .md5(section.attr("data-md5"))
-                    .fileUrl(section.attr("data-large-file-url"))
-                    .previewUrl(section.attr("data-preview-file-url"))
+            ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder()
+                    .id(container.attr("data-id"))
+                    .tags(container.attr("data-tags"))
+                    .creatorId(container.attr("data-uploader-id"))
+                    .source(container.attr("data-normalized-source"))
+                    .score(container.attr("data-score"))
+                    .md5(container.attr("data-md5"))
+                    .fileUrl(container.attr("data-large-file-url"))
+                    .previewUrl(container.attr("data-preview-file-url"))
                     .sampleUrl(image.attr("src"))
                     .sampleWidth(image.attr("width"))
                     .sampleHeight(image.attr("height"))
-                    .jpegUrl(section.attr("data-file-url"))
+                    .jpegUrl(container.attr("data-file-url"))
                     .jpegWidth(image.attr("data-large-width"))
                     .jpegHeight(image.attr("data-large-height"))
-                    .rating(section.attr("data-rating"))
-                    .hasChildren(section.attr("data-has-children"))
-                    .parentId(section.attr("data-parent-id"))
+                    .rating(container.attr("data-rating"))
+                    .hasChildren(container.attr("data-has-children"))
+                    .parentId(container.attr("data-parent-id"))
                     .width(image.attr("data-original-width"))
                     .height(image.attr("data-original-height"))
-                    .flagDetail(section.attr("data-flags"))
-                    .build();
-        } catch (NullPointerException e) {
+                    .flagDetail(container.attr("data-flags"));
+            Element tag = doc.getElementById("tag-list");
+            for (Element copyright : tag.getElementsByClass("category-3")) {
+                builder.addCopyrightTags(copyright.getElementsByClass("search-tag").get(0).text());
+            }
+            for (Element character : tag.getElementsByClass("category-4")) {
+                builder.addCharacterTags(character.getElementsByClass("search-tag").get(0).text());
+            }
+            for (Element artist : tag.getElementsByClass("category-1")) {
+                builder.addArtistTags(artist.getElementsByClass("search-tag").get(0).text());
+            }
+            for (Element general : tag.getElementsByClass("category-0")) {
+                builder.addGeneralTags(general.getElementsByClass("search-tag").get(0).text());
+            }
+            return builder.build();
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }

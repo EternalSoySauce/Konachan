@@ -27,7 +27,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -205,7 +204,8 @@ public class CustomDialog extends MaterialDialog.Builder {
 
     /**
      * 选择尺寸下载图片
-     * @param context 上下文
+     *
+     * @param context  上下文
      * @param itemList 三种尺寸详细数据
      * @param listener 事件监听器
      */
@@ -235,8 +235,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param apkBean 新版本信息
      */
     public static void showUpdateDialog(final Context context, final ApkBean apkBean) {
-        String updateContent = Locale.getDefault().getCountry().equals("CN")
-                ? apkBean.updatedContentZh : apkBean.updatedContentEn;
+        String updateContent = DocData.isChinese() ? apkBean.updatedContentZh : apkBean.updatedContentEn;
         MaterialDialog dialog = new CustomDialog(context)
                 .title(context.getString(R.string.dialog_update_title))
                 .titleGravity(GravityEnum.CENTER)
