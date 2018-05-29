@@ -106,7 +106,7 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_creator_id, R.string.detail_post_creator_id, postBean.creatorId);
 
         // 用户名
-        setText(R.id.post_author, R.string.detail_post_author, postBean.author);
+        setText(R.id.post_author, R.string.detail_post_author, postBean.author.replace("_"," "));
 
         // 图片分辨率
         String size = postBean.jpegWidth + " x " + postBean.jpegHeight;
@@ -132,7 +132,7 @@ public class DetailFragment extends Fragment {
 
         // 图片原作者
         ArrayList<String> artistList = imageBean.tags.artist;
-        String artist = artistList.isEmpty() ? getString(R.string.detail_post_no_artist) : artistList.get(0);
+        String artist = artistList.isEmpty() ? getString(R.string.detail_post_no_artist) : artistList.get(0).replace("_"," ");
         setText(R.id.post_artist, R.string.detail_post_artist, artist);
 
         // 图片评级

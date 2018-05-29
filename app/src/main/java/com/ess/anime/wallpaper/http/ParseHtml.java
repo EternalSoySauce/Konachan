@@ -10,6 +10,7 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.StringUtils;
+import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -107,12 +108,15 @@ public class ParseHtml {
 
     private static String getDanbooruImageDetailJson(Document doc) {
         try {
+            Element time = doc.getElementsByTag("time").get(0);
             Element container = doc.getElementById("image-container");
             Element image = doc.getElementById("image");
             ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder()
                     .id(container.attr("data-id"))
                     .tags(container.attr("data-tags"))
+                    .createdTime(String.valueOf(TimeFormat.timeToMills(time.attr("datetime").replace("-04:00",""), "yyyy-MM-dd'T'HH:mm")))
                     .creatorId(container.attr("data-uploader-id"))
+                    .author(image.attr("data-uploader"))
                     .source(container.attr("data-normalized-source"))
                     .score(container.attr("data-score"))
                     .md5(container.attr("data-md5"))
@@ -132,16 +136,20 @@ public class ParseHtml {
                     .flagDetail(container.attr("data-flags"));
             Element tag = doc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("category-3")) {
-                builder.addCopyrightTags(copyright.getElementsByClass("search-tag").get(0).text());
+                builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
+                        .get(0).text().replace(" ", "_"));
             }
             for (Element character : tag.getElementsByClass("category-4")) {
-                builder.addCharacterTags(character.getElementsByClass("search-tag").get(0).text());
+                builder.addCharacterTags(character.getElementsByClass("search-tag")
+                        .get(0).text().replace(" ", "_"));
             }
             for (Element artist : tag.getElementsByClass("category-1")) {
-                builder.addArtistTags(artist.getElementsByClass("search-tag").get(0).text());
+                builder.addArtistTags(artist.getElementsByClass("search-tag")
+                        .get(0).text().replace(" ", "_"));
             }
             for (Element general : tag.getElementsByClass("category-0")) {
-                builder.addGeneralTags(general.getElementsByClass("search-tag").get(0).text());
+                builder.addGeneralTags(general.getElementsByClass("search-tag")
+                        .get(0).text().replace(" ", "_"));
             }
             return builder.build();
         } catch (Exception e) {

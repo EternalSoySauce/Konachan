@@ -1,9 +1,9 @@
 package com.ess.anime.wallpaper.utils;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class TimeFormat {
 
@@ -40,12 +40,18 @@ public class TimeFormat {
     }
 
     // string格式转换为long (msec)
-    public static long stringToLong(String time, String format) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+    public static long timeToMills(String time, String format) {
+        return timeToMillsWithZone(time, format, TimeZone.getDefault());
+    }
+
+    // 带时区的标准时间格式string转换为long
+    public static long timeToMillsWithZone(String time, String format, TimeZone timeZone) {
         try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+//            dateFormat.setTimeZone(timeZone);
             Date date = dateFormat.parse(time);
             return date.getTime();
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
