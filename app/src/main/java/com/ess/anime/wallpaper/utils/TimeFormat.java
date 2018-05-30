@@ -48,7 +48,7 @@ public class TimeFormat {
     public static long timeToMillsWithZone(String time, String format, TimeZone timeZone) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-//            dateFormat.setTimeZone(timeZone);
+            dateFormat.setTimeZone(timeZone);
             Date date = dateFormat.parse(time);
             return date.getTime();
         } catch (Exception e) {

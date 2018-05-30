@@ -57,7 +57,7 @@ public class FileUtils {
     /**
      * 对字符串进行异或加密
      *
-     * @param info 需要加密的字符串
+     * @param info          需要加密的字符串
      * @param cryptographic 密钥
      * @return 加密后的字符串
      */
@@ -77,7 +77,7 @@ public class FileUtils {
     /**
      * 对字符串进行异或解密
      *
-     * @param info 需要解密的字符串
+     * @param info          需要解密的字符串
      * @param cryptographic 密钥
      * @return 解密后的字符串
      */
@@ -390,6 +390,28 @@ public class FileUtils {
             return decimal.setScale(0, RoundingMode.HALF_UP).intValue() + "K";
         } else {
             return b + "B";
+        }
+    }
+
+    /**
+     * 将文件大小由KB、MB、GB 等字符串转换为long值
+     *
+     * @param fileSize 文件大小字符串
+     * @return 文件大小
+     */
+    public static long parseFileSile(String fileSize) {
+        try {
+            double size = Double.parseDouble(fileSize.replaceAll("[^-*\\d+(\\.)?]","")); // 提取数字
+            if (fileSize.contains("G")) {
+                size *= 1024 * 1024 * 1024;
+            } else if (fileSize.contains("M")) {
+                size *= 1024 * 1024;
+            } else if (fileSize.contains("K")) {
+                size *= 1024;
+            }
+            return (long) size;
+        } catch (NumberFormatException ignore) {
+            return 0;
         }
     }
 }

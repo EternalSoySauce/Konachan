@@ -180,7 +180,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         String desc;
         boolean exists;
         // 0.Sample size
-        if (postBean.sampleFileSize != 0) {
+        if (postBean.sampleFileSize != 0 && !postBean.fileUrl.equals(postBean.sampleUrl)) {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),

@@ -9,6 +9,7 @@ import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.google.gson.JsonArray;
@@ -21,6 +22,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 public class ParseHtml {
@@ -108,32 +110,53 @@ public class ParseHtml {
 
     private static String getDanbooruImageDetailJson(Document doc) {
         try {
+            // 解析时间字符串，格式：2018-05-29T21:06-04:00（-04:00为时区）
+            // 注意PostBean.createdTime单位为second
             Element time = doc.getElementsByTag("time").get(0);
+            String createdTime = time.attr("datetime");
+            long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-4:00"));
+            createdTime = String.valueOf(mills / 1000);
+
+            // 解析原图文件大小
+            Element info = doc.getElementById("post-information");
+            String jpegFileSize = "";
+            for (Element li : info.getElementsByTag("li")) {
+                if (li.text().contains("Size")) {
+                    String size = li.getElementsByTag("a").get(0).text();
+                    jpegFileSize = String.valueOf(FileUtils.parseFileSile(size));
+                    break;
+                }
+            }
+
             Element container = doc.getElementById("image-container");
             Element image = doc.getElementById("image");
             ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder()
                     .id(container.attr("data-id"))
                     .tags(container.attr("data-tags"))
-                    .createdTime(String.valueOf(TimeFormat.timeToMills(time.attr("datetime").replace("-04:00",""), "yyyy-MM-dd'T'HH:mm")))
+                    .createdTime(createdTime)
                     .creatorId(container.attr("data-uploader-id"))
                     .author(image.attr("data-uploader"))
                     .source(container.attr("data-normalized-source"))
                     .score(container.attr("data-score"))
                     .md5(container.attr("data-md5"))
-                    .fileUrl(container.attr("data-large-file-url"))
+                    .fileSize(jpegFileSize)
+                    .fileUrl(container.attr("data-file-url"))
                     .previewUrl(container.attr("data-preview-file-url"))
-                    .sampleUrl(image.attr("src"))
+                    .sampleUrl(container.attr("data-large-file-url"))
                     .sampleWidth(image.attr("width"))
                     .sampleHeight(image.attr("height"))
+                    .sampleFileSize("-1") // danbooru无法获得sample尺寸图片大小，又需要提供下载，因此用-1代替
                     .jpegUrl(container.attr("data-file-url"))
-                    .jpegWidth(image.attr("data-large-width"))
-                    .jpegHeight(image.attr("data-large-height"))
+                    .jpegWidth(image.attr("data-original-width"))
+                    .jpegHeight(image.attr("data-original-height"))
+                    .jpegFileSize(jpegFileSize)
                     .rating(container.attr("data-rating"))
                     .hasChildren(container.attr("data-has-children"))
                     .parentId(container.attr("data-parent-id"))
                     .width(image.attr("data-original-width"))
                     .height(image.attr("data-original-height"))
                     .flagDetail(container.attr("data-flags"));
+
             Element tag = doc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("category-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")

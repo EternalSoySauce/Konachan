@@ -14,25 +14,23 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
 
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.PoolBean;
 import com.ess.anime.wallpaper.bean.PostBean;
+import com.ess.anime.wallpaper.bean.TagBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ImageBean;
-import com.ess.anime.wallpaper.bean.TagBean;
+import com.ess.anime.wallpaper.utils.TimeFormat;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class DetailFragment extends Fragment {
 
@@ -98,15 +96,14 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_id, R.string.detail_post_id, postBean.id);
 
         // 上传时间
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss", Locale.getDefault());
-        String postCreatedTime = dateFormat.format(new Date(postBean.createdTime * 1000));
+        String postCreatedTime = TimeFormat.dateFormat(postBean.createdTime * 1000, "yyyy-MM-dd  HH:mm:ss");
         setText(R.id.post_created_time, R.string.detail_post_created_time, postCreatedTime);
 
         // 用户Id
         setText(R.id.post_creator_id, R.string.detail_post_creator_id, postBean.creatorId);
 
         // 用户名
-        setText(R.id.post_author, R.string.detail_post_author, postBean.author.replace("_"," "));
+        setText(R.id.post_author, R.string.detail_post_author, postBean.author.replace("_", " "));
 
         // 图片分辨率
         String size = postBean.jpegWidth + " x " + postBean.jpegHeight;
@@ -132,7 +129,7 @@ public class DetailFragment extends Fragment {
 
         // 图片原作者
         ArrayList<String> artistList = imageBean.tags.artist;
-        String artist = artistList.isEmpty() ? getString(R.string.detail_post_no_artist) : artistList.get(0).replace("_"," ");
+        String artist = artistList.isEmpty() ? getString(R.string.detail_post_no_artist) : artistList.get(0).replace("_", " ");
         setText(R.id.post_artist, R.string.detail_post_artist, artist);
 
         // 图片评级

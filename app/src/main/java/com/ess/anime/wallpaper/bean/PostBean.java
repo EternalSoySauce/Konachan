@@ -12,7 +12,7 @@ public class PostBean implements Parcelable {
     public String tags;  //图片标签
 
     @SerializedName(value = "createdTime", alternate = "created_at")
-    public long createdTime;  //上传时间（格式：mills）
+    public long createdTime;  //上传时间（格式：mills，单位：second）
 
     @SerializedName(value = "creatorId", alternate = "creator_id")
     public String creatorId;  //上传者id
@@ -28,10 +28,10 @@ public class PostBean implements Parcelable {
     public String md5;  //md5加密码
 
     @SerializedName(value = "fileSize", alternate = "file_size")
-    public long fileSize;  //大图页面显示的尺寸，图片文件大小（作为备用值）
+    public long fileSize;  //大图页面显示的尺寸，图片文件大小（作为原图备用值）
 
     @SerializedName(value = "fileUrl", alternate = "file_url")
-    public String fileUrl;  //大图页面显示的尺寸，图片地址（作为备用值）
+    public String fileUrl;  //大图页面显示的尺寸，图片地址（作为原图备用值）
 
     @SerializedName(value = "isShownInIndex", alternate = "is_shown_in_index")
     public boolean isShownInIndex;  //（未知用处）
