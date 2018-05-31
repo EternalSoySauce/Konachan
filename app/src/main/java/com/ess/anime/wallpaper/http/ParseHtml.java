@@ -175,8 +175,7 @@ public class ParseHtml {
                         .get(0).text().replace(" ", "_"));
             }
             return builder.build();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
             return "";
         }
     }
@@ -195,23 +194,27 @@ public class ParseHtml {
         ArrayList<CommentBean> commentList = new ArrayList<>();
         Elements elements = doc.getElementsByClass("comment avatar-container");
         for (Element e : elements) {
-            String id = "#" + e.attr("id");
-            String author = e.getElementsByTag("h6").get(0).text();
-            String date = e.getElementsByClass("date").get(0).attr("title");
-            String headUrl = "";
-            Elements avatars = e.getElementsByClass("avatar");
-            if (!avatars.isEmpty()) {
-                headUrl = avatars.get(0).attr("src");
-                if (!headUrl.startsWith("http")) {
-                    headUrl = headUrl.startsWith("//") ? "https:" + headUrl
-                            : OkHttp.getBaseUrl(context) + headUrl;
+            try {
+                String id = "#" + e.attr("id");
+                String author = e.getElementsByTag("h6").get(0).text();
+                String date = e.getElementsByClass("date").get(0).attr("title");
+                String headUrl = "";
+                Elements avatars = e.getElementsByClass("avatar");
+                if (!avatars.isEmpty()) {
+                    headUrl = avatars.get(0).attr("src");
+                    if (!headUrl.startsWith("http")) {
+                        headUrl = headUrl.startsWith("//") ? "https:" + headUrl
+                                : OkHttp.getBaseUrl(context) + headUrl;
+                    }
                 }
+                Element body = e.getElementsByClass("body").get(0);
+                Elements blockquote = body.select("blockquote");
+                CharSequence quote = Html.fromHtml(blockquote.select("div").html());
+                blockquote.remove();
+                CharSequence comment = Html.fromHtml(body.html());
+                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+            } catch (Exception ignore) {
             }
-            Element body = e.getElementsByClass("body").get(0);
-            Elements blockquote = body.select("blockquote");
-            CharSequence quote = Html.fromHtml(blockquote.select("div").html());
-            CharSequence comment = Html.fromHtml(body.html().replace(blockquote.outerHtml(), ""));
-            commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
         }
         return commentList;
     }
@@ -220,17 +223,32 @@ public class ParseHtml {
         ArrayList<CommentBean> commentList = new ArrayList<>();
         Elements elements = doc.getElementsByClass("comment");
         for (Element e : elements) {
-            String id = "#c" + e.attr("data-comment-id");
-            String author = e.attr("data-creator");
-            String date = e.getElementsByTag("time").get(0).attr("title");
-            long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-4:00"));
-            date = "Posted at " + TimeFormat.dateFormat(mills, "yyyy-MM-dd HH:mm:ss");
-            String headUrl = "";
-            Element body = e.getElementsByClass("body prose").get(0);
-            Elements blockquote = body.select("blockquote");
-            CharSequence quote = Html.fromHtml(blockquote.html());
-            CharSequence comment = Html.fromHtml(body.html().replace(blockquote.outerHtml(), ""));
-            commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+            try {
+                String id = "#c" + e.attr("data-comment-id");
+                String author = e.attr("data-creator");
+                String date = e.getElementsByTag("time").get(0).attr("title");
+                long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-4:00"));
+                date = "Posted at " + TimeFormat.dateFormat(mills, "yyyy-MM-dd HH:mm:ss");
+                String headUrl = "";
+                Elements body = e.getElementsByClass("body prose");
+                body.select(".spoiler").unwrap();
+                body.select(".info").remove();
+                body.select("p").append("<br/><br/>");
+                body.select("p").unwrap();
+                Elements blockquote = body.select("blockquote");
+                if (!blockquote.isEmpty()) {
+                    blockquote.select("br").last().remove();
+                    blockquote.select("br").last().remove();
+                }
+                CharSequence quote = Html.fromHtml(blockquote.html());
+                blockquote.remove();
+                body.select("br").last().remove();
+                body.select("br").last().remove();
+                String s = body.html();
+                CharSequence comment = Html.fromHtml(s);
+                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+            } catch (Exception ignore) {
+            }
         }
         return commentList;
     }
