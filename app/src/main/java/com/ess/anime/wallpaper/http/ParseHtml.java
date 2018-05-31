@@ -182,8 +182,17 @@ public class ParseHtml {
     }
 
     public static ArrayList<CommentBean> getCommentList(Context context, String html) {
-        ArrayList<CommentBean> commentList = new ArrayList<>();
         Document doc = Jsoup.parse(html);
+        String webTitle = doc.getElementsByTag("title").text();
+        if (webTitle.toLowerCase().contains("danbooru")) {
+            return getDanbooruCommentList(context, doc);
+        } else {
+            return getGeneralCommentList(context, doc);
+        }
+    }
+
+    private static ArrayList<CommentBean> getGeneralCommentList(Context context, Document doc) {
+        ArrayList<CommentBean> commentList = new ArrayList<>();
         Elements elements = doc.getElementsByClass("comment avatar-container");
         for (Element e : elements) {
             String id = "#" + e.attr("id");
@@ -201,6 +210,25 @@ public class ParseHtml {
             Element body = e.getElementsByClass("body").get(0);
             Elements blockquote = body.select("blockquote");
             CharSequence quote = Html.fromHtml(blockquote.select("div").html());
+            CharSequence comment = Html.fromHtml(body.html().replace(blockquote.outerHtml(), ""));
+            commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+        }
+        return commentList;
+    }
+
+    private static ArrayList<CommentBean> getDanbooruCommentList(Context context, Document doc) {
+        ArrayList<CommentBean> commentList = new ArrayList<>();
+        Elements elements = doc.getElementsByClass("comment");
+        for (Element e : elements) {
+            String id = "#c" + e.attr("data-comment-id");
+            String author = e.attr("data-creator");
+            String date = e.getElementsByTag("time").get(0).attr("title");
+            long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-4:00"));
+            date = "Posted at " + TimeFormat.dateFormat(mills, "yyyy-MM-dd HH:mm:ss");
+            String headUrl = "";
+            Element body = e.getElementsByClass("body prose").get(0);
+            Elements blockquote = body.select("blockquote");
+            CharSequence quote = Html.fromHtml(blockquote.html());
             CharSequence comment = Html.fromHtml(body.html().replace(blockquote.outerHtml(), ""));
             commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
         }
