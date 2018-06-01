@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -144,14 +143,7 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
     private void addDatas(int position, ArrayList<ThumbBean> thumbList) {
         synchronized (this) {
             //删掉更新时因网站新增图片导致thumbList出现的重复项
-            Iterator<ThumbBean> iterator = thumbList.iterator();
-            while (iterator.hasNext()) {
-                ThumbBean newData = iterator.next();
-                if (mThumbList.contains(newData)) {
-                    iterator.remove();
-                }
-            }
-
+            thumbList.removeAll(mThumbList);
             mThumbList.addAll(position, thumbList);
             showNormal();
             getImageDetail(thumbList);

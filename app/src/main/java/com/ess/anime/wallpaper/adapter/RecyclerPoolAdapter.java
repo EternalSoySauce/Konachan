@@ -15,7 +15,6 @@ import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolAdapter.MyViewHolder> {
 
@@ -135,14 +134,7 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
     private void addDatas(int position, ArrayList<PoolListBean> poolList) {
         synchronized (this) {
             //删掉更新时因网站新增图片导致thumbList出现的重复项
-            Iterator<PoolListBean> iterator = poolList.iterator();
-            while (iterator.hasNext()) {
-                PoolListBean newData = iterator.next();
-                if (mPoolList.contains(newData)) {
-                    iterator.remove();
-                }
-            }
-
+            poolList.removeAll(mPoolList);
             mPoolList.addAll(position, poolList);
             showNormal();
             preloadThumbnail(poolList);
