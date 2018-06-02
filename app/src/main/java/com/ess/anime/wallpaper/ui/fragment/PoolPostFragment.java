@@ -91,13 +91,12 @@ public class PoolPostFragment extends Fragment {
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return position == mLayoutManager.getItemCount() - 1 ? 2 : 1;
+                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
             }
         });
         mRvPosts.setLayoutManager(mLayoutManager);
 
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
-        mPostAdapter = new RecyclerPostAdapter(getActivity(), thumbList);
+        mPostAdapter = new RecyclerPostAdapter(getActivity(), new ArrayList<ThumbBean>());
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(getActivity(), 5);

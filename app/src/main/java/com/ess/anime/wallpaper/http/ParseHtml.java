@@ -184,7 +184,7 @@ public class ParseHtml {
         Document doc = Jsoup.parse(html);
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
-            return getDanbooruCommentList(context, doc);
+            return getDanbooruCommentList(doc);
         } else {
             return getGeneralCommentList(context, doc);
         }
@@ -219,7 +219,7 @@ public class ParseHtml {
         return commentList;
     }
 
-    private static ArrayList<CommentBean> getDanbooruCommentList(Context context, Document doc) {
+    private static ArrayList<CommentBean> getDanbooruCommentList(Document doc) {
         ArrayList<CommentBean> commentList = new ArrayList<>();
         Elements elements = doc.getElementsByClass("comment");
         for (Element e : elements) {
@@ -300,10 +300,19 @@ public class ParseHtml {
     }
 
     public static ArrayList<PoolListBean> getPoolList(Context context, String html) {
+        Document doc = Jsoup.parse(html);
+        String webTitle = doc.getElementsByTag("title").text();
+        if (webTitle.toLowerCase().contains("danbooru")) {
+            return getDanbooruPoolList(doc);
+        } else {
+            return getGeneralPoolList(context, doc);
+        }
+    }
+
+    private static ArrayList<PoolListBean> getGeneralPoolList(Context context, Document doc) {
         //解析预览图和id
         ArrayList<PoolListBean> poolList = new ArrayList<>();
         PoolListBean poolListBean = new PoolListBean();
-        Document doc = Jsoup.parse(html);
         Elements eleScripts = doc.getElementsByTag("script");
         for (Element script : eleScripts) {
             String text = script.html().trim();
@@ -356,6 +365,26 @@ public class ParseHtml {
                         pool.updateTime = td.text();
                         break;
                 }
+            }
+        }
+        return poolList;
+    }
+
+    private static ArrayList<PoolListBean> getDanbooruPoolList(Document doc) {
+        ArrayList<PoolListBean> poolList = new ArrayList<>();
+        for (Element pool : doc.select("tr[id]")) {
+            try {
+                PoolListBean poolListBean = new PoolListBean();
+                Elements tds = pool.getElementsByTag("td");
+                Element link = tds.get(1).getElementsByTag("a").first();
+                String href = link.attr("href");
+                poolListBean.id = href.substring(href.lastIndexOf("/") + 1);
+                poolListBean.name = link.text();
+                poolListBean.linkToShow = Constants.BASE_URL_DANBOORU + href;
+                poolListBean.postCount = tds.last().text();
+                poolList.add(poolListBean);
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
             }
         }
         return poolList;

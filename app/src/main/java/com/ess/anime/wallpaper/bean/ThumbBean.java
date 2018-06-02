@@ -64,13 +64,13 @@ public class ThumbBean implements Parcelable {
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof ThumbBean) {
             ThumbBean thumbBean = (ThumbBean) obj;
-            return !(this.thumbUrl == null || thumbBean.thumbUrl == null) && this.thumbUrl.equals(thumbBean.thumbUrl);
+            return !(this.linkToShow == null || thumbBean.linkToShow == null) && this.linkToShow.equals(thumbBean.linkToShow);
         }
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return thumbUrl.hashCode();
+        return linkToShow.hashCode();
     }
 }

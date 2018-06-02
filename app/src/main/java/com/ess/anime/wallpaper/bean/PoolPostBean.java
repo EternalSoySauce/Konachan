@@ -17,7 +17,7 @@ public class PoolPostBean implements Parcelable {
 
     public boolean active;  //（未知用处，猜测为是否公开）
 
-    public int sequence;  //图片在图集中的位置序号
+    public String sequence;  //图片在图集中的位置序号（值为String格式，有可能为NaN）
 
     @SerializedName(value = "nextPostId", alternate = "next_post_id")
     public String nextPostId;  //下张图片id
@@ -30,7 +30,7 @@ public class PoolPostBean implements Parcelable {
         poolId = in.readString();
         postId = in.readString();
         active = in.readByte() != 0;
-        sequence = in.readInt();
+        sequence = in.readString();
         nextPostId = in.readString();
         prevPostId = in.readString();
     }
@@ -41,7 +41,7 @@ public class PoolPostBean implements Parcelable {
         dest.writeString(poolId);
         dest.writeString(postId);
         dest.writeByte((byte) (active ? 1 : 0));
-        dest.writeInt(sequence);
+        dest.writeString(sequence);
         dest.writeString(nextPostId);
         dest.writeString(prevPostId);
     }

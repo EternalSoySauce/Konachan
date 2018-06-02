@@ -160,6 +160,15 @@ public class PostFragment extends Fragment {
 
     private void initRecyclerView() {
         mRvPosts = (RecyclerView) mRootView.findViewById(R.id.rv_post);
+        mLayoutManager = new GridLayoutManager(mActivity, 2);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
+            }
+        });
+        mRvPosts.setLayoutManager(mLayoutManager);
+
         mPostAdapter = new RecyclerPostAdapter(mActivity, new ArrayList<ThumbBean>());
         mPostAdapter.setOnItemClickListener(new RecyclerPostAdapter.OnItemClickListener() {
             @Override
@@ -169,15 +178,6 @@ public class PostFragment extends Fragment {
         });
         mPostAdapter.showLoading();
         mRvPosts.setAdapter(mPostAdapter);
-
-        mLayoutManager = new GridLayoutManager(mActivity, 2);
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
-            }
-        });
-        mRvPosts.setLayoutManager(mLayoutManager);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
         int spaceVer = UIUtils.dp2px(mActivity, 10);

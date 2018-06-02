@@ -22,7 +22,7 @@ public class PoolListBean {
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof PoolListBean) {
             PoolListBean poolListBean = (PoolListBean) obj;
-            return !(this.thumbUrl == null || poolListBean.thumbUrl == null) && this.thumbUrl.equals(poolListBean.thumbUrl);
+            return !(this.id == null || poolListBean.id == null) && this.id.equals(poolListBean.id);
         }
         return super.equals(obj);
     }
