@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -72,6 +73,7 @@ public class ImageBean implements Parcelable {
     public static class ImageJsonBuilder {
 
         private PostBean postBean = new PostBean();
+        private PoolBean poolBean = new PoolBean();
         private TagBean tagBean = new TagBean();
 
         public ImageJsonBuilder id(String id) {
@@ -319,6 +321,50 @@ public class ImageBean implements Parcelable {
             return this;
         }
 
+        public ImageJsonBuilder poolId(String id) {
+            poolBean.id = id;
+            return this;
+        }
+
+        public ImageJsonBuilder poolName(String name) {
+            poolBean.name = name;
+            return this;
+        }
+
+        public ImageJsonBuilder poolCreatedTime(String createdTime) {
+            poolBean.createdTime = createdTime;
+            return this;
+        }
+
+        public ImageJsonBuilder poolUpdatedTime(String updatedTime) {
+            poolBean.updatedTime = updatedTime;
+            return this;
+        }
+
+        public ImageJsonBuilder poolUserID(String userID) {
+            poolBean.userID = userID;
+            return this;
+        }
+
+        public ImageJsonBuilder poolIsPublic(String isPublic) {
+            poolBean.isPublic = Boolean.parseBoolean(isPublic);
+            return this;
+        }
+
+        public ImageJsonBuilder poolPostCount(String postCount) {
+            try {
+                poolBean.postCount = Integer.parseInt(postCount);
+            } catch (NumberFormatException ignore) {
+                poolBean.postCount = 0;
+            }
+            return this;
+        }
+
+        public ImageJsonBuilder poolDescription(String description) {
+            poolBean.description = description;
+            return this;
+        }
+
         public ImageJsonBuilder addCopyrightTags(String... copyrightTags) {
             tagBean.copyright.addAll(Arrays.asList(copyrightTags));
             return this;
@@ -390,7 +436,18 @@ public class ImageBean implements Parcelable {
                     .append("\"frames\":[").append( /*postBean.frames[0] ).append(*/ "],")
                     .append("\"flag_detail\":\"").append(postBean.flagDetail).append("\"")
                     .append("}],")
-                    .append("\"pools\":[],")
+                    .append("\"pools\":[");
+            if (!TextUtils.isEmpty(poolBean.id)) {
+                json.append("{\"id\":").append(poolBean.id).append(",")
+                        .append("\"name\":\"").append(poolBean.name).append("\",")
+                        .append("\"created_at\":\"").append(poolBean.createdTime).append("\",")
+                        .append("\"updated_at\":\"").append(poolBean.updatedTime).append("\",")
+                        .append("\"user_id\":").append(poolBean.userID).append(",")
+                        .append("\"is_public\":").append(poolBean.isPublic).append(",")
+                        .append("\"post_count\":").append(poolBean.postCount).append(",")
+                        .append("\"description\":\"").append(poolBean.description).append("\"}");
+            }
+            json.append("],")
                     .append("\"pool_posts\":[],")
                     .append("\"tags\":{");
             for (String copyright : tagBean.copyright) {

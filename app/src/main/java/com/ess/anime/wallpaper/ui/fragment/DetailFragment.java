@@ -178,12 +178,16 @@ public class DetailFragment extends Fragment {
 
         // 创建时间
         String poolCreatedTime = poolBean.createdTime;
-        poolCreatedTime = formatPoolTime(poolCreatedTime);
+        poolCreatedTime = TextUtils.isEmpty(poolCreatedTime)
+                ? getString(R.string.pool_unknown_time)
+                : formatPoolTime(poolCreatedTime);
         setText(R.id.pool_created_time, R.string.detail_pool_created_time, poolCreatedTime);
 
         // 最后更新时间
         String poolUpdatedTime = poolBean.updatedTime;
-        poolUpdatedTime = formatPoolTime(poolUpdatedTime);
+        poolUpdatedTime = TextUtils.isEmpty(poolUpdatedTime)
+                ? getString(R.string.pool_unknown_time)
+                : formatPoolTime(poolUpdatedTime);
         setText(R.id.pool_updated_time, R.string.detail_pool_updated_time, poolUpdatedTime);
 
         // 图集简介

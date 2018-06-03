@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.adapter;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -90,7 +91,10 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
         holder.tvName.setText(poolListBean.name.replace("_", " "));
 
         //创建者
-        holder.tvCreator.setText(poolListBean.creator);
+        String creator = TextUtils.isEmpty(poolListBean.creator)
+                ? getContext().getString(R.string.pool_unknown_creator)
+                : poolListBean.creator;
+        holder.tvCreator.setText(creator);
 
         //图片数量
         holder.tvPostCount.setText(poolListBean.postCount);
@@ -99,7 +103,9 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
         holder.tvCreateTime.setText(poolListBean.createTime);
 
         //上传时间
-        String update = mActivity.getString(R.string.pool_updated_time, poolListBean.updateTime);
+        String update = TextUtils.isEmpty(poolListBean.updateTime)
+                ? getContext().getString(R.string.pool_unknown_time)
+                : mActivity.getString(R.string.pool_updated_time, poolListBean.updateTime);
         holder.tvUpdateTime.setText(update);
 
         //点击加载图片列表

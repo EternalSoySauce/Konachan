@@ -89,6 +89,8 @@
 
     <!-- Pool Detail -->
     <string name="pool_updated_time">Updated %s</string>
+    <string name="pool_unknown_creator">未知</string>
+    <string name="pool_unknown_time">未知</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>

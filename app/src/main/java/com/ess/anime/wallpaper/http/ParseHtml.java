@@ -109,6 +109,7 @@ public class ParseHtml {
     }
 
     private static String getDanbooruImageDetailJson(Document doc) {
+        ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
             // 解析时间字符串，格式：2018-05-29T21:06-04:00（-04:00为时区）
             // 注意PostBean.createdTime单位为second
@@ -130,8 +131,7 @@ public class ParseHtml {
 
             Element container = doc.getElementById("image-container");
             Element image = doc.getElementById("image");
-            ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder()
-                    .id(container.attr("data-id"))
+            builder.id(container.attr("data-id"))
                     .tags(container.attr("data-tags"))
                     .createdTime(createdTime)
                     .creatorId(container.attr("data-uploader-id"))
@@ -157,6 +157,21 @@ public class ParseHtml {
                     .height(image.attr("data-original-height"))
                     .flagDetail(container.attr("data-flags"));
 
+            // 解析图集信息
+            Element pool = doc.getElementsByClass("pool-name active").first();
+            if (pool != null) {
+                Element a = pool.getElementsByTag("a").first();
+                if (a != null) {
+                    String href = a.attr("href");
+                    builder.poolId(href.substring(href.lastIndexOf("/") + 1));
+                    String name = a.text();
+                    builder.poolName(name.substring(name.indexOf(":") + 1).trim());
+                    builder.poolCreatedTime("");
+                    builder.poolUpdatedTime("");
+                    builder.poolDescription("");
+                }
+            }
+
             Element tag = doc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("category-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
@@ -174,10 +189,9 @@ public class ParseHtml {
                 builder.addGeneralTags(general.getElementsByClass("search-tag")
                         .get(0).text().replace(" ", "_"));
             }
-            return builder.build();
         } catch (Exception ignore) {
-            return "";
         }
+        return builder.build();
     }
 
     public static ArrayList<CommentBean> getCommentList(Context context, String html) {

@@ -28,6 +28,9 @@ public class PoolBean implements Parcelable {
 
     public String description;  //图集简介
 
+    public PoolBean() {
+    }
+
     protected PoolBean(Parcel in) {
         id = in.readString();
         name = in.readString();
