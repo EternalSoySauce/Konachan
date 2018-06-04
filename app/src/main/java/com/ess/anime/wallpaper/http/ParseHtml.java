@@ -51,6 +51,7 @@ public class ParseHtml {
         Elements elements = list.getElementsByTag("li");
         for (Element e : elements) {
             try {
+                String id = e.attr("id").replaceAll("[^0-9]", "");
                 String thumbUrl = e.getElementsByTag("img").attr("src");
                 if (thumbUrl.contains("deleted-preview")) {
                     continue;
@@ -64,7 +65,7 @@ public class ParseHtml {
                 }
                 String linkToShow = e.getElementsByClass("plid").get(0).ownText();
                 linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
-                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
             } catch (Exception ignore) {
             }
         }
@@ -75,6 +76,7 @@ public class ParseHtml {
         Elements elements = doc.getElementsByTag("article");
         for (Element e : elements) {
             try {
+                String id = e.attr("data-id");
                 String thumbUrl = e.getElementsByTag("img").attr("src");
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
@@ -84,7 +86,7 @@ public class ParseHtml {
                 if (!linkToShow.startsWith("http")) {
                     linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
                 }
-                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
             } catch (Exception ignore) {
             }
         }
@@ -92,10 +94,11 @@ public class ParseHtml {
 
     // Sankaku专用
     private static void getSankakuThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
-        doc.select("#popular-preview").remove();
+//        doc.select("#popular-preview").remove();  // 移除最上方的四张popular
         Elements elements = doc.getElementsByClass("thumb blacklisted");
         for (Element e : elements) {
             try {
+                String id = e.attr("id").replaceAll("[^0-9]", "");
                 Element img = e.getElementsByTag("img").first();
                 String thumbUrl = img.attr("src");
                 if (!thumbUrl.startsWith("http")) {
@@ -109,7 +112,7 @@ public class ParseHtml {
                 if (!linkToShow.startsWith("http")) {
                     linkToShow = Constants.BASE_URL_SANKAKU + linkToShow;
                 }
-                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
             } catch (Exception ignore) {
             }
         }
@@ -120,7 +123,7 @@ public class ParseHtml {
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
             return getDanbooruImageDetailJson(doc);
-        }  else if (webTitle.toLowerCase().contains("sankaku")) {
+        } else if (webTitle.toLowerCase().contains("sankaku")) {
             return getSankakuImageDetailJson(doc);
         } else {
             return getGeneralImageDetailJson(doc);
@@ -236,6 +239,103 @@ public class ParseHtml {
 
     private static String getSankakuImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
+        try {
+            Element image = doc.getElementById("image");
+            builder.id(doc.getElementById("hidden_post_id").text())
+                    .tags(image.attr("alt"))
+                    .md5(image.attr("pagespeed_url_hash"))
+                    .source("")
+                    .sampleUrl("https:" + image.attr("src"));
+
+            Elements lis = doc.getElementsByTag("li");
+            for (Element li : lis) {
+                String text = li.text();
+                if (text.contains("Posted:")) {
+                    // 解析时间字符串，格式：2018-06-04 08:10（该站时区为-06:00）
+                    // 注意PostBean.createdTime单位为second
+                    Elements created = li.getElementsByTag("a");
+                    String createdTime = created.attr("title");
+                    long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT-6:00"));
+                    builder.createdTime(String.valueOf(mills / 1000));
+
+                    // 上传用户
+                    if (created.size() > 1) {
+                        Element author = created.get(1);
+                        builder.creatorId(author.attr("href").replaceAll("[^0-9]", ""));
+                        builder.author(author.text());
+                    }
+                } else if (text.contains("Vote Average:")) {
+                    // 评分
+                    builder.score(li.child(0).text());
+                } else if (text.contains("Resized:")) {
+                    // 预览图
+                    Element sample = li.child(0);
+                    String sampleUrl = sample.attr("href");
+                    if (!sampleUrl.startsWith("http")) {
+                        sampleUrl = "https:" + sampleUrl;
+                    }
+                    String[] resolution = sample.text().split("x");
+                    builder.sampleUrl(sampleUrl)
+                            .sampleWidth(resolution[0])
+                            .sampleHeight(resolution[1])
+                            .sampleFileSize("-1");
+                } else if (text.contains("Original:")) {
+                    // 大图，原图
+                    Element original = li.child(0);
+                    String originalUrl = original.attr("href");
+                    if (!originalUrl.startsWith("http")) {
+                        originalUrl = "https:" + originalUrl;
+                    }
+                    String originalSize = original.attr("title").replaceAll("[^0-9]", "");
+                    String[] resolution = original.text().replaceAll("\\([^)]*?\\)", "").trim().split("x");
+                    builder.fileSize(originalSize)
+                            .fileUrl(originalUrl)
+                            .jpegUrl(originalUrl)
+                            .jpegWidth(resolution[0])
+                            .jpegHeight(resolution[1])
+                            .jpegFileSize(originalSize)
+                            .width(resolution[0])
+                            .height(resolution[1]);
+                } else if (text.contains("Rating:")) {
+                    // 评级
+                    if (li.children().isEmpty()) {
+                        String rating = li.text();
+                        if (rating.contains("Safe")) {
+                            builder.rating("s");
+                        } else if (rating.contains("Explicit")) {
+                            builder.rating("e");
+                        } else if (rating.contains("Questionable")) {
+                            builder.rating("q");
+                        }
+                    }
+                }
+
+                // tags
+                Element tag = doc.getElementById("tag-sidebar");
+                if (tag != null) {
+                    for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
+                        builder.addCopyrightTags(copyright.child(0).text().replace(" ", "_"));
+                    }
+                    for (Element character : tag.getElementsByClass("tag-type-character")) {
+                        builder.addCharacterTags(character.child(0).text().replace(" ", "_"));
+                    }
+                    for (Element artist : tag.getElementsByClass("tag-type-artist")) {
+                        builder.addArtistTags(artist.child(0).text().replace(" ", "_"));
+                    }
+                    for (Element style : tag.getElementsByClass("tag-type-medium")) {
+                        builder.addStyleTags(style.child(0).text().replace(" ", "_"));
+                    }
+                    for (Element general : tag.getElementsByClass("tag-type-meta")) {
+                        builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
+                    }
+                    for (Element general : tag.getElementsByClass("tag-type-general")) {
+                        builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return builder.build();
     }
 

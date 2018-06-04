@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -107,12 +108,15 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
 
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-        mIvImage.post(new Runnable() {
-            @Override
-            public void run() {
-                loadImage();
-            }
-        });
+        Activity activity = getActivity();
+        if (activity != null && !activity.isDestroyed()) {
+            mIvImage.post(new Runnable() {
+                @Override
+                public void run() {
+                    loadImage();
+                }
+            });
+        }
         return true;
     }
 
