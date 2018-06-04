@@ -27,6 +27,7 @@
     <string name="base_yande">Yande</string>
     <string name="base_lolibooru">Lolibooru</string>
     <string name="base_danbooru">Danbooru</string>
+    <string name="base_sankaku">Sankaku</string>
     <string name="navigation_drawer_open">Open drawer layout</string>
     <string name="navigation_drawer_close">Close drawer layout</string>
     <string name="nav_post">Image</string>

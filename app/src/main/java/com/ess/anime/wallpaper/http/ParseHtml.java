@@ -27,13 +27,14 @@ import java.util.regex.Pattern;
 
 public class ParseHtml {
 
-    // 无搜索结果时 getElementById() 会抛出空指针异常
-    public static ArrayList<ThumbBean> getThumbList(String html) throws NullPointerException {
+    public static ArrayList<ThumbBean> getThumbList(String html) {
         ArrayList<ThumbBean> thumbList = new ArrayList<>();
         Document doc = Jsoup.parse(html);
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
             getDanbooruThumbList(doc, thumbList);
+        } else if (webTitle.toLowerCase().contains("sankaku")) {
+            getSankakuThumbList(doc, thumbList);
         } else {
             getGeneralThumbList(doc, thumbList);
         }
@@ -42,39 +43,75 @@ public class ParseHtml {
 
     // Konachan,Yande,Lolibooru通用
     private static void getGeneralThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
-        Elements elements = doc.getElementById("post-list-posts").getElementsByTag("li");
+        Element list = doc.getElementById("post-list-posts");
+        if (list == null) {
+            return;
+        }
+
+        Elements elements = list.getElementsByTag("li");
         for (Element e : elements) {
-            String thumbUrl = e.getElementsByTag("img").attr("src");
-            if (thumbUrl.contains("deleted-preview")) {
-                continue;
-            } else if (!thumbUrl.startsWith("http")) {
-                thumbUrl = "https:" + thumbUrl;
+            try {
+                String thumbUrl = e.getElementsByTag("img").attr("src");
+                if (thumbUrl.contains("deleted-preview")) {
+                    continue;
+                } else if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = "https:" + thumbUrl;
+                }
+                String realSize = "";
+                Elements directLink = e.getElementsByClass("directlink-res");
+                if (!directLink.isEmpty()) {
+                    realSize = directLink.get(0).ownText();
+                }
+                String linkToShow = e.getElementsByClass("plid").get(0).ownText();
+                linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
+                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+            } catch (Exception ignore) {
             }
-            String realSize = "";
-            Elements directLink = e.getElementsByClass("directlink-res");
-            if (!directLink.isEmpty()) {
-                realSize = directLink.get(0).ownText();
-            }
-            String linkToShow = e.getElementsByClass("plid").get(0).ownText();
-            linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
-            thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
         }
     }
 
     // Danbooru专用
     private static void getDanbooruThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
-        Elements elements = doc.getElementById("posts").getElementsByTag("article");
+        Elements elements = doc.getElementsByTag("article");
         for (Element e : elements) {
-            String thumbUrl = e.getElementsByTag("img").attr("src");
-            if (!thumbUrl.startsWith("http")) {
-                thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
+            try {
+                String thumbUrl = e.getElementsByTag("img").attr("src");
+                if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
+                }
+                String realSize = e.attr("data-width") + " x " + e.attr("data-height");
+                String linkToShow = e.getElementsByTag("a").attr("href");
+                if (!linkToShow.startsWith("http")) {
+                    linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
+                }
+                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+            } catch (Exception ignore) {
             }
-            String realSize = e.attr("data-width") + " x " + e.attr("data-height");
-            String linkToShow = e.getElementsByTag("a").attr("href");
-            if (!linkToShow.startsWith("http")) {
-                linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
+        }
+    }
+
+    // Sankaku专用
+    private static void getSankakuThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
+        doc.select("#popular-preview").remove();
+        Elements elements = doc.getElementsByClass("thumb blacklisted");
+        for (Element e : elements) {
+            try {
+                Element img = e.getElementsByTag("img").first();
+                String thumbUrl = img.attr("src");
+                if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = "https:" + thumbUrl;
+                }
+                String title = img.attr("title");
+                int startIndex = title.indexOf("Size:") + "Size:".length();
+                int endIndex = title.indexOf("User:");
+                String realSize = title.substring(startIndex, endIndex).trim().replace("x", " x ");
+                String linkToShow = e.getElementsByTag("a").attr("href");
+                if (!linkToShow.startsWith("http")) {
+                    linkToShow = Constants.BASE_URL_SANKAKU + linkToShow;
+                }
+                thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
+            } catch (Exception ignore) {
             }
-            thumbList.add(new ThumbBean(thumbUrl, realSize, linkToShow));
         }
     }
 
@@ -83,6 +120,8 @@ public class ParseHtml {
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
             return getDanbooruImageDetailJson(doc);
+        }  else if (webTitle.toLowerCase().contains("sankaku")) {
+            return getSankakuImageDetailJson(doc);
         } else {
             return getGeneralImageDetailJson(doc);
         }
@@ -102,7 +141,7 @@ public class ParseHtml {
             // TODO 目前为止votes这一属性全部为空，但不排除某一天某个网站有了投票活动，到时后再改replace（懒癌）
             json = json.replace("\"votes\":[]", "\"votes\":{}");
             return json;
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
@@ -189,8 +228,14 @@ public class ParseHtml {
                 builder.addGeneralTags(general.getElementsByClass("search-tag")
                         .get(0).text().replace(" ", "_"));
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return builder.build();
+    }
+
+    private static String getSankakuImageDetailJson(Document doc) {
+        ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         return builder.build();
     }
 
@@ -409,25 +454,28 @@ public class ParseHtml {
         Document doc = Jsoup.parse(html);
         Elements eleScripts = doc.getElementsByTag("script");
         for (Element script : eleScripts) {
-            String text = script.html();
-            String flag = "Post.register_resp(";
-            if (text.contains(flag)) {
-                text = text.substring(text.indexOf(flag) + flag.length(), text.lastIndexOf(")"));
-                JsonObject json = new JsonParser().parse(text).getAsJsonObject();
-                JsonArray jsonArray = json.getAsJsonArray("posts");
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JsonObject post = jsonArray.get(i).getAsJsonObject();
-                    String width = post.get("jpeg_width").getAsString();
-                    String height = post.get("jpeg_height").getAsString();
-                    String previewUrl = post.get("preview_url").getAsString();
-                    previewUrl = previewUrl.substring(previewUrl.lastIndexOf("/") + 1);
-                    for (ThumbBean thumbBean : thumbList) {
-                        if (thumbBean.thumbUrl.contains(previewUrl)) {
-                            thumbBean.realSize = width + " x " + height;
-                            break;
+            try {
+                String text = script.html();
+                String flag = "Post.register_resp(";
+                if (text.contains(flag)) {
+                    text = text.substring(text.indexOf(flag) + flag.length(), text.lastIndexOf(")"));
+                    JsonObject json = new JsonParser().parse(text).getAsJsonObject();
+                    JsonArray jsonArray = json.getAsJsonArray("posts");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JsonObject post = jsonArray.get(i).getAsJsonObject();
+                        String width = post.get("jpeg_width").getAsString();
+                        String height = post.get("jpeg_height").getAsString();
+                        String previewUrl = post.get("preview_url").getAsString();
+                        previewUrl = previewUrl.substring(previewUrl.lastIndexOf("/") + 1);
+                        for (ThumbBean thumbBean : thumbList) {
+                            if (thumbBean.thumbUrl.contains(previewUrl)) {
+                                thumbBean.realSize = width + " x " + height;
+                                break;
+                            }
                         }
                     }
                 }
+            } catch (Exception ignore) {
             }
         }
         return thumbList;

@@ -190,7 +190,7 @@ public class PoolFragment extends Fragment {
         mPoolAdapter.setOnItemClickListener(new RecyclerPoolAdapter.OnItemClickListener() {
             @Override
             public void onLoadPostsOfPool(String id, String linkToShow) {
-                String title = getString(R.string.nav_pool) + " #" + id.substring(1);
+                String title = getString(R.string.nav_pool) + " #" + id.replaceAll("[^0-9]", "");
                 addPoolPostFragment(title, linkToShow);
             }
         });

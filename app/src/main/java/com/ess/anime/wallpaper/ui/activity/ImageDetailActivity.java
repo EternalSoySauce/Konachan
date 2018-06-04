@@ -286,6 +286,9 @@ public class ImageDetailActivity extends AppCompatActivity {
             case Constants.BASE_URL_DANBOORU:
                 imgHead = Constants.IMAGE_HEAD_DANBOORU;
                 break;
+            case Constants.BASE_URL_SANKAKU:
+                imgHead = Constants.IMAGE_HEAD_SANKAKU;
+                break;
         }
         return imgHead;
     }

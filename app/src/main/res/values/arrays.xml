@@ -14,5 +14,6 @@
         <item>@string/base_yande</item>
         <item>@string/base_lolibooru</item>
         <item>@string/base_danbooru</item>
+        <item>@string/base_sankaku</item>
     </string-array>
 </resources>

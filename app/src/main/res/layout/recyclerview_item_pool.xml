@@ -26,7 +26,7 @@
             android:layout_alignBottom="@+id/iv_pool_thumb"
             android:layout_alignEnd="@+id/iv_pool_thumb"
             android:layout_marginBottom="6dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/bg_textview_post_count"
             android:drawablePadding="7dp"
             android:drawableStart="@drawable/ic_post_count"

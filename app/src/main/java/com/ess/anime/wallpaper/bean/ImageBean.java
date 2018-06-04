@@ -30,10 +30,15 @@ public class ImageBean implements Parcelable {
     }
 
     public static ImageBean getImageDetailFromJson(String json) {
-        Gson gson = new Gson();
-        ImageBean imageBean = gson.fromJson(json, ImageBean.class);
-        imageBean.tags = new TagBean(imageBean.tagArray);
-        return imageBean;
+        try {
+            Gson gson = new Gson();
+            ImageBean imageBean = gson.fromJson(json, ImageBean.class);
+            imageBean.tags = new TagBean(imageBean.tagArray);
+            return imageBean;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ImageBean();
+        }
     }
 
     protected ImageBean(Parcel in) {
@@ -468,7 +473,9 @@ public class ImageBean implements Parcelable {
             for (String general : tagBean.general) {
                 json.append("\"").append(general).append("\":\"general\",");
             }
-            json.deleteCharAt(json.length() - 1);
+            if (json.charAt(json.length() - 1) == ',') {
+                json.deleteCharAt(json.length() - 1);
+            }
             json.append("},").append("\"votes\":{}}");
             return json.toString().replace("\\", "\\\\");
         }

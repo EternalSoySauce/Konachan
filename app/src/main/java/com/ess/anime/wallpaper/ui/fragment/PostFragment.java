@@ -311,13 +311,8 @@ public class PostFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    try {
-                        ArrayList<ThumbBean> thumbList = ParseHtml.getThumbList(html);
-                        refreshThumbList(thumbList);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                        getNoData();
-                    }
+                    ArrayList<ThumbBean> thumbList = ParseHtml.getThumbList(html);
+                    refreshThumbList(thumbList);
                 } else {
                     checkNetwork();
                 }
@@ -339,7 +334,7 @@ public class PostFragment extends Fragment {
                     mPostAdapter.refreshDatas(newList);
                     scrollToTop();
                 } else if (mPostAdapter.getThumbList().isEmpty()) {
-                    mPostAdapter.showNoData();
+                    getNoData();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -360,15 +355,8 @@ public class PostFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    ArrayList<ThumbBean> thumbList = new ArrayList<>();
-                    try {
-                        String html = response.body().string();
-                        thumbList.addAll(ParseHtml.getThumbList(html));
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    } finally {
-                        addMoreThumbList(thumbList);
-                    }
+                    String html = response.body().string();
+                    addMoreThumbList(ParseHtml.getThumbList(html));
                 } else {
                     checkNetwork();
                 }

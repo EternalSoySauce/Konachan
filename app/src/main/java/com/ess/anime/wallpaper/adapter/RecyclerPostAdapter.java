@@ -34,14 +34,13 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
 
     private Activity mActivity;
     private ArrayList<ThumbBean> mThumbList;
-    private ArrayList<Call> mCallList;
+    private ArrayList<Call> mCallList = new ArrayList<>();
     private OnItemClickListener mItemClickListener;
 
     public RecyclerPostAdapter(Activity activity, @NonNull ArrayList<ThumbBean> thumbList) {
         super(activity);
         mActivity = activity;
         mThumbList = thumbList;
-        mCallList = new ArrayList<>();
         getImageDetail(thumbList);
     }
 

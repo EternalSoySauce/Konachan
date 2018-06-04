@@ -133,6 +133,11 @@ public class OkHttp {
         return getBaseUrl(context) + "pool?page=" + page + "&query=" + name;
     }
 
+    // 搜索图集中的图片
+    public static String getPoolPostUrl(Context context, String linkToShow, int page) {
+        return linkToShow + "?page=" + page;
+    }
+
     public static String getBaseUrl(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN_S);

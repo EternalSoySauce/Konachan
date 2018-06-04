@@ -10,9 +10,7 @@
         android:id="@+id/tv_key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
         android:gravity="start|center_vertical"
-        android:maxLines="1"
         android:minEms="5"
         android:textColor="@color/color_text_unselected"
         android:textSize="16sp"/>

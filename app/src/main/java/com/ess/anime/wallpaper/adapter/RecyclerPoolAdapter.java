@@ -81,8 +81,11 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
         final PoolListBean poolListBean = mPoolList.get(position);
 
         //缩略图
+        Object imgUrl = TextUtils.isEmpty(poolListBean.thumbUrl)
+                ? R.drawable.ic_placeholder_pool_no_cover
+                : MyGlideModule.makeGlideUrl(poolListBean.thumbUrl);
         GlideApp.with(mActivity)
-                .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
+                .load(imgUrl)
                 .placeholder(R.drawable.ic_placeholder_pool)
                 .priority(Priority.HIGH)
                 .into(holder.ivThumb);

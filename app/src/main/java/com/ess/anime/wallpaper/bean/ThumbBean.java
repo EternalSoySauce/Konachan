@@ -5,12 +5,14 @@ import android.os.Parcelable;
 
 public class ThumbBean implements Parcelable {
 
+    public String id;
     public String thumbUrl;
     public String realSize;
     public String linkToShow;
     public ImageBean imageBean;
 
-    public ThumbBean(String thumbUrl, String realSize, String linkToShow) {
+    public ThumbBean(String id, String thumbUrl, String realSize, String linkToShow) {
+        this.id = id;
         this.thumbUrl = thumbUrl;
         this.realSize = realSize;
         this.linkToShow = linkToShow;
@@ -19,16 +21,15 @@ public class ThumbBean implements Parcelable {
     // 判断ImageBean是否为此ThumbBean所属
     public boolean checkImageBelongs(ImageBean imageBean) {
         try {
-            String previewUrl = imageBean.posts[0].previewUrl;
-            previewUrl = previewUrl.substring(previewUrl.lastIndexOf("/"));
-            return thumbUrl.contains(previewUrl);
-        }catch (Exception e){
+            return id.equals(imageBean.posts[0].id);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
     protected ThumbBean(Parcel in) {
+        id = in.readString();
         thumbUrl = in.readString();
         realSize = in.readString();
         linkToShow = in.readString();
@@ -37,6 +38,7 @@ public class ThumbBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(thumbUrl);
         dest.writeString(realSize);
         dest.writeString(linkToShow);
