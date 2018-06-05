@@ -122,7 +122,11 @@ public class ImageBean implements Parcelable {
 
         public ImageJsonBuilder score(String score) {
             try {
-                postBean.score = Integer.parseInt(score);
+                if (score.contains(".")) {
+                    postBean.score = Math.round(Float.parseFloat(score));
+                } else {
+                    postBean.score = Integer.parseInt(score);
+                }
             } catch (NumberFormatException ignore) {
                 postBean.score = 0;
             }
@@ -406,7 +410,7 @@ public class ImageBean implements Parcelable {
                     .append("\"id\":").append(postBean.id).append(",")
                     .append("\"tags\":\"").append(postBean.tags).append("\",")
                     .append("\"createdTime\":").append(postBean.createdTime).append(",")
-                    .append("\"creator_id\":").append(postBean.creatorId).append(",")
+                    .append("\"creator_id\":\"").append(postBean.creatorId).append("\",")
                     .append("\"author\":\"").append(postBean.author).append("\",")
                     .append("\"change\":\"").append(postBean.change).append("\",")
                     .append("\"source\":\"").append(postBean.source).append("\",")

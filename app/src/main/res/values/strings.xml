@@ -70,9 +70,7 @@
     <string name="detail_post_size">Resolution:</string>
     <string name="detail_post_file_size">Size:</string>
     <string name="detail_post_source">Source:</string>
-    <string name="detail_post_no_source">Unknown</string>
     <string name="detail_post_artist">Artist:</string>
-    <string name="detail_post_no_artist">Unknown</string>
     <string name="detail_post_rating">Rating:</string>
     <string name="detail_post_rating_s">Safe</string>
     <string name="detail_post_rating_e">R18</string>
@@ -90,8 +88,6 @@
 
     <!-- Pool Detail -->
     <string name="pool_updated_time">Updated %s</string>
-    <string name="pool_unknown_creator">Unknown</string>
-    <string name="pool_unknown_time">Unknown</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">All</string>
@@ -147,4 +143,6 @@
     <string name="dialog_update_ignore">Ignore</string>
     <string name="dialog_update_update">Update</string>
 
+    <!-- Global -->
+    <string name="unknown">Unknown</string>
 </resources>

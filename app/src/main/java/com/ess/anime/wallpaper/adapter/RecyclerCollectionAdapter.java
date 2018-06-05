@@ -72,6 +72,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         holder.ivCollection.getLayoutParams().width = slideLength;
         holder.ivCollection.getLayoutParams().height = slideLength;
         GlideApp.with(mContext)
+                .asBitmap()
                 .load(collectionBean.url)
                 .priority(Priority.HIGH)
                 .into(holder.ivCollection);

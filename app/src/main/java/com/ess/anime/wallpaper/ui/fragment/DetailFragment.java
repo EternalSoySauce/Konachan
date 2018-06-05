@@ -100,10 +100,16 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_created_time, R.string.detail_post_created_time, postCreatedTime);
 
         // 用户Id
-        setText(R.id.post_creator_id, R.string.detail_post_creator_id, postBean.creatorId);
+        String creatorId = TextUtils.isEmpty(postBean.creatorId)
+                ? getString(R.string.unknown)
+                : postBean.creatorId;
+        setText(R.id.post_creator_id, R.string.detail_post_creator_id, creatorId);
 
         // 用户名
-        setText(R.id.post_author, R.string.detail_post_author, postBean.author.replace("_", " "));
+        String author = TextUtils.isEmpty(postBean.author)
+                ? getString(R.string.unknown)
+                : postBean.author.replace("_", " ");
+        setText(R.id.post_author, R.string.detail_post_author, author);
 
         // 图片分辨率
         String size = postBean.jpegWidth + " x " + postBean.jpegHeight;
@@ -122,14 +128,16 @@ public class DetailFragment extends Fragment {
         String source = postBean.source;
         boolean hyperlinkValue = true;
         if (TextUtils.isEmpty(source)) {
-            source = getString(R.string.detail_post_no_source);
+            source = getString(R.string.unknown);
             hyperlinkValue = false;
         }
         setText(R.id.post_source, R.string.detail_post_source, source, hyperlinkValue);
 
         // 图片原作者
         ArrayList<String> artistList = imageBean.tags.artist;
-        String artist = artistList.isEmpty() ? getString(R.string.detail_post_no_artist) : artistList.get(0).replace("_", " ");
+        String artist = artistList.isEmpty()
+                ? getString(R.string.unknown)
+                : artistList.get(0).replace("_", " ");
         setText(R.id.post_artist, R.string.detail_post_artist, artist);
 
         // 图片评级
@@ -179,14 +187,14 @@ public class DetailFragment extends Fragment {
         // 创建时间
         String poolCreatedTime = poolBean.createdTime;
         poolCreatedTime = TextUtils.isEmpty(poolCreatedTime)
-                ? getString(R.string.pool_unknown_time)
+                ? getString(R.string.unknown)
                 : formatPoolTime(poolCreatedTime);
         setText(R.id.pool_created_time, R.string.detail_pool_created_time, poolCreatedTime);
 
         // 最后更新时间
         String poolUpdatedTime = poolBean.updatedTime;
         poolUpdatedTime = TextUtils.isEmpty(poolUpdatedTime)
-                ? getString(R.string.pool_unknown_time)
+                ? getString(R.string.unknown)
                 : formatPoolTime(poolUpdatedTime);
         setText(R.id.pool_updated_time, R.string.detail_pool_updated_time, poolUpdatedTime);
 

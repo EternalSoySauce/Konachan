@@ -95,7 +95,7 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
 
         //创建者
         String creator = TextUtils.isEmpty(poolListBean.creator)
-                ? getContext().getString(R.string.pool_unknown_creator)
+                ? getContext().getString(R.string.unknown)
                 : poolListBean.creator;
         holder.tvCreator.setText(creator);
 
@@ -107,7 +107,7 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
 
         //上传时间
         String update = TextUtils.isEmpty(poolListBean.updateTime)
-                ? getContext().getString(R.string.pool_unknown_time)
+                ? getContext().getString(R.string.unknown)
                 : mActivity.getString(R.string.pool_updated_time, poolListBean.updateTime);
         holder.tvUpdateTime.setText(update);
 

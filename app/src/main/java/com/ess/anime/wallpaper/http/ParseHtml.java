@@ -243,9 +243,13 @@ public class ParseHtml {
             Element image = doc.getElementById("image");
             builder.id(doc.getElementById("hidden_post_id").text())
                     .tags(image.attr("alt"))
-                    .md5(image.attr("pagespeed_url_hash"))
+                    .md5(image.attr("pagespeed_url_hash"));
+
+            // 下列li不存在某属性时的备用值
+            builder.sampleUrl("https:" + image.attr("src"))
                     .source("")
-                    .sampleUrl("https:" + image.attr("src"));
+                    .creatorId("")
+                    .author("");
 
             Elements lis = doc.getElementsByTag("li");
             for (Element li : lis) {

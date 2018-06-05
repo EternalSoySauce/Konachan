@@ -184,7 +184,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
-                    postBean.sampleUrl.substring(postBean.sampleUrl.lastIndexOf(".") + 1).toUpperCase());
+                    getImageExtension(postBean.sampleUrl).toUpperCase());
             file = makeFileToSave(postBean.sampleUrl);
             exists = file.exists();
             if (exists) {
@@ -199,7 +199,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         desc = getString(R.string.dialog_download_large,
                 postBean.jpegWidth, postBean.jpegHeight,
                 FileUtils.computeFileSize(postBean.fileSize),
-                postBean.fileUrl.substring(postBean.fileUrl.lastIndexOf(".") + 1).toUpperCase());
+                getImageExtension(postBean.fileUrl).toUpperCase());
         file = makeFileToSave(postBean.fileUrl);
         exists = file.exists();
         if (exists) {
@@ -214,7 +214,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),
-                    postBean.jpegUrl.substring(postBean.jpegUrl.lastIndexOf(".") + 1).toUpperCase());
+                    getImageExtension(postBean.jpegUrl).toUpperCase());
             file = makeFileToSave(postBean.jpegUrl);
             exists = file.exists();
             if (exists) {
@@ -265,7 +265,7 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     private File makeFileToSave(String url) {
         String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
-                + url.substring(url.lastIndexOf("."));
+                + getImageExtensionWithDot(url);
         return new File(Constants.IMAGE_DIR, bitmapName);
     }
 
@@ -291,6 +291,15 @@ public class ImageDetailActivity extends AppCompatActivity {
                 break;
         }
         return imgHead;
+    }
+
+    private String getImageExtension(String url) {
+        String extension = url.substring(url.lastIndexOf(".") + 1);
+        return extension.replaceAll("[^0-9a-zA-Z].*", "");
+    }
+
+    private String getImageExtensionWithDot(String url) {
+        return "." + getImageExtension(url);
     }
 
     // 下载图片点击事件

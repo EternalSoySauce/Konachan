@@ -70,9 +70,7 @@
     <string name="detail_post_size">分辨率：</string>
     <string name="detail_post_file_size">大小：</string>
     <string name="detail_post_source">来源：</string>
-    <string name="detail_post_no_source">未知</string>
     <string name="detail_post_artist">原作者：</string>
-    <string name="detail_post_no_artist">未知</string>
     <string name="detail_post_rating">评级：</string>
     <string name="detail_post_rating_s">Safe</string>
     <string name="detail_post_rating_e">R18</string>
@@ -90,8 +88,6 @@
 
     <!-- Pool Detail -->
     <string name="pool_updated_time">Updated %s</string>
-    <string name="pool_unknown_creator">未知</string>
-    <string name="pool_unknown_time">未知</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
@@ -147,4 +143,7 @@
     <string name="dialog_update_msg" formatted="false">版本：%1$s\n更新包体积：%2$s\n\n更新内容：\n%3$s</string>
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
+
+    <!-- Global -->
+    <string name="unknown">未知</string>
 </resources>
