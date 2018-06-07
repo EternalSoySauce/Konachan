@@ -112,7 +112,11 @@ public class ParseHtml {
                 if (!linkToShow.startsWith("http")) {
                     linkToShow = Constants.BASE_URL_SANKAKU + linkToShow;
                 }
-                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
+                // 最上方的四张有可能和普通列表中的图片重复，需要排除
+                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+                if (!thumbList.contains(thumbBean)) {
+                    thumbList.add(thumbBean);
+                }
             } catch (Exception ignore) {
             }
         }
@@ -259,7 +263,7 @@ public class ParseHtml {
                     // 注意PostBean.createdTime单位为second
                     Elements created = li.getElementsByTag("a");
                     String createdTime = created.attr("title");
-                    long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT-6:00"));
+                    long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT-5:00"));
                     builder.createdTime(String.valueOf(mills / 1000));
 
                     // 上传用户
@@ -348,6 +352,8 @@ public class ParseHtml {
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
             return getDanbooruCommentList(doc);
+        } else if (webTitle.toLowerCase().contains("sankaku")) {
+            return getSankakuCommentList(doc);
         } else {
             return getGeneralCommentList(context, doc);
         }
@@ -407,8 +413,43 @@ public class ParseHtml {
                 blockquote.remove();
                 body.select("br").last().remove();
                 body.select("br").last().remove();
-                String s = body.html();
-                CharSequence comment = Html.fromHtml(s);
+                CharSequence comment = Html.fromHtml(body.html());
+                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+            } catch (Exception ignore) {
+            }
+        }
+        return commentList;
+    }
+
+    private static ArrayList<CommentBean> getSankakuCommentList(Document doc) {
+        ArrayList<CommentBean> commentList = new ArrayList<>();
+        Elements elements = doc.getElementsByClass("comment");
+        for (Element e : elements) {
+            try {
+                Element a = e.getElementsByClass("avatar-medium").first();
+                String href = a.attr("href");
+                String id = "#c" + href.substring(href.lastIndexOf("/") + 1);
+                Element img = a.getElementsByTag("img").first();
+                String author = img.attr("title");
+                String headUrl = img.attr("src");
+                if (!headUrl.startsWith("http")) {
+                    headUrl = "https:" + headUrl;
+                }
+                Element span = e.getElementsByClass("date").first();
+                String date = span.attr("title").replace("  ", " ");
+                Elements body = e.getElementsByClass("body");
+                body.select("p").append("<br/><br/>");
+                body.select("p").unwrap();
+                Elements blockquote = body.select("blockquote");
+                if (!blockquote.isEmpty()) {
+                    blockquote.select("br").last().remove();
+                    blockquote.select("br").last().remove();
+                }
+                CharSequence quote = Html.fromHtml(blockquote.html());
+                blockquote.remove();
+                body.select("br").last().remove();
+                body.select("br").last().remove();
+                CharSequence comment = Html.fromHtml(body.html());
                 commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
             } catch (Exception ignore) {
             }

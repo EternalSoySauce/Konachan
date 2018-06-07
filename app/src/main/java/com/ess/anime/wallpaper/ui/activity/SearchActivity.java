@@ -348,7 +348,7 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         File file = new File(path, name);
-        if (file.exists()) {
+        if (file.exists() && file.isFile()) {
             String json = FileUtils.fileToString(file);
             json = json == null ? "" : json;
             try {
