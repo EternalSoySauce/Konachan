@@ -101,6 +101,10 @@ public class ParseHtml {
                 String id = e.attr("id").replaceAll("[^0-9]", "");
                 Element img = e.getElementsByTag("img").first();
                 String thumbUrl = img.attr("src");
+                if (thumbUrl.contains("download-preview.png")) {
+                    // 封面为这张图片就是flash，不解析，无意义
+                    continue;
+                }
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = "https:" + thumbUrl;
                 }
@@ -218,6 +222,7 @@ public class ParseHtml {
                 }
             }
 
+            // tags
             Element tag = doc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("category-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
@@ -508,6 +513,8 @@ public class ParseHtml {
         String webTitle = doc.getElementsByTag("title").text();
         if (webTitle.toLowerCase().contains("danbooru")) {
             return getDanbooruPoolList(doc);
+        } else if (webTitle.toLowerCase().contains("sankaku")) {
+            return getSankakuPoolList(doc);
         } else {
             return getGeneralPoolList(context, doc);
         }
@@ -587,8 +594,32 @@ public class ParseHtml {
                 poolListBean.linkToShow = Constants.BASE_URL_DANBOORU + href;
                 poolListBean.postCount = tds.last().text();
                 poolList.add(poolListBean);
-            } catch (Exception ignore) {
-                ignore.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return poolList;
+    }
+
+    private static ArrayList<PoolListBean> getSankakuPoolList(Document doc) {
+        ArrayList<PoolListBean> poolList = new ArrayList<>();
+        Element body = doc.getElementsByTag("tbody").first();
+        if (body != null) {
+            for (Element pool : body.getElementsByTag("tr")) {
+                try {
+                    PoolListBean poolListBean = new PoolListBean();
+                    Elements tds = pool.getElementsByTag("td");
+                    Element link = tds.first().getElementsByTag("a").first();
+                    String href = link.attr("href");
+                    poolListBean.id = href.substring(href.lastIndexOf("/") + 1);
+                    poolListBean.name = link.text();
+                    poolListBean.linkToShow = Constants.BASE_URL_SANKAKU + href;
+                    poolListBean.creator = tds.get(1).text();
+                    poolListBean.postCount = tds.get(2).text();
+                    poolList.add(poolListBean);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         return poolList;

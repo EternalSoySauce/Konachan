@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.ess.anime.wallpaper.view.RoundImageView
+        <com.ess.anime.wallpaper.view.CircleImageView
             android:id="@+id/iv_head"
             android:layout_width="40dp"
             android:layout_height="40dp"
