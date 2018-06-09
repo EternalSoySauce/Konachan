@@ -27,7 +27,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         getWindow().setBackgroundDrawable(null);
-        UIUtils.hideBar(this, true);
 
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         Sound.getInstance().playSplashWelcomeSound(this);
@@ -50,6 +49,12 @@ public class SplashActivity extends AppCompatActivity {
         }, delay);
 
         Constants.sRestart = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UIUtils.hideStatusBar(this, true);
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示

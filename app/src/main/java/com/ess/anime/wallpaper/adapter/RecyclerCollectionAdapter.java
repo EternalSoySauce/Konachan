@@ -68,7 +68,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         });
 
         // 图片
-        int slideLength = (int) ((UIUtils.getWindowSize(mContext)[0] - UIUtils.dp2px(mContext, 6)) / 3f);
+        int slideLength = (int) ((UIUtils.getScreenWidth(mContext)- UIUtils.dp2px(mContext, 6)) / 3f);
         holder.ivCollection.getLayoutParams().width = slideLength;
         holder.ivCollection.getLayoutParams().height = slideLength;
         GlideApp.with(mContext)

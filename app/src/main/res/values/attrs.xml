@@ -15,4 +15,6 @@
     <declare-styleable name="GifView">
         <attr name="src" format="reference"/>
     </declare-styleable>
+
+    <item name="pager_holder_id" type="id" />
 </resources>

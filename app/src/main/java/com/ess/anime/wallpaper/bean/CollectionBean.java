@@ -5,8 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.utils.FileUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,7 +89,12 @@ public class CollectionBean implements Parcelable {
         ArrayList<CollectionBean> collectionList = new ArrayList<>();
         File folder = new File(Constants.IMAGE_DIR);
         if (folder.exists() && !folder.isFile()) {
-            List<File> imageFiles = Arrays.asList(folder.listFiles());
+            List<File> imageFiles = Arrays.asList(folder.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return FileUtils.isMediaType(name);
+                }
+            }));
             Collections.sort(imageFiles, new FileOrderComparator());
             for (File file : imageFiles) {
                 collectionList.add(createCollectionFromFile(file));

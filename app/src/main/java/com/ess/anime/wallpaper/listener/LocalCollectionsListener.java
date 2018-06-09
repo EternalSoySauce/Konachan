@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.utils.FileUtils;
 
 import java.io.File;
 
@@ -25,7 +26,7 @@ public class LocalCollectionsListener extends FileObserver {
             return;
 
         File file = new File(Constants.IMAGE_DIR, path);
-        if (file.isDirectory())
+        if (file.isDirectory() || !FileUtils.isMediaType(path))
             return;
 
         switch (event) {

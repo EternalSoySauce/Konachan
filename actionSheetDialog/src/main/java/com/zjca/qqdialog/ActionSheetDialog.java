@@ -74,13 +74,12 @@ public class ActionSheetDialog {
             }
         });
         Window dialogWindow = mDialog.getWindow();
-        dialogWindow.setGravity(Gravity.START | Gravity.BOTTOM);
+        dialogWindow.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.x = 0;
         lp.y = 0;
         dialogWindow.setAttributes(lp);
         return this;
-
     }
 
     public ActionSheetDialog setCancelListener(OnCancelClickListener cancelListener) {

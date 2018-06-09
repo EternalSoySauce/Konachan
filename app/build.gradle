@@ -23,6 +23,9 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+    dexOptions{
+        jumboMode true
+    }
 }
 
 dependencies {
@@ -55,6 +58,7 @@ dependencies {
     compile 'com.just.agentweb:agentweb:4.0.2'
     compile project(path: ':agentweb-filechooser')
     compile project(path: ':actionSheetDialog')
+    compile 'com.sprylab.android.texturevideoview:texturevideoview:1.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

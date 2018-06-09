@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -9,13 +10,19 @@ import android.support.annotation.ColorInt;
 import android.support.design.internal.NavigationMenuPresenter;
 import android.support.design.internal.NavigationMenuView;
 import android.support.design.widget.NavigationView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
@@ -27,17 +34,25 @@ import java.lang.reflect.Field;
 public class UIUtils {
 
     /**
-     * 获取屏幕尺寸
+     * 获取屏幕宽度
      *
      * @param context 上下文
-     * @return 整形数组[宽度，高度]
+     * @return 屏幕宽度
      */
-    public static int[] getWindowSize(Context context) {
+    public static int getScreenWidth(Context context) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
+        return dm.widthPixels;
+    }
 
-        return new int[]{width, height};
+    /**
+     * 获取屏幕高度
+     *
+     * @param context 上下文
+     * @return 屏幕高度
+     */
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
     }
 
     /**
@@ -47,21 +62,8 @@ public class UIUtils {
      * @return 状态栏高度
      */
     public static int getStatusBarHeight(Context context) {
-        Class<?> c = null;
-        Object obj = null;
-        Field field = null;
-        int x = 0;
-        int statusBarHeight = 0;
-        try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            statusBarHeight = context.getResources().getDimensionPixelSize(x);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return statusBarHeight;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        return context.getResources().getDimensionPixelOffset(resourceId);
     }
 
     /**
@@ -123,26 +125,6 @@ public class UIUtils {
         return point;
     }
 
-    /**
-     * 隐藏状态栏/导航栏
-     *
-     * @param activity 上下文
-     * @param applyNav 是否隐藏导航栏
-     */
-    public static void hideBar(Activity activity, boolean applyNav) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            View decorView = activity.getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            if (applyNav) {
-                option = option | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            }
-            decorView.setSystemUiVisibility(option);
-        }
-    }
 
     public static int dp2px(Context context, float dp) {
         float scale = context.getResources().getDisplayMetrics().density;
@@ -167,13 +149,52 @@ public class UIUtils {
     /**
      * 设置背景透明度
      *
-     * @param context 上下文
-     * @param alpha   透明度, 1.0为完全不透明，0.0为完全透明
+     * @param activity 上下文
+     * @param alpha    透明度, 1.0为完全不透明，0.0为完全透明
      */
-    public static void setBackgroundAlpha(Activity context, float alpha) {
-        WindowManager.LayoutParams lp = context.getWindow().getAttributes();
+    public static void setBackgroundAlpha(Activity activity, float alpha) {
+        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
         lp.alpha = alpha;
-        context.getWindow().setAttributes(lp);
+        activity.getWindow().setAttributes(lp);
+    }
+
+    /**
+     * 隐藏状态栏/导航栏
+     *
+     * @param activity 上下文
+     * @param applyNav 是否隐藏导航栏
+     */
+    public static void hideStatusBar(Activity activity, boolean applyNav) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            View decorView = activity.getWindow().getDecorView();
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            if (applyNav) {
+                option = option | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+            }
+            decorView.setSystemUiVisibility(option);
+        }
+    }
+
+    /**
+     * 将状态栏融入布局，可设置fitsSystemWindows="true"适配状态栏高度
+     *
+     * @param activity 上下文
+     */
+    public static void integrateStatusBarIntoLayout(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //5.0及以上，不设置透明状态栏，设置会有半透明阴影
+            Window window = activity.getWindow();
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        } else {
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
     }
 
     /**
@@ -234,10 +255,51 @@ public class UIUtils {
     }
 
     /**
+     * 避免输入法导致内存泄露的问题，在onDestroy()中使用
+     *
+     * @param destContext 上下文
+     */
+    public static void fixInputMethodManagerLeak(Context destContext) {
+        if (destContext == null) {
+            return;
+        }
+
+        InputMethodManager imm = (InputMethodManager) destContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return;
+        }
+
+        String[] params = new String[]{"mCurRootView", "mServedView", "mNextServedView"};
+        Field f = null;
+        Object obj_get = null;
+        for (String param : params) {
+            try {
+                f = imm.getClass().getDeclaredField(param);
+                if (!f.isAccessible()) {
+                    f.setAccessible(true);
+                }
+                obj_get = f.get(imm);
+                if (obj_get != null && obj_get instanceof View) {
+                    View v_get = (View) obj_get;
+                    if (v_get.getContext() == destContext) { // 被InputMethodManager持有引用的context是想要目标销毁的
+                        f.set(imm, null); // 置空，破坏掉path to gc节点
+                    } else {
+                        // 不是想要目标销毁的，即为又进了另一层界面了，不要处理，避免影响原逻辑,也就不用继续for循环了
+                        break;
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * 改变侧拉栏分割线高度、颜色
+     *
      * @param navigationView 侧拉栏的navigationView
-     * @param color 颜色
-     * @param height 高度
+     * @param color          颜色
+     * @param height         高度
      */
     public static void setNavigationMenuLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {
         try {
@@ -268,5 +330,35 @@ public class UIUtils {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 获得Toolbar的Title的TextView
+     *
+     * @param activity AppCompatActivity
+     * @param toolbar  Toolbar
+     * @return TextView
+     */
+    public static TextView getToolbarTitleView(AppCompatActivity activity, Toolbar toolbar) {
+        ActionBar actionBar = activity.getSupportActionBar();
+        CharSequence actionbarTitle = null;
+        if (actionBar != null)
+            actionbarTitle = actionBar.getTitle();
+        actionbarTitle = TextUtils.isEmpty(actionbarTitle) ? toolbar.getTitle() : actionbarTitle;
+        if (TextUtils.isEmpty(actionbarTitle)) return null;
+        // can't find if title not set
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            View v = toolbar.getChildAt(i);
+            if (v != null && v instanceof TextView) {
+                TextView t = (TextView) v;
+                CharSequence title = t.getText();
+                if (!TextUtils.isEmpty(title) && actionbarTitle.equals(title) && t.getId() == View.NO_ID) {
+                    //Toolbar does not assign id to views with layout params SYSTEM, hence getId() == View.NO_ID
+                    //in same manner subtitle TextView can be obtained.
+                    return t;
+                }
+            }
+        }
+        return null;
     }
 }

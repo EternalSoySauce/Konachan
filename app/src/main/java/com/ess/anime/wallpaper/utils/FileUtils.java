@@ -401,7 +401,7 @@ public class FileUtils {
      */
     public static long parseFileSile(String fileSize) {
         try {
-            double size = Double.parseDouble(fileSize.replaceAll("[^-*\\d+(\\.)?]","")); // 提取数字
+            double size = Double.parseDouble(fileSize.replaceAll("[^-*\\d+(\\.)?]", "")); // 提取数字
             if (fileSize.contains("G")) {
                 size *= 1024 * 1024 * 1024;
             } else if (fileSize.contains("M")) {
@@ -413,5 +413,37 @@ public class FileUtils {
         } catch (NumberFormatException ignore) {
             return 0;
         }
+    }
+
+    /**
+     * 判断文件是否为图片格式
+     *
+     * @return boolean
+     */
+    public static boolean isImageType(String filePath) {
+        filePath = filePath.toLowerCase();
+        return filePath.endsWith("bmp") || filePath.endsWith("jpg") || filePath.endsWith("jpeg")
+                || filePath.endsWith("png") || filePath.endsWith("gif");
+    }
+
+    /**
+     * 判断文件是否为视频格式
+     *
+     * @return boolean
+     */
+    public static boolean isVideoType(String filePath) {
+        filePath = filePath.toLowerCase();
+        return filePath.endsWith("avi") || filePath.endsWith("wmv") || filePath.endsWith("mp4")
+                || filePath.endsWith("webm") || filePath.endsWith("mpg") || filePath.endsWith("mpeg")
+                || filePath.endsWith("3gp") || filePath.endsWith("mov") || filePath.endsWith("flv");
+    }
+
+    /**
+     * 判断文件是否为媒体格式
+     *
+     * @return boolean
+     */
+    public static boolean isMediaType(String filePath) {
+        return isImageType(filePath) || isVideoType(filePath);
     }
 }

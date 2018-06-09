@@ -241,6 +241,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .titleGravity(GravityEnum.CENTER)
                 .content(context.getString(R.string.dialog_update_msg, apkBean.versionName,
                         FileUtils.computeFileSize(apkBean.apkSize), updateContent))
+                .canceledOnTouchOutside(false)
                 .negativeText(R.string.dialog_update_ignore)
                 .positiveText(R.string.dialog_update_update)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

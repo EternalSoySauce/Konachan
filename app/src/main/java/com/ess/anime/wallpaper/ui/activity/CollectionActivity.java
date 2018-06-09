@@ -19,6 +19,7 @@ import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.global.ImageDataHolder;
 import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -32,6 +33,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CollectionActivity extends AppCompatActivity implements View.OnClickListener, LocalCollectionsListener.OnFilesChangedListener {
 
@@ -143,11 +145,13 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         mCollectionAdapter.setOnActionListener(new RecyclerCollectionAdapter.OnActionListener() {
             @Override
             public void onFullScreen(ImageView imageView, int position) {
+                ImageDataHolder.setCollectionList(mCollectionAdapter.getCollectionList());
+                ImageDataHolder.setCollectionCurrentItem(position);
+
                 // TODO 点击全屏查看图片缩放动画
                 ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         CollectionActivity.this, new Pair<View, String>(imageView, "s"));
                 Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
-                intent.putExtra(Constants.FULLSCREEN_POSITION, position);
                 startActivityForResult(intent, Constants.FULLSCREEN_CODE);
 //                ActivityCompat.startActivityForResult(CollectionActivity.this, intent,
 //                        Constants.FULLSCREEN_CODE, compat.toBundle());
@@ -160,10 +164,12 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public void onEnlarge(int position) {
-                ArrayList<CollectionBean> enlargeList = new ArrayList<>();
+                List<CollectionBean> enlargeList = new ArrayList<>();
                 enlargeList.add(mCollectionAdapter.getCollectionList().get(position));
+                ImageDataHolder.setCollectionList(enlargeList);
+                ImageDataHolder.setCollectionCurrentItem(0);
+
                 Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
-                intent.putExtra(Constants.COLLECTION_LIST, enlargeList);
                 intent.putExtra(Constants.ENLARGE, true);
                 startActivity(intent);
             }
@@ -225,7 +231,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             uriList.add(uri);
         }
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        intent.setType("image/*");
+        intent.setType("*/*");
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
         startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
     }
@@ -272,7 +278,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         super.onActivityResult(requestCode, resultCode, data);
         // 退出全屏回调
         if (resultCode == Constants.FULLSCREEN_CODE && data != null) {
-            int position = data.getIntExtra(Constants.FULLSCREEN_POSITION, 0);
+            int position = ImageDataHolder.getCollectionCurrentItem();
             mRvCollection.scrollToPosition(position);
         }
 
