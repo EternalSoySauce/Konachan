@@ -22,15 +22,6 @@
     <group
         android:id="@+id/g2"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_setting"
-            android:icon="@drawable/ic_nav_menu_setting"
-            android:title="@string/nav_setting"/>
-    </group>
-
-    <group
-        android:id="@+id/g3"
-        android:checkableBehavior="single">
 
         <item
             android:id="@+id/nav_sauce_nao"
@@ -41,5 +32,14 @@
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_nav_menu_game"
             android:title="@string/nav_game"/>
+    </group>
+
+    <group
+        android:id="@+id/g3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_nav_menu_setting"
+            android:title="@string/nav_setting"/>
     </group>
 </menu>

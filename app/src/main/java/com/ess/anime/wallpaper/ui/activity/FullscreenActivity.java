@@ -3,9 +3,10 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.HapticFeedbackConstants;
@@ -93,6 +94,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                 for (int i = 0; i < childCount; i++) {
                     MultipleMediaLayout mediaLayout = (MultipleMediaLayout) mVpFullScreen.getChildAt(i);
                     mediaLayout.reset();
+                    mediaLayout.setOnClickListener(FullscreenActivity.this);
+                    mediaLayout.setOnLongClickListener(FullscreenActivity.this);
+
                     PhotoView photoView = mediaLayout.getPhotoView();
                     photoView.setOnViewTapListener(FullscreenActivity.this);
                     photoView.setOnLongClickListener(FullscreenActivity.this);
@@ -116,6 +120,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
+            case R.id.layout_multiple_media:
                 onBackPressed();
                 break;
 
@@ -132,7 +137,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onLongClick(View v) {
-        v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        if (v instanceof PhotoView) {
+            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        }
         if (!mEnlarge) {
             mActionSheet.show();
         }
@@ -196,6 +203,12 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
             setResult(Constants.FULLSCREEN_CODE, intent);
         }
         super.finish();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
     }
 
     @Override

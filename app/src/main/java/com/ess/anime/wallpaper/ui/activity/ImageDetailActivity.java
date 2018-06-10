@@ -128,7 +128,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         mVpImageDetail = (ViewPager) findViewById(R.id.vp_image_detail);
         mVpImageDetail.setAdapter(new ViewPagerImageDetailAdapter(mFragmentManager, mFragmentList));
         mVpImageDetail.setOffscreenPageLimit(mFragmentList.size() - 1);
-        mVpImageDetail.setCurrentItem(mCurrentPage);
     }
 
     private void initSlidingTabLayout() {
@@ -144,6 +143,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         slidingTab.setTabViewPaddingDp(12);
         slidingTab.setSelectedIndicatorColors(colorSelected);
         slidingTab.setViewPager(mVpImageDetail);
+        mVpImageDetail.setCurrentItem(mCurrentPage);
     }
 
     public void setId(ImageBean imageBean) {
@@ -184,7 +184,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
-                    getImageExtension(postBean.sampleUrl).toUpperCase());
+                    FileUtils.getFileExtension(postBean.sampleUrl).toUpperCase());
             file = makeFileToSave(postBean.sampleUrl);
             exists = file.exists();
             if (exists) {
@@ -199,7 +199,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         desc = getString(R.string.dialog_download_large,
                 postBean.jpegWidth, postBean.jpegHeight,
                 FileUtils.computeFileSize(postBean.fileSize),
-                getImageExtension(postBean.fileUrl).toUpperCase());
+                FileUtils.getFileExtension(postBean.fileUrl).toUpperCase());
         file = makeFileToSave(postBean.fileUrl);
         exists = file.exists();
         if (exists) {
@@ -214,7 +214,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),
-                    getImageExtension(postBean.jpegUrl).toUpperCase());
+                    FileUtils.getFileExtension(postBean.jpegUrl).toUpperCase());
             file = makeFileToSave(postBean.jpegUrl);
             exists = file.exists();
             if (exists) {
@@ -264,8 +264,10 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private File makeFileToSave(String url) {
-        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url.replaceAll(".com|.net", ""))
-                + getImageExtensionWithDot(url);
+        String extension = FileUtils.getFileExtensionWithDot(url);
+        url = url.substring(0, url.lastIndexOf(extension) + extension.length())
+                .replaceAll(".com|.net", "");
+        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
         return new File(Constants.IMAGE_DIR, bitmapName);
     }
 
@@ -291,15 +293,6 @@ public class ImageDetailActivity extends AppCompatActivity {
                 break;
         }
         return imgHead;
-    }
-
-    private String getImageExtension(String url) {
-        String extension = url.substring(url.lastIndexOf(".") + 1);
-        return extension.replaceAll("[^0-9a-zA-Z].*", "");
-    }
-
-    private String getImageExtensionWithDot(String url) {
-        return "." + getImageExtension(url);
     }
 
     // 下载图片点击事件

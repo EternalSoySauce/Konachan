@@ -29,4 +29,12 @@
         android:layout_marginEnd="4.5dp"
         android:src="@drawable/ic_enlarge"
         android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="4.5dp"
+        android:layout_marginStart="4.5dp"/>
 </FrameLayout>

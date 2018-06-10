@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
+import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -43,6 +44,7 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final CollectionBean collectionBean = mCollectionList.get(position);
+        String imageUrl = collectionBean.url;
 
         // 编辑模式选择框
         int visible = mEditing ? View.VISIBLE : View.GONE;
@@ -67,13 +69,22 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
             }
         });
 
+        // 图片格式标记
+        int tagResId = 0;
+        if (FileUtils.isImageType(imageUrl) && imageUrl.toLowerCase().endsWith("gif")) {
+            tagResId = R.drawable.ic_tag_gif;
+        } else if (FileUtils.isVideoType(imageUrl)) {
+            tagResId = R.drawable.ic_tag_video;
+        }
+        holder.ivTag.setImageResource(tagResId);
+
         // 图片
-        int slideLength = (int) ((UIUtils.getScreenWidth(mContext)- UIUtils.dp2px(mContext, 6)) / 3f);
+        int slideLength = (int) ((UIUtils.getScreenWidth(mContext) - UIUtils.dp2px(mContext, 6)) / 3f);
         holder.ivCollection.getLayoutParams().width = slideLength;
         holder.ivCollection.getLayoutParams().height = slideLength;
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(collectionBean.url)
+                .load(imageUrl)
                 .priority(Priority.HIGH)
                 .into(holder.ivCollection);
 
@@ -207,12 +218,14 @@ public class RecyclerCollectionAdapter extends RecyclerView.Adapter<RecyclerColl
         private ImageView ivCollection;
         private SmoothCheckBox cbChoose;
         private ImageView ivEnlarge;
+        private ImageView ivTag;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             ivCollection = (ImageView) itemView.findViewById(R.id.iv_collection);
             cbChoose = (SmoothCheckBox) itemView.findViewById(R.id.cb_choose);
             ivEnlarge = (ImageView) itemView.findViewById(R.id.iv_enlarge);
+            ivTag = (ImageView) itemView.findViewById(R.id.iv_tag);
         }
     }
 

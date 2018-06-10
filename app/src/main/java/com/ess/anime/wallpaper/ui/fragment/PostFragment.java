@@ -32,6 +32,7 @@ import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
+import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
@@ -434,9 +435,10 @@ public class PostFragment extends Fragment {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        if (!getActivity().isDestroyed()) {
+                        String url = imageBean.posts[0].sampleUrl;
+                        if (FileUtils.isImageType(url) && !getActivity().isDestroyed()) {
                             GlideApp.with(mActivity)
-                                    .load(MyGlideModule.makeGlideUrl(imageBean.posts[0].sampleUrl))
+                                    .load(MyGlideModule.makeGlideUrl(url))
                                     .priority(Priority.HIGH)
                                     .submit();
                         }

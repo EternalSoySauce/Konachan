@@ -416,14 +416,35 @@ public class FileUtils {
     }
 
     /**
+     * 获取文件后缀，不带·
+     *
+     * @param path 文件路径
+     * @return 文件后缀
+     */
+    public static String getFileExtension(String path) {
+        String extension = path.substring(path.lastIndexOf(".") + 1);
+        return extension.replaceAll("[^0-9a-zA-Z].*", "");
+    }
+
+    /**
+     * 获取文件后缀，带·
+     *
+     * @param path 文件路径
+     * @return 文件后缀
+     */
+    public static String getFileExtensionWithDot(String path) {
+        return "." + getFileExtension(path);
+    }
+
+    /**
      * 判断文件是否为图片格式
      *
      * @return boolean
      */
     public static boolean isImageType(String filePath) {
-        filePath = filePath.toLowerCase();
-        return filePath.endsWith("bmp") || filePath.endsWith("jpg") || filePath.endsWith("jpeg")
-                || filePath.endsWith("png") || filePath.endsWith("gif");
+        String extension = getFileExtension(filePath).toLowerCase();
+        return extension.equals("bmp") || extension.equals("jpg") || extension.equals("jpeg")
+                || extension.equals("png") || extension.equals("gif");
     }
 
     /**
@@ -432,10 +453,10 @@ public class FileUtils {
      * @return boolean
      */
     public static boolean isVideoType(String filePath) {
-        filePath = filePath.toLowerCase();
-        return filePath.endsWith("avi") || filePath.endsWith("wmv") || filePath.endsWith("mp4")
-                || filePath.endsWith("webm") || filePath.endsWith("mpg") || filePath.endsWith("mpeg")
-                || filePath.endsWith("3gp") || filePath.endsWith("mov") || filePath.endsWith("flv");
+        String extension = getFileExtension(filePath).toLowerCase();
+        return extension.equals("avi") || extension.equals("wmv") || extension.equals("mp4")
+                || extension.equals("webm") || extension.equals("mpg") || extension.equals("mpeg")
+                || extension.equals("3gp") || extension.equals("mov") || extension.equals("flv");
     }
 
     /**

@@ -23,6 +23,7 @@ import java.util.List;
 public class ActionSheetDialog {
     private Context mContext;
     private Dialog mDialog;
+    private View contentView;
     private TextView mTitle;
     private TextView mCancel;
     private LinearLayout mLinearLayout;
@@ -41,16 +42,16 @@ public class ActionSheetDialog {
 
     public ActionSheetDialog builder() {
         // 获取Dialog布局
-        View view = LayoutInflater.from(mContext).inflate(R.layout.qq_dialog_layout, null);
+        contentView = LayoutInflater.from(mContext).inflate(R.layout.qq_dialog_layout, null);
         // 设置Dialog最小宽度为屏幕宽度
-        view.setMinimumWidth(mDisplay.getWidth());
+        contentView.setMinimumWidth(mDisplay.getWidth());
 
         // 获取自定义Dialog布局中的控件
-        mScrollView = (ScrollView) view.findViewById(R.id.scrollview);
-        mLinearLayout = (LinearLayout) view.findViewById(R.id.ll_content);
-        mTitle = (TextView) view.findViewById(R.id.tv_title);
-        mUnderLine = (View) view.findViewById(R.id.title_underline);
-        mCancel = (TextView) view.findViewById(R.id.tv_cancel);
+        mScrollView = (ScrollView) contentView.findViewById(R.id.scrollview);
+        mLinearLayout = (LinearLayout) contentView.findViewById(R.id.ll_content);
+        mTitle = (TextView) contentView.findViewById(R.id.tv_title);
+        mUnderLine = (View) contentView.findViewById(R.id.title_underline);
+        mCancel = (TextView) contentView.findViewById(R.id.tv_cancel);
         mCancel.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -64,7 +65,7 @@ public class ActionSheetDialog {
 
         // 定义Dialog布局和参数
         mDialog = new Dialog(mContext, R.style.ActionSheetDialogStyle);
-        mDialog.setContentView(view);
+        mDialog.setContentView(contentView);
         mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -106,6 +107,11 @@ public class ActionSheetDialog {
 
     public ActionSheetDialog setCanceledOnTouchOutside(boolean cancel) {
         mDialog.setCanceledOnTouchOutside(cancel);
+        return this;
+    }
+
+    public ActionSheetDialog setDialogWidth(int width) {
+        contentView.setMinimumWidth(width);
         return this;
     }
 

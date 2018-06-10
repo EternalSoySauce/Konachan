@@ -1,37 +1,26 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
+import com.ess.anime.wallpaper.view.MultipleMediaLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import uk.co.senab.photoview.PhotoView;
-
-public class ImageFragment extends Fragment implements RequestListener<Drawable> {
+public class ImageFragment extends Fragment {
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
@@ -39,7 +28,6 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
 
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
-    private PhotoView mIvImage;
 
     @Override
     public void onAttach(Context context) {
@@ -82,48 +70,21 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadImage();
+                loadMedia();
             }
         });
 
         if (mImageBean != null) {
-            loadImage();
+            loadMedia();
         } else {
             mSwipeRefresh.setRefreshing(true);
             mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
         }
     }
 
-    private void loadImage() {
-        mIvImage = (PhotoView) mRootView.findViewById(R.id.iv_image);
-        mIvImage.setZoomable(false);
-        String url = mImageBean.posts[0].sampleUrl;
-        GlideApp.with(mActivity)
-                .load(MyGlideModule.makeGlideUrl(url))
-                .listener(this)
-                .placeholder(R.drawable.ic_placeholder_detail)
-                .priority(Priority.IMMEDIATE)
-                .into(mIvImage);
-    }
-
-    @Override
-    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-        Activity activity = getActivity();
-        if (activity != null && !activity.isDestroyed()) {
-            mIvImage.post(new Runnable() {
-                @Override
-                public void run() {
-                    loadImage();
-                }
-            });
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-        mIvImage.setZoomable(true);
-        return false;
+    private void loadMedia() {
+        MultipleMediaLayout mediaLayout = mRootView.findViewById(R.id.layout_multiple_media);
+        mediaLayout.setMediaPath(mImageBean.posts[0].sampleUrl);
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
@@ -134,7 +95,7 @@ public class ImageFragment extends Fragment implements RequestListener<Drawable>
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
             if (mThumbBean.checkImageBelongs(imageBean)) {
                 mImageBean = imageBean;
-                loadImage();
+                loadMedia();
                 mSwipeRefresh.setRefreshing(false);
                 mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
                 mActivity.setId(imageBean);

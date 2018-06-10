@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ess.anime.wallpaper.view.MultipleMediaLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                  android:id="@+id/layout_multiple_media"
                                                   android:layout_width="match_parent"
-                                                  android:layout_height="match_parent"
-                                                  android:background="@android:color/black">
+                                                  android:layout_height="match_parent">
 
     <com.sprylab.android.widget.TextureVideoView
         android:id="@+id/video_view"

@@ -59,6 +59,7 @@ dependencies {
     compile project(path: ':agentweb-filechooser')
     compile project(path: ':actionSheetDialog')
     compile 'com.sprylab.android.texturevideoview:texturevideoview:1.2.1'
+    compile 'com.danikula:videocache:2.6.4'
 }
 
 apply plugin: 'com.google.gms.google-services'

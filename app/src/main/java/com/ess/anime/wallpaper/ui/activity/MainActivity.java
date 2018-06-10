@@ -136,14 +136,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_collection:
                         startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                         break;
-                    case R.id.nav_setting:
-                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
-                        break;
                     case R.id.nav_sauce_nao:
                         startActivity(new Intent(MainActivity.this, SauceNaoActivity.class));
                         break;
                     case R.id.nav_game:
                         startActivity(new Intent(MainActivity.this, GameActivity.class));
+                        break;
+                    case R.id.nav_setting:
+                        startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
                 }
                 mCurrentNavId = 0;
