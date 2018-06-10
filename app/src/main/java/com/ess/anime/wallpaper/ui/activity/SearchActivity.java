@@ -20,6 +20,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +39,8 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 
@@ -45,10 +48,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 import static com.jiang.android.indicatordialog.IndicatorBuilder.GRAVITY_LEFT;
 
@@ -76,6 +84,9 @@ public class SearchActivity extends AppCompatActivity {
 
     // 筛选下拉提示异步任务
     private AsyncTask mAutoCompleteTask;
+
+    // Sankaku网络请求下拉提示
+    private Call mSankakuCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,17 +175,21 @@ public class SearchActivity extends AppCompatActivity {
                 int visible = TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE;
                 findViewById(R.id.iv_clear).setVisibility(visible);
 
+                cancelAutoCompleteTask();
+                cancelSankakuCall();
                 if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
                     // TODO 完善搜索提示（现在与K站算法不完全一样）
                     String tag = s.toString();
                     int splitIndex = Math.max(tag.lastIndexOf(","), tag.lastIndexOf("，"));
                     tag = tag.substring(splitIndex + 1);
                     if (!TextUtils.isEmpty(tag) && mUserInput) {
-                        if (mAutoCompleteTask != null) {
-                            mAutoCompleteTask.cancel(true);
-                        }
                         mPromptMap.clear();
-                        mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
+                        if (OkHttp.getBaseUrl(SearchActivity.this).equals(Constants.BASE_URL_SANKAKU)) {
+                            // Sankaku搜索提示需动态请求网络
+                            getSankakuTagList(tag);
+                        } else {
+                            mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
+                        }
                     } else {
                         mCompleteSearchAdapter.clear();
                         mRvCompleteSearch.setVisibility(View.GONE);
@@ -415,12 +430,67 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
+    private void getSankakuTagList(final String search) {
+        cancelSankakuCall();
+        String url = "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + search;
+        mSankakuCall = OkHttp.getInstance().connect(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (OkHttp.isNetworkProblem(e) && call == mSankakuCall) {
+                    getSankakuTagList(search);
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call == mSankakuCall) {
+                    if (response.isSuccessful()) {
+                        String json = response.body().string();
+                        JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+                        JsonArray tagArray = jsonArray.get(1).getAsJsonArray();
+                        for (int i = 0; i < tagArray.size(); i++) {
+                            mPromptMap.put(tagArray.get(i).getAsString(), 0);
+                        }
+                        setCompleteSearchTags();
+                    } else {
+                        getSankakuTagList(search);
+                    }
+                }
+                response.close();
+            }
+        });
+    }
+
+    private void setCompleteSearchTags() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCompleteSearchAdapter.clear();
+                mCompleteSearchAdapter.addDatas(mPromptMap.keySet());
+                mRvCompleteSearch.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void cancelAutoCompleteTask() {
         if (mAutoCompleteTask != null) {
             mAutoCompleteTask.cancel(true);
         }
+    }
+
+    private void cancelSankakuCall() {
+        if (mSankakuCall != null && !mSankakuCall.isCanceled()) {
+            mSankakuCall.cancel();
+            mSankakuCall = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelAutoCompleteTask();
+        cancelSankakuCall();
     }
 
     // 异步执行筛选下拉提示操作
@@ -435,9 +505,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mCompleteSearchAdapter.clear();
-            mCompleteSearchAdapter.addDatas(mPromptMap.keySet());
-            mRvCompleteSearch.setVisibility(View.VISIBLE);
+            setCompleteSearchTags();
         }
     }
 }
