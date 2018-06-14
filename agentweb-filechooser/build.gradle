@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 25
@@ -21,10 +20,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    provided "com.android.support:design:27.1.1"
-    provided "com.android.support:support-v4:27.1.1"
-    compile 'com.just.agentweb:agentweb:4.0.2'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly "com.android.support:design:27.1.1"
+    compileOnly "com.android.support:support-v4:27.1.1"
+    implementation 'com.just.agentweb:agentweb:4.0.2'
 }
 task javadoc(type: Javadoc) {
     options.encoding = "utf-8"

@@ -24,7 +24,7 @@
     <!-- Drawer Layout -->
     <string name="base_konachan_s">Konachan(safe)</string>
     <string name="base_konachan_e">Konachan(r18)</string>
-    <string name="base_yande">Yande</string>
+    <string name="base_yande">Yande.re</string>
     <string name="base_lolibooru">Lolibooru</string>
     <string name="base_danbooru">Danbooru</string>
     <string name="base_sankaku">Sankaku</string>
