@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Priority;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -439,7 +438,6 @@ public class PostFragment extends Fragment {
                         if (FileUtils.isImageType(url) && !getActivity().isDestroyed()) {
                             GlideApp.with(mActivity)
                                     .load(MyGlideModule.makeGlideUrl(url))
-                                    .priority(Priority.HIGH)
                                     .submit();
                         }
                     }

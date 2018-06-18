@@ -155,7 +155,6 @@ public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolA
             if (!mActivity.isDestroyed()) {
                 GlideApp.with(mActivity)
                         .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
-                        .priority(Priority.NORMAL)
                         .submit();
             }
         }

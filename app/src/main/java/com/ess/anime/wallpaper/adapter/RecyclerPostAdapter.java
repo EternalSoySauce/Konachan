@@ -186,7 +186,6 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
             if (!mActivity.isDestroyed()) {
                 GlideApp.with(mActivity)
                         .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
-                        .priority(Priority.NORMAL)
                         .submit();
             }
         }

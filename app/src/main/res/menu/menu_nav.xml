@@ -3,6 +3,7 @@
     <group
         android:id="@+id/g1"
         android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_post"
             android:icon="@drawable/ic_nav_menu_post"
@@ -37,6 +38,12 @@
     <group
         android:id="@+id/g3"
         android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_feedback"
+            android:icon="@drawable/ic_nav_menu_feedback"
+            android:title="@string/nav_feedback"/>
+
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_nav_menu_setting"

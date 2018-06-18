@@ -359,13 +359,18 @@ public class BitmapUtils {
     }
 
     /**
-     * 从媒体库删除图片（刷新相册）
+     * 从媒体库删除图片/视频（刷新相册）
      *
      * @param context 上下文
-     * @param path    图片路径
+     * @param path    图片/视频路径
      */
     public static void deleteFromMediaStore(Context context, String path) {
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri uri;
+        if (FileUtils.isVideoType(path)) {
+            uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
         context.getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=?", new String[]{path});
     }
 

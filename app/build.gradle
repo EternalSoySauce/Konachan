@@ -6,8 +6,8 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 8
-        versionName "1.6"
+        versionCode 9
+        versionName "1.6.1"
     }
     buildTypes {
         release {

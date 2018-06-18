@@ -150,6 +150,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
         mVideoView.setVisibility(VISIBLE);
         mVideoView.setAlpha(0);
+        mVideoView.setKeepScreenOn(true);
         mVideoView.setOnPreparedListener(this);
         mVideoView.setOnInfoListener(this);
         mVideoView.setOnErrorListener(this);
@@ -204,6 +205,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     /***********************************  Other  ***********************************/
     public void reset() {
         mPhotoView.setScale(1f);
+        mVideoView.setKeepScreenOn(false);
         mVideoView.stopPlayback();
     }
 
