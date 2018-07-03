@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.other;
+package com.ess.anime.wallpaper.helper;
 
 import android.support.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-public class XPuzzle {
+public class XPuzzleHelper {
 
     private Node node;
     private int column;

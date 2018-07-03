@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.bean.CollectionBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.CollectionBean;
-import com.ess.anime.wallpaper.other.GlideApp;
 import com.ess.anime.wallpaper.utils.VibratorUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 

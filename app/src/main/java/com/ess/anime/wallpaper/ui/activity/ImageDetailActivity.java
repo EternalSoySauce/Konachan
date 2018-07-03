@@ -27,7 +27,7 @@ import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.utils.PermissionUtils;
+import com.ess.anime.wallpaper.helper.PermissionHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.SlidingTabLayout;
@@ -46,7 +46,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     private ArrayList<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
 
-    private PermissionUtils mPermissionUtil;
+    private PermissionHelper mPermissionUtil;
     private Handler mHandler = new Handler();
 
     @Override
@@ -298,7 +298,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     // 下载图片点击事件
     public void saveImage(View view) {
         if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.SimplePermissionListener() {
+            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.SimplePermissionListener() {
                 @Override
                 public void onGranted() {
                     showChooseToDownloadDialog();

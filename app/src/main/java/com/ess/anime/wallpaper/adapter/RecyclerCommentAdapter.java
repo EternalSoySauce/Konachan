@@ -11,10 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
-import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.MyGlideModule;
+import com.ess.anime.wallpaper.bean.CommentBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 
 import java.util.ArrayList;
 

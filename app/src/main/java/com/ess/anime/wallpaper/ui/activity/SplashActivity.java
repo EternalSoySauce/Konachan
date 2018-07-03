@@ -9,7 +9,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.other.Sound;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -29,7 +29,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setBackgroundDrawable(null);
 
         long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
-        Sound.getInstance().playSplashWelcomeSound(this);
+        SoundHelper.getInstance().playSplashWelcomeSound(this);
 
         FireBase.getInstance().checkToAddUser();
         FireBase.getInstance().checkUpdate();

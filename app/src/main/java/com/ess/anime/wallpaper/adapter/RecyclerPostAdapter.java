@@ -12,12 +12,12 @@ import com.bumptech.glide.Priority;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.global.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 

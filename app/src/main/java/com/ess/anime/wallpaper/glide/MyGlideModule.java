@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.other;
+package com.ess.anime.wallpaper.glide;
 
 import android.content.Context;
 import android.text.TextUtils;

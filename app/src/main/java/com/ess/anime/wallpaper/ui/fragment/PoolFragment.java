@@ -26,7 +26,7 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
-import com.ess.anime.wallpaper.other.Sound;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
@@ -380,7 +380,7 @@ public class PoolFragment extends Fragment {
                 mPoolAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
                 mPoolAdapter.showNoData();
-                Sound.getInstance().playLoadNothingSound(getActivity());
+                SoundHelper.getInstance().playLoadNothingSound(getActivity());
             }
         });
     }
@@ -395,7 +395,7 @@ public class PoolFragment extends Fragment {
                 mLoadMoreAgain = false;
                 if (mPoolAdapter.getPoolList().isEmpty()) {
                     mPoolAdapter.showNoNetwork();
-                    Sound.getInstance().playLoadNoNetworkSound(getActivity());
+                    SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }

@@ -23,12 +23,12 @@ import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.ParseHtml;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.MyGlideModule;
-import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -455,7 +455,7 @@ public class PostFragment extends Fragment {
                 mPostAdapter.clear();
                 mSwipeRefresh.setRefreshing(false);
                 mPostAdapter.showNoData();
-                Sound.getInstance().playLoadNothingSound(getActivity());
+                SoundHelper.getInstance().playLoadNothingSound(getActivity());
             }
         });
     }
@@ -470,7 +470,7 @@ public class PostFragment extends Fragment {
                 mLoadMoreAgain = false;
                 if (mPostAdapter.getThumbList().isEmpty()) {
                     mPostAdapter.showNoNetwork();
-                    Sound.getInstance().playLoadNoNetworkSound(getActivity());
+                    SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
                     Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
                 }

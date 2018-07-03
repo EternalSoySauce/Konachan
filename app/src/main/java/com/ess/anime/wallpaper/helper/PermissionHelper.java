@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.utils;
+package com.ess.anime.wallpaper.helper;
 
 import android.app.Activity;
 
@@ -15,12 +15,12 @@ import com.yanzhenjie.permission.SettingService;
 import java.util.Arrays;
 import java.util.List;
 
-public class PermissionUtils implements RationaleListener {
+public class PermissionHelper implements RationaleListener {
 
     private Activity mActivity;
     private OnPermissionListener mListener;
 
-    public PermissionUtils(Activity activity, OnPermissionListener listener) {
+    public PermissionHelper(Activity activity, OnPermissionListener listener) {
         mActivity = activity;
         mListener = listener;
     }

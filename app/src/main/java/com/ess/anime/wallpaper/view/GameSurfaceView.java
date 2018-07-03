@@ -16,10 +16,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.ess.anime.wallpaper.other.XPuzzle;
+import com.ess.anime.wallpaper.helper.XPuzzleHelper;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.other.Sound;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -34,7 +34,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private SharedPreferences mPreferences;
     private int mColumn;
     private int[][] mCurrentState;
-    private XPuzzle mPuzzle;
+    private XPuzzleHelper mPuzzle;
     private int mCurrentStep = 0;
     private int mBestStep;
     private boolean mCompleted = false;
@@ -77,7 +77,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mColumn = mPreferences.getInt(Constants.GAME_COLUMN, DEFAULT_COLUMN);
         mBestStep = mPreferences.getInt(String.valueOf(mColumn), -1);
-        mPuzzle = new XPuzzle();
+        mPuzzle = new XPuzzleHelper();
         rebuildPuzzle();
 
         mGameBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_game);
@@ -125,7 +125,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             mPaint.setTextSize(UIUtils.sp2px(getContext(), 24));
             canvas.drawText(getContext().getString(R.string.game_completed), x, y, mPaint);
             if (!mHasPlayedSound) {
-                Sound.getInstance().playGameWinSound(getContext());
+                SoundHelper.getInstance().playGameWinSound(getContext());
                 mHasPlayedSound = true;
             }
         }

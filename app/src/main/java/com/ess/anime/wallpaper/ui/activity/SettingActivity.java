@@ -13,7 +13,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
-import com.ess.anime.wallpaper.other.Sound;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
@@ -61,9 +61,9 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
                 Constants.sAllowPlaySound = b;
                 mPreferences.edit().putBoolean(Constants.ALLOW_PLAY_SOUND, b).apply();
                 if (b) {
-                    Sound.getInstance().playSoundEnabled(SettingActivity.this);
+                    SoundHelper.getInstance().playSoundEnabled(SettingActivity.this);
                 } else {
-                    Sound.getInstance().playSoundDisabled();
+                    SoundHelper.getInstance().playSoundDisabled();
                 }
             }
         });

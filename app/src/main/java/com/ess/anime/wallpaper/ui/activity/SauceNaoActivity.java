@@ -11,13 +11,13 @@ import android.widget.LinearLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.utils.PermissionUtils;
+import com.ess.anime.wallpaper.helper.PermissionHelper;
 import com.just.agentweb.AgentWeb;
 
 public class SauceNaoActivity extends AppCompatActivity {
 
     private AgentWeb mAgentWeb;
-    private PermissionUtils mPermissionUtil;
+    private PermissionHelper mPermissionUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class SauceNaoActivity extends AppCompatActivity {
 
     private void checkStoragePermission() {
         if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.OnPermissionListener() {
+            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.OnPermissionListener() {
                 @Override
                 public void onGranted() {
                     initWebView();

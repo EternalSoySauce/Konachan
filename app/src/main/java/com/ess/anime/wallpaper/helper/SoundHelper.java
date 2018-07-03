@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.other;
+package com.ess.anime.wallpaper.helper;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -6,22 +6,22 @@ import android.media.MediaPlayer;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.R;
 
-public class Sound {
+public class SoundHelper {
 
     private static class SoundHolder {
-        private static final Sound instance = new Sound();
+        private static final SoundHelper instance = new SoundHelper();
     }
 
     private MediaPlayer mMediaPlayer;
 
-    private Sound() {
+    private SoundHelper() {
     }
 
-    public static Sound getInstance() {
+    public static SoundHelper getInstance() {
         return SoundHolder.instance.createPlayerIfNull();
     }
 
-    private Sound createPlayerIfNull() {
+    private SoundHelper createPlayerIfNull() {
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
         }

@@ -26,11 +26,11 @@ import android.widget.Toast;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.Sound;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         btnFunny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Sound.getInstance().playToggleR18ModeSound(MainActivity.this);
+                SoundHelper.getInstance().playToggleR18ModeSound(MainActivity.this);
                 CustomDialog.showChangeBaseUrlDialog(MainActivity.this, new CustomDialog.SimpleDialogActionListener() {
                     @Override
                     public void onPositive() {
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         mIsForeground = false;
         EventBus.getDefault().unregister(this);
-        Sound.getInstance().release();
+        SoundHelper.getInstance().release();
         OkHttp.getInstance().cancelAll();
         FireBase.getInstance().cancelAll();
     }

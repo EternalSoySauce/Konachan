@@ -18,10 +18,10 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.VideoCache;
-import com.ess.anime.wallpaper.other.GlideApp;
-import com.ess.anime.wallpaper.other.MyGlideModule;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.sprylab.android.widget.TextureVideoView;
 

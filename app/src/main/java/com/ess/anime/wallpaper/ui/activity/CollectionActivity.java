@@ -23,7 +23,7 @@ import com.ess.anime.wallpaper.global.ImageDataHolder;
 import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.utils.PermissionUtils;
+import com.ess.anime.wallpaper.helper.PermissionHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
@@ -46,7 +46,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView mRvCollection;
     private RecyclerCollectionAdapter mCollectionAdapter;
 
-    private PermissionUtils mPermissionUtil;
+    private PermissionHelper mPermissionUtil;
     private LocalCollectionsListener mFilesListener;
 
     @Override
@@ -59,7 +59,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
 
     private void checkStoragePermission() {
         if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionUtils(this, new PermissionUtils.OnPermissionListener() {
+            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.OnPermissionListener() {
                 @Override
                 public void onGranted() {
                     initToolBarLayout();
