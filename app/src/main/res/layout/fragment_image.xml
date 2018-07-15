@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ess.anime.wallpaper.view.MySwipeRefreshLayout
+<com.lss.anime.wallpaper.view.MySwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include layout="@layout/layout_multiple_media"/>
-</com.ess.anime.wallpaper.view.MySwipeRefreshLayout>
+</com.lss.anime.wallpaper.view.MySwipeRefreshLayout>

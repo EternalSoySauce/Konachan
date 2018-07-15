@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.ess.anime.wallpaper"
+        applicationId "com.lss.anime.wallpaper"
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 9
-        versionName "1.6.1"
+        versionName "1.6.2"
     }
     buildTypes {
         release {
@@ -22,7 +22,7 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
-    dexOptions{
+    dexOptions {
         jumboMode true
     }
 }
@@ -51,9 +51,9 @@ dependencies {
     implementation 'com.wang.avi:library:2.1.3'
     implementation 'com.balysv:material-ripple:1.0.2'
     implementation 'com.yanzhenjie:permission:1.1.2'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-storage:11.8.0'
-    implementation 'com.google.firebase:firebase-firestore:11.8.0'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.firebase:firebase-storage:15.0.0'
+    implementation 'com.google.firebase:firebase-firestore:15.0.0'
     implementation 'com.just.agentweb:agentweb:4.0.2'
     implementation project(path: ':agentweb-filechooser')
     implementation project(path: ':actionSheetDialog')

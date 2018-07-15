@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ess.anime.wallpaper.view.MySwipeRefreshLayout
+<com.lss.anime.wallpaper.view.MySwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
@@ -24,4 +24,4 @@
             android:textColor="@color/color_text_unselected"
             android:textSize="18sp"/>
     </FrameLayout>
-</com.ess.anime.wallpaper.view.MySwipeRefreshLayout>
+</com.lss.anime.wallpaper.view.MySwipeRefreshLayout>
