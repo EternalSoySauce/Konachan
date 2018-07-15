@@ -6,7 +6,7 @@ android {
         applicationId "com.lss.anime.wallpaper"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 9
+        versionCode 10
         versionName "1.6.2"
     }
     buildTypes {
