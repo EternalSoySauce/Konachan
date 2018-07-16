@@ -32,7 +32,7 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.lss.anime.wallpaper.view.MySwipeRefreshLayout
+    <com.ess.anime.wallpaper.view.MySwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,7 +47,7 @@
             android:scrollbarStyle="outsideOverlay"
             android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb"
             android:scrollbars="vertical" />
-    </com.lss.anime.wallpaper.view.MySwipeRefreshLayout>
+    </com.ess.anime.wallpaper.view.MySwipeRefreshLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/floating_action_menu"

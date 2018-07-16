@@ -63,13 +63,13 @@
             </FrameLayout>
         </RelativeLayout>
 
-        <com.lss.anime.wallpaper.view.SlidingTabLayout
+        <com.ess.anime.wallpaper.view.SlidingTabLayout
             android:id="@+id/sliding_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </android.support.design.widget.AppBarLayout>
 
-    <com.lss.anime.wallpaper.view.ViewPagerFixed
+    <com.ess.anime.wallpaper.view.ViewPagerFixed
         android:id="@+id/vp_image_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

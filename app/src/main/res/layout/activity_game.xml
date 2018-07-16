@@ -26,7 +26,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.lss.anime.wallpaper.view.GameSurfaceView
+        <com.ess.anime.wallpaper.view.GameSurfaceView
             android:id="@+id/surface_view_game"
             android:layout_width="match_parent"
             android:layout_height="0dp"

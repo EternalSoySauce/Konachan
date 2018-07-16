@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <com.lss.anime.wallpaper.view.ViewPagerFixed
+    <com.ess.anime.wallpaper.view.ViewPagerFixed
         android:id="@+id/vp_full_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.lss.anime.wallpaper.view.StatusBarView
+        <com.ess.anime.wallpaper.view.StatusBarView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
