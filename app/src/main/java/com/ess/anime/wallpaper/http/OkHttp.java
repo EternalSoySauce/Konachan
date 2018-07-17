@@ -124,7 +124,13 @@ public class OkHttp {
         for (String tag : tagList) {
             tags.append(tag).append("+");
         }
-        return getBaseUrl(context) + "post?page=" + page + "&tags=" + tags;
+
+        String baseUrl = getBaseUrl(context);
+        if (baseUrl.equals(Constants.BASE_URL_GELBOORU)) {
+            return baseUrl + "index.php?page=post&s=list&tags=" + tags + "&pid=" + (page - 1) * 42;
+        } else {
+            return baseUrl + "post?page=" + page + "&tags=" + tags;
+        }
     }
 
     // 搜索图集

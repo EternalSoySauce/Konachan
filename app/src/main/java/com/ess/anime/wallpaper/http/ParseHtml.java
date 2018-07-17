@@ -35,6 +35,8 @@ public class ParseHtml {
             getDanbooruThumbList(doc, thumbList);
         } else if (webTitle.toLowerCase().contains("sankaku")) {
             getSankakuThumbList(doc, thumbList);
+        } else if (webTitle.toLowerCase().contains("gelbooru")) {
+            getGelbooruThumbList(doc, thumbList);
         } else {
             getGeneralThumbList(doc, thumbList);
         }
@@ -121,6 +123,30 @@ public class ParseHtml {
                 if (!thumbList.contains(thumbBean)) {
                     thumbList.add(thumbBean);
                 }
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    // Gelbooru专用
+    private static void getGelbooruThumbList(Document doc, ArrayList<ThumbBean> thumbList) {
+        Elements elements = doc.getElementsByClass("thumbnail-preview");
+        for (Element e : elements) {
+            try {
+                Element a = e.getElementsByTag("a").first();
+                String id = a.id().replaceAll("[^0-9]", "");
+                String linkToShow = a.attr("href");
+                if (linkToShow.startsWith("//")) {
+                    linkToShow = "https:" + linkToShow;
+                } else if (!linkToShow.startsWith("http")) {
+                    linkToShow = Constants.BASE_URL_GELBOORU + linkToShow;
+                }
+                Element img = e.getElementsByTag("img").first();
+                String thumbUrl = img.attr("src");
+                if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = "https:" + thumbUrl;
+                }
+                thumbList.add(new ThumbBean(id, thumbUrl, "❤", linkToShow));
             } catch (Exception ignore) {
             }
         }

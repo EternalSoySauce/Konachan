@@ -28,6 +28,7 @@
     <string name="base_lolibooru">Lolibooru</string>
     <string name="base_danbooru">Danbooru</string>
     <string name="base_sankaku">Sankaku</string>
+    <string name="base_gelbooru">Gelbooru</string>
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>
     <string name="nav_post">图片</string>

@@ -359,6 +359,9 @@ public class SearchActivity extends AppCompatActivity {
             case Constants.BASE_URL_SANKAKU:
                 // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
                 break;
+            case Constants.BASE_URL_GELBOORU:
+                // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
+                break;
         }
 
         File file = new File(path, name);
