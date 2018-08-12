@@ -9,7 +9,7 @@ public class TimeFormat {
 
     // 格式化为 00:00:00
     public static String durationFormat(long msec) {
-        msec = (long) (msec / 1000f + 0.5f);
+        msec = (long) (msec / 1000f);
         long hour = msec / 3600;
         long minute = msec % 3600 / 60;
         long second = msec % 3600 % 60;
@@ -21,7 +21,7 @@ public class TimeFormat {
 
     // 格式化为 00:00:00.0
     public static String durationFormat2(long msec) {
-        long millisecond = (long) (msec % 1000 / 100f + 0.5f);
+        long millisecond = (long) (msec % 1000 / 100f);
         msec /= 1000;
         long hour = msec / 3600;
         long minute = msec % 3600 / 60;
