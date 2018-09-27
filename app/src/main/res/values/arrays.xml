@@ -15,6 +15,6 @@
         <item>@string/base_lolibooru</item>
         <item>@string/base_danbooru</item>
         <item>@string/base_sankaku</item>
-        <item>@string/base_gelbooru</item>
+        <!--<item>@string/base_gelbooru</item>-->
     </string-array>
 </resources>

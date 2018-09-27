@@ -12,10 +12,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
@@ -61,8 +65,11 @@ public class PostFragment extends Fragment {
     private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
+    private TextView mTvFrom;
+    private TextView mTvTo;
 
-    private int mCurrentPage;
+    private int mCurrentPage;  // 当前页码
+    private int mGoToPage;  // 跳转到的起始页码
     private String mCurrentTag;   // 当前正在搜索的tag
     private ArrayList<String> mCurrentTagList;
     private boolean mIsLoadingMore = false;
@@ -91,16 +98,19 @@ public class PostFragment extends Fragment {
         initRecyclerView();
         initFloatingButton();
         mCurrentPage = 1;
+        mGoToPage = 1;
         mCurrentTag = "";
         mCurrentTagList = new ArrayList<>();
         getNewPosts(mCurrentPage);
+        changeFromPage(mCurrentPage);
+        changeToPage(mCurrentPage);
         return mRootView;
     }
 
     private long lastClickTime = 0;
 
     private void initToolBarLayout() {
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.tool_bar);
+        Toolbar toolbar = mRootView.findViewById(R.id.tool_bar);
         mActivity.setSupportActionBar(toolbar);
         DrawerLayout drawerLayout = mActivity.getDrawerLayout();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -132,7 +142,7 @@ public class PostFragment extends Fragment {
         });
 
         //搜索
-        ImageView ivSearch = (ImageView) mRootView.findViewById(R.id.iv_search);
+        ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,16 +151,41 @@ public class PostFragment extends Fragment {
                 startActivityForResult(searchIntent, Constants.SEARCH_CODE);
             }
         });
+
+        // 当前显示的起始页与终止页
+        mTvFrom = mRootView.findViewById(R.id.tv_from);
+        mTvTo = mRootView.findViewById(R.id.tv_to);
+
+        // 页码跳转
+        final EditText etGoto = mRootView.findViewById(R.id.et_goto);
+        etGoto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    String num = etGoto.getText().toString();
+                    if (!TextUtils.isEmpty(num)) {
+                        int newPage = Integer.parseInt(num);
+                        if (newPage > 0) {
+                            resetAll(newPage);
+                            getNewPosts(mCurrentPage);
+                            changeFromPage(mCurrentPage);
+                            changeToPage(mCurrentPage);
+                        }
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void initSwipeRefreshLayout() {
-        mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getNewPosts(1);
+                getNewPosts(mGoToPage);
                 if (mPostAdapter.getThumbList().isEmpty()) {
                     mPostAdapter.showLoading();
                 }
@@ -159,7 +194,7 @@ public class PostFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        mRvPosts = (RecyclerView) mRootView.findViewById(R.id.rv_post);
+        mRvPosts = mRootView.findViewById(R.id.rv_post);
         mLayoutManager = new GridLayoutManager(mActivity, 2);
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -218,9 +253,9 @@ public class PostFragment extends Fragment {
     }
 
     private void initFloatingButton() {
-        mFloatingMenu = (FloatingActionMenu) mRootView.findViewById(R.id.floating_action_menu);
+        mFloatingMenu = mRootView.findViewById(R.id.floating_action_menu);
 
-        FloatingActionButton fabHome = (FloatingActionButton) mRootView.findViewById(R.id.fab_home);
+        FloatingActionButton fabHome = mRootView.findViewById(R.id.fab_home);
         fabHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +264,7 @@ public class PostFragment extends Fragment {
             }
         });
 
-        FloatingActionButton fabRandom = (FloatingActionButton) mRootView.findViewById(R.id.fab_random);
+        FloatingActionButton fabRandom = mRootView.findViewById(R.id.fab_random);
         fabRandom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,6 +274,14 @@ public class PostFragment extends Fragment {
                 onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
             }
         });
+    }
+
+    private void changeFromPage(int page) {
+        mTvFrom.setText(String.valueOf(page));
+    }
+
+    private void changeToPage(int page) {
+        mTvTo.setText(String.valueOf(page));
     }
 
     private void scrollToTop() {
@@ -254,27 +297,24 @@ public class PostFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.SEARCH_CODE) {
             if (data != null) {
-                mPostAdapter.clear();
-                if (!mSwipeRefresh.isRefreshing()) {
-                    mSwipeRefresh.setRefreshing(true);
-                }
-                mCurrentPage = 1;
+                resetAll(1);
                 mCurrentTagList.clear();
-                mIsLoadingMore = false;
-                mPostAdapter.showLoading();
 
-                OkHttp.getInstance().cancelAll();
                 String searchTag = data.getStringExtra(Constants.SEARCH_TAG);
                 mCurrentTag = "#" + searchTag;
                 switch (resultCode) {
                     case Constants.SEARCH_CODE_TAGS:
                         mCurrentTagList.addAll(Arrays.asList(searchTag.split(",|，")));
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_ID:
                         mCurrentTag = "#id:" + searchTag;
                         mCurrentTagList.add("id:" + searchTag);
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_CHINESE:
                         getNameFromBaidu(searchTag);
@@ -283,18 +323,43 @@ public class PostFragment extends Fragment {
                         String[] tags = searchTag.split(" ");
                         mCurrentTagList.addAll(Arrays.asList(tags));
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_HOME:
                         mCurrentTag = "";
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                         break;
                     case Constants.SEARCH_CODE_RANDOM:
                         mCurrentTagList.add(searchTag);
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                         break;
                 }
             }
         }
+    }
+
+
+    /**
+     * 初始化所有数据，清空adapter，以便加载新内容
+     *
+     * @param startPage 加载的起始页
+     */
+    private void resetAll(int startPage) {
+        OkHttp.getInstance().cancelAll();
+        mPostAdapter.clear();
+        if (!mSwipeRefresh.isRefreshing()) {
+            mSwipeRefresh.setRefreshing(true);
+        }
+        mIsLoadingMore = false;
+        mLoadMoreAgain = true;
+        mCurrentPage = startPage;
+        mGoToPage = startPage;
+        mPostAdapter.showLoading();
     }
 
     private void getNewPosts(int page) {
@@ -380,6 +445,7 @@ public class PostFragment extends Fragment {
                     Toast.makeText(mActivity, R.string.no_more_load, Toast.LENGTH_SHORT).show();
                 } else {
                     mIsLoadingMore = false;
+                    changeToPage(mCurrentPage);
                 }
             }
         });
@@ -412,6 +478,8 @@ public class PostFragment extends Fragment {
                         tag2.replace(tag2.length() - 1, tag2.length(), "");
                         mCurrentTagList.add(tag2.toString());
                         getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                     } else {
                         getNoData();
                     }
@@ -489,16 +557,10 @@ public class PostFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeBaseUrl(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.CHANGE_BASE_URL)) {
-            OkHttp.getInstance().cancelAll();
-            mPostAdapter.clear();
-            if (!mSwipeRefresh.isRefreshing()) {
-                mSwipeRefresh.setRefreshing(true);
-            }
-            mIsLoadingMore = false;
-            mLoadMoreAgain = true;
-            mCurrentPage = 1;
-            mPostAdapter.showLoading();
+            resetAll(1);
             getNewPosts(mCurrentPage);
+            changeFromPage(mCurrentPage);
+            changeToPage(mCurrentPage);
         }
     }
 
