@@ -117,7 +117,7 @@ public class OkHttp {
     // 通过tags搜索图片
     public static String getPostUrl(Context context, int page, ArrayList<String> tagList) {
         if (tagList == null) {
-            return null;
+            tagList = new ArrayList<>();
         }
 
         StringBuilder tags = new StringBuilder();
