@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import com.ess.anime.wallpaper.R;
@@ -67,6 +69,21 @@ public class SauceNaoActivity extends AppCompatActivity {
                 .createAgentWeb()
                 .ready()
                 .go("http://saucenao.com/");
+
+        mAgentWeb.getWebCreator().getWebView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // TODO sauceNAO长按下载图片
+                WebView.HitTestResult result = ((WebView) v).getHitTestResult();
+                int type = result.getType();
+                if (type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
+                        || type == WebView.HitTestResult.IMAGE_TYPE) {
+                    String imgUrl = result.getExtra();
+                    Log.i("rrr",""+type+"   "+imgUrl);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
