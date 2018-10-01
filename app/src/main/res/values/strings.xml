@@ -44,6 +44,8 @@
     <string name="save_image">Save</string>
     <string name="fab_home">Homepage</string>
     <string name="fab_random">Random</string>
+    <string name="currently_loaded">Currently Loaded Page:&#160;</string>
+    <string name="goto_page">Go to</string>
 
     <!-- Search Activity -->
     <string name="spinner_search_tags">Search Tags</string>
@@ -145,6 +147,11 @@
         content:\n%3$s</string>
     <string name="dialog_update_ignore">Ignore</string>
     <string name="dialog_update_update">Update</string>
+    <string name="dialog_feedback_title">Feedback</string>
+    <string name="dialog_feedback_msg">If you have any questions or have any good comments or
+        suggestions, you can contact us by email.\nEmail: qiaolimama@gmail.com</string>
+    <string name="dialog_feedback_sure">Send</string>
+    <string name="dialog_feedback_cancel">Cancel</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

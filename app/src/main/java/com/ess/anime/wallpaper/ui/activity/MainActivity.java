@@ -3,7 +3,6 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,7 +32,6 @@ import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
 
@@ -145,12 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, GameActivity.class));
                         break;
                     case R.id.nav_feedback:
-                        Uri uri = Uri.parse("mailto:" + "qiaolimama@gmail.com");
-                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "["
-                                + ComponentUtils.getVersionName(MainActivity.this)
-                                + "] Feedback - K Anime Wallpaper");
-                        startActivity(Intent.createChooser(intent, getString(R.string.feedback_title)));
+                        CustomDialog.showFeedbackDialog(MainActivity.this);
                         break;
                     case R.id.nav_setting:
                         startActivity(new Intent(MainActivity.this, SettingActivity.class));

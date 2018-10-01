@@ -104,6 +104,7 @@ public class DocData {
 
     // 判断当前语种是否为汉语
     public static boolean isChinese() {
-        return Locale.getDefault().getCountry().equals("CN");
+        String code = Locale.getDefault().getCountry();
+        return code.equals("CN") || code.equals("TW") || code.equals("HK");
     }
 }

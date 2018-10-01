@@ -1,25 +1,25 @@
 <resources>
-    <string name="app_name">K 动漫壁纸</string>
+    <string name="app_name">K 動漫壁紙</string>
 
     <!-- Toast -->
     <string name="back_again">再按一次退出</string>
     <string name="no_more_load">没有更多了</string>
-    <string name="check_network">加载失败，请检查您的网络并刷新重试</string>
-    <string name="loading">别着急哦，马上就好</string>
-    <string name="webview_error">呃…似乎网页出现了一点小问题。\n轻触页面刷新DA✩ZE。</string>
-    <string name="loading_image">正在获取图片信息，请稍候</string>
-    <string name="check_no_new_version">当前已是最新版本</string>
-    <string name="already_first_image">已经是第一张了</string>
-    <string name="already_last_image">已经是最后一张了</string>
-    <string name="cannot_set_as_wallpaper">无法设置为壁纸</string>
+    <string name="check_network">加載失敗，請檢查您的網絡並下拉刷新重試</string>
+    <string name="loading">別著急哦，馬上就好</string>
+    <string name="webview_error">呃…似乎網頁出現了一點小問題。\n輕觸頁面刷新DA✩ZE。</string>
+    <string name="loading_image">正在獲取圖片信息，請稍候</string>
+    <string name="check_no_new_version">當前已是最新版本</string>
+    <string name="already_first_image">已經是第一張了</string>
+    <string name="already_last_image">已經是最後一張了</string>
+    <string name="cannot_set_as_wallpaper">無法設置為壁紙</string>
 
     <!-- Notification -->
-    <string name="download_started">%s开始下载</string>
-    <string name="download_finished">%s / 下载完成</string>
-    <string name="download_failed">下载失败，点击重试</string>
-    <string name="download_title_sample">#%s (预览图)</string>
-    <string name="download_title_large">#%s (大图)</string>
-    <string name="download_title_origin">#%s (原图)</string>
+    <string name="download_started">%s開始下載</string>
+    <string name="download_finished">%s / 下載完成</string>
+    <string name="download_failed">下載失敗，點擊重試</string>
+    <string name="download_title_sample">#%s (預覽圖)</string>
+    <string name="download_title_large">#%s (大圖)</string>
+    <string name="download_title_origin">#%s (原圖)</string>
 
     <!-- Drawer Layout -->
     <string name="base_konachan_s">Konachan(safe)</string>
@@ -29,123 +29,129 @@
     <string name="base_danbooru">Danbooru</string>
     <string name="base_sankaku">Sankaku</string>
     <string name="base_gelbooru">Gelbooru</string>
-    <string name="navigation_drawer_open">打开侧边栏</string>
-    <string name="navigation_drawer_close">关闭侧边栏</string>
-    <string name="nav_post">图片</string>
-    <string name="nav_pool">图集</string>
+    <string name="navigation_drawer_open">打開側邊欄</string>
+    <string name="navigation_drawer_close">關閉側邊欄</string>
+    <string name="nav_post">圖片</string>
+    <string name="nav_pool">圖集</string>
     <string name="nav_collection">我的收藏</string>
-    <string name="nav_feedback">反馈建议</string>
-    <string name="nav_setting">设置与帮助</string>
+    <string name="nav_feedback">反饋建議</string>
+    <string name="nav_setting">設置與幫助</string>
     <string name="nav_sauce_nao">SauceNAO</string>
-    <string name="nav_game">拼图游戏</string>
-    <string name="feedback_title">发送邮件通过</string>
+    <string name="nav_game">拼圖遊戲</string>
+    <string name="feedback_title">發送郵件通過</string>
 
     <!-- Widget -->
     <string name="save_image">保存</string>
-    <string name="fab_home">回到首页</string>
-    <string name="fab_random">随机看图</string>
+    <string name="fab_home">回到首頁</string>
+    <string name="fab_random">隨機看圖</string>
+    <string name="currently_loaded">當前加載頁碼:&#160;</string>
+    <string name="goto_page">跳轉至</string>
 
     <!-- Search Activity -->
-    <string name="spinner_search_tags">标签搜索</string>
+    <string name="spinner_search_tags">標籤搜索</string>
     <string name="spinner_search_id">ID搜索</string>
     <string name="spinner_search_chinese">中文搜索</string>
-    <string name="spinner_search_advanced">高级搜索</string>
+    <string name="spinner_search_advanced">高級搜索</string>
     <string name="cancel_search">取消</string>
-    <string name="click_here">%s点此查看。</string>
+    <string name="click_here">%s點此查看。</string>
 
     <!-- Setting Activity -->
-    <string name="setting_allow_play_sound">允许播放语音</string>
-    <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
-    <string name="setting_help_advanced_search">查看高级搜索指令表</string>
-    <string name="setting_check_update">检查更新（需要有VPN和谷歌服务）</string>
-    <string name="setting_current_version">当前版本：%s</string>
+    <string name="setting_allow_play_sound">允許播放語音</string>
+    <string name="setting_help_tag_type">查看所有標籤類型及其含義</string>
+    <string name="setting_help_advanced_search">查看高級搜索指令表</string>
+    <string name="setting_check_update">檢查更新（需要有VPN和谷歌服務）</string>
+    <string name="setting_current_version">當前版本：%s</string>
 
     <!-- Image Detail -->
-    <string name="image_detail_image">图片</string>
-    <string name="image_detail_detail">详情</string>
-    <string name="image_detail_comment">评论</string>
+    <string name="image_detail_image">圖片</string>
+    <string name="image_detail_detail">詳情</string>
+    <string name="image_detail_comment">評論</string>
     <string name="image_id_symbol">#</string>
-    <string name="detail_post_title">图片</string>
-    <string name="detail_post_id">图片Id：</string>
-    <string name="detail_post_created_time">上传时间：</string>
-    <string name="detail_post_creator_id">用户Id：</string>
-    <string name="detail_post_author">用户名：</string>
+    <string name="detail_post_title">圖片</string>
+    <string name="detail_post_id">圖片Id：</string>
+    <string name="detail_post_created_time">上傳時間：</string>
+    <string name="detail_post_creator_id">用戶Id：</string>
+    <string name="detail_post_author">用戶名：</string>
     <string name="detail_post_size">分辨率：</string>
     <string name="detail_post_file_size">大小：</string>
-    <string name="detail_post_source">来源：</string>
+    <string name="detail_post_source">來源：</string>
     <string name="detail_post_artist">原作者：</string>
-    <string name="detail_post_rating">评级：</string>
+    <string name="detail_post_rating">評級：</string>
     <string name="detail_post_rating_s">Safe</string>
     <string name="detail_post_rating_e">R18</string>
     <string name="detail_post_rating_q">Questionable</string>
-    <string name="detail_post_score">评分：</string>
-    <string name="detail_tag_title">标签</string>
-    <string name="detail_pool_title">所属图集</string>
-    <string name="detail_pool_id">图集Id：</string>
-    <string name="detail_pool_name">名称：</string>
-    <string name="detail_pool_created_time">创建时间：</string>
-    <string name="detail_pool_updated_time">最后更新：</string>
+    <string name="detail_post_score">評分：</string>
+    <string name="detail_tag_title">標籤</string>
+    <string name="detail_pool_title">所屬圖集</string>
+    <string name="detail_pool_id">圖集Id：</string>
+    <string name="detail_pool_name">名稱：</string>
+    <string name="detail_pool_created_time">創建時間：</string>
+    <string name="detail_pool_updated_time">最後更新：</string>
     <string name="detail_pool_description">描述：</string>
-    <string name="detail_pool_no_description">无</string>
-    <string name="comment_no_comments">暂无评论</string>
+    <string name="detail_pool_no_description">無</string>
+    <string name="comment_no_comments">暫無評論</string>
 
     <!-- Pool Detail -->
     <string name="pool_updated_time">Updated %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
-    <string name="edit">编辑</string>
+    <string name="edit">編輯</string>
     <string name="share">共享</string>
-    <string name="share_title">共享通过</string>
-    <string name="delete">删除</string>
+    <string name="share_title">共享通過</string>
+    <string name="delete">刪除</string>
 
     <!-- Fullscreen Activity -->
-    <string name="action_wallpaper">设为壁纸</string>
-    <string name="action_share">分享到其他应用</string>
+    <string name="action_wallpaper">設為壁紙</string>
+    <string name="action_share">分享到其他應用</string>
 
     <!-- Surface View -->
     <string name="game_column_3">3 × 3</string>
     <string name="game_column_4">4 × 4</string>
     <string name="game_column_5">5 × 5</string>
-    <string name="game_current_step">步数：%d</string>
+    <string name="game_current_step">步數：%d</string>
     <string name="game_best_step">最佳：</string>
-    <string name="game_none_best_step">无</string>
+    <string name="game_none_best_step">無</string>
     <string name="game_completed">恭喜！</string>
 
     <!-- Dialog -->
-    <string name="dialog_delete_msg">将删除 %d 张图片。</string>
+    <string name="dialog_delete_msg">將刪除 %d 張圖片。</string>
     <string name="dialog_delete_cancel">取消</string>
-    <string name="dialog_delete_sure">删除</string>
-    <string name="dialog_download_sample">预览图&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
+    <string name="dialog_delete_sure">刪除</string>
+    <string name="dialog_download_sample">預覽圖&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
         %2$d</string>
-    <string name="dialog_download_large">大图&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
+    <string name="dialog_download_large">大圖&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
         %2$d</string>
-    <string name="dialog_download_origin">原图&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
+    <string name="dialog_download_origin">原圖&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
         %2$d</string>
-    <string name="dialog_download_already">%s&#160;&#160;&#160;(已下载)</string>
-    <string name="dialog_download_sure">下载</string>
+    <string name="dialog_download_already">%s&#160;&#160;&#160;(已下載)</string>
+    <string name="dialog_download_sure">下載</string>
     <string name="dialog_download_cancel">取消</string>
-    <string name="dialog_reload_msg">部分图片已存在于相册中，是否重新下载？</string>
+    <string name="dialog_reload_msg">部分圖片已存在于相册中，是否重新下载？</string>
     <string name="dialog_reload_yes">是</string>
     <string name="dialog_reload_no">否</string>
-    <string name="dialog_doc_tag_type_title">帮助：标签</string>
-    <string name="dialog_doc_advanced_search_title">帮助：指令表</string>
+    <string name="dialog_doc_tag_type_title">幫助：標籤</string>
+    <string name="dialog_doc_advanced_search_title">幫助：指令表</string>
     <string name="dialog_doc_sure">OK</string>
-    <string name="dialog_doc_lost">文档丢失。</string>
-    <string name="dialog_permission_rationale_title">权限请求</string>
-    <string name="dialog_permission_rationale_msg">应用需要SD卡权限进行保存、读取、删除图片操作。</string>
-    <string name="dialog_permission_rationale_grant">允许</string>
-    <string name="dialog_permission_rationale_deny">拒绝</string>
-    <string name="dialog_permission_setting_title">权限请求失败</string>
-    <string name="dialog_permission_setting_msg">应用请求SD卡权限失败，您可以到系统设置界面手动设置权限。</string>
-    <string name="dialog_permission_setting_ok">跳转</string>
+    <string name="dialog_doc_lost">文檔丟失。</string>
+    <string name="dialog_permission_rationale_title">權限請求</string>
+    <string name="dialog_permission_rationale_msg">应用需要SD卡权限进行保存、读取、删除圖片操作。</string>
+    <string name="dialog_permission_rationale_grant">允許</string>
+    <string name="dialog_permission_rationale_deny">拒絕</string>
+    <string name="dialog_permission_setting_title">權限請求失敗</string>
+    <string name="dialog_permission_setting_msg">應用請求SD卡權限失敗，您可以到系統設置界面手動設置權限。</string>
+    <string name="dialog_permission_setting_ok">跳轉</string>
     <string name="dialog_permission_setting_cancel">取消</string>
-    <string name="dialog_change_base_url_title">切换网站</string>
+    <string name="dialog_change_base_url_title">切換網站</string>
     <string name="dialog_change_base_url_cancel">取消</string>
-    <string name="dialog_update_title">检测到新版本</string>
-    <string name="dialog_update_msg" formatted="false">版本：%1$s\n更新包体积：%2$s\n\n更新内容：\n%3$s</string>
+    <string name="dialog_update_title">檢測到新版本</string>
+    <string name="dialog_update_msg" formatted="false">版本：%1$s\n更新包體積：%2$s\n\n更新內容：\n%3$s</string>
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
+    <string name="dialog_feedback_title">反饋建議</string>
+    <string name="dialog_feedback_msg">如果您遇到什麼問題，或是有什麼好的意見和建議，可以發送郵件與我們聯繫。\n郵箱: qiaolimama@gmail.com</string>
+    <string name="dialog_feedback_sure">發送</string>
+    <string name="dialog_feedback_cancel">取消</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

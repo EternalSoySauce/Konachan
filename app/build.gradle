@@ -6,7 +6,7 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 9
+        versionCode 10
         versionName "1.6.2"
     }
     buildTypes {
@@ -55,10 +55,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:15.0.0'
     implementation 'com.google.firebase:firebase-firestore:15.0.0'
     implementation 'com.just.agentweb:agentweb:4.0.2'
+    implementation 'com.just.agentweb:download:4.0.2'
     implementation project(path: ':agentweb-filechooser')
     implementation project(path: ':actionSheetDialog')
     implementation 'com.sprylab.android.texturevideoview:texturevideoview:1.2.1'
     implementation 'com.danikula:videocache:2.6.4'
+    implementation 'com.github.zyyoona7:EasyPopup:1.1.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

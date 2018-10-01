@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -255,6 +256,30 @@ public class CustomDialog extends MaterialDialog.Builder {
                             intent.putExtra(Constants.APK_BEAN, apkBean);
                             context.startService(intent);
                         }
+                    }
+                }).show();
+    }
+
+    /**
+     * Feedback说明
+     *
+     * @param context 上下文
+     */
+    public static void showFeedbackDialog(final Context context) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_feedback_title)
+                .content(R.string.dialog_feedback_msg)
+                .negativeText(R.string.dialog_feedback_cancel)
+                .positiveText(R.string.dialog_feedback_sure)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Uri uri = Uri.parse("mailto:" + "qiaolimama@gmail.com");
+                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "["
+                                + ComponentUtils.getVersionName(context)
+                                + "] Feedback - K Anime Wallpaper");
+                        context.startActivity(Intent.createChooser(intent, context.getString(R.string.feedback_title)));
                     }
                 }).show();
     }

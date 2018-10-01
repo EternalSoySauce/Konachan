@@ -21,33 +21,6 @@
             app:title="@string/nav_post"
             app:titleTextAppearance="@style/Toolbar.TitleText">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_from"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorAccent"/>
-
-                <TextView
-                    android:id="@+id/tv_to"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorAccent"/>
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/et_goto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:imeOptions="actionGo"
-                android:inputType="number"
-                android:textColor="@color/colorAccent"/>
-
             <ImageView
                 android:id="@+id/iv_search"
                 android:layout_width="42dp"
@@ -57,6 +30,15 @@
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_search"/>
+
+            <ImageView
+                android:id="@+id/iv_page"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="end|center_vertical"
+                android:background="@drawable/background_item_selected"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_page"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 

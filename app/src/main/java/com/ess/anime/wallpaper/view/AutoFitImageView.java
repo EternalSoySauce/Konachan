@@ -2,11 +2,11 @@ package com.ess.anime.wallpaper.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
+import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.utils.UIUtils;
 
 /**
  * 以360dp * 640dp屏幕为基准，根据xml里设置的宽度和高度自动进行缩放适配
@@ -21,6 +21,7 @@ import com.ess.anime.wallpaper.R;
  * maxRatio(float)：最大缩放倍数
  * minRatio(float)：最小缩放倍数
  */
+
 public class AutoFitImageView extends android.support.v7.widget.AppCompatImageView {
 
     private final static int NONE = 0;  // 两边均以屏幕尺寸为基准进行缩放
@@ -36,16 +37,11 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
     private float mMaxRatio;    // 最大缩放倍数，默认为0
     private float mMinRatio;    // 最小缩放倍数，默认为0
 
-
-    public AutoFitImageView(Context context) {
-        this(context, null);
-    }
-
-    public AutoFitImageView(Context context, @Nullable AttributeSet attrs) {
+    public AutoFitImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AutoFitImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public AutoFitImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // 获取xml属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AutoFitImageView);
@@ -55,16 +51,13 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
         mMaxRatio = typedArray.getFloat(R.styleable.AutoFitImageView_maxRatio, 0);
         mMinRatio = typedArray.getFloat(R.styleable.AutoFitImageView_minRatio, 0);
         typedArray.recycle();
-
-        // 计算宽高需缩放倍数
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        mWidthRatio = balanceRatio(px2dp(dm, dm.widthPixels) / 360f);
-        mHeightRatio = balanceRatio(px2dp(dm, dm.heightPixels) / 640f);
     }
 
-    private float px2dp(DisplayMetrics dm, float px) {
-        float scale = dm.density;
-        return px / scale + 0.5f;
+    private void resetRatio() {
+        // 计算宽高需缩放倍数
+        Point point = UIUtils.getAppUsableScreenSize(getContext());
+        mWidthRatio = balanceRatio(UIUtils.px2dp(getContext(), point.x) / 360f);
+        mHeightRatio = balanceRatio(UIUtils.px2dp(getContext(), point.y) / 640f);
     }
 
     // 根据最大和最小缩放比例进行取舍
@@ -80,6 +73,7 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        resetRatio();
         // UNSPECIFIED: 父容器不对View有任何限制，要多大给多大，一般用于系统内部，表示一种测量的状态
         // EXACTLY: 100dp match_parent
         // AT_MOST: wrap_content
@@ -95,18 +89,18 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
                 && mRelative == RELATIVE_TO_WIDTH) {
             // 宽高定值，宽度按屏幕缩放，高度按比例缩放
             float scale = selfHeight / 1f / selfWidth;
-            selfWidth *= mWidthRatio;
-            selfHeight = (int) (selfWidth * scale);
+            selfWidth = (int) (selfWidth * mWidthRatio + 0.5f);
+            selfHeight = (int) (selfWidth * scale + 0.5f);
         } else if (widthMode == MeasureSpec.EXACTLY && heightMode == MeasureSpec.EXACTLY
                 && mRelative == RELATIVE_TO_HEIGHT) {
             // 宽高定值，高度按屏幕缩放，宽度按比例缩放
             float scale = selfWidth / 1f / selfHeight;
-            selfHeight *= mHeightRatio;
-            selfWidth = (int) (selfHeight * scale);
+            selfHeight = (int) (selfHeight * mHeightRatio + 0.5f);
+            selfWidth = (int) (selfHeight * scale + 0.5f);
         } else {
             if (widthMode == MeasureSpec.EXACTLY && mScaleWidth) {
                 // 宽度按屏幕缩放，无视高度
-                selfWidth *= mWidthRatio;
+                selfWidth = (int) (selfWidth * mWidthRatio + 0.5f);
             } else {
                 // 无缩放，未设置mScaleWidth或layout_width="wrap_content"
                 selfWidth = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
@@ -114,7 +108,7 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
 
             if (heightMode == MeasureSpec.EXACTLY && mScaleHeight) {
                 // 高度按屏幕缩放，无视宽度
-                selfHeight *= mHeightRatio;
+                selfHeight = (int) (selfHeight * mHeightRatio + 0.5f);
             } else {
                 // 无缩放，未设置mScaleHeight或layout_height="wrap_content"
                 selfHeight = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);

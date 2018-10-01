@@ -4,7 +4,7 @@
     <!-- Toast -->
     <string name="back_again">再按一次退出</string>
     <string name="no_more_load">没有更多了</string>
-    <string name="check_network">加载失败，请检查您的网络并刷新重试</string>
+    <string name="check_network">加载失败，请检查您的网络并下拉刷新重试</string>
     <string name="loading">别着急哦，马上就好</string>
     <string name="webview_error">呃…似乎网页出现了一点小问题。\n轻触页面刷新DA✩ZE。</string>
     <string name="loading_image">正在获取图片信息，请稍候</string>
@@ -44,6 +44,8 @@
     <string name="save_image">保存</string>
     <string name="fab_home">回到首页</string>
     <string name="fab_random">随机看图</string>
+    <string name="currently_loaded">当前加载页码:&#160;</string>
+    <string name="goto_page">跳转至</string>
 
     <!-- Search Activity -->
     <string name="spinner_search_tags">标签搜索</string>
@@ -146,6 +148,10 @@
     <string name="dialog_update_msg" formatted="false">版本：%1$s\n更新包体积：%2$s\n\n更新内容：\n%3$s</string>
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
+    <string name="dialog_feedback_title">反馈建议</string>
+    <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系。\n邮箱: qiaolimama@gmail.com</string>
+    <string name="dialog_feedback_sure">发送</string>
+    <string name="dialog_feedback_cancel">取消</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

@@ -13,6 +13,10 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="AppTheme.PageEditText" parent="AppTheme">
+        <item name="colorAccent">@color/color_text_selected</item>
+    </style>
+
     <!-- Toolbar theme-->
     <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorPrimary">@color/colorAccent</item>

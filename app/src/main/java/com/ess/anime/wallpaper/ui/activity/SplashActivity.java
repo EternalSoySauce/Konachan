@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         getWindow().setBackgroundDrawable(null);
 
-        long delay = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
+        long delayMills = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         SoundHelper.getInstance().playSplashWelcomeSound(this);
 
         FireBase.getInstance().checkToAddUser();
@@ -46,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        }, delay);
+        }, delayMills);
 
         Constants.sRestart = false;
     }

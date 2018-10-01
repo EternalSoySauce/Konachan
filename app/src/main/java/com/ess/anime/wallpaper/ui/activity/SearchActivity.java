@@ -112,7 +112,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mPopup.show(v);
-                UIUtils.closeSoftInput(SearchActivity.this, mEtSearch);
+                UIUtils.closeSoftInput(SearchActivity.this);
             }
         });
 
@@ -142,7 +142,7 @@ public class SearchActivity extends AppCompatActivity {
                         Intent intent = new Intent();
                         intent.putExtra(Constants.SEARCH_TAG, tags);
                         setResult(mCurrentSearchMode, intent);
-                        UIUtils.closeSoftInput(SearchActivity.this, mEtSearch);
+                        UIUtils.closeSoftInput(SearchActivity.this);
                         finish();
                     }
                 }

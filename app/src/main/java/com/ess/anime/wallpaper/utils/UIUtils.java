@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -67,6 +68,18 @@ public class UIUtils {
     }
 
     /**
+     * 获取ActionBar高度
+     *
+     * @param context 上下文
+     * @return ActionBar高度
+     */
+    public static int getActionBarHeight(Context context) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
+        return TypedValue.complexToDimensionPixelSize(typedValue.data, context.getResources().getDisplayMetrics());
+    }
+
+    /**
      * 获取底部导航栏尺寸
      *
      * @param activity 上下文
@@ -93,11 +106,13 @@ public class UIUtils {
     /**
      * 获取用户正在使用的屏幕尺寸
      *
-     * @param activity activity
+     * @param context context
      * @return 屏幕使用尺寸 Point （宽：point.x, 高：point.y）
      */
-    public static Point getAppUsableScreenSize(Activity activity) {
-        WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+    public static Point getAppUsableScreenSize(Context context) {
+        // 使用application才能真正获得正在使用部分的尺寸
+        context = context.getApplicationContext();
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
@@ -198,6 +213,24 @@ public class UIUtils {
     }
 
     /**
+     * 设置状态栏文字颜色为黑色/白色
+     *
+     * @param activity 上下文
+     * @param isBlack  是否为黑色（必须设置过true之后才能对应使用false值）
+     */
+    public static void setStatusBarBlackText(Activity activity, boolean isBlack) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decorView = activity.getWindow().getDecorView();
+            int visibility = decorView.getSystemUiVisibility();
+            if (isBlack) {
+                decorView.setSystemUiVisibility(visibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            } else {
+                decorView.setSystemUiVisibility(visibility ^ View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
+    }
+
+    /**
      * 获得软键盘高度
      *
      * @param view 当前view层
@@ -228,15 +261,15 @@ public class UIUtils {
     /**
      * 关闭软键盘
      *
-     * @param context 上下文
-     * @param view    EditText
+     * @param activity 上下文
      */
-    public static void closeSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.
+    public static void closeSoftInput(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.
                 getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        if (imm.isActive()) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (imm.isActive() && activity.getCurrentFocus() != null) {
+            imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
@@ -250,7 +283,8 @@ public class UIUtils {
                 getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (imm.isActive()) {
-            imm.toggleSoftInput(0, 0);
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,
+                    InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 

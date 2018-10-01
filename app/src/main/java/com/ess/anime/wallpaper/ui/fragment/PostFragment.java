@@ -40,6 +40,7 @@ import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,8 +66,10 @@ public class PostFragment extends Fragment {
     private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
+    private EasyPopup mPopupPage;
     private TextView mTvFrom;
     private TextView mTvTo;
+    private EditText mEtGoto;
 
     private int mCurrentPage;  // 当前页码
     private int mGoToPage;  // 跳转到的起始页码
@@ -94,6 +97,7 @@ public class PostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_post, container, false);
         initToolBarLayout();
+        initPopupPage();
         initSwipeRefreshLayout();
         initRecyclerView();
         initFloatingButton();
@@ -141,6 +145,22 @@ public class PostFragment extends Fragment {
             }
         });
 
+        // 弹出跳转页弹窗
+        ImageView ivPage = mRootView.findViewById(R.id.iv_page);
+        ivPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupPage.showAsDropDown(v);
+                mEtGoto.selectAll();
+                mEtGoto.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        UIUtils.showSoftInput(mActivity, mEtGoto);
+                    }
+                });
+            }
+        });
+
         //搜索
         ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
         ivSearch.setOnClickListener(new View.OnClickListener() {
@@ -151,18 +171,27 @@ public class PostFragment extends Fragment {
                 startActivityForResult(searchIntent, Constants.SEARCH_CODE);
             }
         });
+    }
+
+    private void initPopupPage() {
+        mPopupPage = EasyPopup.create()
+                .setContentView(mActivity, R.layout.layout_popup_goto_page)
+                .setFocusAndOutsideEnable(true)
+                .setBackgroundDimEnable(true)
+                .setDimValue(0.4f)
+                .apply();
 
         // 当前显示的起始页与终止页
-        mTvFrom = mRootView.findViewById(R.id.tv_from);
-        mTvTo = mRootView.findViewById(R.id.tv_to);
+        mTvFrom = mPopupPage.findViewById(R.id.tv_from);
+        mTvTo = mPopupPage.findViewById(R.id.tv_to);
 
         // 页码跳转
-        final EditText etGoto = mRootView.findViewById(R.id.et_goto);
-        etGoto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mEtGoto = mPopupPage.findViewById(R.id.et_goto);
+        mEtGoto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    String num = etGoto.getText().toString();
+                    String num = mEtGoto.getText().toString();
                     if (!TextUtils.isEmpty(num)) {
                         int newPage = Integer.parseInt(num);
                         if (newPage > 0) {
@@ -172,6 +201,7 @@ public class PostFragment extends Fragment {
                             changeToPage(mCurrentPage);
                         }
                     }
+                    mPopupPage.dismiss();
                 }
                 return false;
             }
@@ -478,8 +508,13 @@ public class PostFragment extends Fragment {
                         tag2.replace(tag2.length() - 1, tag2.length(), "");
                         mCurrentTagList.add(tag2.toString());
                         getNewPosts(mCurrentPage);
-                        changeFromPage(mCurrentPage);
-                        changeToPage(mCurrentPage);
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                changeFromPage(mCurrentPage);
+                                changeToPage(mCurrentPage);
+                            }
+                        });
                     } else {
                         getNoData();
                     }
