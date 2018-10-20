@@ -4,6 +4,8 @@
 ## 最新版本【v1.6.2】
 [百度云盘下载](https://pan.baidu.com/s/125mkF_F1kpKaSVrcugXpIw)，提取码: 81as
 
+## 使用说明
+![截图](https://github.com/EternalSoySauce/images/blob/master/k_banner.jpg)
 
 ## 网站支持
 目前已支持网站源：
