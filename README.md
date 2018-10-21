@@ -4,8 +4,15 @@
 ## 最新版本【v1.6.2】
 [百度云盘下载](https://pan.baidu.com/s/125mkF_F1kpKaSVrcugXpIw)，提取码: 81as
 
+## 应用展示
+<a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
+
+<a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_4.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_4.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_5.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_5.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_6.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_6.jpg" width="30%"/></a>
+
+<a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_7.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_7.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg" width="30%"/></a>
+
 ## 使用说明
-![截图](https://github.com/EternalSoySauce/images/blob/master/k_banner.jpg)
+详见WIKI
 
 ## 网站支持
 目前已支持网站源：
