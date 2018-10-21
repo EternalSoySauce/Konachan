@@ -12,17 +12,25 @@
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_7.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_7.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg" width="30%"/></a>
 
 ## 使用说明
-详见WIKI
+* 详见[Wiki](https://github.com/EternalSoySauce/Konachan/wiki)
+
+## 常见问题
+#### 我总是显示网络有问题加载不出来数据怎么办
+```
+* 多下拉刷新几次
+* 多切换几个网站源试试
+* 开VPN
+```
 
 ## 网站支持
-目前已支持网站源：
+#### 目前已支持网站源：
 * Konachan
 * Yande.re
 * Lolibooru
 * Danbooru
 * Sankaku
 
-后续即将支持网站源：
+#### 后续即将支持网站源：
 * Gelbooru
 * 3dbooru
 * Zerochan
@@ -39,26 +47,36 @@
 * 【v1.6.1】
 	* 优化预览图加载速度
 	* 播放视频时保持屏幕常亮
-  * 增加反馈功能，可发送邮件反馈问题或建议
-  * 修复一些已知问题
+  	* 增加反馈功能，可发送邮件反馈问题或建议
+  	* 修复一些已知问题
   
 * 【v1.6】
 	* 集成Danbooru和Sankaku图源，在侧拉栏中点滑稽切换
 	* 支持显示图片、动图、视频等多种媒体格式
-  * 修复一些已知问题
+  	* 修复一些已知问题
  
 * 【v1.5.2】
 	* 支持在图片详情界面上下翻页浏览
 	* 支持多种尺寸选择下载图片，不单单能下载原图
-  * 全屏查看本地收藏图片页面加入分享与设置为手机壁纸功能
-  * 集成SauceNAO图片搜索功能
+  	* 全屏查看本地收藏图片页面加入分享与设置为手机壁纸功能
+  	* 集成SauceNAO图片搜索功能
   
 * 【v1.5.1】
 	* 正式版
   
 * 【v1.0 ~ v1.4】
 	* 测试版
-  
+
+## 有问题或者有功能提议
+* 欢迎提 [Issues](https://github.com/EternalSoySauce/Konachan/issues)，我会尽快回复
+
+## 打赏
+各位看官老爷要是喜欢这款应用的话，有钱的捧个钱场，没钱的捧个人场，空闲的捧个留场，喜欢的捧个情场！
+
+谢谢大家的支持~
+
+<a href="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png"><img src="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png" width="35%"/>
+
 ## License 
 ```
 Copyright ©  EternalSoySauce(https://github.com/EternalSoySauce/Konachan)
