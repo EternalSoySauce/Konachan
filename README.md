@@ -17,10 +17,23 @@
 ## 常见问题
 #### 我总是显示网络有问题加载不出来数据怎么办
 ```
-* 多下拉刷新几次
-* 多切换几个网站源试试
-* 开VPN
+· 多下拉刷新几次
+· 多切换几个网站源试试
+· 开VPN
 ```
+
+#### 明明你这里有新版本，为什么我在应用内检测不到啊
+```
+应用内的服务器暂时用的是谷歌的Firebase，所以必须要手机支持谷歌服务并且开着VPN才能检测到更新
+没有此条件的看官老爷就常来这里瞅瞅吧，抱歉了~
+```
+
+#### 我搜索『汉语名/图片ID』怎么什么都搜不到啊
+```
+应用内提供了四种搜索模式以满足不同用户的需求，『标签搜索』、『ID搜索』、『中文搜索』、『高级搜索』
+请先切换到对应的搜索模式后再进行搜索
+```
+
 
 ## 网站支持
 #### 目前已支持网站源：
@@ -75,7 +88,7 @@
 
 谢谢大家的支持~
 
-<a href="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png"><img src="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png" width="35%"/>
+<a href="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png"><img src="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png" width="37.5%"/>
 
 ## License 
 ```
