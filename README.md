@@ -3,7 +3,7 @@
 
 ## 最新版本【v1.6.2】
 * 地址1：[百度云盘下载](https://pan.baidu.com/s/125mkF_F1kpKaSVrcugXpIw)，提取码: 81as
-* 地址2：[直接源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.6.2.apk)
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.6.2.apk)
 * 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.6.2.apk?alt=media&token=c64d428c-9ede-4219-b9c3-da4846c8a275)
 
 ## 应用展示
