@@ -19,7 +19,7 @@ import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.global.ImageDataHolder;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.MultipleMediaLayout;

@@ -32,7 +32,7 @@ import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
 import com.ess.anime.wallpaper.bean.SearchBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.global.DocData;
+import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
@@ -214,7 +214,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initSearchDocumentViews() {
-        ArrayList<String> docList = DocData.getSearchModeDocumentList(this);
+        ArrayList<String> docList = DocDataHelper.getSearchModeDocumentList(this);
         mLayoutDocSearchMode = (LinearLayout) findViewById(R.id.layout_doc_search_mode);
 
         TextView tvDocSearchTag = (TextView) findViewById(R.id.tv_doc_search_tag);
@@ -354,7 +354,8 @@ public class SearchActivity extends AppCompatActivity {
                 name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_LOLIBOORU);
                 break;
             case Constants.BASE_URL_DANBOORU:
-                // Danbooru没有搜索提示
+                // Danbooru没有搜索提示，用Konachan(r18)的
+                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN_E);
                 break;
             case Constants.BASE_URL_SANKAKU:
                 // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx

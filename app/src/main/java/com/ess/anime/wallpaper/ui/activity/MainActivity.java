@@ -27,7 +27,7 @@ import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.helper.SoundHelper;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;

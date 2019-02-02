@@ -15,9 +15,9 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.global.ImageDataHolder;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -166,7 +166,7 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String html = response.body().string();
-                            String json = ParseHtml.getImageDetailJson(html);
+                            String json = HtmlParserFactory.createParser(mActivity, html).getImageDetailJson();
                             // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
                             EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
                         } else {

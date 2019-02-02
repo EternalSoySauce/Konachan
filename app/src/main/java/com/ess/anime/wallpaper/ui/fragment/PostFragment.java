@@ -30,9 +30,10 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.helper.SoundHelper;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.http.parser.HtmlParser;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -406,7 +407,7 @@ public class PostFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<ThumbBean> thumbList = ParseHtml.getThumbList(html);
+                    ArrayList<ThumbBean> thumbList = HtmlParserFactory.createParser(mActivity, html).getThumbList();
                     refreshThumbList(thumbList);
                 } else {
                     checkNetwork();
@@ -451,7 +452,7 @@ public class PostFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    addMoreThumbList(ParseHtml.getThumbList(html));
+                    addMoreThumbList(HtmlParserFactory.createParser(mActivity, html).getThumbList());
                 } else {
                     checkNetwork();
                 }
@@ -495,7 +496,7 @@ public class PostFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    String name = ParseHtml.getNameFromBaidu(html);
+                    String name = HtmlParser.getNameFromBaidu(html);
                     if (!TextUtils.isEmpty(name)) {
                         String tag1 = "~" + name;
                         mCurrentTagList.add(tag1);
@@ -538,7 +539,7 @@ public class PostFragment extends Fragment {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
                         String url = imageBean.posts[0].sampleUrl;
-                        if (FileUtils.isImageType(url) && !getActivity().isDestroyed()) {
+                        if (FileUtils.isImageType(url) && !mActivity.isDestroyed()) {
                             GlideApp.with(mActivity)
                                     .load(MyGlideModule.makeGlideUrl(url))
                                     .submit();

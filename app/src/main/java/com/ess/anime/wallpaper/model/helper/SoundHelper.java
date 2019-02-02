@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.helper;
+package com.ess.anime.wallpaper.model.helper;
 
 import android.content.Context;
 import android.media.MediaPlayer;

@@ -11,16 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,7 +127,7 @@ public class CommentFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<CommentBean> commentList = ParseHtml.getCommentList(mActivity, html);
+                    ArrayList<CommentBean> commentList = HtmlParserFactory.createParser(mActivity, html).getCommentList();
                     setCommentList(commentList);
                 } else {
                     getCommentList();

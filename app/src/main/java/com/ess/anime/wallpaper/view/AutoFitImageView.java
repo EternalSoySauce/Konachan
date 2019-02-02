@@ -56,8 +56,8 @@ public class AutoFitImageView extends android.support.v7.widget.AppCompatImageVi
     private void resetRatio() {
         // 计算宽高需缩放倍数
         Point point = UIUtils.getAppUsableScreenSize(getContext());
-        mWidthRatio = balanceRatio(UIUtils.px2dp(getContext(), point.x) / 360f);
-        mHeightRatio = balanceRatio(UIUtils.px2dp(getContext(), point.y) / 640f);
+        mWidthRatio = balanceRatio(UIUtils.px2dp(getContext(), Math.min(point.x, point.y)) / 360f);
+        mHeightRatio = balanceRatio(UIUtils.px2dp(getContext(), Math.max(point.x, point.y)) / 640f);
     }
 
     // 根据最大和最小缩放比例进行取舍

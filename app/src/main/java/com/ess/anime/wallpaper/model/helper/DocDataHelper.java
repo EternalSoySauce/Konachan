@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.global;
+package com.ess.anime.wallpaper.model.helper;
 
 import android.content.Context;
 import android.text.Html;
@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class DocData {
+public class DocDataHelper {
 
     private final static String TXT_SEARCH_MODE_CHINESE = "search_mode_chinese";
     private final static String TXT_SEARCH_MODE_ENGLISH = "search_mode_english";

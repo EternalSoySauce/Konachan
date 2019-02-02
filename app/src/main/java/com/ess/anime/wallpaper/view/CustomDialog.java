@@ -16,7 +16,7 @@ import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.global.DocData;
+import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
@@ -89,7 +89,7 @@ public class CustomDialog extends MaterialDialog.Builder {
     public static void showTagTypeHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
         TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
-        tvContent.setText(DocData.getTagTypeHelpDoc(context));
+        tvContent.setText(DocDataHelper.getTagTypeHelpDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_doc_tag_type_title)
@@ -106,7 +106,7 @@ public class CustomDialog extends MaterialDialog.Builder {
     public static void showAdvancedSearchHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
         TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
-        tvContent.setText(DocData.getAdvancedSearchDoc(context));
+        tvContent.setText(DocDataHelper.getAdvancedSearchDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_doc_advanced_search_title)
@@ -236,7 +236,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param apkBean 新版本信息
      */
     public static void showUpdateDialog(final Context context, final ApkBean apkBean) {
-        String updateContent = DocData.isChinese() ? apkBean.updatedContentZh : apkBean.updatedContentEn;
+        String updateContent = DocDataHelper.isChinese() ? apkBean.updatedContentZh : apkBean.updatedContentEn;
         MaterialDialog dialog = new CustomDialog(context)
                 .title(context.getString(R.string.dialog_update_title))
                 .titleGravity(GravityEnum.CENTER)

@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.global;
+package com.ess.anime.wallpaper.model.holder;
 
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;

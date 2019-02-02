@@ -20,7 +20,7 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.http.parser.HtmlParser;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
@@ -152,7 +152,7 @@ public class PoolPostFragment extends Fragment {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
-                        refreshThumbList(ParseHtml.getThumbListOfPool(html));
+                        refreshThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
                     }
                 } else {
                     mNewCall = OkHttp.getInstance().connect(url, this);
@@ -196,7 +196,7 @@ public class PoolPostFragment extends Fragment {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
-                        addMoreThumbList(ParseHtml.getThumbListOfPool(html));
+                        addMoreThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
                     }
                 } else {
                     mLoadMoreCall = OkHttp.getInstance().connect(url, this);

@@ -29,9 +29,9 @@ import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.helper.SoundHelper;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.ParseHtml;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
@@ -395,7 +395,7 @@ public class PoolFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<PoolListBean> poolList = ParseHtml.getPoolList(mActivity, html);
+                    ArrayList<PoolListBean> poolList = HtmlParserFactory.createParser(mActivity, html).getPoolList();
                     refreshPoolList(poolList);
                     if (poolList.isEmpty()) {
                         getNoData();
@@ -443,7 +443,7 @@ public class PoolFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    addMorePoolList(ParseHtml.getPoolList(mActivity, html));
+                    addMorePoolList(HtmlParserFactory.createParser(mActivity, html).getPoolList());
                 } else {
                     checkNetwork();
                 }

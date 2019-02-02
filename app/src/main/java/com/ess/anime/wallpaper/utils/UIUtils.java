@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -392,6 +393,23 @@ public class UIUtils {
                     return t;
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 获得View的Activity，兼容4.x机器
+     *
+     * @param view View
+     * @return Activity
+     */
+    public static Activity getActivityFromView(View view) {
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
     }

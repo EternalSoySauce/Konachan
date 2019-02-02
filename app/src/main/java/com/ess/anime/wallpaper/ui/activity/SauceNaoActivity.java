@@ -8,12 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.helper.PermissionHelper;
+import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.just.agentweb.AgentWeb;
 
 public class SauceNaoActivity extends AppCompatActivity {
@@ -66,9 +67,17 @@ public class SauceNaoActivity extends AppCompatActivity {
                         new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(getResources().getColor(R.color.color_text_selected))
                 .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
+                .interceptUnkownUrl()
                 .createAgentWeb()
                 .ready()
                 .go("http://saucenao.com/");
+
+        WebSettings settings = mAgentWeb.getWebCreator().getWebView().getSettings();
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
 
         mAgentWeb.getWebCreator().getWebView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
