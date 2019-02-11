@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 public class ThumbBean implements Parcelable {
 
@@ -10,6 +11,11 @@ public class ThumbBean implements Parcelable {
     public String realSize;
     public String linkToShow;
     public ImageBean imageBean;
+
+    //临时存储部分图片信息
+    //部分网站（如Gelbooru）在获取ThumbBean时即可解析出一部分图片信息
+    //在解析完ImageBean后将此临时信息覆盖到imageBean.posts[0]上
+    public PostBean tempPost;
 
     public ThumbBean(String id, String thumbUrl, String realSize, String linkToShow) {
         this.id = id;
@@ -21,10 +27,25 @@ public class ThumbBean implements Parcelable {
     // 判断ImageBean是否为此ThumbBean所属
     public boolean checkImageBelongs(ImageBean imageBean) {
         try {
-            return id.equals(imageBean.posts[0].id);
+            return TextUtils.equals(id, imageBean.posts[0].id);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    // 在解析完ImageBean后将tempPost临时信息覆盖到imageBean.posts[0]上
+    public synchronized void checkToReplacePostData() {
+        try {
+            if (tempPost != null && imageBean != null
+                    && imageBean.posts != null && imageBean.posts.length > 0) {
+                PostBean postBean = imageBean.posts[0];
+                if (postBean != null) {
+                    postBean.replaceDataIfNotNull(tempPost);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -34,6 +55,7 @@ public class ThumbBean implements Parcelable {
         realSize = in.readString();
         linkToShow = in.readString();
         imageBean = in.readParcelable(ImageBean.class.getClassLoader());
+        tempPost = in.readParcelable(PostBean.class.getClassLoader());
     }
 
     @Override
@@ -43,6 +65,7 @@ public class ThumbBean implements Parcelable {
         dest.writeString(realSize);
         dest.writeString(linkToShow);
         dest.writeParcelable(imageBean, flags);
+        dest.writeParcelable(tempPost, flags);
     }
 
     @Override
@@ -64,7 +87,7 @@ public class ThumbBean implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof ThumbBean) {
+        if (obj instanceof ThumbBean) {
             ThumbBean thumbBean = (ThumbBean) obj;
             return !(this.linkToShow == null || thumbBean.linkToShow == null) && this.linkToShow.equals(thumbBean.linkToShow);
         }

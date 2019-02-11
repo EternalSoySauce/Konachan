@@ -30,10 +30,10 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -538,6 +538,7 @@ public class PostFragment extends Fragment {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
+                        thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].sampleUrl;
                         if (FileUtils.isImageType(url) && !mActivity.isDestroyed()) {
                             GlideApp.with(mActivity)

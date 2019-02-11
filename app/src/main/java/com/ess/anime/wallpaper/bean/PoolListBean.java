@@ -20,7 +20,7 @@ public class PoolListBean {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof PoolListBean) {
+        if (obj instanceof PoolListBean) {
             PoolListBean poolListBean = (PoolListBean) obj;
             return !(this.id == null || poolListBean.id == null) && this.id.equals(poolListBean.id);
         }

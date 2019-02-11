@@ -26,7 +26,7 @@ public class ImageBean implements Parcelable {
 
     public VoteBean votes;  //（未知用处，bean暂时未设定）
 
-    private ImageBean() {
+    public ImageBean() {
     }
 
     public static ImageBean getImageDetailFromJson(String json) {

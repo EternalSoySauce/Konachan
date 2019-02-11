@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -107,6 +108,123 @@ public class PostBean implements Parcelable {
     public String flagDetail;  //（未知用处）（只有一部分有这个key）
 
     public PostBean() {
+    }
+
+    /**
+     * 用newPost中的非null和0的数据替换掉原有数据
+     *
+     * @param newPost
+     */
+    public void replaceDataIfNotNull(PostBean newPost) {
+        if (newPost == null) {
+            return;
+        }
+
+        if (!TextUtils.isEmpty(newPost.id)) {
+            id = newPost.id;
+        }
+        if (!TextUtils.isEmpty(newPost.tags)) {
+            tags = newPost.tags;
+        }
+        if (newPost.createdTime != 0) {
+            createdTime = newPost.createdTime;
+        }
+        if (!TextUtils.isEmpty(newPost.creatorId)) {
+            creatorId = newPost.creatorId;
+        }
+        if (!TextUtils.isEmpty(newPost.author)) {
+            author = newPost.author;
+        }
+        if (!TextUtils.isEmpty(newPost.change)) {
+            change = newPost.change;
+        }
+        if (!TextUtils.isEmpty(newPost.source)) {
+            source = newPost.source;
+        }
+        if (newPost.score != 0) {
+            score = newPost.score;
+        }
+        if (!TextUtils.isEmpty(newPost.md5)) {
+            md5 = newPost.md5;
+        }
+        if (newPost.fileSize != 0) {
+            fileSize = newPost.fileSize;
+        }
+        if (!TextUtils.isEmpty(newPost.fileUrl)) {
+            fileUrl = newPost.fileUrl;
+        }
+        if (newPost.isShownInIndex) {
+            isShownInIndex = newPost.isShownInIndex;
+        }
+        if (!TextUtils.isEmpty(newPost.previewUrl)) {
+            previewUrl = newPost.previewUrl;
+        }
+        if (newPost.previewWidth != 0) {
+            previewWidth = newPost.previewWidth;
+        }
+        if (newPost.previewHeight != 0) {
+            previewHeight = newPost.previewHeight;
+        }
+        if (newPost.actualPreviewWidth != 0) {
+            actualPreviewWidth = newPost.actualPreviewWidth;
+        }
+        if (newPost.actualPreviewHeight != 0) {
+            actualPreviewHeight = newPost.actualPreviewHeight;
+        }
+        if (!TextUtils.isEmpty(newPost.sampleUrl)) {
+            sampleUrl = newPost.sampleUrl;
+        }
+        if (newPost.sampleWidth != 0) {
+            sampleWidth = newPost.sampleWidth;
+        }
+        if (newPost.sampleHeight != 0) {
+            sampleHeight = newPost.sampleHeight;
+        }
+        if (newPost.sampleFileSize != 0) {
+            sampleFileSize = newPost.sampleFileSize;
+        }
+        if (!TextUtils.isEmpty(newPost.jpegUrl)) {
+            jpegUrl = newPost.jpegUrl;
+        }
+        if (newPost.jpegWidth != 0) {
+            jpegWidth = newPost.jpegWidth;
+        }
+        if (newPost.jpegHeight != 0) {
+            jpegHeight = newPost.jpegHeight;
+        }
+        if (newPost.jpegFileSize != 0) {
+            jpegFileSize = newPost.jpegFileSize;
+        }
+        if (!TextUtils.isEmpty(newPost.rating)) {
+            rating = newPost.rating;
+        }
+        if (newPost.hasChildren) {
+            hasChildren = newPost.hasChildren;
+        }
+        if (!TextUtils.isEmpty(newPost.parentId)) {
+            parentId = newPost.parentId;
+        }
+        if (!TextUtils.isEmpty(newPost.status)) {
+            status = newPost.status;
+        }
+        if (newPost.width != 0) {
+            width = newPost.width;
+        }
+        if (newPost.height != 0) {
+            height = newPost.height;
+        }
+        if (newPost.isHeld) {
+            isHeld = newPost.isHeld;
+        }
+        if (!TextUtils.isEmpty(newPost.framesPendingString)) {
+            framesPendingString = newPost.framesPendingString;
+        }
+        if (!TextUtils.isEmpty(newPost.framesString)) {
+            framesString = newPost.framesString;
+        }
+        if (!TextUtils.isEmpty(newPost.flagDetail)) {
+            flagDetail = newPost.flagDetail;
+        }
     }
 
     protected PostBean(Parcel in) {

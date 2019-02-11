@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.view.image;
 
 import android.content.Context;
 import android.content.res.Resources;

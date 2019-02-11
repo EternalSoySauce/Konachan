@@ -77,7 +77,7 @@ public class DetailFragment extends Fragment {
     }
 
     private void initView() {
-        mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setEnabled(false);
 
         if (mImageBean != null) {
@@ -90,6 +90,10 @@ public class DetailFragment extends Fragment {
 
     // 图片详情
     private void loadDetail(ImageBean imageBean) {
+        if (imageBean == null || imageBean.posts.length == 0) {
+            return;
+        }
+
         /****************** Posts ******************/
         PostBean postBean = imageBean.posts[0];
         // 图片Id
@@ -161,7 +165,7 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_score, R.string.detail_post_score, score);
 
         /****************** Tags ******************/
-        ViewGroup layoutTag = (ViewGroup) mRootView.findViewById(R.id.layout_tag);
+        ViewGroup layoutTag = mRootView.findViewById(R.id.layout_tag);
         TagBean tagBean = imageBean.tags;
         addTagViews(layoutTag, tagBean.copyright, R.color.color_copyright);
         addTagViews(layoutTag, tagBean.character, R.color.color_character);
@@ -175,7 +179,7 @@ public class DetailFragment extends Fragment {
             return;
         }
         PoolBean poolBean = imageBean.pools[0];
-        ViewStub viewStub = (ViewStub) mRootView.findViewById(R.id.view_stub_detail_pool);
+        ViewStub viewStub = mRootView.findViewById(R.id.view_stub_detail_pool);
         viewStub.inflate();
 
         // 图集Id
@@ -211,12 +215,12 @@ public class DetailFragment extends Fragment {
     }
 
     private void setText(int layoutId, int key, String value, boolean hyperlinkValue) {
-        ViewGroup layout = (ViewGroup) mRootView.findViewById(layoutId);
+        ViewGroup layout = mRootView.findViewById(layoutId);
 
-        TextView tvKey = (TextView) layout.findViewById(R.id.tv_key);
+        TextView tvKey = layout.findViewById(R.id.tv_key);
         tvKey.setText(key);
 
-        TextView tvValue = (TextView) layout.findViewById(R.id.tv_value);
+        TextView tvValue = layout.findViewById(R.id.tv_value);
         tvValue.setText(value);
         if (hyperlinkValue) {
             tvValue.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -229,7 +233,7 @@ public class DetailFragment extends Fragment {
     private void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
         for (String tag : tagList) {
             View view = View.inflate(mActivity, R.layout.layout_detail_item, null);
-            TextView tvTag = (TextView) view.findViewById(R.id.tv_key);
+            TextView tvTag = view.findViewById(R.id.tv_key);
             tvTag.setText(tag);
             tvTag.setTextColor(getResources().getColor(colorId));
             parentLayout.addView(view);
@@ -249,6 +253,8 @@ public class DetailFragment extends Fragment {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
             if (mThumbBean.checkImageBelongs(imageBean)) {
+                mThumbBean.imageBean = imageBean;
+                mThumbBean.checkToReplacePostData();
                 loadDetail(imageBean);
                 mSwipeRefresh.setRefreshing(false);
                 mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);

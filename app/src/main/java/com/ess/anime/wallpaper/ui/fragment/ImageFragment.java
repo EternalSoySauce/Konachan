@@ -65,7 +65,7 @@ public class ImageFragment extends Fragment {
     }
 
     private void initView() {
-        mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setEnabled(false);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -94,6 +94,8 @@ public class ImageFragment extends Fragment {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
             if (mThumbBean.checkImageBelongs(imageBean)) {
+                mThumbBean.imageBean = imageBean;
+                mThumbBean.checkToReplacePostData();
                 mImageBean = imageBean;
                 loadMedia();
                 mSwipeRefresh.setRefreshing(false);

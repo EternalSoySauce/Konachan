@@ -44,8 +44,8 @@ public abstract class HtmlParser {
     public static ArrayList<ThumbBean> getThumbListOfPool(Context context, String html) {
         HtmlParser parser = HtmlParserFactory.createParser(context, html);
         ArrayList<ThumbBean> thumbList = parser.getThumbList();
-        Elements eleScripts = parser.getDocument().getElementsByTag("script");
-        for (Element script : eleScripts) {
+        Elements scripts = parser.getDocument().getElementsByTag("script");
+        for (Element script : scripts) {
             try {
                 String text = script.html();
                 String flag = "Post.register_resp(";

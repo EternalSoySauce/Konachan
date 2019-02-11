@@ -19,15 +19,15 @@ import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.OnTouchAlphaListener;
+import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.SlidingTabLayout;
@@ -46,7 +46,6 @@ public class ImageDetailActivity extends AppCompatActivity {
     private ArrayList<Fragment> mFragmentList = new ArrayList<>();
     private FragmentManager mFragmentManager;
 
-    private PermissionHelper mPermissionUtil;
     private Handler mHandler = new Handler();
 
     @Override
@@ -105,7 +104,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void initToolBarLayout() {
-        FrameLayout flBack = (FrameLayout) findViewById(R.id.fl_back);
+        FrameLayout flBack = findViewById(R.id.fl_back);
         flBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +124,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             mFragmentList.add(CommentFragment.newInstance(getString(R.string.image_detail_comment)));
         }
 
-        mVpImageDetail = (ViewPager) findViewById(R.id.vp_image_detail);
+        mVpImageDetail = findViewById(R.id.vp_image_detail);
         mVpImageDetail.setAdapter(new ViewPagerImageDetailAdapter(mFragmentManager, mFragmentList));
         mVpImageDetail.setOffscreenPageLimit(mFragmentList.size() - 1);
     }
@@ -134,7 +133,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         int colorSelected = getResources().getColor(R.color.color_text_selected);
         int colorUnselected = getResources().getColor(R.color.color_text_unselected);
 
-        SlidingTabLayout slidingTab = (SlidingTabLayout) findViewById(R.id.sliding_tab_layout);
+        SlidingTabLayout slidingTab = findViewById(R.id.sliding_tab_layout);
         slidingTab.setDistributeEvenly(true);
         slidingTab.setTabViewTextSizeSp(16);
         slidingTab.setTitleTextColor(colorSelected, colorUnselected);
@@ -148,7 +147,7 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     public void setId(ImageBean imageBean) {
         String id = getString(R.string.image_id_symbol) + imageBean.posts[0].id;
-        TextView tvId = (TextView) findViewById(R.id.tv_id);
+        TextView tvId = findViewById(R.id.tv_id);
         tvId.setText(id);
     }
 
@@ -185,7 +184,7 @@ public class ImageDetailActivity extends AppCompatActivity {
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
                     FileUtils.getFileExtension(postBean.sampleUrl).toUpperCase());
-            file = makeFileToSave(postBean.sampleUrl);
+            file = makeFileToSave(postBean.id, "-Sample", postBean.sampleUrl);
             exists = file.exists();
             if (exists) {
                 desc = getString(R.string.dialog_download_already, desc);
@@ -200,7 +199,7 @@ public class ImageDetailActivity extends AppCompatActivity {
                 postBean.jpegWidth, postBean.jpegHeight,
                 FileUtils.computeFileSize(postBean.fileSize),
                 FileUtils.getFileExtension(postBean.fileUrl).toUpperCase());
-        file = makeFileToSave(postBean.fileUrl);
+        file = makeFileToSave(postBean.id, "-Large", postBean.fileUrl);
         exists = file.exists();
         if (exists) {
             desc = getString(R.string.dialog_download_already, desc);
@@ -215,7 +214,7 @@ public class ImageDetailActivity extends AppCompatActivity {
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),
                     FileUtils.getFileExtension(postBean.jpegUrl).toUpperCase());
-            file = makeFileToSave(postBean.jpegUrl);
+            file = makeFileToSave(postBean.id, "-Origin", postBean.jpegUrl);
             exists = file.exists();
             if (exists) {
                 desc = getString(R.string.dialog_download_already, desc);
@@ -263,11 +262,14 @@ public class ImageDetailActivity extends AppCompatActivity {
         }
     }
 
-    private File makeFileToSave(String url) {
+    private File makeFileToSave(String postId, String fileType, String url) {
         String extension = FileUtils.getFileExtensionWithDot(url);
         url = url.substring(0, url.lastIndexOf(extension) + extension.length())
                 .replaceAll(".com|.net", "");
-        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
+//        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
+        // 图片命名方式改为"网站名-图片id-图片尺寸样式"，eg. Konachan-123456-Sample.jpg
+        // 但这样无法识别此版本(v1.7)之前下载的图片是下载过的
+        String bitmapName = getImageHead() + postId + fileType + extension;
         return new File(Constants.IMAGE_DIR, bitmapName);
     }
 
@@ -300,15 +302,13 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     // 下载图片点击事件
     public void saveImage(View view) {
-        if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.SimplePermissionListener() {
-                @Override
-                public void onGranted() {
-                    showChooseToDownloadDialog();
-                }
-            });
-        }
-        mPermissionUtil.checkStoragePermission();
+        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
+            @Override
+            public void onGranted() {
+                super.onGranted();
+                showChooseToDownloadDialog();
+            }
+        });
     }
 
     // 查看上一张图片点击事件

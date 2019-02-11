@@ -5,7 +5,10 @@ import android.view.View;
 
 public class OnTouchScaleListener implements View.OnTouchListener {
 
-    private float mScale;
+    private float mScale = 0.96f;
+
+    public OnTouchScaleListener() {
+    }
 
     public OnTouchScaleListener(float scale) {
         mScale = scale;

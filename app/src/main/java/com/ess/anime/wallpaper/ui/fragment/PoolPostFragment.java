@@ -89,7 +89,7 @@ public class PoolPostFragment extends Fragment {
     }
 
     private void initSwipeRefreshLayout() {
-        mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -101,7 +101,7 @@ public class PoolPostFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        mRvPosts = (RecyclerView) mRootView.findViewById(R.id.rv_pool_post);
+        mRvPosts = mRootView.findViewById(R.id.rv_pool_post);
         mLayoutManager = new GridLayoutManager(getActivity(), 2);
         mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -245,6 +245,7 @@ public class PoolPostFragment extends Fragment {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
+                        thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].sampleUrl;
                         if (FileUtils.isImageType(url) && !getActivity().isDestroyed()) {
                             GlideApp.with(getActivity())

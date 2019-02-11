@@ -10,21 +10,22 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
+import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.utils.VibratorUtils;
 import com.ess.anime.wallpaper.view.CustomDialog;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
@@ -46,7 +47,6 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView mRvCollection;
     private RecyclerCollectionAdapter mCollectionAdapter;
 
-    private PermissionHelper mPermissionUtil;
     private LocalCollectionsListener mFilesListener;
 
     @Override
@@ -54,32 +54,25 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
 
-        checkStoragePermission();
-    }
+        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
+            @Override
+            public void onGranted() {
+                initToolBarLayout();
+                initEditView();
+                initRecyclerView();
+                mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
+                mFilesListener.startWatching();
+            }
 
-    private void checkStoragePermission() {
-        if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.OnPermissionListener() {
-                @Override
-                public void onGranted() {
-                    initToolBarLayout();
-                    initEditView();
-                    initRecyclerView();
-                    mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
-                    mFilesListener.startWatching();
-                }
-
-                @Override
-                public void onDenied() {
-                    finish();
-                }
-            });
-        }
-        mPermissionUtil.checkStoragePermission();
+            @Override
+            public void onDenied() {
+                finish();
+            }
+        });
     }
 
     private void initToolBarLayout() {
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mToolbar = findViewById(R.id.tool_bar);
         mToolbar.setTitle(R.string.nav_collection);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -93,12 +86,12 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initEditView() {
-        mLayoutEditing = (RelativeLayout) findViewById(R.id.layout_editing);
+        mLayoutEditing = findViewById(R.id.layout_editing);
         findViewById(R.id.layout_choose_all).setOnClickListener(this);
-        mCbChooseAll = (SmoothCheckBox) findViewById(R.id.cb_choose_all);
+        mCbChooseAll = findViewById(R.id.cb_choose_all);
         mCbChooseAll.setOnClickListener(this);
-        mTvChooseCount = (TextView) findViewById(R.id.tv_choose_count);
-        mTvEdit = (TextView) findViewById(R.id.tv_edit);
+        mTvChooseCount = findViewById(R.id.tv_choose_count);
+        mTvEdit = findViewById(R.id.tv_edit);
     }
 
     @Override
@@ -107,23 +100,26 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             case R.id.layout_choose_all:
                 mCbChooseAll.performClick();
                 break;
+
             case R.id.cb_choose_all:
                 if (mCbChooseAll.isChecked()) {
-                    mCollectionAdapter.chooseAll();
+                    mCollectionAdapter.selectAll();
                 } else {
-                    mCollectionAdapter.cancelChooseAll();
+                    mCollectionAdapter.deselectAll();
                 }
-                mTvChooseCount.setText(String.valueOf(mCollectionAdapter.getChooseCount()));
                 break;
+
             case R.id.tv_edit:
-                beginEdit();
+                enterEditMode();
                 break;
+
             case R.id.tv_share:
                 shareImages();
-                cancelEdit(true);
+                exitEditMode(true);
                 break;
+
             case R.id.tv_delete:
-                ArrayList<CollectionBean> deleteList = new ArrayList<>(mCollectionAdapter.getChooseList());
+                ArrayList<CollectionBean> deleteList = new ArrayList<>(mCollectionAdapter.getSelectList());
                 String msg = getString(R.string.dialog_delete_msg, deleteList.size());
                 showDeleteCollectionDialog(msg, deleteList);
                 break;
@@ -131,9 +127,9 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initRecyclerView() {
-        mRvCollection = (RecyclerView) findViewById(R.id.rv_collection);
+        mRvCollection = findViewById(R.id.rv_collection);
         mRvCollection.setLayoutManager(new GridLayoutManager(this, 3));
-        mCollectionAdapter = new RecyclerCollectionAdapter(this, CollectionBean.getCollectionImages());
+        mCollectionAdapter = new RecyclerCollectionAdapter(CollectionBean.getCollectionImages());
         mRvCollection.setAdapter(mCollectionAdapter);
         int spanHor = UIUtils.dp2px(this, 0.75f);
         int spanVer = UIUtils.dp2px(this, 1.5f);
@@ -141,44 +137,74 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
                 3, GridDividerItemDecoration.VERTICAL, spanHor, spanVer, true);
         mRvCollection.addItemDecoration(itemDecoration);
 
-        // adapter设置 点击全屏查看 和 长按进入编辑模式 监听器
-        mCollectionAdapter.setOnActionListener(new RecyclerCollectionAdapter.OnActionListener() {
+        // 点击、全屏查看监听器
+        mCollectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public void onFullScreen(ImageView imageView, int position) {
-                ImageDataHolder.setCollectionList(mCollectionAdapter.getCollectionList());
-                ImageDataHolder.setCollectionCurrentItem(position);
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                CollectionBean collectionBean = mCollectionAdapter.getItem(position);
+                switch (view.getId()) {
+                    case R.id.iv_collection:
+                        if (mCollectionAdapter.isEditMode()) {
+                            // 编辑模式下切换选中/非选中
+                            boolean newChecked = !mCollectionAdapter.isSelected(collectionBean);
+                            SmoothCheckBox cbChoose = (SmoothCheckBox) adapter.getViewByPosition(mRvCollection, position, R.id.cb_choose);
+                            cbChoose.setChecked(newChecked);
+                            if (newChecked) {
+                                mCollectionAdapter.select(collectionBean);
+                            } else {
+                                mCollectionAdapter.deselect(collectionBean);
+                            }
+                        } else {
+                            // 非编辑模式下全屏查看
+                            ImageDataHolder.setCollectionList(mCollectionAdapter.getData());
+                            ImageDataHolder.setCollectionCurrentItem(position);
 
-                // TODO 点击全屏查看图片缩放动画
-                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        CollectionActivity.this, new Pair<View, String>(imageView, "s"));
-                Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
-                startActivityForResult(intent, Constants.FULLSCREEN_CODE);
-//                ActivityCompat.startActivityForResult(CollectionActivity.this, intent,
-//                        Constants.FULLSCREEN_CODE, compat.toBundle());
+                            // TODO 点击全屏查看图片缩放动画
+                            ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                    CollectionActivity.this, new Pair<>(view, "s"));
+                            Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
+                            startActivityForResult(intent, Constants.FULLSCREEN_CODE);
+//                          ActivityCompat.startActivityForResult(CollectionActivity.this, intent,
+//                          Constants.FULLSCREEN_CODE, compat.toBundle());
+                        }
+                        break;
+
+                    case R.id.iv_enlarge:
+                        // 编辑模式下全屏查看
+                        List<CollectionBean> enlargeList = new ArrayList<>();
+                        enlargeList.add(collectionBean);
+                        ImageDataHolder.setCollectionList(enlargeList);
+                        ImageDataHolder.setCollectionCurrentItem(0);
+
+                        Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
+                        intent.putExtra(Constants.ENLARGE, true);
+                        startActivity(intent);
+                        break;
+                }
             }
+        });
 
+        // 长按进入编辑模式监听器
+        mCollectionAdapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
             @Override
-            public void onEdit() {
-                toggleEditView(true);
+            public boolean onItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
+                if (view.getId() == R.id.iv_collection && !mCollectionAdapter.isEditMode()) {
+                    CollectionBean collectionBean = mCollectionAdapter.getItem(position);
+                    mCollectionAdapter.select(collectionBean);
+                    mCollectionAdapter.enterEditMode();
+                    VibratorUtils.Vibrate(view.getContext(), 12);
+                    toggleEditView(true);
+                }
+                return false;
             }
+        });
 
+        // 切换选中/非选中监听器
+        mCollectionAdapter.setOnSelectChangedListener(new RecyclerCollectionAdapter.OnSelectChangedListener() {
             @Override
-            public void onEnlarge(int position) {
-                List<CollectionBean> enlargeList = new ArrayList<>();
-                enlargeList.add(mCollectionAdapter.getCollectionList().get(position));
-                ImageDataHolder.setCollectionList(enlargeList);
-                ImageDataHolder.setCollectionCurrentItem(0);
-
-                Intent intent = new Intent(CollectionActivity.this, FullscreenActivity.class);
-                intent.putExtra(Constants.ENLARGE, true);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onItemClick() {
-                int chooseCount = mCollectionAdapter.getChooseCount();
-                mTvChooseCount.setText(String.valueOf(chooseCount));
-                mCbChooseAll.setChecked(chooseCount == mCollectionAdapter.getItemCount(), true, false);
+            public void onSelectChanged(int selectCount, boolean allSelected) {
+                mTvChooseCount.setText(String.valueOf(selectCount));
+                mCbChooseAll.setChecked(allSelected);
             }
         });
     }
@@ -187,7 +213,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
-                cancelEdit(false);
+                exitEditMode(false);
                 mCollectionAdapter.removeDatas(deleteList);
                 for (CollectionBean collectionBean : deleteList) {
                     String path = collectionBean.url.replace("file://", "");
@@ -200,11 +226,10 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void toggleEditView(boolean editing) {
+        mCbChooseAll.setChecked(false, false, false);
         if (editing) {
             mTvEdit.setVisibility(View.GONE);
             mLayoutEditing.setVisibility(View.VISIBLE);
-            mCbChooseAll.setChecked(false, false, false);
-            mTvChooseCount.setText(String.valueOf(mCollectionAdapter.getChooseCount()));
             mToolbar.setTitle("");
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         } else {
@@ -214,19 +239,19 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void beginEdit() {
+    private void enterEditMode() {
         toggleEditView(true);
-        mCollectionAdapter.beginEdit();
+        mCollectionAdapter.enterEditMode();
     }
 
-    private void cancelEdit(boolean notify) {
+    private void exitEditMode(boolean notify) {
         toggleEditView(false);
-        mCollectionAdapter.cancelEdit(notify);
+        mCollectionAdapter.exitEditMode(notify);
     }
 
     private void shareImages() {
         ArrayList<Uri> uriList = new ArrayList<>();
-        for (CollectionBean collectionBean : mCollectionAdapter.getChooseList()) {
+        for (CollectionBean collectionBean : mCollectionAdapter.getSelectList()) {
             Uri uri = Uri.parse(collectionBean.url);
             uriList.add(uri);
         }
@@ -241,11 +266,11 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mCollectionAdapter.isEditing()) {
-                    cancelEdit(false);
+                if (mCollectionAdapter.isEditMode()) {
+                    exitEditMode(false);
                 }
                 CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
-                if (!mCollectionAdapter.getCollectionList().contains(collectionBean)) {
+                if (!mCollectionAdapter.getData().contains(collectionBean)) {
                     mCollectionAdapter.addData(collectionBean);
                 }
                 mRvCollection.scrollToPosition(0);
@@ -260,13 +285,11 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mCollectionAdapter.isEditing()) {
-                    cancelEdit(false);
+                if (mCollectionAdapter.isEditMode()) {
+                    exitEditMode(false);
                 }
                 CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
-                if (mCollectionAdapter.getCollectionList().contains(collectionBean)) {
-                    mCollectionAdapter.removeData(collectionBean);
-                }
+                mCollectionAdapter.removeData(collectionBean);
                 // 发送通知到FullscreenActivity
                 EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
             }
@@ -281,17 +304,12 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             int position = ImageDataHolder.getCollectionCurrentItem();
             mRvCollection.scrollToPosition(position);
         }
-
-        // 检查权限回调
-        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
-            mPermissionUtil.checkStoragePermission();
-        }
     }
 
     @Override
     public void onBackPressed() {
-        if (mCollectionAdapter.isEditing()) {
-            cancelEdit(true);
+        if (mCollectionAdapter.isEditMode()) {
+            exitEditMode(true);
         } else {
             finish();
         }

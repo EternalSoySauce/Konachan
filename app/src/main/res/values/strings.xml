@@ -22,13 +22,13 @@
     <string name="download_title_origin">#%s (Origin)</string>
 
     <!-- Drawer Layout -->
-    <string name="base_konachan_s">Konachan(safe)</string>
-    <string name="base_konachan_e">Konachan(r18)</string>
-    <string name="base_yande">Yande.re</string>
-    <string name="base_lolibooru">Lolibooru</string>
-    <string name="base_danbooru">Danbooru</string>
-    <string name="base_sankaku">Sankaku</string>
-    <string name="base_gelbooru">Gelbooru</string>
+    <string name="base_konachan_s" translatable="false">Konachan(safe)</string>
+    <string name="base_konachan_e" translatable="false">Konachan(r18)</string>
+    <string name="base_yande" translatable="false">Yande.re</string>
+    <string name="base_lolibooru" translatable="false">Lolibooru</string>
+    <string name="base_danbooru" translatable="false">Danbooru</string>
+    <string name="base_sankaku" translatable="false">Sankaku</string>
+    <string name="base_gelbooru" translatable="false">Gelbooru</string>
     <string name="navigation_drawer_open">Open drawer layout</string>
     <string name="navigation_drawer_close">Close drawer layout</string>
     <string name="nav_post">Image</string>
@@ -77,9 +77,9 @@
     <string name="detail_post_source">Source:</string>
     <string name="detail_post_artist">Artist:</string>
     <string name="detail_post_rating">Rating:</string>
-    <string name="detail_post_rating_s">Safe</string>
-    <string name="detail_post_rating_e">R18</string>
-    <string name="detail_post_rating_q">Questionable</string>
+    <string name="detail_post_rating_s" translatable="false">Safe</string>
+    <string name="detail_post_rating_e" translatable="false">R18</string>
+    <string name="detail_post_rating_q" translatable="false">Questionable</string>
     <string name="detail_post_score">Score:</string>
     <string name="detail_tag_title">Tags</string>
     <string name="detail_pool_title">Album</string>
@@ -92,7 +92,7 @@
     <string name="comment_no_comments">No comment</string>
 
     <!-- Pool Detail -->
-    <string name="pool_updated_time">Updated %s</string>
+    <string name="pool_updated_time" translatable="false">Updated %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">All</string>
@@ -106,9 +106,9 @@
     <string name="action_share">Share to others</string>
 
     <!-- Surface View -->
-    <string name="game_column_3">3 × 3</string>
-    <string name="game_column_4">4 × 4</string>
-    <string name="game_column_5">5 × 5</string>
+    <string name="game_column_3" translatable="false">3 × 3</string>
+    <string name="game_column_4" translatable="false">4 × 4</string>
+    <string name="game_column_5" translatable="false">5 × 5</string>
     <string name="game_current_step">Step: %d</string>
     <string name="game_best_step">Best:&#160;</string>
     <string name="game_none_best_step">none</string>
@@ -137,9 +137,6 @@
     <string name="dialog_permission_rationale_grant">Grant</string>
     <string name="dialog_permission_rationale_deny">Deny</string>
     <string name="dialog_permission_setting_title">Permission request failed</string>
-    <string name="dialog_permission_setting_msg">Application request STORAGE permission failed. You can manually set permission to the system settings interface.</string>
-    <string name="dialog_permission_setting_ok">Go to</string>
-    <string name="dialog_permission_setting_cancel">Cancel</string>
     <string name="dialog_change_base_url_title">Change website</string>
     <string name="dialog_change_base_url_cancel">Cancel</string>
     <string name="dialog_update_title">New version detected</string>

@@ -71,7 +71,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initViews() {
-        mTvSerial = (TextView) findViewById(R.id.tv_serial);
+        mTvSerial = findViewById(R.id.tv_serial);
         setSerial();
         if (mEnlarge) {
             findViewById(R.id.iv_menu).setVisibility(View.GONE);

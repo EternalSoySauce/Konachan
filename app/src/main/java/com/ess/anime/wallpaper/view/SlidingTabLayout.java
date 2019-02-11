@@ -120,6 +120,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     /**
      * 设置自定义下划线宽度
+     *
      * @param width px
      */
     public void setTabStripWidth(int width) {
@@ -128,6 +129,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     /**
      * 设置自定义下划线高度
+     *
      * @param height dp
      */
     public void setTabStripHeight(float height) {
@@ -232,7 +234,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
                         false);
-                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
+                tabTitleView = tabView.findViewById(mTabViewTextViewId);
             }
 
             if (tabView == null) {

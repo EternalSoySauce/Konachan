@@ -46,9 +46,9 @@ public class GeneralParser extends HtmlParser {
                 String realSize = "";
                 Elements directLink = e.getElementsByClass("directlink-res");
                 if (!directLink.isEmpty()) {
-                    realSize = directLink.get(0).ownText();
+                    realSize = directLink.first().ownText();
                 }
-                String linkToShow = e.getElementsByClass("plid").get(0).ownText();
+                String linkToShow = e.getElementsByClass("plid").first().ownText();
                 linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
                 thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
@@ -86,23 +86,23 @@ public class GeneralParser extends HtmlParser {
         for (Element e : elements) {
             try {
                 String id = "#" + e.attr("id");
-                String author = e.getElementsByTag("h6").get(0).text();
-                String date = e.getElementsByClass("date").get(0).attr("title");
-                String headUrl = "";
+                String author = e.getElementsByTag("h6").first().text();
+                String date = e.getElementsByClass("date").first().attr("title");
+                String avatar = "";
                 Elements avatars = e.getElementsByClass("avatar");
                 if (!avatars.isEmpty()) {
-                    headUrl = avatars.get(0).attr("src");
-                    if (!headUrl.startsWith("http")) {
-                        headUrl = headUrl.startsWith("//") ? "https:" + headUrl
-                                : OkHttp.getBaseUrl(mContext) + headUrl;
+                    avatar = avatars.first().attr("src");
+                    if (!avatar.startsWith("http")) {
+                        avatar = avatar.startsWith("//") ? "https:" + avatar
+                                : OkHttp.getBaseUrl(mContext) + avatar;
                     }
                 }
-                Element body = e.getElementsByClass("body").get(0);
+                Element body = e.getElementsByClass("body").first();
                 Elements blockquote = body.select("blockquote");
                 CharSequence quote = Html.fromHtml(blockquote.select("div").html());
                 blockquote.remove();
                 CharSequence comment = Html.fromHtml(body.html());
-                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+                commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -144,12 +144,12 @@ public class GeneralParser extends HtmlParser {
         //根据id解析详细信息
         for (PoolListBean pool : poolList) {
             Element poolDetail = mDoc.getElementById(pool.id);
-            Elements eleTds = poolDetail.getElementsByTag("td");
-            for (int index = 0; index < eleTds.size(); index++) {
-                Element td = eleTds.get(index);
+            Elements tds = poolDetail.getElementsByTag("td");
+            for (int index = 0; index < tds.size(); index++) {
+                Element td = tds.get(index);
                 switch (index) {
                     case 0:
-                        String linkToShow = td.getElementsByTag("a").get(0).attr("href");
+                        String linkToShow = td.getElementsByTag("a").first().attr("href");
                         linkToShow = OkHttp.getBaseUrl(mContext) + linkToShow.substring(1);
                         pool.linkToShow = linkToShow;
                         pool.name = td.text();

@@ -70,7 +70,7 @@ public class CommentFragment extends Fragment {
     }
 
     private void initView() {
-        mSwipeRefresh = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -84,11 +84,11 @@ public class CommentFragment extends Fragment {
     }
 
     private void initNoCommentView() {
-        mTvNoComment = (TextView) mRootView.findViewById(R.id.tv_no_comment);
+        mTvNoComment = mRootView.findViewById(R.id.tv_no_comment);
     }
 
     private void initRecyclerView() {
-        RecyclerView rvComment = (RecyclerView) mRootView.findViewById(R.id.rv_comment);
+        RecyclerView rvComment = mRootView.findViewById(R.id.rv_comment);
         rvComment.setLayoutManager(new LinearLayoutManager(mActivity));
 
         ArrayList<CommentBean> commentList = new ArrayList<>();

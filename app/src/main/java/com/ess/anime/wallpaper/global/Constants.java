@@ -39,7 +39,6 @@ public class Constants {
     public final static int SEARCH_CODE_HOME = 1005;
     public final static int SEARCH_CODE_RANDOM = 1006;
     public final static int FULLSCREEN_CODE = 2000;
-    public final static int STORAGE_PERMISSION_CODE = 3000;
 
     // EventBus
     public final static String CHECK_UPDATE = "checkUpdate";  // 检测到新版本后通知 MainActivity

@@ -27,13 +27,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
 import com.ess.anime.wallpaper.bean.SearchBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import okhttp3.Call;
@@ -84,8 +86,8 @@ public class SearchActivity extends AppCompatActivity {
     // 筛选下拉提示异步任务
     private AsyncTask mAutoCompleteTask;
 
-    // Sankaku网络请求下拉提示
-    private Call mSankakuCall;
+    // Sankaku, Gelbooru网络请求下拉提示
+    private Call mTagCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +134,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        mEtSearch = (EditText) findViewById(R.id.et_search);
+        mEtSearch = findViewById(R.id.et_search);
         mEtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -175,7 +177,7 @@ public class SearchActivity extends AppCompatActivity {
                 findViewById(R.id.iv_clear).setVisibility(visible);
 
                 cancelAutoCompleteTask();
-                cancelSankakuCall();
+                cancelTagCall();
                 if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
                     // TODO 完善搜索提示（现在与K站算法不完全一样）
                     String tag = s.toString();
@@ -183,11 +185,18 @@ public class SearchActivity extends AppCompatActivity {
                     tag = tag.substring(splitIndex + 1);
                     if (!TextUtils.isEmpty(tag) && mUserInput) {
                         mPromptMap.clear();
-                        if (OkHttp.getBaseUrl(SearchActivity.this).equals(Constants.BASE_URL_SANKAKU)) {
-                            // Sankaku搜索提示需动态请求网络
-                            getSankakuTagList(tag);
-                        } else {
-                            mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
+                        switch (OkHttp.getBaseUrl(SearchActivity.this)) {
+                            case Constants.BASE_URL_SANKAKU:
+                                // Sankaku搜索提示需动态请求网络
+                                getTagListFromNetwork("https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag);
+                                break;
+                            case Constants.BASE_URL_GELBOORU:
+                                // Gelbooru搜索提示需动态请求网络
+                                getTagListFromNetwork("https://gelbooru.com/index.php?page=autocomplete&term=" + tag);
+                                break;
+                            default:
+                                mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
+                                break;
                         }
                     } else {
                         mCompleteSearchAdapter.clear();
@@ -215,19 +224,18 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initSearchDocumentViews() {
         ArrayList<String> docList = DocDataHelper.getSearchModeDocumentList(this);
-        mLayoutDocSearchMode = (LinearLayout) findViewById(R.id.layout_doc_search_mode);
+        mLayoutDocSearchMode = findViewById(R.id.layout_doc_search_mode);
 
-        TextView tvDocSearchTag = (TextView) findViewById(R.id.tv_doc_search_tag);
+        TextView tvDocSearchTag = findViewById(R.id.tv_doc_search_tag);
         tvDocSearchTag.setText(docList.get(0));
 
-        TextView tvDocSearchId = (TextView) findViewById(R.id.tv_doc_search_id);
+        TextView tvDocSearchId = findViewById(R.id.tv_doc_search_id);
         tvDocSearchId.setText(docList.get(1));
 
-        TextView tvDocSearchChinese = (TextView) findViewById(R.id.tv_doc_search_chinese);
+        TextView tvDocSearchChinese = findViewById(R.id.tv_doc_search_chinese);
         tvDocSearchChinese.setText(docList.get(2));
 
-
-        TextView tvDocSearchAdvanced = (TextView) findViewById(R.id.tv_doc_search_advanced);
+        TextView tvDocSearchAdvanced = findViewById(R.id.tv_doc_search_advanced);
         tvDocSearchAdvanced.setText(setLinkToShowTagTypeDoc(docList.get(3)));
         tvDocSearchAdvanced.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -256,14 +264,15 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initCompleteSearchRecyclerView() {
-        mRvCompleteSearch = (RecyclerView) findViewById(R.id.rv_auto_complete_search);
+        mRvCompleteSearch = findViewById(R.id.rv_auto_complete_search);
         mRvCompleteSearch.setLayoutManager(new LinearLayoutManager(this));
-        mCompleteSearchAdapter = new RecyclerCompleteSearchAdapter(new RecyclerCompleteSearchAdapter.onItemClickListener() {
+        mCompleteSearchAdapter = new RecyclerCompleteSearchAdapter();
+        mCompleteSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(String tag) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String text = mEtSearch.getText().toString();
                 int splitIndex = Math.max(text.lastIndexOf(","), text.lastIndexOf("，"));
-                String newText = text.substring(0, splitIndex + 1) + tag;
+                String newText = text.substring(0, splitIndex + 1) + mCompleteSearchAdapter.getItem(position);
                 mUserInput = false;
                 mEtSearch.setText(newText);
                 mEtSearch.setSelection(newText.length());
@@ -274,12 +283,12 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initListPopupWindow() {
         // 选择搜索模式弹窗
-        String[] searchModeArray = getResources().getStringArray(R.array.spinner_list_item);
-        mSpinnerAdapter = new RecyclerSearchModePopupAdapter(this, searchModeArray);
+        List<String> searchModeList = Arrays.asList(getResources().getStringArray(R.array.spinner_list_item));
+        mSpinnerAdapter = new RecyclerSearchModePopupAdapter(searchModeList);
         mSpinnerAdapter.setSelection(mSelectedPos);
-        mSpinnerAdapter.setOnItemClickListener(new RecyclerSearchModePopupAdapter.OnItemClickListener() {
+        mSpinnerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (position != mSelectedPos) {
                     mSelectedPos = position;
                     mSpinnerAdapter.setSelection(position);
@@ -325,7 +334,7 @@ public class SearchActivity extends AppCompatActivity {
     private int computePopupItemMaxWidth() {
         float maxWidth = 0;
         View layout = View.inflate(this, R.layout.recyclerview_item_popup_search_mode, null);
-        TextView tv = (TextView) layout.findViewById(R.id.tv_search_mode);
+        TextView tv = layout.findViewById(R.id.tv_search_mode);
         TextPaint paint = tv.getPaint();
         for (int i = 0; i < mSpinnerAdapter.getItemCount(); i++) {
             String item = mSpinnerAdapter.getItem(i);
@@ -354,7 +363,7 @@ public class SearchActivity extends AppCompatActivity {
                 name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_LOLIBOORU);
                 break;
             case Constants.BASE_URL_DANBOORU:
-                // Danbooru没有搜索提示，用Konachan(r18)的
+                // Danbooru没有搜索提示，借用Konachan(r18)的
                 name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN_E);
                 break;
             case Constants.BASE_URL_SANKAKU:
@@ -433,31 +442,39 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
-    private void getSankakuTagList(final String search) {
-        cancelSankakuCall();
-        String url = "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + search;
-        mSankakuCall = OkHttp.getInstance().connect(url, new Callback() {
+    // Sankaku, Gelbooru搜索提示为动态请求
+    private void getTagListFromNetwork(final String url) {
+        cancelTagCall();
+        mTagCall = OkHttp.getInstance().connect(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if (OkHttp.isNetworkProblem(e) && call == mSankakuCall) {
-                    getSankakuTagList(search);
+                if (OkHttp.isNetworkProblem(e) && call == mTagCall) {
+                    getTagListFromNetwork(url);
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call == mSankakuCall) {
+                if (call == mTagCall) {
                     if (response.isSuccessful()) {
                         String json = response.body().string();
-                        JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
-                        JsonArray tagArray = jsonArray.get(1).getAsJsonArray();
-                        for (int i = 0; i < tagArray.size(); i++) {
-                            mPromptMap.put(tagArray.get(i).getAsString(), 0);
+                        JsonArray tagArray = null;
+                        switch (OkHttp.getBaseUrl(SearchActivity.this)) {
+                            case Constants.BASE_URL_SANKAKU:
+                                tagArray = new JsonParser().parse(json).getAsJsonArray().get(1).getAsJsonArray();
+                                break;
+                            case Constants.BASE_URL_GELBOORU:
+                                tagArray = new JsonParser().parse(json).getAsJsonArray();
+                                break;
+                        }
+                        if (tagArray != null) {
+                            for (int i = 0; i < tagArray.size(); i++) {
+                                mPromptMap.put(tagArray.get(i).getAsString(), 0);
+                            }
                         }
                         setCompleteSearchTags();
                     } else {
-                        getSankakuTagList(search);
+                        getTagListFromNetwork(url);
                     }
                 }
                 response.close();
@@ -470,7 +487,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mCompleteSearchAdapter.clear();
-                mCompleteSearchAdapter.addDatas(mPromptMap.keySet());
+                mCompleteSearchAdapter.addData(mPromptMap.keySet());
                 mRvCompleteSearch.setVisibility(View.VISIBLE);
             }
         });
@@ -482,10 +499,10 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void cancelSankakuCall() {
-        if (mSankakuCall != null && !mSankakuCall.isCanceled()) {
-            mSankakuCall.cancel();
-            mSankakuCall = null;
+    private void cancelTagCall() {
+        if (mTagCall != null && !mTagCall.isCanceled()) {
+            mTagCall.cancel();
+            mTagCall = null;
         }
     }
 
@@ -493,7 +510,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancelAutoCompleteTask();
-        cancelSankakuCall();
+        cancelTagCall();
     }
 
     // 异步执行筛选下拉提示操作

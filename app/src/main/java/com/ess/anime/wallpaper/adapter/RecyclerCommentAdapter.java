@@ -42,7 +42,7 @@ public class RecyclerCommentAdapter extends RecyclerView.Adapter<RecyclerComment
 
         //头像
         GlideApp.with(mContext)
-                .load(MyGlideModule.makeGlideUrl(commentBean.headUrl))
+                .load(MyGlideModule.makeGlideUrl(commentBean.avatar))
                 .placeholder(R.drawable.ic_placeholder_comment)
                 .priority(Priority.NORMAL)
                 .into(holder.ivHead);

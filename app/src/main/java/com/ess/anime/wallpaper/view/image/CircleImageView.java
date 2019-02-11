@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.view.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,9 +12,10 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
-public class CircleImageView extends android.support.v7.widget.AppCompatImageView {
+public class CircleImageView extends AppCompatImageView {
 
     private Paint mPaintBitmap = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Bitmap mRawBitmap;

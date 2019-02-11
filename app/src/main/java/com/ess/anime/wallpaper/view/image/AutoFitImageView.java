@@ -1,8 +1,9 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.view.image;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import com.ess.anime.wallpaper.R;
@@ -22,7 +23,7 @@ import com.ess.anime.wallpaper.utils.UIUtils;
  * minRatio(float)：最小缩放倍数
  */
 
-public class AutoFitImageView extends android.support.v7.widget.AppCompatImageView {
+public class AutoFitImageView extends AppCompatImageView {
 
     private final static int NONE = 0;  // 两边均以屏幕尺寸为基准进行缩放
     private final static int RELATIVE_TO_WIDTH = 1;  // 以宽度为基准等比缩放高度

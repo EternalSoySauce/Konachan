@@ -54,7 +54,7 @@ public class DanbooruParser extends HtmlParser {
         try {
             // 解析时间字符串，格式：2018-05-29T21:06-04:00（-04:00为时区）
             // 注意PostBean.createdTime单位为second
-            Element time = mDoc.getElementsByTag("time").get(0);
+            Element time = mDoc.getElementsByTag("time").first();
             String createdTime = time.attr("datetime");
             long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-4:00"));
             createdTime = String.valueOf(mills / 1000);
@@ -117,19 +117,19 @@ public class DanbooruParser extends HtmlParser {
             Element tag = mDoc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("category-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
-                        .get(0).text().replace(" ", "_"));
+                        .first().text().replace(" ", "_"));
             }
             for (Element character : tag.getElementsByClass("category-4")) {
                 builder.addCharacterTags(character.getElementsByClass("search-tag")
-                        .get(0).text().replace(" ", "_"));
+                        .first().text().replace(" ", "_"));
             }
             for (Element artist : tag.getElementsByClass("category-1")) {
                 builder.addArtistTags(artist.getElementsByClass("search-tag")
-                        .get(0).text().replace(" ", "_"));
+                        .first().text().replace(" ", "_"));
             }
             for (Element general : tag.getElementsByClass("category-0")) {
                 builder.addGeneralTags(general.getElementsByClass("search-tag")
-                        .get(0).text().replace(" ", "_"));
+                        .first().text().replace(" ", "_"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,10 +145,10 @@ public class DanbooruParser extends HtmlParser {
             try {
                 String id = "#c" + e.attr("data-comment-id");
                 String author = e.attr("data-creator");
-                String date = e.getElementsByTag("time").get(0).attr("title");
+                String date = e.getElementsByTag("time").first().attr("title");
                 long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-4:00"));
                 date = "Posted at " + TimeFormat.dateFormat(mills, "yyyy-MM-dd HH:mm:ss");
-                String headUrl = "";
+                String avatar = "";
                 Elements body = e.getElementsByClass("body prose");
                 body.select(".spoiler").unwrap();
                 body.select(".info").remove();
@@ -164,7 +164,7 @@ public class DanbooruParser extends HtmlParser {
                 body.select("br").last().remove();
                 body.select("br").last().remove();
                 CharSequence comment = Html.fromHtml(body.html());
-                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+                commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

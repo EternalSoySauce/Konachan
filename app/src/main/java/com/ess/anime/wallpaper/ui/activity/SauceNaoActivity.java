@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +12,12 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.just.agentweb.AgentWeb;
 
 public class SauceNaoActivity extends AppCompatActivity {
 
     private AgentWeb mAgentWeb;
-    private PermissionHelper mPermissionUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,24 +25,17 @@ public class SauceNaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sauce_nao);
 
         initToolBarLayout();
-        checkStoragePermission();
-    }
+        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
+            @Override
+            public void onGranted() {
+                initWebView();
+            }
 
-    private void checkStoragePermission() {
-        if (mPermissionUtil == null) {
-            mPermissionUtil = new PermissionHelper(this, new PermissionHelper.OnPermissionListener() {
-                @Override
-                public void onGranted() {
-                    initWebView();
-                }
-
-                @Override
-                public void onDenied() {
-                    finish();
-                }
-            });
-        }
-        mPermissionUtil.checkStoragePermission();
+            @Override
+            public void onDenied() {
+                finish();
+            }
+        });
     }
 
     private void initToolBarLayout() {
@@ -126,12 +116,4 @@ public class SauceNaoActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // 检查权限回调
-        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
-            mPermissionUtil.checkStoragePermission();
-        }
-    }
 }

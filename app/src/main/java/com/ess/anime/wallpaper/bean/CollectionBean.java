@@ -25,18 +25,11 @@ public class CollectionBean implements Parcelable {
 
     public int height;
 
-    public boolean isChecked;
-
     public CollectionBean(String filePath, int width, int height) {
-        this(filePath, width, height, false);
-    }
-
-    public CollectionBean(String filePath, int width, int height, boolean isChecked) {
         this.filePath = filePath;
         this.url = "file://" + filePath;
         this.width = width;
         this.height = height;
-        this.isChecked = isChecked;
     }
 
     protected CollectionBean(Parcel in) {
@@ -73,7 +66,7 @@ public class CollectionBean implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof CollectionBean) {
+        if (obj instanceof CollectionBean) {
             CollectionBean collectionBean = (CollectionBean) obj;
             return !(this.url == null || collectionBean.url == null) && this.url.equals(collectionBean.url);
         }
@@ -115,7 +108,7 @@ public class CollectionBean implements Parcelable {
 
         @Override
         public int compare(File lhs, File rhs) {
-            return ((Long) rhs.lastModified()).compareTo(lhs.lastModified());
+            return Long.compare(rhs.lastModified(), lhs.lastModified());
         }
     }
 }

@@ -28,7 +28,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -41,7 +41,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initGameSurfaceView() {
-        mGameView = (GameSurfaceView) findViewById(R.id.surface_view_game);
+        mGameView = findViewById(R.id.surface_view_game);
         mGameView.setOnActionListener(new GameSurfaceView.OnActionListener() {
             @Override
             public void onChangeBitmap(Bitmap bitmap) {
@@ -51,7 +51,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews() {
-        mIvGame = (ImageView) findViewById(R.id.iv_game);
+        mIvGame = findViewById(R.id.iv_game);
         mIvGame.setImageBitmap(mGameView.getGameBitmap());
 
         OnTouchScaleListener touchListener = new OnTouchScaleListener(0.9f);

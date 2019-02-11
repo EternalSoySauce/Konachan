@@ -40,7 +40,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -53,7 +53,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initViews() {
-        mCbAllowPlaySound = (SmoothCheckBox) findViewById(R.id.cb_setting_allow_play_sound);
+        mCbAllowPlaySound = findViewById(R.id.cb_setting_allow_play_sound);
         mCbAllowPlaySound.setChecked(Constants.sAllowPlaySound, false, false);
         mCbAllowPlaySound.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
             @Override
@@ -68,7 +68,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        TextView tvCurrentVersion = (TextView) findViewById(R.id.tv_current_version);
+        TextView tvCurrentVersion = findViewById(R.id.tv_current_version);
         tvCurrentVersion.setText(getString(R.string.setting_current_version, ComponentUtils.getVersionName(this)));
     }
 

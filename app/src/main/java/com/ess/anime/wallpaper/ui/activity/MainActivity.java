@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDrawerLayout() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initNavMenuLayout() {
         mCurrentNavId = mCurrentNavId == 0 ? R.id.nav_post : mCurrentNavId;
-        mNavigation = (NavigationView) findViewById(R.id.nav_view);
+        mNavigation = findViewById(R.id.nav_view);
         mNavigation.setItemTextColor(getResources().getColorStateList(R.color.nav_menu_text_color));
         mNavigation.setItemIconTintList(getResources().getColorStateList(R.color.nav_menu_text_color));
         mNavigation.setItemBackgroundResource(R.drawable.bg_nav_menu);
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         View navHeader = mNavigation.getHeaderView(0);
 
         // 切换搜图网站
-        final Button btnFunny = (Button) navHeader.findViewById(R.id.btn_funny);
+        final Button btnFunny = navHeader.findViewById(R.id.btn_funny);
         btnFunny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 图片对应一周7天
-        final ImageView ivExtra = (ImageView) navHeader.findViewById(R.id.iv_extra);
+        final ImageView ivExtra = navHeader.findViewById(R.id.iv_extra);
         GlideApp.with(this).load(getExtraImageSrcId()).into(ivExtra);
     }
 

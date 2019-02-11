@@ -22,13 +22,6 @@
     <string name="download_title_origin">#%s (原图)</string>
 
     <!-- Drawer Layout -->
-    <string name="base_konachan_s">Konachan(safe)</string>
-    <string name="base_konachan_e">Konachan(r18)</string>
-    <string name="base_yande">Yande.re</string>
-    <string name="base_lolibooru">Lolibooru</string>
-    <string name="base_danbooru">Danbooru</string>
-    <string name="base_sankaku">Sankaku</string>
-    <string name="base_gelbooru">Gelbooru</string>
     <string name="navigation_drawer_open">打开侧边栏</string>
     <string name="navigation_drawer_close">关闭侧边栏</string>
     <string name="nav_post">图片</string>
@@ -77,9 +70,6 @@
     <string name="detail_post_source">来源：</string>
     <string name="detail_post_artist">原作者：</string>
     <string name="detail_post_rating">评级：</string>
-    <string name="detail_post_rating_s">Safe</string>
-    <string name="detail_post_rating_e">R18</string>
-    <string name="detail_post_rating_q">Questionable</string>
     <string name="detail_post_score">评分：</string>
     <string name="detail_tag_title">标签</string>
     <string name="detail_pool_title">所属图集</string>
@@ -90,9 +80,6 @@
     <string name="detail_pool_description">描述：</string>
     <string name="detail_pool_no_description">无</string>
     <string name="comment_no_comments">暂无评论</string>
-
-    <!-- Pool Detail -->
-    <string name="pool_updated_time">Updated %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
@@ -106,9 +93,6 @@
     <string name="action_share">分享到其他应用</string>
 
     <!-- Surface View -->
-    <string name="game_column_3">3 × 3</string>
-    <string name="game_column_4">4 × 4</string>
-    <string name="game_column_5">5 × 5</string>
     <string name="game_current_step">步数：%d</string>
     <string name="game_best_step">最佳：</string>
     <string name="game_none_best_step">无</string>
@@ -139,9 +123,6 @@
     <string name="dialog_permission_rationale_grant">允许</string>
     <string name="dialog_permission_rationale_deny">拒绝</string>
     <string name="dialog_permission_setting_title">权限请求失败</string>
-    <string name="dialog_permission_setting_msg">应用请求SD卡权限失败，您可以到系统设置界面手动设置权限。</string>
-    <string name="dialog_permission_setting_ok">跳转</string>
-    <string name="dialog_permission_setting_cancel">取消</string>
     <string name="dialog_change_base_url_title">切换网站</string>
     <string name="dialog_change_base_url_cancel">取消</string>
     <string name="dialog_update_title">检测到新版本</string>

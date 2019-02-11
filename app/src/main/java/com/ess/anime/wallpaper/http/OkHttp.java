@@ -127,7 +127,7 @@ public class OkHttp {
 
         String baseUrl = getBaseUrl(context);
         if (baseUrl.equals(Constants.BASE_URL_GELBOORU)) {
-            return baseUrl + "index.php?page=post&s=list&tags=" + tags + "&pid=" + (page - 1) * 42;
+            return baseUrl + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
         } else {
             return baseUrl + "post?page=" + page + "&tags=" + tags;
         }
@@ -136,7 +136,12 @@ public class OkHttp {
     // 搜索图集
     public static String getPoolUrl(Context context, int page, String name) {
         name = name == null ? "" : name;
-        return getBaseUrl(context) + "pool?page=" + page + "&query=" + name;
+        String baseUrl = getBaseUrl(context);
+        if (baseUrl.equals(Constants.BASE_URL_GELBOORU)) {
+            return baseUrl + "index.php?page=pool&s=list&pid=" + (page - 1) * 25;
+        } else {
+            return baseUrl + "pool?page=" + page + "&query=" + name;
+        }
     }
 
     // 搜索图集中的图片

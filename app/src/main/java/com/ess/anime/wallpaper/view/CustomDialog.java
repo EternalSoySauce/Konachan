@@ -88,7 +88,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      */
     public static void showTagTypeHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
-        TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
+        TextView tvContent = view.findViewById(R.id.tv_content);
         tvContent.setText(DocDataHelper.getTagTypeHelpDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
@@ -105,7 +105,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      */
     public static void showAdvancedSearchHelpDialog(Context context) {
         View view = View.inflate(context, R.layout.layout_dialog_scroll_text, null);
-        TextView tvContent = (TextView) view.findViewById(R.id.tv_content);
+        TextView tvContent = view.findViewById(R.id.tv_content);
         tvContent.setText(DocDataHelper.getAdvancedSearchDoc(context));
 
         MaterialDialog dialog = new CustomDialog(context)
@@ -116,12 +116,12 @@ public class CustomDialog extends MaterialDialog.Builder {
     }
 
     /**
-     * 需要SD卡权限时的提示
+     * 请求SD卡权限
      *
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showNeedStoragePermissionDialog(Context context, final OnDialogActionListener listener) {
+    public static void showRequestStoragePermissionDialog(Context context, final OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_permission_rationale_title)
                 .content(R.string.dialog_permission_rationale_msg)
@@ -135,34 +135,6 @@ public class CustomDialog extends MaterialDialog.Builder {
                     }
                 })
                 .positiveText(R.string.dialog_permission_rationale_grant)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        listener.onPositive();
-                    }
-                }).show();
-    }
-
-    /**
-     * 跳转至系统权限设置界面提示
-     *
-     * @param context  上下文
-     * @param listener 事件监听器
-     */
-    public static void showGoToSettingDialog(Context context, final OnDialogActionListener listener) {
-        MaterialDialog dialog = new CustomDialog(context)
-                .title(R.string.dialog_permission_setting_title)
-                .content(R.string.dialog_permission_setting_msg)
-                .cancelable(false)
-                .canceledOnTouchOutside(false)
-                .negativeText(R.string.dialog_permission_setting_cancel)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        listener.onNegative();
-                    }
-                })
-                .positiveText(R.string.dialog_permission_setting_ok)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
