@@ -271,7 +271,7 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
                 }
                 CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
                 if (!mCollectionAdapter.getData().contains(collectionBean)) {
-                    mCollectionAdapter.addData(collectionBean);
+                    mCollectionAdapter.addData(0, collectionBean);
                 }
                 mRvCollection.scrollToPosition(0);
                 // 发送通知到FullscreenActivity

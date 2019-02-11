@@ -77,6 +77,12 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
         holder.addOnLongClickListener(R.id.iv_collection);
     }
 
+    @Override
+    public void addData(int position, @NonNull CollectionBean data) {
+        super.addData(position, data);
+        notifyItemRangeChanged(0, mData.size());
+    }
+
     public void removeData(CollectionBean collectionBean) {
         int position = mData.indexOf(collectionBean);
         if (position != -1) {
