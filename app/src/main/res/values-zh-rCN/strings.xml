@@ -29,7 +29,6 @@
     <string name="nav_collection">我的收藏</string>
     <string name="nav_feedback">反馈建议</string>
     <string name="nav_setting">设置与帮助</string>
-    <string name="nav_sauce_nao">SauceNAO</string>
     <string name="nav_game">拼图游戏</string>
     <string name="feedback_title">发送邮件通过</string>
 
@@ -116,7 +115,6 @@
     <string name="dialog_reload_no">否</string>
     <string name="dialog_doc_tag_type_title">帮助：标签</string>
     <string name="dialog_doc_advanced_search_title">帮助：指令表</string>
-    <string name="dialog_doc_sure">OK</string>
     <string name="dialog_doc_lost">文档丢失。</string>
     <string name="dialog_permission_rationale_title">权限请求</string>
     <string name="dialog_permission_rationale_msg">应用需要SD卡权限进行保存、读取、删除图片操作。</string>

@@ -93,7 +93,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        getWindow().setBackgroundDrawable(null);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);

@@ -73,6 +73,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.activity.TraceMoeActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.activity.GameActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait"/>

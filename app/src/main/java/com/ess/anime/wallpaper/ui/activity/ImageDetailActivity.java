@@ -52,7 +52,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_detail);
-        getWindow().setBackgroundDrawable(null);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {

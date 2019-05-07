@@ -26,7 +26,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        getWindow().setBackgroundDrawable(null);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         long delayMills = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         SoundHelper.getInstance().playSplashWelcomeSound(this);

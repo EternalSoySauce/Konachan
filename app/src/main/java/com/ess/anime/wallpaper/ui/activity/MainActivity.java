@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
         setContentView(R.layout.activity_main);
-        getWindow().setBackgroundDrawable(null);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -138,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_sauce_nao:
                         startActivity(new Intent(MainActivity.this, SauceNaoActivity.class));
+                        break;
+                    case R.id.nav_trace_moe:
+                        startActivity(new Intent(MainActivity.this, TraceMoeActivity.class));
                         break;
                     case R.id.nav_game:
                         startActivity(new Intent(MainActivity.this, GameActivity.class));

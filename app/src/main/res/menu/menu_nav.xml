@@ -30,6 +30,11 @@
             android:title="@string/nav_sauce_nao"/>
 
         <item
+            android:id="@+id/nav_trace_moe"
+            android:icon="@drawable/ic_nav_menu_sauce_nao"
+            android:title="@string/nav_trace_moe"/>
+
+        <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_nav_menu_game"
             android:title="@string/nav_game"/>
