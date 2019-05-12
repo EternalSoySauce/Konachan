@@ -47,6 +47,7 @@
     <string name="fab_random">Random</string>
     <string name="currently_loaded">Currently Loaded Page:&#160;</string>
     <string name="goto_page">Go to</string>
+    <string name="load_failed">Failed to load, click to try again</string>
 
     <!-- Search Activity -->
     <string name="spinner_search_tags">Search Tags</string>

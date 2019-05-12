@@ -3,7 +3,6 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,8 +19,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -38,6 +37,7 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -50,14 +50,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PostFragment extends Fragment {
-
-    private final static long LOAD_MORE_INTERVAL = 5000;
+public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
     private MainActivity mActivity;
 
@@ -76,10 +75,6 @@ public class PostFragment extends Fragment {
     private int mGoToPage;  // 跳转到的起始页码
     private String mCurrentTag;   // 当前正在搜索的tag
     private ArrayList<String> mCurrentTagList;
-    private boolean mIsLoadingMore = false;
-    private boolean mLoadMoreAgain = true;
-
-    private Handler mHandler = new Handler();
 
     @Override
     public void onAttach(Context context) {
@@ -217,59 +212,43 @@ public class PostFragment extends Fragment {
             @Override
             public void onRefresh() {
                 getNewPosts(mGoToPage);
-                if (mPostAdapter.getThumbList().isEmpty()) {
-                    mPostAdapter.showLoading();
+                if (mPostAdapter.getData().isEmpty()) {
+                    mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
                 }
             }
         });
     }
 
     private void initRecyclerView() {
+        int span = 2;
         mRvPosts = mRootView.findViewById(R.id.rv_post);
-        mLayoutManager = new GridLayoutManager(mActivity, 2);
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
-            }
-        });
+        mLayoutManager = new GridLayoutManager(mActivity, span);
         mRvPosts.setLayoutManager(mLayoutManager);
 
-        mPostAdapter = new RecyclerPostAdapter(mActivity, new ArrayList<ThumbBean>());
+        mPostAdapter = new RecyclerPostAdapter();
         mPostAdapter.setOnItemClickListener(new RecyclerPostAdapter.OnItemClickListener() {
             @Override
             public void onViewDetails() {
                 mFloatingMenu.close(true);
             }
         });
-        mPostAdapter.showLoading();
+        mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
+        mPostAdapter.setPreLoadNumber(10);
+        mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
+        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
         int spaceVer = UIUtils.dp2px(mActivity, 10);
         mRvPosts.addItemDecoration(new GridDividerItemDecoration(
-                2, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
 
-        //滑动加载更多
+        // 滑动时隐藏fab
         mRvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
-                int totalCount = mPostAdapter.getDataListSize();
-                if (totalCount > 0 && lastVisiblePosition >= totalCount - 10
-                        && !mIsLoadingMore && mLoadMoreAgain) {
-                    mIsLoadingMore = true;
-                    mPostAdapter.showLoadMore();
-                    loadMore();
-                }
-            }
-
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (!mPostAdapter.getThumbList().isEmpty()) {
+                if (!mPostAdapter.getData().isEmpty()) {
                     switch (newState) {
                         case RecyclerView.SCROLL_STATE_IDLE:
                             mFloatingMenu.showMenu(true);
@@ -279,6 +258,31 @@ public class PostFragment extends Fragment {
                             break;
                     }
                 }
+            }
+        });
+    }
+
+    // 滑动加载更多
+    @Override
+    public void onLoadMoreRequested() {
+        String url = OkHttp.getPostUrl(mActivity, ++mCurrentPage, mCurrentTagList);
+        OkHttp.getInstance().connect(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (OkHttp.isNetworkProblem(e)) {
+                    checkNetwork();
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    addMoreThumbList(HtmlParserFactory.createParser(mActivity, html).getThumbList());
+                } else {
+                    checkNetwork();
+                }
+                response.close();
             }
         });
     }
@@ -382,15 +386,11 @@ public class PostFragment extends Fragment {
      */
     private void resetAll(int startPage) {
         OkHttp.getInstance().cancelAll();
-        mPostAdapter.clear();
-        if (!mSwipeRefresh.isRefreshing()) {
-            mSwipeRefresh.setRefreshing(true);
-        }
-        mIsLoadingMore = false;
-        mLoadMoreAgain = true;
+        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
+        mPostAdapter.setNewData(null);
+        mSwipeRefresh.setRefreshing(true);
         mCurrentPage = startPage;
         mGoToPage = startPage;
-        mPostAdapter.showLoading();
     }
 
     private void getNewPosts(int page) {
@@ -407,7 +407,7 @@ public class PostFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<ThumbBean> thumbList = HtmlParserFactory.createParser(mActivity, html).getThumbList();
+                    List<ThumbBean> thumbList = HtmlParserFactory.createParser(mActivity, html).getThumbList();
                     refreshThumbList(thumbList);
                 } else {
                     checkNetwork();
@@ -418,7 +418,7 @@ public class PostFragment extends Fragment {
     }
 
     //搜索新内容或下拉刷新完成后刷新界面
-    private void refreshThumbList(final ArrayList<ThumbBean> newList) {
+    private void refreshThumbList(final List<ThumbBean> newList) {
         if (!mSwipeRefresh.isRefreshing()) {
             return;
         }
@@ -426,10 +426,10 @@ public class PostFragment extends Fragment {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!newList.isEmpty()) {
-                    mPostAdapter.refreshDatas(newList);
+                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+                if (mPostAdapter.refreshDatas(newList)) {
                     scrollToTop();
-                } else if (mPostAdapter.getThumbList().isEmpty()) {
+                } else if (mPostAdapter.getData().isEmpty()) {
                     getNoData();
                 }
                 mSwipeRefresh.setRefreshing(false);
@@ -437,46 +437,21 @@ public class PostFragment extends Fragment {
         });
     }
 
-    //滑动加载更多
-    private void loadMore() {
-        String url = OkHttp.getPostUrl(mActivity, ++mCurrentPage, mCurrentTagList);
-        OkHttp.getInstance().connect(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    addMoreThumbList(HtmlParserFactory.createParser(mActivity, html).getThumbList());
-                } else {
-                    checkNetwork();
-                }
-                response.close();
-            }
-        });
-    }
-
     //加载更多完成后刷新界面
-    private void addMoreThumbList(final ArrayList<ThumbBean> newList) {
-        if (!mIsLoadingMore) {
+    private void addMoreThumbList(final List<ThumbBean> newList) {
+        if (!mPostAdapter.isLoading()) {
             return;
         }
 
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mPostAdapter.loadMoreDatas(newList);
-                mPostAdapter.showNormal();
-                if (newList.isEmpty()) {
-                    Toast.makeText(mActivity, R.string.no_more_load, Toast.LENGTH_SHORT).show();
-                } else {
-                    mIsLoadingMore = false;
+                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+                if (mPostAdapter.loadMoreDatas(newList)) {
+                    mPostAdapter.loadMoreComplete();
                     changeToPage(mCurrentPage);
+                } else {
+                    mPostAdapter.loadMoreEnd();
                 }
             }
         });
@@ -533,7 +508,7 @@ public class PostFragment extends Fragment {
         if (msgBean.msg.equals(Constants.GET_IMAGE_DETAIL)) {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
-            ArrayList<ThumbBean> thumbList = mPostAdapter.getThumbList();
+            List<ThumbBean> thumbList = mPostAdapter.getData();
             for (ThumbBean thumbBean : thumbList) {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
@@ -557,9 +532,8 @@ public class PostFragment extends Fragment {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mPostAdapter.clear();
+                mPostAdapter.setNewData(null);
                 mSwipeRefresh.setRefreshing(false);
-                mPostAdapter.showNoData();
                 SoundHelper.getInstance().playLoadNothingSound(getActivity());
             }
         });
@@ -571,21 +545,12 @@ public class PostFragment extends Fragment {
             @Override
             public void run() {
                 mSwipeRefresh.setRefreshing(false);
-                mIsLoadingMore = false;
-                mLoadMoreAgain = false;
-                if (mPostAdapter.getThumbList().isEmpty()) {
-                    mPostAdapter.showNoNetwork();
+                if (mPostAdapter.getData().isEmpty()) {
+                    mPostAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPosts);
                     SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
-                    Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
+                    mPostAdapter.loadMoreFail();
                 }
-
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadMoreAgain = true;
-                    }
-                }, LOAD_MORE_INTERVAL);
             }
         });
     }

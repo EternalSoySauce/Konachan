@@ -9,8 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -23,6 +23,7 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,13 +31,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PoolPostFragment extends Fragment {
+public class PoolPostFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
@@ -45,8 +46,6 @@ public class PoolPostFragment extends Fragment {
     private RecyclerPostAdapter mPostAdapter;
     private String mLinkToShow;
     private int mCurrentPage;
-    private boolean mIsLoadingMore = false;
-    private boolean mLoadMoreAgain = true;
 
     private Call mNewCall;
     private Call mLoadMoreCall;
@@ -101,38 +100,47 @@ public class PoolPostFragment extends Fragment {
     }
 
     private void initRecyclerView() {
+        int span = 2;
         mRvPosts = mRootView.findViewById(R.id.rv_pool_post);
-        mLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position >= mPostAdapter.getDataListSize() ? 2 : 1;
-            }
-        });
+        mLayoutManager = new GridLayoutManager(getActivity(), span);
         mRvPosts.setLayoutManager(mLayoutManager);
 
-        mPostAdapter = new RecyclerPostAdapter(getActivity(), new ArrayList<ThumbBean>());
+        mPostAdapter = new RecyclerPostAdapter();
+        mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
+        mPostAdapter.setPreLoadNumber(10);
+        mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
+        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(getActivity(), 5);
         int spaceVer = UIUtils.dp2px(getActivity(), 10);
         mRvPosts.addItemDecoration(new GridDividerItemDecoration(
-                2, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+    }
 
-        //滑动加载更多
-        mRvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    // 滑动加载更多
+    @Override
+    public void onLoadMoreRequested() {
+        final String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
+        mLoadMoreCall = OkHttp.getInstance().connect(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (OkHttp.isNetworkProblem(e)) {
+                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
+                }
+            }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
-                int totalCount = mPostAdapter.getDataListSize();
-                if (totalCount > 0 && lastVisiblePosition >= totalCount - 10
-                        && !mIsLoadingMore && mLoadMoreAgain) {
-                    mIsLoadingMore = true;
-                    mPostAdapter.showLoadMore();
-                    loadMore();
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    if (getActivity() != null) {
+                        addMoreThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
+                    }
+                } else {
+                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
                 }
+                response.close();
             }
         });
     }
@@ -163,7 +171,7 @@ public class PoolPostFragment extends Fragment {
     }
 
     // 搜索新内容或下拉刷新完成后刷新界面
-    private void refreshThumbList(final ArrayList<ThumbBean> newList) {
+    private void refreshThumbList(final List<ThumbBean> newList) {
         if (!mSwipeRefresh.isRefreshing()) {
             return;
         }
@@ -171,8 +179,7 @@ public class PoolPostFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!newList.isEmpty()) {
-                    mPostAdapter.refreshDatas(newList);
+                if (mPostAdapter.refreshDatas(newList)) {
                     scrollToTop();
                 }
                 mSwipeRefresh.setRefreshing(false);
@@ -180,47 +187,20 @@ public class PoolPostFragment extends Fragment {
         });
     }
 
-    // 滑动加载更多
-    private void loadMore() {
-        final String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
-        mLoadMoreCall = OkHttp.getInstance().connect(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    if (getActivity() != null) {
-                        addMoreThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
-                    }
-                } else {
-                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
-                }
-                response.close();
-            }
-        });
-    }
-
     //加载更多完成后刷新界面
-    private void addMoreThumbList(final ArrayList<ThumbBean> newList) {
-        if (!mIsLoadingMore) {
+    private void addMoreThumbList(final List<ThumbBean> newList) {
+        if (!mPostAdapter.isLoading()) {
             return;
         }
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mPostAdapter.loadMoreDatas(newList);
-                mPostAdapter.showNormal();
-                if (newList.isEmpty()) {
-                    Toast.makeText(getActivity(), R.string.no_more_load, Toast.LENGTH_SHORT).show();
+                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+                if (mPostAdapter.loadMoreDatas(newList)) {
+                    mPostAdapter.loadMoreComplete();
                 } else {
-                    mIsLoadingMore = false;
+                    mPostAdapter.loadMoreEnd();
                 }
             }
         });
@@ -240,7 +220,7 @@ public class PoolPostFragment extends Fragment {
         if (msgBean.msg.equals(Constants.GET_IMAGE_DETAIL)) {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
-            ArrayList<ThumbBean> thumbList = mPostAdapter.getThumbList();
+            List<ThumbBean> thumbList = mPostAdapter.getData();
             for (ThumbBean thumbBean : thumbList) {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {

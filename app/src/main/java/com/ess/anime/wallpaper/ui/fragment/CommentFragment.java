@@ -3,9 +3,11 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,7 +39,6 @@ public class CommentFragment extends Fragment {
 
     private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
-    private TextView mTvNoComment;
     private RecyclerCommentAdapter mCommentAdapter;
 
     private Call mCommentCall;
@@ -63,9 +65,8 @@ public class CommentFragment extends Fragment {
         }
         mRootView = inflater.inflate(R.layout.fragment_comment, container, false);
         initView();
-        initNoCommentView();
         initRecyclerView();
-        showComments(null);
+        getCommentList();
         return mRootView;
     }
 
@@ -77,22 +78,16 @@ public class CommentFragment extends Fragment {
                 getCommentList();
             }
         });
-
         mSwipeRefresh.setRefreshing(true);
-        mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
-        getCommentList();
     }
 
-    private void initNoCommentView() {
-        mTvNoComment = mRootView.findViewById(R.id.tv_no_comment);
-    }
 
     private void initRecyclerView() {
         RecyclerView rvComment = mRootView.findViewById(R.id.rv_comment);
         rvComment.setLayoutManager(new LinearLayoutManager(mActivity));
 
         ArrayList<CommentBean> commentList = new ArrayList<>();
-        mCommentAdapter = new RecyclerCommentAdapter(mActivity, commentList);
+        mCommentAdapter = new RecyclerCommentAdapter(commentList);
         rvComment.setAdapter(mCommentAdapter);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
@@ -102,15 +97,21 @@ public class CommentFragment extends Fragment {
     }
 
     // 显示评论
-    private void showComments(ArrayList<CommentBean> commentList) {
-        mCommentAdapter.getCommentList().clear();
-        if (commentList == null || commentList.isEmpty()) {
-            mTvNoComment.setVisibility(View.VISIBLE);
-        } else {
-            mTvNoComment.setVisibility(View.GONE);
-            mCommentAdapter.getCommentList().addAll(commentList);
+    private void showComments(List<CommentBean> commentList) {
+        if (mCommentAdapter.getEmptyView() == null) {
+            mCommentAdapter.setEmptyView(getEmptyView());
         }
-        mCommentAdapter.notifyDataSetChanged();
+        mCommentAdapter.setNewData(commentList);
+    }
+
+    private View getEmptyView() {
+        TextView tvEmpty = new TextView(mActivity);
+        tvEmpty.setText(R.string.comment_no_comments);
+        tvEmpty.setTextColor(ResourcesCompat.getColor(
+                getResources(), R.color.color_text_unselected, null));
+        tvEmpty.setTextSize(18);
+        tvEmpty.setGravity(Gravity.CENTER);
+        return tvEmpty;
     }
 
     // 获取评论列表
@@ -127,7 +128,7 @@ public class CommentFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<CommentBean> commentList = HtmlParserFactory.createParser(mActivity, html).getCommentList();
+                    List<CommentBean> commentList = HtmlParserFactory.createParser(mActivity, html).getCommentList();
                     setCommentList(commentList);
                 } else {
                     getCommentList();
@@ -138,13 +139,14 @@ public class CommentFragment extends Fragment {
     }
 
     // 获取到评论列表后刷新界面
-    private void setCommentList(final ArrayList<CommentBean> commentList) {
+    private void setCommentList(final List<CommentBean> commentList) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showComments(commentList);
-                mSwipeRefresh.setRefreshing(false);
-                mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
+                if (!mActivity.isFinishing() && !mActivity.isDestroyed()) {
+                    showComments(commentList);
+                    mSwipeRefresh.setRefreshing(false);
+                }
             }
         });
     }

@@ -1,118 +1,63 @@
 package com.ess.anime.wallpaper.adapter;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostAdapter.MyViewHolder> {
+public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
 
-    private Activity mActivity;
-    private ArrayList<ThumbBean> mThumbList;
     private ArrayList<Call> mCallList = new ArrayList<>();
     private OnItemClickListener mItemClickListener;
 
-    public RecyclerPostAdapter(Activity activity, @NonNull ArrayList<ThumbBean> thumbList) {
-        super(activity);
-        mActivity = activity;
-        mThumbList = thumbList;
-        getImageDetail(thumbList);
+    public RecyclerPostAdapter() {
+        super(R.layout.recyclerview_item_post);
     }
 
     @Override
-    public int bindLoadMoreLayoutRes() {
-        return R.layout.layout_load_more;
-    }
-
-    @Override
-    public int bindLoadingLayoutRes() {
-        return R.layout.layout_loading;
-    }
-
-    @Override
-    public int bindNoDataLayoutRes() {
-        return R.layout.layout_load_nothing;
-    }
-
-    @Override
-    public int bindNoNetworkLayoutRes() {
-        return R.layout.layout_load_no_network;
-    }
-
-    @Override
-    public int bindNormalLayoutRes() {
-        return R.layout.recyclerview_item_post;
-    }
-
-    @Override
-    public MyViewHolder onCreateViewHolder(View view) {
-        return new MyViewHolder(view);
-    }
-
-    @Override
-    public void onBindLoadMoreHolder(MyViewHolder holder, int layoutPos) {
-        holder.indicatorView.smoothToShow();
-    }
-
-    @Override
-    public void onBindLoadingHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNoDataHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNoNetworkHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNormalHolder(MyViewHolder holder, final int position) {
-        final ThumbBean thumbBean = mThumbList.get(position);
-
+    protected void convert(final BaseViewHolder holder, final ThumbBean thumbBean) {
         //缩略图
-        GlideApp.with(mActivity)
+        GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
-                .into(holder.ivThumb);
+                .into((ImageView) holder.getView(R.id.iv_post_thumb));
 
         //尺寸
-        holder.tvSize.setText(thumbBean.realSize);
+        holder.setText(R.id.tv_size, thumbBean.realSize);
 
         //点击进入详细页面
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageDataHolder.setThumbList(mThumbList, position);
-                Intent intent = new Intent(mActivity, ImageDetailActivity.class);
+                int index = holder.getLayoutPosition() - getHeaderLayoutCount();
+                ImageDataHolder.setThumbList(mData, index);
+                Intent intent = new Intent(mContext, ImageDetailActivity.class);
                 intent.putExtra(Constants.THUMB_BEAN, thumbBean);
-                mActivity.startActivity(intent);
+                mContext.startActivity(intent);
 
                 if (mItemClickListener != null) {
                     mItemClickListener.onViewDetails();
@@ -121,36 +66,29 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
         });
     }
 
-    @Override
-    public int getDataListSize() {
-        return getThumbList().size();
+    public boolean loadMoreDatas(List<ThumbBean> imageList) {
+        return addDatas(mData.size(), imageList);
     }
 
-    public ArrayList<ThumbBean> getThumbList() {
-        return mThumbList;
+    public boolean refreshDatas(List<ThumbBean> imageList) {
+        return addDatas(0, imageList);
     }
 
-    public void loadMoreDatas(ArrayList<ThumbBean> imageList) {
-        int position = getDataListSize();
-        addDatas(position, imageList);
-    }
-
-    public void refreshDatas(ArrayList<ThumbBean> imageList) {
-        addDatas(0, imageList);
-    }
-
-    private void addDatas(int position, ArrayList<ThumbBean> thumbList) {
+    private boolean addDatas(int position, List<ThumbBean> thumbList) {
         synchronized (this) {
             //删掉更新时因网站新增图片导致thumbList出现的重复项
-            thumbList.removeAll(mThumbList);
-            mThumbList.addAll(position, thumbList);
-            showNormal();
-            getImageDetail(thumbList);
-            preloadThumbnail(thumbList);
+            thumbList.removeAll(mData);
+            if (!thumbList.isEmpty()) {
+                addData(position, thumbList);
+                getImageDetail(thumbList);
+                preloadThumbnail(thumbList);
+                return true;
+            }
+            return false;
         }
     }
 
-    private void getImageDetail(ArrayList<ThumbBean> thumbList) {
+    private void getImageDetail(List<ThumbBean> thumbList) {
         for (final ThumbBean thumbBean : thumbList) {
             if (thumbBean.imageBean == null) {
                 Call call = OkHttp.getInstance().connect(thumbBean.linkToShow, new Callback() {
@@ -166,7 +104,7 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
                     public void onResponse(Call call, Response response) throws IOException {
                         if (response.isSuccessful()) {
                             String html = response.body().string();
-                            String json = HtmlParserFactory.createParser(mActivity, html).getImageDetailJson();
+                            String json = HtmlParserFactory.createParser(mContext, html).getImageDetailJson();
                             // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
                             EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
                         } else {
@@ -181,37 +119,21 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
         }
     }
 
-    private void preloadThumbnail(ArrayList<ThumbBean> thumbList) {
-        for (ThumbBean thumbBean : thumbList) {
-            if (!mActivity.isDestroyed()) {
-                GlideApp.with(mActivity)
+    private void preloadThumbnail(List<ThumbBean> thumbList) {
+        try {
+            for (ThumbBean thumbBean : thumbList) {
+                GlideApp.with(mContext)
                         .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                         .submit();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
-
-    public void clear() {
-        mThumbList.clear();
-        showNormal();
     }
 
     public void cancelAll() {
         for (Call call : mCallList) {
             call.cancel();
-        }
-    }
-
-    class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivThumb;
-        private TextView tvSize;
-        private AVLoadingIndicatorView indicatorView;
-
-        public MyViewHolder(android.view.View itemView) {
-            super(itemView);
-            ivThumb = itemView.findViewById(R.id.iv_post_thumb);
-            tvSize = itemView.findViewById(R.id.tv_size);
-            indicatorView = itemView.findViewById(R.id.view_load_more);
         }
     }
 
@@ -223,4 +145,5 @@ public class RecyclerPostAdapter extends MultiStateRecyclerAdapter<RecyclerPostA
     public void setOnItemClickListener(OnItemClickListener listener) {
         mItemClickListener = listener;
     }
+
 }

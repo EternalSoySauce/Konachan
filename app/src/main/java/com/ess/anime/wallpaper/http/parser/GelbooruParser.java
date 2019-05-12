@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GelbooruParser extends HtmlParser {
 
@@ -24,8 +25,8 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<ThumbBean> getThumbList() {
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
+    public List<ThumbBean> getThumbList() {
+        List<ThumbBean> thumbList = new ArrayList<>();
         Elements elements = mDoc.getElementsByTag("post");
         for (Element e : elements) {
             try {
@@ -137,8 +138,8 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<CommentBean> getCommentList() {
-        ArrayList<CommentBean> commentList = new ArrayList<>();
+    public List<CommentBean> getCommentList() {
+        List<CommentBean> commentList = new ArrayList<>();
         Elements elements = mDoc.getElementsByClass("commentBox");
         for (Element e : elements) {
             try {
@@ -170,8 +171,8 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<PoolListBean> getPoolList() {
-        ArrayList<PoolListBean> poolList = new ArrayList<>();
+    public List<PoolListBean> getPoolList() {
+        List<PoolListBean> poolList = new ArrayList<>();
         Element table = mDoc.getElementsByClass("highlightable").first();
         if (table != null) {
             Elements pools = table.getElementsByTag("tr");

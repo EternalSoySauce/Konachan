@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class HtmlParser {
@@ -29,21 +30,21 @@ public abstract class HtmlParser {
         mDoc = doc;
     }
 
-    public abstract ArrayList<ThumbBean> getThumbList();
+    public abstract List<ThumbBean> getThumbList();
 
     public abstract String getImageDetailJson();
 
-    public abstract ArrayList<CommentBean> getCommentList();
+    public abstract List<CommentBean> getCommentList();
 
-    public abstract ArrayList<PoolListBean> getPoolList();
+    public abstract List<PoolListBean> getPoolList();
 
     public Document getDocument() {
         return mDoc;
     }
 
-    public static ArrayList<ThumbBean> getThumbListOfPool(Context context, String html) {
+    public static List<ThumbBean> getThumbListOfPool(Context context, String html) {
         HtmlParser parser = HtmlParserFactory.createParser(context, html);
-        ArrayList<ThumbBean> thumbList = parser.getThumbList();
+        List<ThumbBean> thumbList = parser.getThumbList();
         Elements scripts = parser.getDocument().getElementsByTag("script");
         for (Element script : scripts) {
             try {

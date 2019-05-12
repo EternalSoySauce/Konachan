@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 public class DanbooruParser extends HtmlParser {
@@ -25,8 +26,8 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<ThumbBean> getThumbList() {
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
+    public List<ThumbBean> getThumbList() {
+        List<ThumbBean> thumbList = new ArrayList<>();
         Elements elements = mDoc.getElementsByTag("article");
         for (Element e : elements) {
             try {
@@ -138,8 +139,8 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<CommentBean> getCommentList() {
-        ArrayList<CommentBean> commentList = new ArrayList<>();
+    public List<CommentBean> getCommentList() {
+        List<CommentBean> commentList = new ArrayList<>();
         Elements elements = mDoc.getElementsByClass("comment");
         for (Element e : elements) {
             try {
@@ -173,8 +174,8 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<PoolListBean> getPoolList() {
-        ArrayList<PoolListBean> poolList = new ArrayList<>();
+    public List<PoolListBean> getPoolList() {
+        List<PoolListBean> poolList = new ArrayList<>();
         for (Element pool : mDoc.select("tr[id]")) {
             try {
                 PoolListBean poolListBean = new PoolListBean();

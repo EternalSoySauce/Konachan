@@ -38,6 +38,7 @@
     <string name="fab_random">隨機看圖</string>
     <string name="currently_loaded">當前加載頁碼:&#160;</string>
     <string name="goto_page">跳轉至</string>
+    <string name="load_failed">加載失敗，點擊重試</string>
 
     <!-- Search Activity -->
     <string name="spinner_search_tags">標籤搜索</string>

@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Konachan,Yande,Lolibooru通用
@@ -26,8 +27,8 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<ThumbBean> getThumbList() {
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
+    public List<ThumbBean> getThumbList() {
+        List<ThumbBean> thumbList = new ArrayList<>();
         Element list = mDoc.getElementById("post-list-posts");
         if (list == null) {
             return thumbList;
@@ -80,8 +81,8 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<CommentBean> getCommentList() {
-        ArrayList<CommentBean> commentList = new ArrayList<>();
+    public List<CommentBean> getCommentList() {
+        List<CommentBean> commentList = new ArrayList<>();
         Elements elements = mDoc.getElementsByClass("comment avatar-container");
         for (Element e : elements) {
             try {
@@ -111,9 +112,9 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<PoolListBean> getPoolList() {
+    public List<PoolListBean> getPoolList() {
         //解析预览图和id
-        ArrayList<PoolListBean> poolList = new ArrayList<>();
+        List<PoolListBean> poolList = new ArrayList<>();
         PoolListBean poolListBean = new PoolListBean();
         Elements eleScripts = mDoc.getElementsByTag("script");
         for (Element script : eleScripts) {

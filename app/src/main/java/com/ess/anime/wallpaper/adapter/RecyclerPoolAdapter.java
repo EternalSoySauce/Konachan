@@ -1,202 +1,89 @@
 package com.ess.anime.wallpaper.adapter;
 
-import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
-import com.wang.avi.AVLoadingIndicatorView;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class RecyclerPoolAdapter extends MultiStateRecyclerAdapter<RecyclerPoolAdapter.MyViewHolder> {
+public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseViewHolder> {
 
-    private Activity mActivity;
-    private ArrayList<PoolListBean> mPoolList;
-    private OnItemClickListener mItemClickListener;
-
-    public RecyclerPoolAdapter(Activity activity, @NonNull ArrayList<PoolListBean> poolList) {
-        super(activity);
-        mActivity = activity;
-        mPoolList = poolList;
+    public RecyclerPoolAdapter() {
+        super(R.layout.recyclerview_item_pool);
     }
 
     @Override
-    public int bindLoadMoreLayoutRes() {
-        return R.layout.layout_load_more;
-    }
-
-    @Override
-    public int bindLoadingLayoutRes() {
-        return R.layout.layout_loading;
-    }
-
-    @Override
-    public int bindNoDataLayoutRes() {
-        return R.layout.layout_load_nothing;
-    }
-
-    @Override
-    public int bindNoNetworkLayoutRes() {
-        return R.layout.layout_load_no_network;
-    }
-
-    @Override
-    public int bindNormalLayoutRes() {
-        return R.layout.recyclerview_item_pool;
-    }
-
-    @Override
-    public MyViewHolder onCreateViewHolder(View view) {
-        return new MyViewHolder(view);
-    }
-
-    @Override
-    public void onBindLoadMoreHolder(MyViewHolder holder, int layoutPos) {
-        holder.indicatorView.smoothToShow();
-    }
-
-    @Override
-    public void onBindLoadingHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNoDataHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNoNetworkHolder(MyViewHolder holder, int layoutPos) {
-    }
-
-    @Override
-    public void onBindNormalHolder(MyViewHolder holder, int position) {
-        final PoolListBean poolListBean = mPoolList.get(position);
-
+    protected void convert(BaseViewHolder holder, PoolListBean poolListBean) {
         //缩略图
         Object imgUrl = TextUtils.isEmpty(poolListBean.thumbUrl)
                 ? R.drawable.ic_placeholder_pool_no_cover
                 : MyGlideModule.makeGlideUrl(poolListBean.thumbUrl);
-        GlideApp.with(mActivity)
+        GlideApp.with(mContext)
                 .load(imgUrl)
                 .placeholder(R.drawable.ic_placeholder_pool)
                 .priority(Priority.HIGH)
-                .into(holder.ivThumb);
+                .into((ImageView) holder.getView(R.id.iv_pool_thumb));
 
         //图集名称
-        holder.tvName.setText(poolListBean.name.replace("_", " "));
+        holder.setText(R.id.tv_name, poolListBean.name.replace("_", " "));
 
         //创建者
         String creator = TextUtils.isEmpty(poolListBean.creator)
-                ? getContext().getString(R.string.unknown)
+                ? mContext.getString(R.string.unknown)
                 : poolListBean.creator;
-        holder.tvCreator.setText(creator);
+        holder.setText(R.id.tv_creator, creator);
 
         //图片数量
-        holder.tvPostCount.setText(poolListBean.postCount);
+        holder.setText(R.id.tv_post_count, poolListBean.postCount);
 
         //创建时间
-        holder.tvCreateTime.setText(poolListBean.createTime);
+        holder.setText(R.id.tv_create_time, poolListBean.createTime);
 
         //上传时间
         String update = TextUtils.isEmpty(poolListBean.updateTime)
-                ? getContext().getString(R.string.unknown)
-                : mActivity.getString(R.string.pool_updated_time, poolListBean.updateTime);
-        holder.tvUpdateTime.setText(update);
-
-        //点击加载图片列表
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mItemClickListener != null) {
-                    mItemClickListener.onLoadPostsOfPool(poolListBean.id, poolListBean.linkToShow);
-                }
-            }
-        });
+                ? mContext.getString(R.string.unknown)
+                : mContext.getString(R.string.pool_updated_time, poolListBean.updateTime);
+        holder.setText(R.id.tv_update_time, update);
     }
 
-    @Override
-    public int getDataListSize() {
-        return getPoolList().size();
+    public boolean loadMoreDatas(List<PoolListBean> poolList) {
+        return addDatas(mData.size(), poolList);
     }
 
-    public ArrayList<PoolListBean> getPoolList() {
-        return mPoolList;
+    public boolean refreshDatas(List<PoolListBean> poolList) {
+        return addDatas(0, poolList);
     }
 
-    public void loadMoreDatas(ArrayList<PoolListBean> poolList) {
-        int position = getDataListSize();
-        addDatas(position, poolList);
-    }
-
-    public void refreshDatas(ArrayList<PoolListBean> poolList) {
-        addDatas(0, poolList);
-    }
-
-    private void addDatas(int position, ArrayList<PoolListBean> poolList) {
+    private boolean addDatas(int position, List<PoolListBean> poolList) {
         synchronized (this) {
             //删掉更新时因网站新增图片导致thumbList出现的重复项
-            poolList.removeAll(mPoolList);
-            mPoolList.addAll(position, poolList);
-            showNormal();
-            preloadThumbnail(poolList);
+            poolList.removeAll(mData);
+            if (!poolList.isEmpty()) {
+                addData(position, poolList);
+                preloadThumbnail(poolList);
+                return true;
+            }
+            return false;
         }
     }
 
-    private void preloadThumbnail(ArrayList<PoolListBean> poolList) {
-        for (PoolListBean poolListBean : poolList) {
-            if (!mActivity.isDestroyed()) {
-                GlideApp.with(mActivity)
+    private void preloadThumbnail(List<PoolListBean> poolList) {
+        try {
+            for (PoolListBean poolListBean : poolList) {
+                GlideApp.with(mContext)
                         .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
                         .submit();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void clear() {
-        mPoolList.clear();
-        showNormal();
-    }
-
-    class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivThumb;
-        private TextView tvName;
-        private TextView tvCreator;
-        private TextView tvPostCount;
-        private TextView tvCreateTime;
-        private TextView tvUpdateTime;
-        private AVLoadingIndicatorView indicatorView;
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            ivThumb = itemView.findViewById(R.id.iv_pool_thumb);
-            tvName = itemView.findViewById(R.id.tv_name);
-            tvCreator = itemView.findViewById(R.id.tv_creator);
-            tvPostCount = itemView.findViewById(R.id.tv_post_count);
-            tvCreateTime = itemView.findViewById(R.id.tv_create_time);
-            tvUpdateTime = itemView.findViewById(R.id.tv_update_time);
-            indicatorView = itemView.findViewById(R.id.view_load_more);
-        }
-    }
-
-    private enum ViewState {
-        NORMAL,
-        LOAD_MORE
-    }
-
-    public interface OnItemClickListener {
-        //加载图集里的图片列表
-        void onLoadPostsOfPool(String id, String linkToShow);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mItemClickListener = listener;
-    }
 }

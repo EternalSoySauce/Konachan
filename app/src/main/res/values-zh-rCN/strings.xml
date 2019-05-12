@@ -38,6 +38,7 @@
     <string name="fab_random">随机看图</string>
     <string name="currently_loaded">当前加载页码:&#160;</string>
     <string name="goto_page">跳转至</string>
+    <string name="load_failed">加载失败，点击重试</string>
 
     <!-- Search Activity -->
     <string name="spinner_search_tags">标签搜索</string>

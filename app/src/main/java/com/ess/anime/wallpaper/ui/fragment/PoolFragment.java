@@ -2,7 +2,6 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,18 +21,19 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.zyyoona7.popup.EasyPopup;
 
@@ -42,15 +42,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PoolFragment extends Fragment {
-
-    private final static long LOAD_MORE_INTERVAL = 5000;
+public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
     private MainActivity mActivity;
     private FragmentManager mFragmentManager;
@@ -72,10 +70,6 @@ public class PoolFragment extends Fragment {
     private int mCurrentPage;   // 当前页码
     private int mGoToPage;   // 跳转到的起始页码
     private String mCurrentSearchName;
-    private boolean mIsLoadingMore = false;
-    private boolean mLoadMoreAgain = true;
-
-    private Handler mHandler = new Handler();
 
     @Override
     public void onAttach(Context context) {
@@ -234,8 +228,8 @@ public class PoolFragment extends Fragment {
             @Override
             public void onRefresh() {
                 getNewPools(mGoToPage);
-                if (mPoolAdapter.getPoolList().isEmpty()) {
-                    mPoolAdapter.showLoading();
+                if (mPoolAdapter.getData().isEmpty()) {
+                    mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
                 }
             }
         });
@@ -250,36 +244,49 @@ public class PoolFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(mActivity);
         mRvPools.setLayoutManager(mLayoutManager);
 
-        ArrayList<PoolListBean> poolList = new ArrayList<>();
-        mPoolAdapter = new RecyclerPoolAdapter(mActivity, poolList);
+        mPoolAdapter = new RecyclerPoolAdapter();
         mRvPools.setAdapter(mPoolAdapter);
-        mPoolAdapter.showLoading();
-        mPoolAdapter.setOnItemClickListener(new RecyclerPoolAdapter.OnItemClickListener() {
+        mPoolAdapter.setOnLoadMoreListener(this, mRvPools);
+        mPoolAdapter.setPreLoadNumber(5);
+        mPoolAdapter.setLoadMoreView(new CustomLoadMoreView());
+        mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
+        mPoolAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onLoadPostsOfPool(String id, String linkToShow) {
-                String title = getString(R.string.nav_pool) + " #" + id.replaceAll("[^0-9]", "");
-                addPoolPostFragment(title, linkToShow);
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                PoolListBean poolListBean = mPoolAdapter.getItem(position);
+                if (poolListBean != null) {
+                    String title = getString(R.string.nav_pool) + " #" + poolListBean.id.replaceAll("[^0-9]", "");
+                    addPoolPostFragment(title, poolListBean.linkToShow);
+                }
             }
         });
 
         int space = UIUtils.dp2px(mActivity, 12);
         mRvPools.addItemDecoration(new GridDividerItemDecoration(
                 1, GridDividerItemDecoration.VERTICAL, space, true));
+    }
 
-        //滑动加载更多
-        mRvPools.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    // 滑动加载更多
+    @Override
+    public void onLoadMoreRequested() {
+        String url = OkHttp.getPoolUrl(mActivity, ++mCurrentPage, mCurrentSearchName);
+        OkHttp.getInstance().connect(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (OkHttp.isNetworkProblem(e)) {
+                    checkNetwork();
+                }
+            }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
-                int totalCount = mPoolAdapter.getDataListSize();
-                if (totalCount > 0 && lastVisiblePosition >= totalCount - 5
-                        && !mIsLoadingMore && mLoadMoreAgain) {
-                    mIsLoadingMore = true;
-                    mPoolAdapter.showLoadMore();
-                    loadMore();
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String html = response.body().string();
+                    addMorePoolList(HtmlParserFactory.createParser(mActivity, html).getPoolList());
+                } else {
+                    checkNetwork();
                 }
+                response.close();
             }
         });
     }
@@ -332,9 +339,7 @@ public class PoolFragment extends Fragment {
 //        if (requestCode == Constants.SEARCH_CODE) {
 //            if (data != null) {
 //                mPoolAdapter.clear();
-//                if (!mSwipeRefresh.isRefreshing()) {
-//                    mSwipeRefresh.setRefreshing(true);
-//                }
+//                mSwipeRefresh.setRefreshing(true);
 //                mCurrentPage = 1;
 //                mGoToPage = 1;
 //                mCurrentSearchName.clear();
@@ -370,15 +375,11 @@ public class PoolFragment extends Fragment {
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
-        mPoolAdapter.clear();
-        if (!mSwipeRefresh.isRefreshing()) {
-            mSwipeRefresh.setRefreshing(true);
-        }
-        mIsLoadingMore = false;
-        mLoadMoreAgain = true;
+        mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
+        mPoolAdapter.setNewData(null);
+        mSwipeRefresh.setRefreshing(true);
         mCurrentPage = startPage;
         mGoToPage = startPage;
-        mPoolAdapter.showLoading();
     }
 
     private void getNewPools(int page) {
@@ -395,11 +396,8 @@ public class PoolFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
-                    ArrayList<PoolListBean> poolList = HtmlParserFactory.createParser(mActivity, html).getPoolList();
+                    List<PoolListBean> poolList = HtmlParserFactory.createParser(mActivity, html).getPoolList();
                     refreshPoolList(poolList);
-                    if (poolList.isEmpty()) {
-                        getNoData();
-                    }
                 } else {
                     checkNetwork();
                 }
@@ -409,7 +407,7 @@ public class PoolFragment extends Fragment {
     }
 
     //搜索新内容或下拉刷新完成后刷新界面
-    private void refreshPoolList(final ArrayList<PoolListBean> newList) {
+    private void refreshPoolList(final List<PoolListBean> newList) {
         if (!mSwipeRefresh.isRefreshing()) {
             return;
         }
@@ -417,57 +415,32 @@ public class PoolFragment extends Fragment {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!newList.isEmpty()) {
-                    mPoolAdapter.refreshDatas(newList);
+                mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+                if (mPoolAdapter.refreshDatas(newList)) {
                     scrollToTop();
-                } else if (mPoolAdapter.getPoolList().isEmpty()) {
-                    mPoolAdapter.showNoData();
+                } else if (mPoolAdapter.getData().isEmpty()) {
+                    getNoData();
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
         });
     }
 
-    //滑动加载更多
-    private void loadMore() {
-        String url = OkHttp.getPoolUrl(mActivity, ++mCurrentPage, mCurrentSearchName);
-        OkHttp.getInstance().connect(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    addMorePoolList(HtmlParserFactory.createParser(mActivity, html).getPoolList());
-                } else {
-                    checkNetwork();
-                }
-                response.close();
-            }
-        });
-    }
-
     //加载更多完成后刷新界面
-    private void addMorePoolList(final ArrayList<PoolListBean> newList) {
-        if (!mIsLoadingMore) {
+    private void addMorePoolList(final List<PoolListBean> newList) {
+        if (!mPoolAdapter.isLoading()) {
             return;
         }
 
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mPoolAdapter.loadMoreDatas(newList);
-                mPoolAdapter.showNormal();
-                if (newList.isEmpty()) {
-                    Toast.makeText(mActivity, R.string.no_more_load, Toast.LENGTH_SHORT).show();
-                } else {
-                    mIsLoadingMore = false;
+                mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+                if (mPoolAdapter.loadMoreDatas(newList)) {
+                    mPoolAdapter.loadMoreComplete();
                     changeToPage(mCurrentPage);
+                } else {
+                    mPoolAdapter.loadMoreEnd();
                 }
             }
         });
@@ -478,9 +451,8 @@ public class PoolFragment extends Fragment {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mPoolAdapter.clear();
+                mPoolAdapter.setNewData(null);
                 mSwipeRefresh.setRefreshing(false);
-                mPoolAdapter.showNoData();
                 SoundHelper.getInstance().playLoadNothingSound(getActivity());
             }
         });
@@ -492,21 +464,12 @@ public class PoolFragment extends Fragment {
             @Override
             public void run() {
                 mSwipeRefresh.setRefreshing(false);
-                mIsLoadingMore = false;
-                mLoadMoreAgain = false;
-                if (mPoolAdapter.getPoolList().isEmpty()) {
-                    mPoolAdapter.showNoNetwork();
+                if (mPoolAdapter.getData().isEmpty()) {
+                    mPoolAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPools);
                     SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
                 } else {
-                    Toast.makeText(mActivity, R.string.check_network, Toast.LENGTH_SHORT).show();
+                    mPoolAdapter.loadMoreFail();
                 }
-
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadMoreAgain = true;
-                    }
-                }, LOAD_MORE_INTERVAL);
             }
         });
     }

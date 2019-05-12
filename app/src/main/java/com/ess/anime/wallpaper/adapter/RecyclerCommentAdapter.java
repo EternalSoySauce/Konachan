@@ -1,100 +1,57 @@
 package com.ess.anime.wallpaper.adapter;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Priority;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class RecyclerCommentAdapter extends RecyclerView.Adapter<RecyclerCommentAdapter.MyViewHolder> {
+public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseViewHolder> {
 
-    private Context mContext;
-    private ArrayList<CommentBean> mCommentList;
-
-    public RecyclerCommentAdapter(Context context, ArrayList<CommentBean> commentList) {
-        mContext = context;
-        mCommentList = commentList;
+    public RecyclerCommentAdapter(@NonNull List<CommentBean> commentList) {
+        super(R.layout.recyclerview_item_comment, commentList);
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.recyclerview_item_comment, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        CommentBean commentBean = mCommentList.get(position);
-
+    protected void convert(BaseViewHolder holder, CommentBean commentBean) {
         //头像
         GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(commentBean.avatar))
                 .placeholder(R.drawable.ic_placeholder_comment)
                 .priority(Priority.NORMAL)
-                .into(holder.ivHead);
+                .into((ImageView) holder.getView(R.id.iv_head));
 
         //作者
-        holder.tvAuthor.setText(commentBean.author);
+        holder.setText(R.id.tv_author, commentBean.author);
 
         //id
-        holder.tvId.setText(commentBean.id);
+        holder.setText(R.id.tv_id, commentBean.id);
 
         //时间
-        holder.tvDate.setText(commentBean.date);
+        holder.setText(R.id.tv_date, commentBean.date);
 
         //引用
-        if (TextUtils.isEmpty(commentBean.quote)) {
-            holder.tvQuote.setVisibility(View.GONE);
-        } else {
-            holder.tvQuote.setVisibility(View.VISIBLE);
-            holder.tvQuote.setText(commentBean.quote);
-            holder.tvQuote.setMovementMethod(LinkMovementMethod.getInstance());
-        }
+        boolean hasQuote = !TextUtils.isEmpty(commentBean.quote);
+        TextView tvQuote = holder.getView(R.id.tv_quote);
+        tvQuote.setVisibility(hasQuote ? View.VISIBLE : View.GONE);
+        tvQuote.setText(commentBean.quote);
+        tvQuote.setMovementMethod(LinkMovementMethod.getInstance());
 
         //评论
-        holder.tvComment.setText(commentBean.comment);
-        holder.tvComment.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView tvComment = holder.getView(R.id.tv_comment);
+        tvComment.setText(commentBean.comment);
+        tvComment.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    @Override
-    public int getItemCount() {
-        return mCommentList == null ? 0 : mCommentList.size();
-    }
-
-    public ArrayList<CommentBean> getCommentList() {
-        return mCommentList;
-    }
-
-    class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivHead;
-        private TextView tvAuthor;
-        private TextView tvId;
-        private TextView tvDate;
-        private TextView tvQuote;
-        private TextView tvComment;
-
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            ivHead = (ImageView) itemView.findViewById(R.id.iv_head);
-            tvAuthor = (TextView) itemView.findViewById(R.id.tv_author);
-            tvId = (TextView) itemView.findViewById(R.id.tv_id);
-            tvDate = (TextView) itemView.findViewById(R.id.tv_date);
-            tvQuote = (TextView) itemView.findViewById(R.id.tv_quote);
-            tvComment = (TextView) itemView.findViewById(R.id.tv_comment);
-        }
-    }
 }

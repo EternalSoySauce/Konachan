@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 public class SankakuParser extends HtmlParser {
@@ -24,8 +25,8 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<ThumbBean> getThumbList() {
-        ArrayList<ThumbBean> thumbList = new ArrayList<>();
+    public List<ThumbBean> getThumbList() {
+        List<ThumbBean> thumbList = new ArrayList<>();
         //        mDoc.select("#popular-preview").remove();  // 移除最上方的四张popular
         Elements elements = mDoc.getElementsByClass("thumb blacklisted");
         for (Element e : elements) {
@@ -168,8 +169,8 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<CommentBean> getCommentList() {
-        ArrayList<CommentBean> commentList = new ArrayList<>();
+    public List<CommentBean> getCommentList() {
+        List<CommentBean> commentList = new ArrayList<>();
         Elements elements = mDoc.getElementsByClass("comment");
         for (Element e : elements) {
             try {
@@ -206,8 +207,8 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public ArrayList<PoolListBean> getPoolList() {
-        ArrayList<PoolListBean> poolList = new ArrayList<>();
+    public List<PoolListBean> getPoolList() {
+        List<PoolListBean> poolList = new ArrayList<>();
         Element body = mDoc.getElementsByTag("tbody").first();
         if (body != null) {
             for (Element pool : body.getElementsByTag("tr")) {
