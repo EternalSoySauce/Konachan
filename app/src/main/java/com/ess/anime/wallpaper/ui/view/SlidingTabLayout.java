@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -38,7 +40,7 @@ import java.util.List;
 /**
  * 这个滑动条控件通过ViewPager被用来提供一个选项卡指示功能，当用户滑动时提供反馈。
  * 使用这个组件时，把它加到视图层即可。
- * 然后在你的 {@link android.app.Activity} 或 {@link android.support.v4.app.Fragment} 中
+ * 然后在你的 {@link android.app.Activity} 或 {@link Fragment} 中
  * 调用 {@link #setViewPager(ViewPager)} 给它提供这个布局中所使用的ViewPager。
  * <p>
  * 其颜色可通过两种方法定义。

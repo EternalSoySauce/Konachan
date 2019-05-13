@@ -2,7 +2,7 @@ package com.ess.anime.wallpaper.listener;
 
 import android.os.FileObserver;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.FileUtils;

@@ -1,7 +1,7 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 

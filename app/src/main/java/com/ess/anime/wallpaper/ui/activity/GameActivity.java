@@ -2,26 +2,27 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
-import com.ess.anime.wallpaper.view.GameSurfaceView;
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
+import com.ess.anime.wallpaper.ui.view.GameSurfaceView;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+import androidx.appcompat.widget.Toolbar;
+
+public class GameActivity extends BaseActivity implements View.OnClickListener {
 
     private GameSurfaceView mGameView;
     private ImageView mIvGame;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    int layoutRes() {
+        return R.layout.activity_game;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initGameSurfaceView();
         initViews();
@@ -31,13 +32,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initGameSurfaceView() {

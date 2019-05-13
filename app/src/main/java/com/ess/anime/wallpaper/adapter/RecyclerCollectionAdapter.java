@@ -1,6 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 

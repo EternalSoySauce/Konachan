@@ -1,6 +1,6 @@
 package com.ess.anime.wallpaper.model.helper;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;

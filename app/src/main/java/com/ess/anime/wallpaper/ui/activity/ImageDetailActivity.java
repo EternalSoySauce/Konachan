@@ -3,10 +3,6 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -27,16 +23,22 @@ import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.SlidingTabLayout;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.CustomDialog;
-import com.ess.anime.wallpaper.view.SlidingTabLayout;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageDetailActivity extends AppCompatActivity {
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
+public class ImageDetailActivity extends BaseActivity {
 
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
@@ -49,17 +51,14 @@ public class ImageDetailActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_detail);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    int layoutRes() {
+        return R.layout.activity_image_detail;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         mFragmentManager = getSupportFragmentManager();
-        if (savedInstanceState != null) {
-            restoreData(savedInstanceState);
-        }
-
-        initData();
+        initData(savedInstanceState);
         initViews();
         initToolBarLayout();
         initViewPager();
@@ -79,21 +78,19 @@ public class ImageDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void restoreData(Bundle savedInstanceState) {
-        mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
-        mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
-        mCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 0);
-
-        mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, ImageFragment.class.getName()));
-        mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, DetailFragment.class.getName()));
-        mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, CommentFragment.class.getName()));
-    }
-
-    private void initData() {
-        if (mThumbBean == null) {
+    private void initData(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
             mCurrentPage = getIntent().getIntExtra(Constants.CURRENT_PAGE, 0);
             mThumbBean = getIntent().getParcelableExtra(Constants.THUMB_BEAN);
             mImageBean = mThumbBean.imageBean;
+        } else {
+            mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
+            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
+            mCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 0);
+
+            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, ImageFragment.class.getName()));
+            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, DetailFragment.class.getName()));
+            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, CommentFragment.class.getName()));
         }
     }
 
@@ -340,6 +337,17 @@ public class ImageDetailActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         } else {
             Toast.makeText(this, R.string.already_last_image, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PermissionHelper.REQ_CODE_PERMISSION) {
+            // 进入系统设置界面请求权限后的回调
+            if (PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+                showChooseToDownloadDialog();
+            }
         }
     }
 

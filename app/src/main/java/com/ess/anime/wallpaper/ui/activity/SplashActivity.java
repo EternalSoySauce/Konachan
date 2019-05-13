@@ -3,7 +3,6 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
@@ -20,14 +19,15 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    int layoutRes() {
+        return R.layout.activity_splash;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         long delayMills = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         SoundHelper.getInstance().playSplashWelcomeSound(this);
 
@@ -38,23 +38,14 @@ public class SplashActivity extends AppCompatActivity {
             getTagJson(url);
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
+        new Handler().postDelayed(() -> {
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }, delayMills);
 
         Constants.sRestart = false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        UIUtils.hideStatusBar(this, true);
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示
@@ -81,6 +72,18 @@ public class SplashActivity extends AppCompatActivity {
                 response.close();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UIUtils.hideNavigationBar(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        UIUtils.hideNavigationBar(this);
     }
 
     @Override

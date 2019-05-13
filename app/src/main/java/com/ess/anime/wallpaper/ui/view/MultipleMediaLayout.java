@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,8 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -23,12 +21,14 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.VideoCache;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.sprylab.android.widget.TextureVideoView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import uk.co.senab.photoview.PhotoView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 

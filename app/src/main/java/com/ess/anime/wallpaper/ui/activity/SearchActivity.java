@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableString;
@@ -35,10 +32,10 @@ import com.ess.anime.wallpaper.bean.SearchBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.CustomDialog;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
@@ -55,13 +52,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.jiang.android.indicatordialog.IndicatorBuilder.GRAVITY_LEFT;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends BaseActivity {
 
     private SharedPreferences mPreferences;
     private int mCurrentSearchMode;
@@ -90,11 +89,12 @@ public class SearchActivity extends AppCompatActivity {
     private Call mTagCall;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    int layoutRes() {
+        return R.layout.activity_search;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
         mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;

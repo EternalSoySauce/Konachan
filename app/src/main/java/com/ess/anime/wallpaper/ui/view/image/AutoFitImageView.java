@@ -1,13 +1,14 @@
-package com.ess.anime.wallpaper.view.image;
+package com.ess.anime.wallpaper.ui.view.image;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Point;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.utils.UIUtils;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * 以360dp * 640dp屏幕为基准，根据xml里设置的宽度和高度自动进行缩放适配

@@ -1,7 +1,7 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 
 import com.ess.anime.wallpaper.R;

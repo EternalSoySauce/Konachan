@@ -5,7 +5,7 @@
              android:layout_height="match_parent"
              android:background="@color/colorPrimaryDark">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="0dp"
@@ -68,7 +68,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="16sp"/>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -117,7 +117,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_auto_complete_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

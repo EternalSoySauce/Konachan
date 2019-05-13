@@ -2,17 +2,7 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +23,8 @@ import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.CustomLoadMoreView;
-import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,6 +34,15 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -138,50 +137,41 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mToolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
 
         //双击返回顶部
-        mToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (lastClickTime <= 0) {
-                    lastClickTime = System.currentTimeMillis();
-                } else {
-                    long currentClickTime = System.currentTimeMillis();
-                    if (currentClickTime - lastClickTime < 500) {
-                        if (isPoolPostFragmentVisible()) {
-                            mPoolPostFragment.scrollToTop();
-                        } else {
-                            scrollToTop();
-                        }
+        mToolbar.setOnClickListener(v -> {
+            if (lastClickTime <= 0) {
+                lastClickTime = System.currentTimeMillis();
+            } else {
+                long currentClickTime = System.currentTimeMillis();
+                if (currentClickTime - lastClickTime < 500) {
+                    if (isPoolPostFragmentVisible()) {
+                        mPoolPostFragment.scrollToTop();
                     } else {
-                        lastClickTime = currentClickTime;
+                        scrollToTop();
                     }
+                } else {
+                    lastClickTime = currentClickTime;
                 }
             }
         });
 
         // 弹出跳转页弹窗
         mIvPage = mRootView.findViewById(R.id.iv_page);
-        mIvPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupPage.showAsDropDown(v);
-                mEtGoto.selectAll();
-                mEtGoto.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        UIUtils.showSoftInput(mActivity, mEtGoto);
-                    }
-                });
-            }
+        mIvPage.setOnClickListener(v -> {
+            mPopupPage.showAsDropDown(v);
+            mEtGoto.selectAll();
+            mEtGoto.post(new Runnable() {
+                @Override
+                public void run() {
+                    UIUtils.showSoftInput(mActivity, mEtGoto);
+                }
+            });
         });
 
         //搜索
         ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
-        ivSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        ivSearch.setOnClickListener(v -> {
 //                Intent searchIntent = new Intent(mActivity, SearchActivity.class);
 //                startActivityForResult(searchIntent, Constants.SEARCH_CODE);
-            }
         });
     }
 
@@ -199,24 +189,21 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
 
         // 页码跳转
         mEtGoto = mPopupPage.findViewById(R.id.et_goto);
-        mEtGoto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_GO) {
-                    String num = mEtGoto.getText().toString();
-                    if (!TextUtils.isEmpty(num)) {
-                        int newPage = Integer.parseInt(num);
-                        if (newPage > 0) {
-                            resetAll(newPage);
-                            getNewPools(mCurrentPage);
-                            changeFromPage(mCurrentPage);
-                            changeToPage(mCurrentPage);
-                        }
+        mEtGoto.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                String num = mEtGoto.getText().toString();
+                if (!TextUtils.isEmpty(num)) {
+                    int newPage = Integer.parseInt(num);
+                    if (newPage > 0) {
+                        resetAll(newPage);
+                        getNewPools(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                     }
-                    mPopupPage.dismiss();
                 }
-                return false;
+                mPopupPage.dismiss();
             }
+            return false;
         });
     }
 
@@ -224,13 +211,10 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getNewPools(mGoToPage);
-                if (mPoolAdapter.getData().isEmpty()) {
-                    mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
-                }
+        mSwipeRefresh.setOnRefreshListener(() -> {
+            getNewPools(mGoToPage);
+            if (mPoolAdapter.getData().isEmpty()) {
+                mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
             }
         });
     }
@@ -250,14 +234,11 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mPoolAdapter.setPreLoadNumber(5);
         mPoolAdapter.setLoadMoreView(new CustomLoadMoreView());
         mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
-        mPoolAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                PoolListBean poolListBean = mPoolAdapter.getItem(position);
-                if (poolListBean != null) {
-                    String title = getString(R.string.nav_pool) + " #" + poolListBean.id.replaceAll("[^0-9]", "");
-                    addPoolPostFragment(title, poolListBean.linkToShow);
-                }
+        mPoolAdapter.setOnItemClickListener((adapter, view, position) -> {
+            PoolListBean poolListBean = mPoolAdapter.getItem(position);
+            if (poolListBean != null) {
+                String title = getString(R.string.nav_pool) + " #" + poolListBean.id.replaceAll("[^0-9]", "");
+                addPoolPostFragment(title, poolListBean.linkToShow);
             }
         });
 
@@ -412,17 +393,14 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
             return;
         }
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
-                if (mPoolAdapter.refreshDatas(newList)) {
-                    scrollToTop();
-                } else if (mPoolAdapter.getData().isEmpty()) {
-                    getNoData();
-                }
-                mSwipeRefresh.setRefreshing(false);
+        mActivity.runOnUiThread(() -> {
+            mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+            if (mPoolAdapter.refreshDatas(newList)) {
+                scrollToTop();
+            } else if (mPoolAdapter.getData().isEmpty()) {
+                getNoData();
             }
+            mSwipeRefresh.setRefreshing(false);
         });
     }
 
@@ -432,44 +410,35 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
             return;
         }
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
-                if (mPoolAdapter.loadMoreDatas(newList)) {
-                    mPoolAdapter.loadMoreComplete();
-                    changeToPage(mCurrentPage);
-                } else {
-                    mPoolAdapter.loadMoreEnd();
-                }
+        mActivity.runOnUiThread(() -> {
+            mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+            if (mPoolAdapter.loadMoreDatas(newList)) {
+                mPoolAdapter.loadMoreComplete();
+                changeToPage(mCurrentPage);
+            } else {
+                mPoolAdapter.loadMoreEnd();
             }
         });
     }
 
     //搜所无结果
     private void getNoData() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPoolAdapter.setNewData(null);
-                mSwipeRefresh.setRefreshing(false);
-                SoundHelper.getInstance().playLoadNothingSound(getActivity());
-            }
+        mActivity.runOnUiThread(() -> {
+            mPoolAdapter.setNewData(null);
+            mSwipeRefresh.setRefreshing(false);
+            SoundHelper.getInstance().playLoadNothingSound(getActivity());
         });
     }
 
     //访问网络失败
     private void checkNetwork() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefresh.setRefreshing(false);
-                if (mPoolAdapter.getData().isEmpty()) {
-                    mPoolAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPools);
-                    SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
-                } else {
-                    mPoolAdapter.loadMoreFail();
-                }
+        mActivity.runOnUiThread(() -> {
+            mSwipeRefresh.setRefreshing(false);
+            if (mPoolAdapter.getData().isEmpty()) {
+                mPoolAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPools);
+                SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
+            } else {
+                mPoolAdapter.loadMoreFail();
             }
         });
     }

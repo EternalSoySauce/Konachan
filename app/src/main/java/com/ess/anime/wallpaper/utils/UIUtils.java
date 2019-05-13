@@ -3,30 +3,25 @@ package com.ess.anime.wallpaper.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.design.internal.NavigationMenuPresenter;
-import android.support.design.internal.NavigationMenuView;
-import android.support.design.widget.NavigationView;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+
+import com.google.android.material.internal.NavigationMenuPresenter;
+import com.google.android.material.internal.NavigationMenuView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.lang.reflect.Field;
+
+import androidx.annotation.ColorInt;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 获取手机窗口属性
@@ -175,59 +170,36 @@ public class UIUtils {
     }
 
     /**
-     * 隐藏状态栏/导航栏
+     * 隐藏状态栏
+     * 在onCreate和onWindowFocusChanged中都要调用
      *
      * @param activity 上下文
-     * @param applyNav 是否隐藏导航栏
      */
-    public static void hideStatusBar(Activity activity, boolean applyNav) {
+    public static void hideStatusBar(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             View decorView = activity.getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            if (applyNav) {
-                option = option | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            }
             decorView.setSystemUiVisibility(option);
         }
     }
 
     /**
-     * 将状态栏融入布局，可设置fitsSystemWindows="true"适配状态栏高度
+     * 隐藏虚拟键
+     * 在onCreate和onWindowFocusChanged中都要调用
      *
      * @param activity 上下文
      */
-    public static void integrateStatusBarIntoLayout(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //5.0及以上，不设置透明状态栏，设置会有半透明阴影
-            Window window = activity.getWindow();
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        } else {
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-    }
-
-    /**
-     * 设置状态栏文字颜色为黑色/白色
-     *
-     * @param activity 上下文
-     * @param isBlack  是否为黑色（必须设置过true之后才能对应使用false值）
-     */
-    public static void setStatusBarBlackText(Activity activity, boolean isBlack) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    public static void hideNavigationBar(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             View decorView = activity.getWindow().getDecorView();
-            int visibility = decorView.getSystemUiVisibility();
-            if (isBlack) {
-                decorView.setSystemUiVisibility(visibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            } else {
-                decorView.setSystemUiVisibility(visibility ^ View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
+            int option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(option);
         }
     }
 
@@ -338,10 +310,10 @@ public class UIUtils {
      */
     public static void setNavigationMenuLineStyle(NavigationView navigationView, @ColorInt final int color, final int height) {
         try {
-            Field fieldByPresenter = navigationView.getClass().getDeclaredField("mPresenter");
+            Field fieldByPresenter = navigationView.getClass().getDeclaredField("presenter");
             fieldByPresenter.setAccessible(true);
             NavigationMenuPresenter menuPresenter = (NavigationMenuPresenter) fieldByPresenter.get(navigationView);
-            Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("mMenuView");
+            Field fieldByMenuView = menuPresenter.getClass().getDeclaredField("menuView");
             fieldByMenuView.setAccessible(true);
             final NavigationMenuView menuView = (NavigationMenuView) fieldByMenuView.get(menuPresenter);
             menuView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
@@ -365,36 +337,6 @@ public class UIUtils {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 获得Toolbar的Title的TextView
-     *
-     * @param activity AppCompatActivity
-     * @param toolbar  Toolbar
-     * @return TextView
-     */
-    public static TextView getToolbarTitleView(AppCompatActivity activity, Toolbar toolbar) {
-        ActionBar actionBar = activity.getSupportActionBar();
-        CharSequence actionbarTitle = null;
-        if (actionBar != null)
-            actionbarTitle = actionBar.getTitle();
-        actionbarTitle = TextUtils.isEmpty(actionbarTitle) ? toolbar.getTitle() : actionbarTitle;
-        if (TextUtils.isEmpty(actionbarTitle)) return null;
-        // can't find if title not set
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View v = toolbar.getChildAt(i);
-            if (v != null && v instanceof TextView) {
-                TextView t = (TextView) v;
-                CharSequence title = t.getText();
-                if (!TextUtils.isEmpty(title) && actionbarTitle.equals(title) && t.getId() == View.NO_ID) {
-                    //Toolbar does not assign id to views with layout params SYSTEM, hence getId() == View.NO_ID
-                    //in same manner subtitle TextView can be obtained.
-                    return t;
-                }
-            }
-        }
-        return null;
     }
 
     /**

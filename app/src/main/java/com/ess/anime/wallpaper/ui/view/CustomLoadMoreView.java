@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import com.chad.library.adapter.base.loadmore.LoadMoreView;
 import com.ess.anime.wallpaper.R;

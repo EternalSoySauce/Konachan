@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.content.SharedPreferences;

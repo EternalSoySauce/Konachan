@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ess.anime.wallpaper.view.MultipleMediaLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.ess.anime.wallpaper.ui.view.MultipleMediaLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                   android:id="@+id/layout_multiple_media"
                                                   android:layout_width="match_parent"
                                                   android:layout_height="match_parent">
@@ -10,9 +10,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"/>
 
-    <uk.co.senab.photoview.PhotoView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"/>
-</com.ess.anime.wallpaper.view.MultipleMediaLayout>
+</com.ess.anime.wallpaper.ui.view.MultipleMediaLayout>

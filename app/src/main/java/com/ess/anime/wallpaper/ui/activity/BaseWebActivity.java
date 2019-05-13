@@ -1,21 +1,21 @@
 package com.ess.anime.wallpaper.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.just.agentweb.AgentWeb;
+import com.yanzhenjie.permission.runtime.Permission;
 
-public abstract class BaseWebActivity extends AppCompatActivity {
+import androidx.appcompat.widget.Toolbar;
+
+public abstract class BaseWebActivity extends BaseActivity {
 
     AgentWeb mAgentWeb;
 
@@ -24,10 +24,12 @@ public abstract class BaseWebActivity extends AppCompatActivity {
     abstract String webUrl();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
+    int layoutRes() {
+        return R.layout.activity_web;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         initToolBarLayout();
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
             @Override
@@ -47,18 +49,13 @@ public abstract class BaseWebActivity extends AppCompatActivity {
         toolbar.setTitle(titleRes());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     void initWebView() {
         mAgentWeb = AgentWeb.with(this)
-                .setAgentWebParent((ViewGroup) findViewById(R.id.layout_web_view),
-                        new LinearLayout.LayoutParams(-1, -1))
+                .setAgentWebParent(findViewById(R.id.layout_web_view),
+                        new FrameLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(getResources().getColor(R.color.color_text_selected))
                 .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
                 .interceptUnkownUrl()
@@ -119,4 +116,18 @@ public abstract class BaseWebActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PermissionHelper.REQ_CODE_PERMISSION) {
+            // 进入系统设置界面请求权限后的回调
+            if (PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+                initWebView();
+            } else {
+                finish();
+            }
+        }
+    }
+
 }

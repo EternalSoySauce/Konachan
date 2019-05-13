@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 11
         versionName "1.7"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -15,52 +16,93 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-    dexOptions {
-        jumboMode true
-    }
-    buildToolsVersion '27.0.3'
 }
 
 dependencies {
+    // Android 基础库
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:support-v13:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:cardview-v7:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha05'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+
+
+    // 账户相关库
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
+    implementation 'com.google.firebase:firebase-firestore:19.0.0'
+
+
+    // 项目相关库（引用时如果github上有写明混淆代码需加入到ProGuard）
+    // ButterKnife (https://github.com/JakeWharton/butterknife)
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+
+    // EventBus (https://github.com/greenrobot/EventBus)
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'org.jsoup:jsoup:1.10.3'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
-    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
+
+    // AndPermission (https://github.com/yanzhenjie/AndPermission)
+    implementation 'com.yanzhenjie.permission:x:2.0.1'
+
+    // Material Dialogs (https://github.com/afollestad/material-dialogs)
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'me.jessyan:progressmanager:1.3.3'
-    implementation 'com.github.clans:fab:1.6.4'
-    implementation 'com.github.jiang111:IndicatorDialog:2.1.0'
-    implementation files('libs/smoothcompoundbuttonlibrary.jar')
-    implementation 'com.wang.avi:library:2.1.3'
-    implementation 'com.balysv:material-ripple:1.0.2'
-    implementation 'com.yanzhenjie:permission:2.0.0-rc12'
-    implementation 'com.google.firebase:firebase-core:16.0.0'
-    implementation 'com.google.firebase:firebase-storage:15.0.0'
-    implementation 'com.google.firebase:firebase-firestore:15.0.0'
-    implementation 'com.just.agentweb:agentweb:4.0.2'
-    implementation project(path: ':agentweb-filechooser')
-    implementation project(path: ':actionSheetDialog')
+
+    // BRVAH (RecyclerView Adapter) (https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+
+    // Glide (https://github.com/bumptech/glide)
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    // Okhttp (https://github.com/square/okhttp)
+    implementation 'com.squareup.okhttp3:okhttp:3.14.1'
+
+    // 监听Okhttp和Glide等的下载进度
+    implementation 'me.jessyan:progressmanager:1.5.0'
+
+    // Gson (https://github.com/google/gson)
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Jsoup (https://github.com/jhy/jsoup)
+    implementation 'org.jsoup:jsoup:1.12.1'
+
+    // PhotoView (https://github.com/chrisbanes/PhotoView)
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+
+    // TextureVideoView (https://github.com/sprylab/texturevideoview)
     implementation 'com.sprylab.android.texturevideoview:texturevideoview:1.2.1'
-    implementation 'com.danikula:videocache:2.6.4'
+
+    // Video cache (https://github.com/danikula/AndroidVideoCache)
+    implementation 'com.danikula:videocache:2.7.1'
+
+    // AgentWeb (https://github.com/Justson/AgentWeb)
+    implementation 'com.just.agentweb:agentweb:4.0.3-alpha@aar'
+    implementation project(path: ':agentweb-filechooser')
+
+    // 点击ripple效果 (https://github.com/balysv/material-ripple)
+    implementation 'com.balysv:material-ripple:1.0.2'
+
+    // Switch, CheckBox, RadioButton等控控件 (https://github.com/Mixiaoxiao/SmoothCompoundButton)
+    implementation files('libs/smoothcompoundbuttonlibrary.jar')
+
+    // FAB (https://github.com/Clans/FloatingActionButton)
+    implementation 'com.github.clans:fab:1.6.4'
+
+    // Loading加载样式 (https://github.com/81813780/AVLoadingIndicatorView)
+    implementation 'com.wang.avi:library:2.1.3'
+
+    // 仿QQ底部弹出dialog
+    implementation project(path: ':actionSheetDialog')
+
+    // 带尖角号popup window (https://github.com/jiang111/IndicatorDialog)
+    implementation 'com.github.jiang111:IndicatorDialog:2.1.0'
+
+    // 高度自定义的popup window (https://github.com/zyyoona7/EasyPopup)
     implementation 'com.github.zyyoona7:EasyPopup:1.1.2'
 }
 

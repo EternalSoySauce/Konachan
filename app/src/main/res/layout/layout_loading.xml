@@ -9,7 +9,7 @@
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
-    <com.ess.anime.wallpaper.view.image.GifView
+    <com.ess.anime.wallpaper.ui.view.image.GifView
         android:layout_width="100dp"
         android:layout_height="147dp"
         android:layout_marginStart="7dp"

@@ -3,12 +3,6 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,13 +16,14 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.utils.VibratorUtils;
-import com.ess.anime.wallpaper.view.CustomDialog;
-import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,7 +31,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionActivity extends AppCompatActivity implements View.OnClickListener, LocalCollectionsListener.OnFilesChangedListener {
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class CollectionActivity extends BaseActivity implements View.OnClickListener, LocalCollectionsListener.OnFilesChangedListener {
 
     private Toolbar mToolbar;
     private TextView mTvEdit;
@@ -50,18 +51,17 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     private LocalCollectionsListener mFilesListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_collection);
+    int layoutRes() {
+        return R.layout.activity_collection;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
+        initToolBarLayout();
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
             @Override
             public void onGranted() {
-                initToolBarLayout();
-                initEditView();
-                initRecyclerView();
-                mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
-                mFilesListener.startWatching();
+                initWhenPermissionGranted();
             }
 
             @Override
@@ -71,18 +71,19 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
+    private void initWhenPermissionGranted() {
+        initEditView();
+        initRecyclerView();
+        mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
+        mFilesListener.startWatching();
+    }
+
     private void initToolBarLayout() {
         mToolbar = findViewById(R.id.tool_bar);
         mToolbar.setTitle(R.string.nav_collection);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationIcon(R.drawable.ic_back);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initEditView() {
@@ -299,8 +300,15 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // 退出全屏回调
-        if (resultCode == Constants.FULLSCREEN_CODE && data != null) {
+        if (requestCode == PermissionHelper.REQ_CODE_PERMISSION) {
+            // 进入系统设置界面请求权限后的回调
+            if (PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+                initWhenPermissionGranted();
+            } else {
+                finish();
+            }
+        } else if (resultCode == Constants.FULLSCREEN_CODE && data != null) {
+            // 退出全屏回调
             int position = ImageDataHolder.getCollectionCurrentItem();
             mRvCollection.scrollToPosition(position);
         }
@@ -322,4 +330,5 @@ public class CollectionActivity extends AppCompatActivity implements View.OnClic
             mFilesListener.stopWatching();
         }
     }
+
 }

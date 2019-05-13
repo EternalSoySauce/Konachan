@@ -3,15 +3,7 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +29,8 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.CustomLoadMoreView;
-import com.ess.anime.wallpaper.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.zyyoona7.popup.EasyPopup;
@@ -52,6 +44,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -124,48 +123,34 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         toolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
 
         //双击返回顶部
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (lastClickTime <= 0) {
-                    lastClickTime = System.currentTimeMillis();
+        toolbar.setOnClickListener(v -> {
+            if (lastClickTime <= 0) {
+                lastClickTime = System.currentTimeMillis();
+            } else {
+                long currentClickTime = System.currentTimeMillis();
+                if (currentClickTime - lastClickTime < 500) {
+                    scrollToTop();
+                    mFloatingMenu.close(true);
                 } else {
-                    long currentClickTime = System.currentTimeMillis();
-                    if (currentClickTime - lastClickTime < 500) {
-                        scrollToTop();
-                        mFloatingMenu.close(true);
-                    } else {
-                        lastClickTime = currentClickTime;
-                    }
+                    lastClickTime = currentClickTime;
                 }
             }
         });
 
         // 弹出跳转页弹窗
         ImageView ivPage = mRootView.findViewById(R.id.iv_page);
-        ivPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupPage.showAsDropDown(v);
-                mEtGoto.selectAll();
-                mEtGoto.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        UIUtils.showSoftInput(mActivity, mEtGoto);
-                    }
-                });
-            }
+        ivPage.setOnClickListener(v -> {
+            mPopupPage.showAsDropDown(v);
+            mEtGoto.selectAll();
+            mEtGoto.post(() -> UIUtils.showSoftInput(mActivity, mEtGoto));
         });
 
         //搜索
         ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
-        ivSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFloatingMenu.close(true);
-                Intent searchIntent = new Intent(mActivity, SearchActivity.class);
-                startActivityForResult(searchIntent, Constants.SEARCH_CODE);
-            }
+        ivSearch.setOnClickListener(v -> {
+            mFloatingMenu.close(true);
+            Intent searchIntent = new Intent(mActivity, SearchActivity.class);
+            startActivityForResult(searchIntent, Constants.SEARCH_CODE);
         });
     }
 
@@ -183,24 +168,21 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
 
         // 页码跳转
         mEtGoto = mPopupPage.findViewById(R.id.et_goto);
-        mEtGoto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_GO) {
-                    String num = mEtGoto.getText().toString();
-                    if (!TextUtils.isEmpty(num)) {
-                        int newPage = Integer.parseInt(num);
-                        if (newPage > 0) {
-                            resetAll(newPage);
-                            getNewPosts(mCurrentPage);
-                            changeFromPage(mCurrentPage);
-                            changeToPage(mCurrentPage);
-                        }
+        mEtGoto.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                String num = mEtGoto.getText().toString();
+                if (!TextUtils.isEmpty(num)) {
+                    int newPage = Integer.parseInt(num);
+                    if (newPage > 0) {
+                        resetAll(newPage);
+                        getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
                     }
-                    mPopupPage.dismiss();
                 }
-                return false;
+                mPopupPage.dismiss();
             }
+            return false;
         });
     }
 
@@ -208,13 +190,10 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getNewPosts(mGoToPage);
-                if (mPostAdapter.getData().isEmpty()) {
-                    mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
-                }
+        mSwipeRefresh.setOnRefreshListener(() -> {
+            getNewPosts(mGoToPage);
+            if (mPostAdapter.getData().isEmpty()) {
+                mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
             }
         });
     }
@@ -226,12 +205,7 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mRvPosts.setLayoutManager(mLayoutManager);
 
         mPostAdapter = new RecyclerPostAdapter();
-        mPostAdapter.setOnItemClickListener(new RecyclerPostAdapter.OnItemClickListener() {
-            @Override
-            public void onViewDetails() {
-                mFloatingMenu.close(true);
-            }
-        });
+        mPostAdapter.setOnItemClickListener(() -> mFloatingMenu.close(true));
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
@@ -291,23 +265,17 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mFloatingMenu = mRootView.findViewById(R.id.floating_action_menu);
 
         FloatingActionButton fabHome = mRootView.findViewById(R.id.fab_home);
-        fabHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFloatingMenu.close(true);
-                onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
-            }
+        fabHome.setOnClickListener(v -> {
+            mFloatingMenu.close(true);
+            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
         });
 
         FloatingActionButton fabRandom = mRootView.findViewById(R.id.fab_random);
-        fabRandom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFloatingMenu.close(true);
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SEARCH_TAG, "order:random");
-                onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
-            }
+        fabRandom.setOnClickListener(v -> {
+            mFloatingMenu.close(true);
+            Intent intent = new Intent();
+            intent.putExtra(Constants.SEARCH_TAG, "order:random");
+            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
         });
     }
 
@@ -423,17 +391,14 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
             return;
         }
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-                if (mPostAdapter.refreshDatas(newList)) {
-                    scrollToTop();
-                } else if (mPostAdapter.getData().isEmpty()) {
-                    getNoData();
-                }
-                mSwipeRefresh.setRefreshing(false);
+        mActivity.runOnUiThread(() -> {
+            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+            if (mPostAdapter.refreshDatas(newList)) {
+                scrollToTop();
+            } else if (mPostAdapter.getData().isEmpty()) {
+                getNoData();
             }
+            mSwipeRefresh.setRefreshing(false);
         });
     }
 
@@ -443,16 +408,13 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
             return;
         }
 
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-                if (mPostAdapter.loadMoreDatas(newList)) {
-                    mPostAdapter.loadMoreComplete();
-                    changeToPage(mCurrentPage);
-                } else {
-                    mPostAdapter.loadMoreEnd();
-                }
+        mActivity.runOnUiThread(() -> {
+            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+            if (mPostAdapter.loadMoreDatas(newList)) {
+                mPostAdapter.loadMoreComplete();
+                changeToPage(mCurrentPage);
+            } else {
+                mPostAdapter.loadMoreEnd();
             }
         });
     }
@@ -484,12 +446,9 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
                         tag2.replace(tag2.length() - 1, tag2.length(), "");
                         mCurrentTagList.add(tag2.toString());
                         getNewPosts(mCurrentPage);
-                        mActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                changeFromPage(mCurrentPage);
-                                changeToPage(mCurrentPage);
-                            }
+                        mActivity.runOnUiThread(() -> {
+                            changeFromPage(mCurrentPage);
+                            changeToPage(mCurrentPage);
                         });
                     } else {
                         getNoData();
@@ -529,28 +488,22 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
 
     //百度或K站搜所无结果
     private void getNoData() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPostAdapter.setNewData(null);
-                mSwipeRefresh.setRefreshing(false);
-                SoundHelper.getInstance().playLoadNothingSound(getActivity());
-            }
+        mActivity.runOnUiThread(() -> {
+            mPostAdapter.setNewData(null);
+            mSwipeRefresh.setRefreshing(false);
+            SoundHelper.getInstance().playLoadNothingSound(getActivity());
         });
     }
 
     //访问网络失败
     private void checkNetwork() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefresh.setRefreshing(false);
-                if (mPostAdapter.getData().isEmpty()) {
-                    mPostAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPosts);
-                    SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
-                } else {
-                    mPostAdapter.loadMoreFail();
-                }
+        mActivity.runOnUiThread(() -> {
+            mSwipeRefresh.setRefreshing(false);
+            if (mPostAdapter.getData().isEmpty()) {
+                mPostAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPosts);
+                SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
+            } else {
+                mPostAdapter.loadMoreFail();
             }
         });
     }

@@ -1,16 +1,13 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +17,11 @@ import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
+import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.view.MultipleMediaLayout;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.zjca.qqdialog.ActionSheetDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,11 +30,11 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.List;
 
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 
-public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener,
-        PhotoViewAttacher.OnViewTapListener, View.OnLongClickListener {
+public class FullscreenActivity extends BaseActivity implements View.OnClickListener,
+        OnPhotoTapListener, View.OnLongClickListener {
 
     private TextView mTvSerial;
     private ViewPager mVpFullScreen;
@@ -48,10 +47,12 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     private boolean mForResult = true;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fullscreen);
+    int layoutRes() {
+        return R.layout.activity_fullscreen;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         mCollectionList = ImageDataHolder.getCollectionList();
         mCurrentPos = ImageDataHolder.getCollectionCurrentItem();
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
@@ -67,7 +68,13 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        UIUtils.hideStatusBar(this, true);
+        UIUtils.hideNavigationBar(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        UIUtils.hideNavigationBar(this);
     }
 
     private void initViews() {
@@ -98,7 +105,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                     mediaLayout.setOnLongClickListener(FullscreenActivity.this);
 
                     PhotoView photoView = mediaLayout.getPhotoView();
-                    photoView.setOnViewTapListener(FullscreenActivity.this);
+                    photoView.setOnPhotoTapListener(FullscreenActivity.this);
                     photoView.setOnLongClickListener(FullscreenActivity.this);
                 }
 
@@ -108,12 +115,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
             }
         };
         mVpFullScreen.addOnPageChangeListener(listener);
-        mVpFullScreen.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onPageSelected(mCurrentPos);
-            }
-        });
+        mVpFullScreen.post(() -> listener.onPageSelected(mCurrentPos));
     }
 
     @Override
@@ -131,7 +133,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onViewTap(View view, float x, float y) {
+    public void onPhotoTap(ImageView view, float x, float y) {
         onBackPressed();
     }
 
@@ -148,22 +150,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     private void initActionSheetDialog() {
         mActionSheet = new ActionSheetDialog(this);
-        mActionSheet.builder().addSheetItem(getString(R.string.action_wallpaper), null, new ActionSheetDialog.OnSheetItemClickListener() {
-            @Override
-            public void onClick(int which) {
-                setAsWallpaper();
-            }
-        }).addSheetItem(getString(R.string.action_share), null, new ActionSheetDialog.OnSheetItemClickListener() {
-            @Override
-            public void onClick(int which) {
-                shareImage();
-            }
-        }).setDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                UIUtils.hideStatusBar(FullscreenActivity.this, true);
-            }
-        });
+        mActionSheet.builder()
+                .addSheetItem(getString(R.string.action_wallpaper), null, which -> setAsWallpaper())
+                .addSheetItem(getString(R.string.action_share), null, which -> shareImage());
     }
 
     private void setSerial() {
@@ -230,4 +219,5 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
             onBackPressed();
         }
     }
+
 }

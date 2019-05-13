@@ -1,10 +1,9 @@
-package com.ess.anime.wallpaper.view;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,8 +15,8 @@ import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -28,6 +27,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -116,29 +117,29 @@ public class CustomDialog extends MaterialDialog.Builder {
     }
 
     /**
-     * 请求SD卡权限
+     * 请求权限
      *
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showRequestStoragePermissionDialog(Context context, final OnDialogActionListener listener) {
+    public static void showRequestPermissionDialog(Context context, String title, String msg, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
-                .title(R.string.dialog_permission_rationale_title)
-                .content(R.string.dialog_permission_rationale_msg)
-                .cancelable(false)
-                .canceledOnTouchOutside(false)
+                .content(msg)
                 .negativeText(R.string.dialog_permission_rationale_deny)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                .positiveText(R.string.dialog_permission_rationale_grant)
+                .onNegative((dialog1, which) -> {
+                    if (listener != null) {
                         listener.onNegative();
                     }
                 })
-                .positiveText(R.string.dialog_permission_rationale_grant)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                .onPositive((dialog12, which) -> {
+                    if (listener != null) {
                         listener.onPositive();
+                    }
+                })
+                .cancelListener(dialog13 -> {
+                    if (listener != null) {
+                        listener.onNegative();
                     }
                 }).show();
     }

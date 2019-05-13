@@ -3,8 +3,6 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,27 +12,30 @@ import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.view.CustomDialog;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
 
 import java.io.File;
 
-public class SettingActivity extends AppCompatActivity implements View.OnClickListener {
+import androidx.appcompat.widget.Toolbar;
+
+public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
     private SharedPreferences mPreferences;
 
     private SmoothCheckBox mCbAllowPlaySound;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+    int layoutRes() {
+        return R.layout.activity_setting;
+    }
 
+    @Override
+    void init(Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         initToolBarLayout();
         initViews();
     }
@@ -43,13 +44,7 @@ public class SettingActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationIcon(R.drawable.ic_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViews() {

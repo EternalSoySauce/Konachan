@@ -1,6 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;

@@ -1,25 +1,33 @@
 package com.ess.anime.wallpaper.model.helper;
 
+import android.app.AppOpsManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.AppOpsManagerCompat;
-import android.support.v4.content.ContextCompat;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
-import com.ess.anime.wallpaper.view.CustomDialog;
-import com.yanzhenjie.permission.Action;
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.Permission;
-import com.yanzhenjie.permission.Setting;
+import com.yanzhenjie.permission.runtime.Permission;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.AppOpsManagerCompat;
+import androidx.core.content.ContextCompat;
+
 public class PermissionHelper {
+
+    public final static int REQ_CODE_PERMISSION = 1000;
 
     /**
      * 检测组件是否拥有某权限
@@ -61,6 +69,58 @@ public class PermissionHelper {
     }
 
     /**
+     * 检查权限
+     * 在Activity中重写onActivityResult，case REQ_CODE_PERMISSION，并重新调用hasPermissions()判断是否有权限
+     *
+     * @param context     上下文
+     * @param dialogMsg   弹窗请求提示文字
+     * @param listener    事件监听器
+     * @param permissions 要检查的权限组
+     */
+    public static void checkPermissions(Context context, String dialogTitle, String dialogMsg, RequestListener listener, String... permissions) {
+        if (AndPermission.hasPermissions(context, permissions)) {
+            if (listener != null) {
+                listener.onGranted();
+            }
+        } else {
+            CustomDialog.showRequestPermissionDialog(context, dialogTitle, dialogMsg, new CustomDialog.SimpleDialogActionListener() {
+                @Override
+                public void onPositive() {
+                    super.onPositive();
+                    if (!hasAlwaysDeniedPermission(context, permissions)) {
+                        AndPermission.with(context)
+                                .runtime()
+                                .permission(permissions)
+                                .onGranted(data -> {
+                                    if (listener != null) {
+                                        listener.onGranted();
+                                    }
+                                })
+                                .onDenied(data -> {
+                                    if (listener != null) {
+                                        listener.onDenied();
+                                    }
+                                }).start();
+                    } else {
+                        AndPermission.with(context)
+                                .runtime()
+                                .setting()
+                                .start(REQ_CODE_PERMISSION);
+                    }
+                }
+
+                @Override
+                public void onNegative() {
+                    super.onNegative();
+                    if (listener != null) {
+                        listener.onDenied();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
      * 权限是否被永久拒绝
      *
      * @param context     上下文
@@ -86,70 +146,60 @@ public class PermissionHelper {
     }
 
     /**
-     * 检查权限
+     * 检查是否有悬浮窗权限
      *
-     * @param context  上下文
-     * @param listener 事件监听器
+     * @param context 上下文
+     * @return 是否有悬浮窗权限
      */
-    public static void checkStoragePermissions(final Context context, final RequestListener listener) {
-        final String[] permissions = Permission.Group.STORAGE;
-        if (AndPermission.hasPermissions(context, permissions)) {
-            if (listener != null) {
-                listener.onGranted();
-            }
-        } else {
-            CustomDialog.showRequestStoragePermissionDialog(context, new CustomDialog.SimpleDialogActionListener() {
-                @Override
-                public void onPositive() {
-                    super.onPositive();
-                    if (!hasAlwaysDeniedPermission(context, permissions)) {
-                        AndPermission.with(context)
-                                .runtime()
-                                .permission(permissions)
-                                .onGranted(new Action<List<String>>() {
-                                    @Override
-                                    public void onAction(List<String> data) {
-                                        if (listener != null) {
-                                            listener.onGranted();
-                                        }
-                                    }
-                                })
-                                .onDenied(new Action<List<String>>() {
-                                    @Override
-                                    public void onAction(List<String> data) {
-                                        if (listener != null) {
-                                            listener.onDenied();
-                                        }
-                                    }
-                                }).start();
-                    } else {
-                        AndPermission.with(context)
-                                .runtime()
-                                .setting()
-                                .onComeback(new Setting.Action() {
-                                    @Override
-                                    public void onAction() {
-                                        if (listener != null) {
-                                            if (AndPermission.hasPermissions(context, permissions)) {
-                                                listener.onGranted();
-                                            } else {
-                                                listener.onDenied();
-                                            }
-                                        }
-                                    }
-                                }).start();
-                    }
-                }
+    public static boolean hasOverlayPermission(Context context) {
+        return canDrawOverlays(context) && tryDisplayDialog(context);
+    }
 
-                @Override
-                public void onNegative() {
-                    super.onNegative();
-                    if (listener != null) {
-                        listener.onDenied();
-                    }
-                }
-            });
+    private static boolean tryDisplayDialog(Context context) {
+        Dialog dialog = new Dialog(context, R.style.Permission_Theme);
+        int overlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        int alertWindow = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        int windowType = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? overlay : alertWindow;
+        dialog.getWindow().setType(windowType);
+        try {
+            dialog.show();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (dialog.isShowing()) dialog.dismiss();
         }
+        return true;
+    }
+
+    private static boolean canDrawOverlays(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context.getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M) {
+                return Settings.canDrawOverlays(context);
+            }
+            return reflectionOps(context, "OP_SYSTEM_ALERT_WINDOW");
+        }
+        return true;
+    }
+
+    private static boolean reflectionOps(Context context, String opFieldName) {
+        int uid = context.getApplicationInfo().uid;
+        try {
+            Class<AppOpsManager> appOpsClass = AppOpsManager.class;
+            Method method = appOpsClass.getMethod("checkOpNoThrow", Integer.TYPE, Integer.TYPE, String.class);
+            Field opField = appOpsClass.getDeclaredField(opFieldName);
+            int opValue = (int) opField.get(Integer.class);
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            int result = (int) method.invoke(appOpsManager, opValue, uid, context.getApplicationContext().getPackageName());
+            return result == AppOpsManager.MODE_ALLOWED || result == 4;
+        } catch (Throwable e) {
+            return true;
+        }
+    }
+
+    public static void checkStoragePermissions(Context context, RequestListener listener) {
+        String title = context.getString(R.string.dialog_permission_rationale_title);
+        String msg = context.getString(R.string.dialog_permission_rationale_msg);
+        checkPermissions(context, title, msg, listener, Permission.Group.STORAGE);
     }
 
     public interface RequestListener {
@@ -168,5 +218,4 @@ public class PermissionHelper {
         public void onDenied() {
         }
     }
-
 }
