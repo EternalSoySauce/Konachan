@@ -70,19 +70,16 @@ public abstract class BaseWebActivity extends BaseActivity {
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
 
-        mAgentWeb.getWebCreator().getWebView().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                // TODO sauceNAO长按下载图片
-                WebView.HitTestResult result = ((WebView) v).getHitTestResult();
-                int type = result.getType();
-                if (type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
-                        || type == WebView.HitTestResult.IMAGE_TYPE) {
-                    String imgUrl = result.getExtra();
-                    Log.i("rrr", "" + type + "   " + imgUrl);
-                }
-                return true;
+        mAgentWeb.getWebCreator().getWebView().setOnLongClickListener(v -> {
+            // TODO sauceNAO长按下载图片
+            WebView.HitTestResult result = ((WebView) v).getHitTestResult();
+            int type = result.getType();
+            if (type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
+                    || type == WebView.HitTestResult.IMAGE_TYPE) {
+                String imgUrl = result.getExtra();
+                Log.i("rrr", "" + type + "   " + imgUrl);
             }
+            return true;
         });
     }
 

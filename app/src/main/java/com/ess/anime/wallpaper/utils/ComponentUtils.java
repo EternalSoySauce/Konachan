@@ -11,10 +11,11 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.util.List;
+
+import androidx.core.content.FileProvider;
 
 /**
  * 通过ActivityManager获取当前系统中的Activity与Service的运行状态
@@ -166,9 +167,7 @@ public class ComponentUtils {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                Uri contentUri = FileProvider.getUriForFile(context,
-                        context.getPackageName() + ".fileprovider"
-                        , apkFile);
+                Uri contentUri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), apkFile);
                 intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
             } else {
                 intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
@@ -183,8 +182,13 @@ public class ComponentUtils {
         }
     }
 
+    public static String getFileProviderAuthority(Context context) {
+        return context.getPackageName() + ".fileprovider";
+    }
+
     /**
      * 获取设备Android Id
+     *
      * @param context 上下文
      * @return Android Id
      */

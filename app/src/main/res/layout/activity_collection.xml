@@ -30,8 +30,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:soundEffectsEnabled="false">
+                    android:orientation="vertical">
 
                     <com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox
                         android:id="@+id/cb_choose_all"
@@ -65,7 +64,6 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
                     android:layout_toStartOf="@+id/tv_delete"
-                    android:onClick="onClick"
                     android:text="@string/share"
                     android:textColor="@color/colorAccent" />
 
@@ -76,7 +74,6 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
-                    android:onClick="onClick"
                     android:text="@string/delete"
                     android:textColor="@color/colorAccent" />
             </RelativeLayout>
@@ -87,7 +84,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
-                android:onClick="onClick"
                 android:text="@string/edit"
                 android:textColor="@color/colorAccent" />
         </androidx.appcompat.widget.Toolbar>

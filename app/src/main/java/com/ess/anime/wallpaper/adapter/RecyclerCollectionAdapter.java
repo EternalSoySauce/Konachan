@@ -1,7 +1,7 @@
 package com.ess.anime.wallpaper.adapter;
 
-import androidx.annotation.NonNull;
-import android.view.View;
+import android.app.Activity;
+import android.content.Intent;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -10,13 +10,20 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
+import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
+import com.ess.anime.wallpaper.ui.activity.FullscreenActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 
 public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
 
@@ -34,21 +41,28 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
         // 编辑模式选择框
         holder.setGone(R.id.cb_choose, isEditMode());
         holder.setChecked(R.id.cb_choose, isSelected(collectionBean));
-        holder.getView(R.id.cb_choose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isChecked = ((SmoothCheckBox) v).isChecked();
-                if (isChecked) {
-                    select(collectionBean);
-                } else {
-                    deselect(collectionBean);
-                }
+        holder.getView(R.id.cb_choose).setOnClickListener(v -> {
+            boolean isChecked = ((SmoothCheckBox) v).isChecked();
+            if (isChecked) {
+                select(collectionBean);
+            } else {
+                deselect(collectionBean);
             }
         });
 
         // 编辑模式放大查看
         holder.setGone(R.id.iv_enlarge, isEditMode());
         holder.addOnClickListener(R.id.iv_enlarge);
+        holder.getView(R.id.iv_enlarge).setOnClickListener(v -> {
+            List<CollectionBean> enlargeList = new ArrayList<>();
+            enlargeList.add(collectionBean);
+            ImageDataHolder.setCollectionList(enlargeList);
+            ImageDataHolder.setCollectionCurrentItem(0);
+
+            Intent intent = new Intent(mContext, FullscreenActivity.class);
+            intent.putExtra(Constants.ENLARGE, true);
+            mContext.startActivity(intent);
+        });
 
         // 图片格式标记
         int tagResId = 0;
@@ -66,14 +80,40 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
         int slideLength = (int) ((UIUtils.getScreenWidth(mContext) - UIUtils.dp2px(mContext, 6)) / 3f);
         ivCollection.getLayoutParams().width = slideLength;
         ivCollection.getLayoutParams().height = slideLength;
-
         GlideApp.with(mContext)
                 .asBitmap()
                 .load(imageUrl)
                 .priority(Priority.HIGH)
                 .into(ivCollection);
+
+        // 点击、全屏查看监听器
         ivCollection.setOnTouchListener(new OnTouchScaleListener());
-        holder.addOnClickListener(R.id.iv_collection);
+        ivCollection.setOnClickListener(v -> {
+            if (isEditMode()) {
+                // 编辑模式下切换选中/非选中
+                boolean newChecked = !isSelected(collectionBean);
+                holder.setChecked(R.id.cb_choose, newChecked);
+                if (newChecked) {
+                    select(collectionBean);
+                } else {
+                    deselect(collectionBean);
+                }
+            } else {
+                // 非编辑模式下全屏查看
+                ImageDataHolder.setCollectionList(getData());
+                ImageDataHolder.setCollectionCurrentItem(holder.getLayoutPosition());
+
+                // TODO 点击全屏查看图片缩放动画
+                Activity activity = (Activity) mContext;
+                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, new Pair<>(ivCollection, "s"));
+                Intent intent = new Intent(mContext, FullscreenActivity.class);
+                activity.startActivityForResult(intent, Constants.FULLSCREEN_CODE);
+//                ActivityCompat.startActivityForResult(activity, intent, Constants.FULLSCREEN_CODE, compat.toBundle());
+            }
+        });
+
+        // 长按进入编辑模式监听器
         holder.addOnLongClickListener(R.id.iv_collection);
     }
 

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -115,12 +116,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-        mPhotoView.post(new Runnable() {
-            @Override
-            public void run() {
-                showImage();
-            }
-        });
+        mPhotoView.post(this::showImage);
         return true;
     }
 
@@ -226,8 +222,30 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     public void startVideo(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.START_VIDEO)) {
             String url = (String) msgBean.obj;
-            if (url.equals(mMediaPath)) {
+            if (TextUtils.equals(url, mMediaPath)) {
                 setMediaPath(url);
+            }
+        }
+    }
+
+    // FullscreenActivity触发onResume()后收到的通知，obj 为 image url
+    @Subscribe
+    public void resumeVideo(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.RESUME_VIDEO)) {
+            String url = (String) msgBean.obj;
+            if (TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
+                mVideoView.start();
+            }
+        }
+    }
+
+    // FullscreenActivity触发onPause()后收到的通知，obj 为 image url
+    @Subscribe
+    public void pauseVideo(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.PAUSE_VIDEO)) {
+            String url = (String) msgBean.obj;
+            if (TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
+                mVideoView.pause();
             }
         }
     }
