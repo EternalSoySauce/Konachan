@@ -10,6 +10,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import me.jessyan.progressmanager.ProgressListener;
@@ -38,7 +39,7 @@ public class OkHttp {
     private OkHttpClient mHttpClient;
 
     // 需要避免重复访问的url保存在这里
-    private ArrayList<String> mUrlInQueueList = new ArrayList<>();
+    private List<String> mUrlInQueueList = new ArrayList<>();
 
     // 需要避免进度监听器重复添加的url保存在这里
     private HashMap<String, ProgressListener> mUrlInListenerMap = new HashMap<>();
@@ -115,7 +116,7 @@ public class OkHttp {
     }
 
     // 通过tags搜索图片
-    public static String getPostUrl(Context context, int page, ArrayList<String> tagList) {
+    public static String getPostUrl(Context context, int page, List<String> tagList) {
         if (tagList == null) {
             tagList = new ArrayList<>();
         }

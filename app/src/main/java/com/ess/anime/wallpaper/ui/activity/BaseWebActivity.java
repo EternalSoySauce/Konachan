@@ -14,6 +14,7 @@ import com.just.agentweb.AgentWeb;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 
 public abstract class BaseWebActivity extends BaseActivity {
 
@@ -56,7 +57,7 @@ public abstract class BaseWebActivity extends BaseActivity {
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(findViewById(R.id.layout_web_view),
                         new FrameLayout.LayoutParams(-1, -1))
-                .useDefaultIndicator(getResources().getColor(R.color.color_text_selected))
+                .useDefaultIndicator(ResourcesCompat.getColor(getResources(), R.color.color_text_selected, null))
                 .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
                 .interceptUnkownUrl()
                 .createAgentWeb()

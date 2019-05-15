@@ -16,17 +16,23 @@ import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
-import com.mixiaoxiao.smoothcompoundbutton.SmoothCompoundButton;
 
 import java.io.File;
 
 import androidx.appcompat.widget.Toolbar;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
-    private SharedPreferences mPreferences;
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+    @BindView(R.id.cb_setting_allow_play_sound)
+    SmoothCheckBox mCbAllowPlaySound;
+    @BindView(R.id.tv_current_version)
+    TextView mTvCurrentVersion;
 
-    private SmoothCheckBox mCbAllowPlaySound;
+    private SharedPreferences mPreferences;
 
     @Override
     int layoutRes() {
@@ -41,51 +47,50 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViews() {
-        mCbAllowPlaySound = findViewById(R.id.cb_setting_allow_play_sound);
         mCbAllowPlaySound.setChecked(Constants.sAllowPlaySound, false, false);
-        mCbAllowPlaySound.setOnCheckedChangeListener(new SmoothCompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SmoothCompoundButton smoothCompoundButton, boolean b) {
-                Constants.sAllowPlaySound = b;
-                mPreferences.edit().putBoolean(Constants.ALLOW_PLAY_SOUND, b).apply();
-                if (b) {
-                    SoundHelper.getInstance().playSoundEnabled(SettingActivity.this);
-                } else {
-                    SoundHelper.getInstance().playSoundDisabled();
-                }
-            }
+        mCbAllowPlaySound.setOnCheckedChangeListener((smoothCompoundButton, isChecked) -> {
+
         });
 
-        TextView tvCurrentVersion = findViewById(R.id.tv_current_version);
-        tvCurrentVersion.setText(getString(R.string.setting_current_version, ComponentUtils.getVersionName(this)));
+        String version = ComponentUtils.getVersionName(this);
+        version = getString(R.string.setting_current_version, version);
+        mTvCurrentVersion.setText(version);
     }
 
+    @OnClick({R.id.layout_setting_allow_play_sound})
+    void togglePlaySound() {
+        mCbAllowPlaySound.toggle();
+        boolean isChecked = mCbAllowPlaySound.isChecked();
+        Constants.sAllowPlaySound = isChecked;
+        mPreferences.edit().putBoolean(Constants.ALLOW_PLAY_SOUND, isChecked).apply();
+        if (isChecked) {
+            SoundHelper.getInstance().playSoundEnabled(SettingActivity.this);
+        } else {
+            SoundHelper.getInstance().playSoundDisabled();
+        }
+    }
+
+    @OnClick({R.id.tv_help_tag_type, R.id.tv_help_advanced_search})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.layout_setting_allow_play_sound:
-                mCbAllowPlaySound.performClick();
-                break;
             case R.id.tv_help_tag_type:
                 CustomDialog.showTagTypeHelpDialog(SettingActivity.this);
                 break;
             case R.id.tv_help_advanced_search:
                 CustomDialog.showAdvancedSearchHelpDialog(SettingActivity.this);
                 break;
-            case R.id.layout_check_update:
-                checkUpdate();
-                break;
         }
     }
 
-    private void checkUpdate() {
+    @OnClick(R.id.layout_check_update)
+    void checkUpdate() {
         File file = new File(getExternalFilesDir(null), FireBase.UPDATE_FILE_NAME);
         if (file.exists()) {
             String json = FileUtils.fileToString(file);

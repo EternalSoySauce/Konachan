@@ -1,14 +1,6 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -21,10 +13,10 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
-import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,13 +25,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PoolPostFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
-    private View mRootView;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
@@ -51,14 +46,31 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
     private Call mLoadMoreCall;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    int layoutRes() {
+        return R.layout.fragment_pool_post;
+    }
+
+    @Override
+    void init(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mLinkToShow = savedInstanceState.getString(Constants.LINK_TO_SHOW);
+        }
+        initSwipeRefreshLayout();
+        initRecyclerView();
+        mCurrentPage = 1;
+        getNewPosts(mCurrentPage);
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(Constants.LINK_TO_SHOW, mLinkToShow);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         mNewCall.cancel();
         if (mLoadMoreCall != null) {
             mLoadMoreCall.cancel();
@@ -68,35 +80,11 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
         EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(Constants.LINK_TO_SHOW, mLinkToShow);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mLinkToShow = savedInstanceState.getString(Constants.LINK_TO_SHOW);
-        }
-        mRootView = inflater.inflate(R.layout.fragment_pool_post, container, false);
-        initSwipeRefreshLayout();
-        initRecyclerView();
-        mCurrentPage = 1;
-        getNewPosts(mCurrentPage);
-        return mRootView;
-    }
-
     private void initSwipeRefreshLayout() {
         mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getNewPosts(1);
-            }
-        });
+        mSwipeRefresh.setOnRefreshListener(() -> getNewPosts(1));
     }
 
     private void initRecyclerView() {
@@ -121,17 +109,17 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
     // 滑动加载更多
     @Override
     public void onLoadMoreRequested() {
-        final String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
+        String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
         mLoadMoreCall = OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     mLoadMoreCall = OkHttp.getInstance().connect(url, this);
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
@@ -145,18 +133,18 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
         });
     }
 
-    public void getNewPosts(int page) {
+    private void getNewPosts(int page) {
         final String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
         mNewCall = OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     mNewCall = OkHttp.getInstance().connect(url, this);
                 }
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
@@ -176,14 +164,11 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
             return;
         }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mPostAdapter.refreshDatas(newList)) {
-                    scrollToTop();
-                }
-                mSwipeRefresh.setRefreshing(false);
+        getActivity().runOnUiThread(() -> {
+            if (mPostAdapter.refreshDatas(newList)) {
+                scrollToTop();
             }
+            mSwipeRefresh.setRefreshing(false);
         });
     }
 
@@ -193,20 +178,17 @@ public class PoolPostFragment extends Fragment implements BaseQuickAdapter.Reque
             return;
         }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-                if (mPostAdapter.loadMoreDatas(newList)) {
-                    mPostAdapter.loadMoreComplete();
-                } else {
-                    mPostAdapter.loadMoreEnd();
-                }
+        getActivity().runOnUiThread(() -> {
+            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+            if (mPostAdapter.loadMoreDatas(newList)) {
+                mPostAdapter.loadMoreComplete();
+            } else {
+                mPostAdapter.loadMoreEnd();
             }
         });
     }
 
-    public void scrollToTop() {
+    void scrollToTop() {
         int smoothPos = 14;
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
             mRvPosts.scrollToPosition(smoothPos);

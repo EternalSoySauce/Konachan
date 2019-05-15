@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,14 +23,14 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.listener.OnTouchGestureListener;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
-import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.github.clans.fab.FloatingActionButton;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
 import com.github.clans.fab.FloatingActionMenu;
 import com.zyyoona7.popup.EasyPopup;
 
@@ -44,58 +43,60 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class PostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+    @BindView(R.id.floating_action_menu)
+    FloatingActionMenu mFloatingMenu;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.rv_post)
+    RecyclerView mRvPosts;
 
     private MainActivity mActivity;
-
-    private View mRootView;
-    private FloatingActionMenu mFloatingMenu;
-    private SwipeRefreshLayout mSwipeRefresh;
-    private RecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
+
     private EasyPopup mPopupPage;
     private TextView mTvFrom;
     private TextView mTvTo;
     private EditText mEtGoto;
-
     private int mCurrentPage;  // 当前页码
     private int mGoToPage;  // 跳转到的起始页码
     private String mCurrentTag;   // 当前正在搜索的tag
-    private ArrayList<String> mCurrentTagList;
+    private List<String> mCurrentTagList;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (MainActivity) context;
-        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
+    int layoutRes() {
+        return R.layout.fragment_post;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_post, container, false);
+    void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initPopupPage();
         initSwipeRefreshLayout();
         initRecyclerView();
-        initFloatingButton();
         mCurrentPage = 1;
         mGoToPage = 1;
         mCurrentTag = "";
@@ -103,55 +104,54 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         getNewPosts(mCurrentPage);
         changeFromPage(mCurrentPage);
         changeToPage(mCurrentPage);
-        return mRootView;
+        EventBus.getDefault().register(this);
     }
 
-    private long lastClickTime = 0;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = mRootView.findViewById(R.id.tool_bar);
-        mActivity.setSupportActionBar(toolbar);
+        mActivity.setSupportActionBar(mToolbar);
         DrawerLayout drawerLayout = mActivity.getDrawerLayout();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 mActivity,
                 drawerLayout,
-                toolbar,
+                mToolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        toolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
+        mToolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
 
         //双击返回顶部
-        toolbar.setOnClickListener(v -> {
-            if (lastClickTime <= 0) {
-                lastClickTime = System.currentTimeMillis();
-            } else {
-                long currentClickTime = System.currentTimeMillis();
-                if (currentClickTime - lastClickTime < 500) {
-                    scrollToTop();
-                    mFloatingMenu.close(true);
-                } else {
-                    lastClickTime = currentClickTime;
-                }
+        OnTouchGestureListener listener = new OnTouchGestureListener(mActivity, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                scrollToTop();
+                mFloatingMenu.close(true);
+                return super.onDoubleTap(e);
             }
         });
+        mToolbar.setOnTouchListener(listener);
+    }
 
-        // 弹出跳转页弹窗
-        ImageView ivPage = mRootView.findViewById(R.id.iv_page);
-        ivPage.setOnClickListener(v -> {
-            mPopupPage.showAsDropDown(v);
-            mEtGoto.selectAll();
-            mEtGoto.post(() -> UIUtils.showSoftInput(mActivity, mEtGoto));
-        });
+    // 弹出跳转页弹窗
+    @OnClick(R.id.iv_page)
+    void gotoPage(View view) {
+        mPopupPage.showAsDropDown(view);
+        mEtGoto.selectAll();
+        mEtGoto.post(() -> UIUtils.showSoftInput(mActivity, mEtGoto));
+    }
 
-        //搜索
-        ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
-        ivSearch.setOnClickListener(v -> {
-            mFloatingMenu.close(true);
-            Intent searchIntent = new Intent(mActivity, SearchActivity.class);
-            startActivityForResult(searchIntent, Constants.SEARCH_CODE);
-        });
+    //搜索
+    @OnClick({R.id.iv_search})
+    void openSearch() {
+        mFloatingMenu.close(true);
+        Intent searchIntent = new Intent(mActivity, SearchActivity.class);
+        startActivityForResult(searchIntent, Constants.SEARCH_CODE);
     }
 
     private void initPopupPage() {
@@ -187,7 +187,6 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
     }
 
     private void initSwipeRefreshLayout() {
-        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(() -> {
@@ -200,7 +199,6 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
 
     private void initRecyclerView() {
         int span = 2;
-        mRvPosts = mRootView.findViewById(R.id.rv_post);
         mLayoutManager = new GridLayoutManager(mActivity, span);
         mRvPosts.setLayoutManager(mLayoutManager);
 
@@ -220,7 +218,7 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         // 滑动时隐藏fab
         mRvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!mPostAdapter.getData().isEmpty()) {
                     switch (newState) {
@@ -242,14 +240,14 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         String url = OkHttp.getPostUrl(mActivity, ++mCurrentPage, mCurrentTagList);
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     checkNetwork();
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     addMoreThumbList(HtmlParserFactory.createParser(mActivity, html).getThumbList());
@@ -261,22 +259,18 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         });
     }
 
-    private void initFloatingButton() {
-        mFloatingMenu = mRootView.findViewById(R.id.floating_action_menu);
+    @OnClick(R.id.fab_home)
+    void searchHome() {
+        mFloatingMenu.close(true);
+        onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
+    }
 
-        FloatingActionButton fabHome = mRootView.findViewById(R.id.fab_home);
-        fabHome.setOnClickListener(v -> {
-            mFloatingMenu.close(true);
-            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
-        });
-
-        FloatingActionButton fabRandom = mRootView.findViewById(R.id.fab_random);
-        fabRandom.setOnClickListener(v -> {
-            mFloatingMenu.close(true);
-            Intent intent = new Intent();
-            intent.putExtra(Constants.SEARCH_TAG, "order:random");
-            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
-        });
+    @OnClick(R.id.fab_home)
+    void searchRandom() {
+        mFloatingMenu.close(true);
+        Intent intent = new Intent();
+        intent.putExtra(Constants.SEARCH_TAG, "order:random");
+        onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
     }
 
     private void changeFromPage(int page) {
@@ -307,7 +301,7 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
                 mCurrentTag = "#" + searchTag;
                 switch (resultCode) {
                     case Constants.SEARCH_CODE_TAGS:
-                        mCurrentTagList.addAll(Arrays.asList(searchTag.split(",|，")));
+                        mCurrentTagList.addAll(Arrays.asList(searchTag.split("[,，]")));
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
                         changeToPage(mCurrentPage);
@@ -365,14 +359,14 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         String url = OkHttp.getPostUrl(mActivity, page, mCurrentTagList);
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     checkNetwork();
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     List<ThumbBean> thumbList = HtmlParserFactory.createParser(mActivity, html).getThumbList();
@@ -423,14 +417,14 @@ public class PostFragment extends Fragment implements BaseQuickAdapter.RequestLo
         String url = Constants.BASE_URL_BAIDU + searchTag;
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     checkNetwork();
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     String name = HtmlParser.getNameFromBaidu(html);

@@ -3,9 +3,9 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -20,11 +20,12 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.listener.OnTouchGestureListener;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
-import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.UIUtils;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,57 +35,76 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class PoolFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.fl_pool_post)
+    FrameLayout mLayoutFragment;
+    @BindView(R.id.rv_pool)
+    RecyclerView mRvPools;
+    @BindView(R.id.iv_page)
+    ImageView mIvPage;
 
     private MainActivity mActivity;
     private FragmentManager mFragmentManager;
-
-    private View mRootView;
-    private Toolbar mToolbar;
-    private SwipeRefreshLayout mSwipeRefresh;
-    private FrameLayout mLayoutFragment;
     private PoolPostFragment mPoolPostFragment;
-    private RecyclerView mRvPools;
     private LinearLayoutManager mLayoutManager;
     private RecyclerPoolAdapter mPoolAdapter;
-    private ImageView mIvPage;
+
     private EasyPopup mPopupPage;
     private TextView mTvFrom;
     private TextView mTvTo;
     private EditText mEtGoto;
-
     private int mCurrentPage;   // 当前页码
     private int mGoToPage;   // 跳转到的起始页码
     private String mCurrentSearchName;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (MainActivity) context;
+    }
+
+    @Override
+    int layoutRes() {
+        return R.layout.fragment_pool;
+    }
+
+    @Override
+    void init(Bundle savedInstanceState) {
+        mFragmentManager = getChildFragmentManager();
+        initToolBarLayout();
+        initPopupPage();
+        initSwipeRefreshLayout();
+        initRecyclerView();
+        mCurrentPage = 1;
+        mGoToPage = 1;
+        getNewPools(mCurrentPage);
+        changeFromPage(mCurrentPage);
+        changeToPage(mCurrentPage);
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mPoolPostFragment != null) {
             mFragmentManager.putFragment(outState, PoolPostFragment.class.getName(), mPoolPostFragment);
@@ -95,8 +115,8 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            mPoolPostFragment = (PoolPostFragment) mFragmentManager.getFragment(savedInstanceState,
-                    PoolPostFragment.class.getName());
+            mPoolPostFragment = (PoolPostFragment) mFragmentManager.getFragment(
+                    savedInstanceState, PoolPostFragment.class.getName());
             if (mPoolPostFragment != null) {
                 removePoolPostFragment();
             }
@@ -104,26 +124,14 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFragmentManager = getChildFragmentManager();
-        mRootView = inflater.inflate(R.layout.fragment_pool, container, false);
-        initToolBarLayout();
-        initPopupPage();
-        initSwipeRefreshLayout();
-        initPoolPostFragment();
-        initRecyclerView();
-        mCurrentPage = 1;
-        mGoToPage = 1;
-        getNewPools(mCurrentPage);
-        changeFromPage(mCurrentPage);
-        changeToPage(mCurrentPage);
-        return mRootView;
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 
     private long lastClickTime = 0;
 
     private void initToolBarLayout() {
-        mToolbar = mRootView.findViewById(R.id.tool_bar);
         mActivity.setSupportActionBar(mToolbar);
         DrawerLayout drawerLayout = mActivity.getDrawerLayout();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -137,42 +145,33 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         mToolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
 
         //双击返回顶部
-        mToolbar.setOnClickListener(v -> {
-            if (lastClickTime <= 0) {
-                lastClickTime = System.currentTimeMillis();
-            } else {
-                long currentClickTime = System.currentTimeMillis();
-                if (currentClickTime - lastClickTime < 500) {
-                    if (isPoolPostFragmentVisible()) {
-                        mPoolPostFragment.scrollToTop();
-                    } else {
-                        scrollToTop();
-                    }
+        OnTouchGestureListener listener = new OnTouchGestureListener(mActivity, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (isPoolPostFragmentVisible()) {
+                    mPoolPostFragment.scrollToTop();
                 } else {
-                    lastClickTime = currentClickTime;
+                    scrollToTop();
                 }
+                return super.onDoubleTap(e);
             }
         });
+        mToolbar.setOnTouchListener(listener);
+    }
 
-        // 弹出跳转页弹窗
-        mIvPage = mRootView.findViewById(R.id.iv_page);
-        mIvPage.setOnClickListener(v -> {
-            mPopupPage.showAsDropDown(v);
-            mEtGoto.selectAll();
-            mEtGoto.post(new Runnable() {
-                @Override
-                public void run() {
-                    UIUtils.showSoftInput(mActivity, mEtGoto);
-                }
-            });
-        });
+    // 弹出跳转页弹窗
+    @OnClick(R.id.iv_page)
+    void gotoPage(View view) {
+        mPopupPage.showAsDropDown(view);
+        mEtGoto.selectAll();
+        mEtGoto.post(() -> UIUtils.showSoftInput(mActivity, mEtGoto));
+    }
 
-        //搜索
-        ImageView ivSearch = mRootView.findViewById(R.id.iv_search);
-        ivSearch.setOnClickListener(v -> {
-//                Intent searchIntent = new Intent(mActivity, SearchActivity.class);
-//                startActivityForResult(searchIntent, Constants.SEARCH_CODE);
-        });
+    //搜索
+    @OnClick({R.id.iv_search})
+    void openSearch() {
+//        Intent searchIntent = new Intent(mActivity, SearchActivity.class);
+//        startActivityForResult(searchIntent, Constants.SEARCH_CODE);
     }
 
     private void initPopupPage() {
@@ -208,7 +207,6 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
     }
 
     private void initSwipeRefreshLayout() {
-        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(() -> {
@@ -219,12 +217,7 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         });
     }
 
-    private void initPoolPostFragment() {
-        mLayoutFragment = mRootView.findViewById(R.id.fl_pool_post);
-    }
-
     private void initRecyclerView() {
-        mRvPools = mRootView.findViewById(R.id.rv_pool);
         mLayoutManager = new LinearLayoutManager(mActivity);
         mRvPools.setLayoutManager(mLayoutManager);
 
@@ -253,14 +246,14 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         String url = OkHttp.getPoolUrl(mActivity, ++mCurrentPage, mCurrentSearchName);
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     checkNetwork();
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     addMorePoolList(HtmlParserFactory.createParser(mActivity, html).getPoolList());
@@ -367,14 +360,14 @@ public class PoolFragment extends Fragment implements BaseQuickAdapter.RequestLo
         String url = OkHttp.getPoolUrl(mActivity, page, mCurrentSearchName);
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     checkNetwork();
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     List<PoolListBean> poolList = HtmlParserFactory.createParser(mActivity, html).getPoolList();

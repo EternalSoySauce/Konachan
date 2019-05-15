@@ -1,10 +1,9 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,19 +31,23 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
 
     private final static String TAG_FRG_POST = PostFragment.class.getName();
     private final static String TAG_FRG_POOL = PoolFragment.class.getName();
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigation;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.nav_view)
+    NavigationView mNavigation;
 
     private FragmentManager mFragmentManager;
     private PostFragment mFrgPost;
@@ -53,7 +56,6 @@ public class MainActivity extends BaseActivity {
     private int mCurrentNavId;
     private Fragment mCurrentFragment;
 
-    private SharedPreferences mPreferences;
     private boolean mIsForeground;
 
     @Override
@@ -63,8 +65,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             restoreData(savedInstanceState);
@@ -86,7 +86,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mFragmentManager.putFragment(outState, TAG_FRG_POST, mFrgPost);
         if (mFrgPool.isAdded()) {
@@ -104,17 +104,16 @@ public class MainActivity extends BaseActivity {
         }
 
         String currentFrgName = savedInstanceState.getString(Constants.CURRENT_FRAGMENT, TAG_FRG_POST);
-        if (currentFrgName.equals(TAG_FRG_POST)) {
+        if (TextUtils.equals(currentFrgName, TAG_FRG_POST)) {
             mCurrentNavId = R.id.nav_post;
             mCurrentFragment = mFrgPost;
-        } else if (currentFrgName.equals(TAG_FRG_POOL)) {
+        } else if (TextUtils.equals(currentFrgName, TAG_FRG_POOL)) {
             mCurrentNavId = R.id.nav_pool;
             mCurrentFragment = mFrgPool;
         }
     }
 
     private void initDrawerLayout() {
-        mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -152,20 +151,18 @@ public class MainActivity extends BaseActivity {
 
     private void initNavMenuLayout() {
         mCurrentNavId = mCurrentNavId == 0 ? R.id.nav_post : mCurrentNavId;
-        mNavigation = findViewById(R.id.nav_view);
-        mNavigation.setItemTextColor(getResources().getColorStateList(R.color.nav_menu_text_color));
-        mNavigation.setItemIconTintList(getResources().getColorStateList(R.color.nav_menu_text_color));
+        ColorStateList colorStateList = ResourcesCompat.getColorStateList(
+                getResources(), R.color.nav_menu_text_color, null);
+        mNavigation.setItemTextColor(colorStateList);
+        mNavigation.setItemIconTintList(colorStateList);
         mNavigation.setItemBackgroundResource(R.drawable.bg_nav_menu);
-        UIUtils.setNavigationMenuLineStyle(mNavigation,
-                getResources().getColor(R.color.color_text_unselected), UIUtils.dp2px(this, 0.5f));
+        int lineColor = ResourcesCompat.getColor(getResources(), R.color.color_text_unselected, null);
+        UIUtils.setNavigationMenuLineStyle(mNavigation, lineColor, UIUtils.dp2px(this, 0.5f));
         mNavigation.setCheckedItem(mCurrentNavId);
-        mNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                mCurrentNavId = item.getItemId();
-                toggleDrawerLayout();
-                return mCurrentNavId == R.id.nav_post || mCurrentNavId == R.id.nav_pool;
-            }
+        mNavigation.setNavigationItemSelectedListener(item -> {
+            mCurrentNavId = item.getItemId();
+            toggleDrawerLayout();
+            return mCurrentNavId == R.id.nav_post || mCurrentNavId == R.id.nav_pool;
         });
 
         NavigationMenuView navMenu = (NavigationMenuView) mNavigation.getChildAt(0);
@@ -178,23 +175,20 @@ public class MainActivity extends BaseActivity {
         View navHeader = mNavigation.getHeaderView(0);
 
         // 切换搜图网站
-        final Button btnFunny = navHeader.findViewById(R.id.btn_funny);
-        btnFunny.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SoundHelper.getInstance().playToggleR18ModeSound(MainActivity.this);
-                CustomDialog.showChangeBaseUrlDialog(MainActivity.this, new CustomDialog.SimpleDialogActionListener() {
-                    @Override
-                    public void onPositive() {
-                        super.onPositive();
-                        toggleDrawerLayout();
-                    }
-                });
-            }
+        Button btnFunny = navHeader.findViewById(R.id.btn_funny);
+        btnFunny.setOnClickListener(v -> {
+            SoundHelper.getInstance().playToggleR18ModeSound(MainActivity.this);
+            CustomDialog.showChangeBaseUrlDialog(MainActivity.this, new CustomDialog.SimpleDialogActionListener() {
+                @Override
+                public void onPositive() {
+                    super.onPositive();
+                    toggleDrawerLayout();
+                }
+            });
         });
 
         // 图片对应一周7天
-        final ImageView ivExtra = navHeader.findViewById(R.id.iv_extra);
+        ImageView ivExtra = navHeader.findViewById(R.id.iv_extra);
         GlideApp.with(this).load(getExtraImageSrcId()).into(ivExtra);
     }
 

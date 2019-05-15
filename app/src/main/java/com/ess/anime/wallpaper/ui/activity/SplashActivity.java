@@ -15,6 +15,7 @@ import com.ess.anime.wallpaper.utils.UIUtils;
 import java.io.File;
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -52,14 +53,14 @@ public class SplashActivity extends BaseActivity {
     private void getTagJson(final String url) {
         OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e)) {
                     OkHttp.getInstance().connect(url, this);
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     String path = getFilesDir().getPath();

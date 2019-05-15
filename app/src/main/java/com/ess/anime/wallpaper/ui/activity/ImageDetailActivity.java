@@ -3,12 +3,8 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.DownloadBean;
@@ -35,11 +31,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class ImageDetailActivity extends BaseActivity {
 
+    @BindView(R.id.tv_id)
+    TextView mTvId;
     @BindView(R.id.smart_tab)
     SmartTabLayout mSmartTab;
     @BindView(R.id.vp_image_detail)
@@ -66,7 +67,7 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // 防止软件进入后台过久被系统回收导致切换回来时产生空指针异常
         outState.putParcelable(Constants.THUMB_BEAN, mThumbBean);
@@ -116,8 +117,7 @@ public class ImageDetailActivity extends BaseActivity {
 
     public void setId(ImageBean imageBean) {
         String id = getString(R.string.image_id_symbol) + imageBean.posts[0].id;
-        TextView tvId = findViewById(R.id.tv_id);
-        tvId.setText(id);
+        mTvId.setText(id);
     }
 
     public ThumbBean getThumbBean() {
@@ -230,8 +230,7 @@ public class ImageDetailActivity extends BaseActivity {
 
     private File makeFileToSave(String postId, String fileType, String url) {
         String extension = FileUtils.getFileExtensionWithDot(url);
-        url = url.substring(0, url.lastIndexOf(extension) + extension.length())
-                .replaceAll(".com|.net", "");
+//        url = url.substring(0, url.lastIndexOf(extension) + extension.length()).replaceAll(".com|.net", "");
 //        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
         // 图片命名方式改为"网站名-图片id-图片尺寸样式"，eg. Konachan-123456-Sample.jpg
         // 但这样无法识别此版本(v1.7)之前下载的图片是下载过的
@@ -268,7 +267,7 @@ public class ImageDetailActivity extends BaseActivity {
 
     // 下载图片点击事件
     @OnClick(R.id.tv_save)
-    void saveImage(View view) {
+    void saveImage() {
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
             @Override
             public void onGranted() {
@@ -280,7 +279,7 @@ public class ImageDetailActivity extends BaseActivity {
 
     // 查看上一张图片点击事件
     @OnClick(R.id.iv_previous)
-    void previousImage(View view) {
+    void previousImage() {
         ThumbBean thumbBean = ImageDataHolder.previousThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);
@@ -297,7 +296,7 @@ public class ImageDetailActivity extends BaseActivity {
 
     // 查看下一张图片点击事件
     @OnClick(R.id.iv_next)
-    void nextImage(View view) {
+    void nextImage() {
         ThumbBean thumbBean = ImageDataHolder.nextThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);

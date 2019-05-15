@@ -39,8 +39,7 @@
                 <FrameLayout
                     android:id="@+id/layout_setting_allow_play_sound"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:onClick="onClick">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -79,7 +78,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="16dp"
-                    android:onClick="onClick"
                     android:text="@string/setting_help_tag_type"
                     android:textColor="@color/color_text_unselected"
                     android:textSize="15sp" />
@@ -102,7 +100,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="16dp"
-                    android:onClick="onClick"
                     android:text="@string/setting_help_advanced_search"
                     android:textColor="@color/color_text_unselected"
                     android:textSize="15sp" />
@@ -124,7 +121,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:onClick="onClick"
                     android:orientation="vertical"
                     android:paddingStart="16dp"
                     android:paddingEnd="0dp">

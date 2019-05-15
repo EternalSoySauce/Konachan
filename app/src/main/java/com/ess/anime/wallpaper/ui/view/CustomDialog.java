@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
@@ -55,12 +54,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(R.string.dialog_reload_msg)
                 .negativeText(R.string.dialog_reload_no)
                 .positiveText(R.string.dialog_reload_yes)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        listener.onPositive();
-                    }
-                }).show();
+                .onPositive((dialog1, which) -> listener.onPositive()).show();
     }
 
     /**
@@ -74,12 +68,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(msg)
                 .negativeText(R.string.dialog_delete_cancel)
                 .positiveText(R.string.dialog_delete_sure)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        listener.onPositive();
-                    }
-                }).show();
+                .onPositive((dialog1, which) -> listener.onPositive()).show();
     }
 
     /**
@@ -189,16 +178,13 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .negativeText(R.string.dialog_download_cancel)
                 .positiveText(R.string.dialog_download_sure)
                 .items(itemList)
-                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        List<DownloadBean> chosenList = new ArrayList<>();
-                        for (int index : which) {
-                            chosenList.add(itemList.get(index));
-                        }
-                        listener.onDownloadChosen(chosenList);
-                        return false;
+                .itemsCallbackMultiChoice(null, (dialog1, which, text) -> {
+                    List<DownloadBean> chosenList = new ArrayList<>();
+                    for (int index : which) {
+                        chosenList.add(itemList.get(index));
                     }
+                    listener.onDownloadChosen(chosenList);
+                    return false;
                 }).show();
     }
 
@@ -218,17 +204,14 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .canceledOnTouchOutside(false)
                 .negativeText(R.string.dialog_update_ignore)
                 .positiveText(R.string.dialog_update_update)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        File apkFile = new File(apkBean.localFilePath);
-                        if (apkFile.exists()) {
-                            ComponentUtils.installApk(context, apkFile, true);
-                        } else {
-                            Intent intent = new Intent(context, DownloadApkService.class);
-                            intent.putExtra(Constants.APK_BEAN, apkBean);
-                            context.startService(intent);
-                        }
+                .onPositive((dialog1, which) -> {
+                    File apkFile = new File(apkBean.localFilePath);
+                    if (apkFile.exists()) {
+                        ComponentUtils.installApk(context, apkFile, true);
+                    } else {
+                        Intent intent = new Intent(context, DownloadApkService.class);
+                        intent.putExtra(Constants.APK_BEAN, apkBean);
+                        context.startService(intent);
                     }
                 }).show();
     }
@@ -244,16 +227,13 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(R.string.dialog_feedback_msg)
                 .negativeText(R.string.dialog_feedback_cancel)
                 .positiveText(R.string.dialog_feedback_sure)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Uri uri = Uri.parse("mailto:" + "qiaolimama@gmail.com");
-                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "["
-                                + ComponentUtils.getVersionName(context)
-                                + "] Feedback - K Anime Wallpaper");
-                        context.startActivity(Intent.createChooser(intent, context.getString(R.string.feedback_title)));
-                    }
+                .onPositive((dialog1, which) -> {
+                    Uri uri = Uri.parse("mailto:" + "qiaolimama@gmail.com");
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "["
+                            + ComponentUtils.getVersionName(context)
+                            + "] Feedback - K Anime Wallpaper");
+                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.feedback_title)));
                 }).show();
     }
 
