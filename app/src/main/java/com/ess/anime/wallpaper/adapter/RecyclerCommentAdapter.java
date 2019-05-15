@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.adapter;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -15,12 +14,10 @@ import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 
-import java.util.List;
-
 public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseViewHolder> {
 
-    public RecyclerCommentAdapter(@NonNull List<CommentBean> commentList) {
-        super(R.layout.recyclerview_item_comment, commentList);
+    public RecyclerCommentAdapter() {
+        super(R.layout.recyclerview_item_comment, null);
     }
 
     @Override

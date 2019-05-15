@@ -7,21 +7,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class TagBean implements Parcelable {
 
-    public ArrayList<String> copyright = new ArrayList<>();  //版权方，#DD00DD
+    public List<String> copyright = new ArrayList<>();  //版权方，#DD00DD
 
-    public ArrayList<String> character = new ArrayList<>();  //角色名，#00AA00
+    public List<String> character = new ArrayList<>();  //角色名，#00AA00
 
-    public ArrayList<String> artist = new ArrayList<>();     //此作品的作者（非官方原作者），#CCCC00
+    public List<String> artist = new ArrayList<>();     //此作品的作者（非官方原作者），#CCCC00
 
-    public ArrayList<String> circle = new ArrayList<>();     //元版权方（非正规版权），#00BBBB
+    public List<String> circle = new ArrayList<>();     //元版权方（非正规版权），#00BBBB
 
-    public ArrayList<String> style = new ArrayList<>();      //独特风格类型（如_vocaloid），#FF2020
+    public List<String> style = new ArrayList<>();      //独特风格类型（如_vocaloid），#FF2020
 
-    public ArrayList<String> general = new ArrayList<>();    //普通描述，#FFFFFF (#EE8887)
+    public List<String> general = new ArrayList<>();    //普通描述，#FFFFFF (#EE8887)
 
     public TagBean() {
     }

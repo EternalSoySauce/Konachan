@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ess.anime.wallpaper.ui.view.MultipleMediaLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                  android:id="@+id/layout_multiple_media"
-                                                  android:layout_width="match_parent"
-                                                  android:layout_height="match_parent">
+    android:id="@+id/layout_multiple_media"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.sprylab.android.widget.TextureVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter" />
 </com.ess.anime.wallpaper.ui.view.MultipleMediaLayout>

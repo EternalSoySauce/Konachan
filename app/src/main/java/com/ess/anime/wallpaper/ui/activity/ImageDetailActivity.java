@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.adapter.ViewPagerImageDetailAdapter;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PostBean;
@@ -24,29 +25,29 @@ import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
-import com.ess.anime.wallpaper.ui.view.SlidingTabLayout;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class ImageDetailActivity extends BaseActivity {
+
+    @BindView(R.id.smart_tab)
+    SmartTabLayout mSmartTab;
+    @BindView(R.id.vp_image_detail)
+    ViewPager mVpImageDetail;
 
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
     private int mCurrentPage;
-
-    private ViewPager mVpImageDetail;
-    private ArrayList<Fragment> mFragmentList = new ArrayList<>();
-    private FragmentManager mFragmentManager;
 
     private Handler mHandler = new Handler();
 
@@ -57,7 +58,6 @@ public class ImageDetailActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
-        mFragmentManager = getSupportFragmentManager();
         initData(savedInstanceState);
         initViews();
         initToolBarLayout();
@@ -72,10 +72,6 @@ public class ImageDetailActivity extends BaseActivity {
         outState.putParcelable(Constants.THUMB_BEAN, mThumbBean);
         outState.putParcelable(Constants.IMAGE_BEAN, mImageBean);
         outState.putInt(Constants.CURRENT_PAGE, mCurrentPage);
-
-        for (Fragment fragment : mFragmentList) {
-            mFragmentManager.putFragment(outState, fragment.getClass().getName(), fragment);
-        }
     }
 
     private void initData(Bundle savedInstanceState) {
@@ -87,10 +83,6 @@ public class ImageDetailActivity extends BaseActivity {
             mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
             mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
             mCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 0);
-
-            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, ImageFragment.class.getName()));
-            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, DetailFragment.class.getName()));
-            mFragmentList.add(mFragmentManager.getFragment(savedInstanceState, CommentFragment.class.getName()));
         }
     }
 
@@ -101,45 +93,25 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     private void initToolBarLayout() {
-        FrameLayout flBack = findViewById(R.id.fl_back);
-        flBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         if (mImageBean != null) {
             setId(mImageBean);
         }
     }
 
     private void initViewPager() {
-        if (mFragmentList.isEmpty()) {
-            mFragmentList.add(ImageFragment.newInstance(getString(R.string.image_detail_image)));
-            mFragmentList.add(DetailFragment.newInstance(getString(R.string.image_detail_detail)));
-            mFragmentList.add(CommentFragment.newInstance(getString(R.string.image_detail_comment)));
-        }
-
-        mVpImageDetail = findViewById(R.id.vp_image_detail);
-        mVpImageDetail.setAdapter(new ViewPagerImageDetailAdapter(mFragmentManager, mFragmentList));
-        mVpImageDetail.setOffscreenPageLimit(mFragmentList.size() - 1);
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(), FragmentPagerItems.with(this)
+                .add(R.string.image_detail_image, ImageFragment.class)
+                .add(R.string.image_detail_detail, DetailFragment.class)
+                .add(R.string.image_detail_comment, CommentFragment.class)
+                .create());
+        mVpImageDetail.setAdapter(adapter);
+        mVpImageDetail.setOffscreenPageLimit(adapter.getCount());
+        mVpImageDetail.setCurrentItem(mCurrentPage);
     }
 
     private void initSlidingTabLayout() {
-        int colorSelected = getResources().getColor(R.color.color_text_selected);
-        int colorUnselected = getResources().getColor(R.color.color_text_unselected);
-
-        SlidingTabLayout slidingTab = findViewById(R.id.sliding_tab_layout);
-        slidingTab.setDistributeEvenly(true);
-        slidingTab.setTabViewTextSizeSp(16);
-        slidingTab.setTitleTextColor(colorSelected, colorUnselected);
-        slidingTab.setTabStripWidth(UIUtils.dp2px(this, 60));
-        slidingTab.setTabStripHeight(2.5f);
-        slidingTab.setTabViewPaddingDp(12);
-        slidingTab.setSelectedIndicatorColors(colorSelected);
-        slidingTab.setViewPager(mVpImageDetail);
-        mVpImageDetail.setCurrentItem(mCurrentPage);
+        mSmartTab.setViewPager(mVpImageDetail);
     }
 
     public void setId(ImageBean imageBean) {
@@ -245,15 +217,12 @@ public class ImageDetailActivity extends BaseActivity {
     private void downloadBitmaps(List<DownloadBean> downloadList) {
         for (int i = 0; i < downloadList.size(); i++) {
             final DownloadBean downloadBean = downloadList.get(i);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!OkHttp.getInstance().isUrlInDownloadQueue(downloadBean.downloadUrl)) {
-                        Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
-                        downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
-                        startService(downloadIntent);
-                        OkHttp.getInstance().addUrlToDownloadQueue(downloadBean.downloadUrl);
-                    }
+            mHandler.postDelayed(() -> {
+                if (!OkHttp.getInstance().isUrlInDownloadQueue(downloadBean.downloadUrl)) {
+                    Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
+                    downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
+                    startService(downloadIntent);
+                    OkHttp.getInstance().addUrlToDownloadQueue(downloadBean.downloadUrl);
                 }
             }, i * 100);
         }
@@ -298,7 +267,8 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     // 下载图片点击事件
-    public void saveImage(View view) {
+    @OnClick(R.id.tv_save)
+    void saveImage(View view) {
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
             @Override
             public void onGranted() {
@@ -309,7 +279,8 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     // 查看上一张图片点击事件
-    public void previousImage(View view) {
+    @OnClick(R.id.iv_previous)
+    void previousImage(View view) {
         ThumbBean thumbBean = ImageDataHolder.previousThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);
@@ -325,7 +296,8 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     // 查看下一张图片点击事件
-    public void nextImage(View view) {
+    @OnClick(R.id.iv_next)
+    void nextImage(View view) {
         ThumbBean thumbBean = ImageDataHolder.nextThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);
@@ -351,4 +323,9 @@ public class ImageDetailActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.fl_back)
+    @Override
+    public void finish() {
+        super.finish();
+    }
 }

@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -32,9 +36,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -106,7 +107,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     }
 
     private void initFullScreenViewPager() {
-        mVpFullScreen.setAdapter(new ViewPagerFullscreenAdapter(this, mCollectionList));
+        mVpFullScreen.setAdapter(new ViewPagerFullscreenAdapter(mCollectionList));
         mVpFullScreen.setCurrentItem(mCurrentPos, false);
         final ViewPager.OnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
             @Override

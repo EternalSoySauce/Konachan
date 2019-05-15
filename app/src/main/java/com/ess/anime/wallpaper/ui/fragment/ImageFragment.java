@@ -2,9 +2,10 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -18,29 +19,41 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import butterknife.BindView;
 
-public class ImageFragment extends Fragment {
+public class ImageFragment extends BaseFragment {
+
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.layout_multiple_media)
+    MultipleMediaLayout mMediaLayout;
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
 
-    private View mRootView;
-    private SwipeRefreshLayout mSwipeRefresh;
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (ImageDetailActivity) context;
-        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
+    int layoutRes() {
+        return R.layout.fragment_image;
+    }
+
+    @Override
+    void init(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
+            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
+        } else {
+            mThumbBean = mActivity.getThumbBean();
+            mImageBean = mThumbBean.imageBean;
+        }
+        initView();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -52,28 +65,14 @@ public class ImageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
-            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
-        } else {
-            mThumbBean = mActivity.getThumbBean();
-            mImageBean = mThumbBean.imageBean;
-        }
-        mRootView = inflater.inflate(R.layout.fragment_image, container, false);
-        initView();
-        return mRootView;
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
-        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setEnabled(false);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadMedia();
-            }
-        });
+        mSwipeRefresh.setOnRefreshListener(this::loadMedia);
 
         if (mImageBean != null) {
             loadMedia();
@@ -84,8 +83,7 @@ public class ImageFragment extends Fragment {
     }
 
     private void loadMedia() {
-        MultipleMediaLayout mediaLayout = mRootView.findViewById(R.id.layout_multiple_media);
-        mediaLayout.setMediaPath(mImageBean.posts[0].sampleUrl);
+        mMediaLayout.setMediaPath(mImageBean.posts[0].sampleUrl);
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
@@ -105,14 +103,6 @@ public class ImageFragment extends Fragment {
                 mActivity.setImageBean(imageBean);
             }
         }
-    }
-
-    public static ImageFragment newInstance(String title) {
-        ImageFragment fragment = new ImageFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.PAGE_TITLE, title);
-        fragment.setArguments(bundle);
-        return fragment;
     }
 
 }

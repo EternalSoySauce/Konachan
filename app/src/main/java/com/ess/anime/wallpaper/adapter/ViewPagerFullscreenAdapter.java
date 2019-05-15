@@ -1,51 +1,53 @@
 package com.ess.anime.wallpaper.adapter;
 
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CollectionBean;
-import com.ess.anime.wallpaper.ui.activity.FullscreenActivity;
 import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
+import com.qmuiteam.qmui.widget.QMUIPagerAdapter;
 
 import java.util.List;
 
-public class ViewPagerFullscreenAdapter extends ReusedPagerAdapter<ViewPagerFullscreenAdapter.MyViewHolder> {
+public class ViewPagerFullscreenAdapter extends QMUIPagerAdapter {
 
-    private FullscreenActivity mActivity;
     private List<CollectionBean> mCollectionList;
 
-    public ViewPagerFullscreenAdapter(FullscreenActivity activity, @NonNull List<CollectionBean> collectionList) {
-        mActivity = activity;
+    public ViewPagerFullscreenAdapter(@NonNull List<CollectionBean> collectionList) {
         mCollectionList = collectionList;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mActivity)
-                .inflate(R.layout.layout_multiple_media, parent, false);
-        return new MyViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    protected Object hydrate(ViewGroup container, int position) {
         String url = mCollectionList.get(position).url;
-
-        MultipleMediaLayout mediaLayout = (MultipleMediaLayout) holder.itemView;
+        MultipleMediaLayout mediaLayout  =(MultipleMediaLayout) LayoutInflater.from(container.getContext())
+                .inflate(R.layout.layout_multiple_media, null);
         mediaLayout.setMediaPath(url, false);
+        return mediaLayout;
     }
 
     @Override
-    public int getItemCount() {
+    protected void populate(ViewGroup container, Object item, int position) {
+        container.addView((View) item);
+    }
+
+    @Override
+    protected void destroy(ViewGroup container, int position, Object object) {
+        container.removeView((View) object);
+    }
+
+    @Override
+    public int getCount() {
         return mCollectionList.size();
     }
 
-    class MyViewHolder extends ReusedPagerAdapter.PagerViewHolder {
-
-        public MyViewHolder(View view) {
-            super(view);
-        }
+    @Override
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+        return view == object;
     }
+
 }

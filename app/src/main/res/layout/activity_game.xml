@@ -56,7 +56,6 @@
                     android:layout_width="65dp"
                     android:layout_height="40dp"
                     android:background="@drawable/ic_button_game"
-                    android:onClick="onClick"
                     android:text="@string/game_column_3"
                     android:textColor="@color/color_text_unselected" />
 
@@ -66,7 +65,6 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/ic_button_game"
-                    android:onClick="onClick"
                     android:text="@string/game_column_4"
                     android:textColor="@color/color_text_unselected" />
 
@@ -76,7 +74,6 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/ic_button_game"
-                    android:onClick="onClick"
                     android:text="@string/game_column_5"
                     android:textColor="@color/color_text_unselected" />
             </LinearLayout>
@@ -90,8 +87,7 @@
                 android:id="@+id/btn_restart"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:background="@drawable/ic_restart"
-                android:onClick="onClick" />
+                android:background="@drawable/ic_restart" />
 
             <View
                 android:layout_width="0dp"

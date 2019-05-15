@@ -3,16 +3,15 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
+
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -30,28 +29,43 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class DetailFragment extends Fragment {
+import butterknife.BindView;
+
+public class DetailFragment extends BaseFragment {
+
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.layout_tag)
+    ViewGroup mLayoutTag;
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
 
-    private View mRootView;
-    private SwipeRefreshLayout mSwipeRefresh;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mActivity = (ImageDetailActivity) context;
-        EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
+    int layoutRes() {
+        return R.layout.fragment_detail;
+    }
+
+    @Override
+    void init(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
+            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
+        } else {
+            mThumbBean = mActivity.getThumbBean();
+            mImageBean = mThumbBean.imageBean;
+        }
+        initView();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -63,21 +77,12 @@ public class DetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
-            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
-        } else {
-            mThumbBean = mActivity.getThumbBean();
-            mImageBean = mThumbBean.imageBean;
-        }
-        mRootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        initView();
-        return mRootView;
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
-        mSwipeRefresh = mRootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefresh.setEnabled(false);
 
         if (mImageBean != null) {
@@ -138,7 +143,7 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_source, R.string.detail_post_source, source, hyperlinkValue);
 
         // 图片原作者
-        ArrayList<String> artistList = imageBean.tags.artist;
+        List<String> artistList = imageBean.tags.artist;
         String artist = artistList.isEmpty()
                 ? getString(R.string.unknown)
                 : artistList.get(0).replace("_", " ");
@@ -165,14 +170,13 @@ public class DetailFragment extends Fragment {
         setText(R.id.post_score, R.string.detail_post_score, score);
 
         /****************** Tags ******************/
-        ViewGroup layoutTag = mRootView.findViewById(R.id.layout_tag);
         TagBean tagBean = imageBean.tags;
-        addTagViews(layoutTag, tagBean.copyright, R.color.color_copyright);
-        addTagViews(layoutTag, tagBean.character, R.color.color_character);
-        addTagViews(layoutTag, tagBean.artist, R.color.color_artist);
-        addTagViews(layoutTag, tagBean.circle, R.color.color_circle);
-        addTagViews(layoutTag, tagBean.style, R.color.color_style);
-        addTagViews(layoutTag, tagBean.general, R.color.color_general);
+        addTagViews(mLayoutTag, tagBean.copyright, R.color.color_copyright);
+        addTagViews(mLayoutTag, tagBean.character, R.color.color_character);
+        addTagViews(mLayoutTag, tagBean.artist, R.color.color_artist);
+        addTagViews(mLayoutTag, tagBean.circle, R.color.color_circle);
+        addTagViews(mLayoutTag, tagBean.style, R.color.color_style);
+        addTagViews(mLayoutTag, tagBean.general, R.color.color_general);
 
         /****************** Pools ******************/
         if (imageBean.pools.length == 0) {
@@ -230,7 +234,7 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private void addTagViews(ViewGroup parentLayout, ArrayList<String> tagList, int colorId) {
+    private void addTagViews(ViewGroup parentLayout, List<String> tagList, int colorId) {
         for (String tag : tagList) {
             View view = View.inflate(mActivity, R.layout.layout_detail_item, null);
             TextView tvTag = view.findViewById(R.id.tv_key);
@@ -262,11 +266,4 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    public static DetailFragment newInstance(String title) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.PAGE_TITLE, title);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 }

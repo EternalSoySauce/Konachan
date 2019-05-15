@@ -16,9 +16,6 @@ public class Constants {
     public final static String ALREADY_ADD_USER = "alreadyAddUser";
     public final static String VIDEO_SILENT = "videoSilent";
 
-    // Fragment
-    public final static String PAGE_TITLE = "pageTitle";
-
     // Intent
     public final static String APK_BEAN = "APK_BEAN";
     public final static String THUMB_BEAN = "THUMB_BEAN";

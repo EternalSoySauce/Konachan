@@ -72,7 +72,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
 
     // PhotoView (https://github.com/chrisbanes/PhotoView)
-    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // TextureVideoView (https://github.com/sprylab/texturevideoview)
     implementation 'com.sprylab.android.texturevideoview:texturevideoview:1.2.1'
@@ -83,6 +83,13 @@ dependencies {
     // AgentWeb (https://github.com/Justson/AgentWeb)
     implementation 'com.just.agentweb:agentweb:4.0.3-alpha@aar'
     implementation project(path: ':agentweb-filechooser')
+
+    // QMUI (UI support by Tencent) (https://github.com/Tencent/QMUI_Android)
+    implementation 'com.qmuiteam:qmui:1.2.0'
+
+    // SmartTabLayout (https://github.com/ogaclejapan/SmartTabLayout)
+    implementation 'com.ogaclejapan.smarttablayout:library:2.0.0@aar'
+    implementation 'com.ogaclejapan.smarttablayout:utils-v4:2.0.0@aar'
 
     // 点击ripple效果 (https://github.com/balysv/material-ripple)
     implementation 'com.balysv:material-ripple:1.0.2'

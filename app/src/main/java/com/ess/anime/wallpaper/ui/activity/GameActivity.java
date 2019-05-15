@@ -1,20 +1,26 @@
 package com.ess.anime.wallpaper.ui.activity;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.ui.view.GameSurfaceView;
 
-import androidx.appcompat.widget.Toolbar;
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class GameActivity extends BaseActivity implements View.OnClickListener {
 
-    private GameSurfaceView mGameView;
-    private ImageView mIvGame;
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+    @BindView(R.id.surface_view_game)
+    GameSurfaceView mGameView;
+    @BindView(R.id.iv_game)
+    ImageView mIvGame;
 
     @Override
     int layoutRes() {
@@ -29,24 +35,16 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initGameSurfaceView() {
-        mGameView = findViewById(R.id.surface_view_game);
-        mGameView.setOnActionListener(new GameSurfaceView.OnActionListener() {
-            @Override
-            public void onChangeBitmap(Bitmap bitmap) {
-                mIvGame.setImageBitmap(bitmap);
-            }
-        });
+        mGameView.setOnActionListener(bitmap -> mIvGame.setImageBitmap(bitmap));
     }
 
     private void initViews() {
-        mIvGame = findViewById(R.id.iv_game);
         mIvGame.setImageBitmap(mGameView.getGameBitmap());
 
         OnTouchScaleListener touchListener = new OnTouchScaleListener(0.9f);
@@ -56,6 +54,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         findViewById(R.id.btn_restart).setOnTouchListener(touchListener);
     }
 
+    @OnClick({R.id.btn_column_3, R.id.btn_column_4, R.id.btn_column_5, R.id.btn_restart})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
