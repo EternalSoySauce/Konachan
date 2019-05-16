@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
+
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -20,10 +24,6 @@ import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.util.Pair;
 
 public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
 
@@ -132,7 +132,7 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
         }
     }
 
-    public void removeDatas(ArrayList<CollectionBean> deleteList) {
+    public void removeDatas(List<CollectionBean> deleteList) {
         for (CollectionBean collectionBean : deleteList) {
             int position = mData.indexOf(collectionBean);
             if (position != -1) {

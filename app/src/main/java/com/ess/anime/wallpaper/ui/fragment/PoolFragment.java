@@ -3,14 +3,22 @@ package com.ess.anime.wallpaper.ui.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -20,7 +28,7 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
-import com.ess.anime.wallpaper.listener.OnTouchGestureListener;
+import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
@@ -35,15 +43,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
@@ -145,18 +144,13 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mToolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
 
         //双击返回顶部
-        OnTouchGestureListener listener = new OnTouchGestureListener(mActivity, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                if (isPoolPostFragmentVisible()) {
-                    mPoolPostFragment.scrollToTop();
-                } else {
-                    scrollToTop();
-                }
-                return super.onDoubleTap(e);
+        DoubleTapEffector.addDoubleTapEffect(mToolbar, () -> {
+            if (isPoolPostFragmentVisible()) {
+                mPoolPostFragment.scrollToTop();
+            } else {
+                scrollToTop();
             }
         });
-        mToolbar.setOnTouchListener(listener);
     }
 
     // 弹出跳转页弹窗

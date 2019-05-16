@@ -7,11 +7,17 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
@@ -28,10 +34,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -50,6 +54,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     @BindView(R.id.rv_collection)
     RecyclerView mRvCollection;
 
+    private LinearLayoutManager mLayoutManager;
     private RecyclerCollectionAdapter mCollectionAdapter;
 
     private LocalCollectionsListener mFilesListener;
@@ -87,8 +92,8 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         mToolbar.setNavigationOnClickListener(v -> finish());
+        DoubleTapEffector.addDoubleTapEffect(mToolbar, () -> scrollToTop());
     }
-
 
     @OnClick({R.id.layout_choose_all, R.id.cb_choose_all, R.id.tv_edit, R.id.tv_share, R.id.tv_delete})
     @Override
@@ -114,7 +119,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
                 break;
 
             case R.id.tv_delete:
-                ArrayList<CollectionBean> deleteList = new ArrayList<>(mCollectionAdapter.getSelectList());
+                List<CollectionBean> deleteList = new ArrayList<>(mCollectionAdapter.getSelectList());
                 String msg = getString(R.string.dialog_delete_msg, deleteList.size());
                 showDeleteCollectionDialog(msg, deleteList);
                 break;
@@ -122,7 +127,8 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void initRecyclerView() {
-        mRvCollection.setLayoutManager(new GridLayoutManager(this, 3));
+        mLayoutManager = new GridLayoutManager(this, 3);
+        mRvCollection.setLayoutManager(mLayoutManager);
         mCollectionAdapter = new RecyclerCollectionAdapter(CollectionBean.getCollectionImages());
         mRvCollection.setAdapter(mCollectionAdapter);
         int spanHor = UIUtils.dp2px(this, 0.75f);
@@ -150,7 +156,15 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
         });
     }
 
-    private void showDeleteCollectionDialog(String msg, final ArrayList<CollectionBean> deleteList) {
+    private void scrollToTop() {
+        int smoothPos = 24;
+        if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
+            mRvCollection.scrollToPosition(smoothPos);
+        }
+        mRvCollection.smoothScrollToPosition(0);
+    }
+
+    private void showDeleteCollectionDialog(String msg, List<CollectionBean> deleteList) {
         CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {

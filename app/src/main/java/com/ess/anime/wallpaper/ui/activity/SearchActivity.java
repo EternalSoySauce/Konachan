@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.ui.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -17,14 +16,16 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
@@ -52,8 +53,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -62,13 +63,17 @@ import static com.jiang.android.indicatordialog.IndicatorBuilder.GRAVITY_LEFT;
 
 public class SearchActivity extends BaseActivity {
 
+    @BindView(R.id.et_search)
+    EditText mEtSearch;
+    @BindView(R.id.layout_doc_search_mode)
+    LinearLayout mLayoutDocSearchMode;
+    @BindView(R.id.rv_auto_complete_search)
+    RecyclerView mRvCompleteSearch;
+
+    private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
+
     private SharedPreferences mPreferences;
     private int mCurrentSearchMode;
-
-    private EditText mEtSearch;
-    private LinearLayout mLayoutDocSearchMode;
-    private RecyclerView mRvCompleteSearch;
-    private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
     private IndicatorDialog mPopup;
     private RecyclerSearchModePopupAdapter mSpinnerAdapter;
     private int mSelectedPos;
@@ -99,7 +104,7 @@ public class SearchActivity extends BaseActivity {
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
         mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
 
-        initSearchViews();
+        initEditSearch();
         initSearchDocumentViews();
         initCompleteSearchRecyclerView();
         initListPopupWindow();
@@ -108,64 +113,46 @@ public class SearchActivity extends BaseActivity {
         initTagList();
     }
 
-    private void initSearchViews() {
-        // 下拉栏图标
-        findViewById(R.id.iv_spinner).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopup.show(v);
-                UIUtils.closeSoftInput(SearchActivity.this);
-            }
-        });
+    // 下拉栏图标
+    @OnClick(R.id.iv_spinner)
+    void changeSearchMode(View view) {
+        mPopup.show(view);
+        UIUtils.closeSoftInput(SearchActivity.this);
+    }
 
-        // 清空搜索内容
-        findViewById(R.id.iv_clear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEtSearch.setText("");
-            }
-        });
+    // 清空搜索内容
+    @OnClick(R.id.iv_clear)
+    void clearSearch() {
+        mEtSearch.setText("");
+    }
 
-        // 取消搜索
-        findViewById(R.id.tv_cancel_search).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mEtSearch = findViewById(R.id.et_search);
-        mEtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String tags = mEtSearch.getText().toString().trim();
-                    if (!TextUtils.isEmpty(tags)) {
-                        Intent intent = new Intent();
-                        intent.putExtra(Constants.SEARCH_TAG, tags);
-                        setResult(mCurrentSearchMode, intent);
-                        UIUtils.closeSoftInput(SearchActivity.this);
-                        finish();
-                    }
+    private void initEditSearch() {
+        mEtSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String tags = mEtSearch.getText().toString().trim();
+                if (!TextUtils.isEmpty(tags)) {
+                    Intent intent = new Intent();
+                    intent.putExtra(Constants.SEARCH_TAG, tags);
+                    setResult(mCurrentSearchMode, intent);
+                    UIUtils.closeSoftInput(SearchActivity.this);
+                    finish();
                 }
-                return false;
             }
+            return false;
         });
-        mEtSearch.setFilters(new InputFilter[]{new InputFilter() {
 
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                switch (mCurrentSearchMode) {
-                    case Constants.SEARCH_CODE_TAGS:
-                        return source.toString().replace(" ", "_");
-                    case Constants.SEARCH_CODE_CHINESE:
-                        Pattern pattern = Pattern.compile("[\u4e00-\u9fa5·]+");
-                        return StringUtils.filter(source.toString(), pattern);
-                    default:
-                        return source;
-                }
+        mEtSearch.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
+            switch (mCurrentSearchMode) {
+                case Constants.SEARCH_CODE_TAGS:
+                    return source.toString().replace(" ", "_");
+                case Constants.SEARCH_CODE_CHINESE:
+                    Pattern pattern = Pattern.compile("[\u4e00-\u9fa5·]+");
+                    return StringUtils.filter(source.toString(), pattern);
+                default:
+                    return source;
             }
         }});
+
         mEtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -223,8 +210,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearchDocumentViews() {
-        ArrayList<String> docList = DocDataHelper.getSearchModeDocumentList(this);
-        mLayoutDocSearchMode = findViewById(R.id.layout_doc_search_mode);
+        List<String> docList = DocDataHelper.getSearchModeDocumentList(this);
 
         TextView tvDocSearchTag = findViewById(R.id.tv_doc_search_tag);
         tvDocSearchTag.setText(docList.get(0));
@@ -244,7 +230,7 @@ public class SearchActivity extends BaseActivity {
         SpannableString spanText = new SpannableString(getString(R.string.click_here, baseText));
         spanText.setSpan(new ClickableSpan() {
             @Override
-            public void onClick(View widget) {
+            public void onClick(@NonNull View widget) {
                 CustomDialog.showAdvancedSearchHelpDialog(SearchActivity.this);
             }
         }, baseText.length(), spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -264,19 +250,15 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initCompleteSearchRecyclerView() {
-        mRvCompleteSearch = findViewById(R.id.rv_auto_complete_search);
         mRvCompleteSearch.setLayoutManager(new LinearLayoutManager(this));
         mCompleteSearchAdapter = new RecyclerCompleteSearchAdapter();
-        mCompleteSearchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                String text = mEtSearch.getText().toString();
-                int splitIndex = Math.max(text.lastIndexOf(","), text.lastIndexOf("，"));
-                String newText = text.substring(0, splitIndex + 1) + mCompleteSearchAdapter.getItem(position);
-                mUserInput = false;
-                mEtSearch.setText(newText);
-                mEtSearch.setSelection(newText.length());
-            }
+        mCompleteSearchAdapter.setOnItemClickListener((adapter, view, position) -> {
+            String text = mEtSearch.getText().toString();
+            int splitIndex = Math.max(text.lastIndexOf(","), text.lastIndexOf("，"));
+            String newText = text.substring(0, splitIndex + 1) + mCompleteSearchAdapter.getItem(position);
+            mUserInput = false;
+            mEtSearch.setText(newText);
+            mEtSearch.setSelection(newText.length());
         });
         mRvCompleteSearch.setAdapter(mCompleteSearchAdapter);
     }
@@ -286,21 +268,18 @@ public class SearchActivity extends BaseActivity {
         List<String> searchModeList = Arrays.asList(getResources().getStringArray(R.array.spinner_list_item));
         mSpinnerAdapter = new RecyclerSearchModePopupAdapter(searchModeList);
         mSpinnerAdapter.setSelection(mSelectedPos);
-        mSpinnerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position != mSelectedPos) {
-                    mSelectedPos = position;
-                    mSpinnerAdapter.setSelection(position);
-                    mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
-                    mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
-                    mCompleteSearchAdapter.clear();
-                    mRvCompleteSearch.setVisibility(View.GONE);
-                    changeEditAttrs();
-                    changeDocumentColor();
-                }
-                mPopup.dismiss();
+        mSpinnerAdapter.setOnItemClickListener((adapter, view, position) -> {
+            if (position != mSelectedPos) {
+                mSelectedPos = position;
+                mSpinnerAdapter.setSelection(position);
+                mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
+                mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
+                mCompleteSearchAdapter.clear();
+                mRvCompleteSearch.setVisibility(View.GONE);
+                changeEditAttrs();
+                changeDocumentColor();
             }
+            mPopup.dismiss();
         });
 
         mPopup = new IndicatorBuilder(this)
@@ -316,18 +295,8 @@ public class SearchActivity extends BaseActivity {
                 .adapter(mSpinnerAdapter)
                 .create();
         mPopup.setCanceledOnTouchOutside(true);
-        mPopup.getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                UIUtils.setBackgroundAlpha(SearchActivity.this, 0.4f);
-            }
-        });
-        mPopup.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                UIUtils.setBackgroundAlpha(SearchActivity.this, 1f);
-            }
-        });
+        mPopup.getDialog().setOnShowListener(dialog -> UIUtils.setBackgroundAlpha(this, 0.4f));
+        mPopup.getDialog().setOnDismissListener(dialog -> UIUtils.setBackgroundAlpha(this, 1f));
     }
 
     // 使弹窗自适应文字宽度
@@ -398,7 +367,7 @@ public class SearchActivity extends BaseActivity {
     // 筛选当前搜索内容的提示标签，最多10个
     // 去除"_" "-"等连字符
     private void getTagList(String search) {
-        search = search.replaceAll("_|-", "");
+        search = search.replaceAll("[_\\-]", "");
         if (!TextUtils.isEmpty(search)) {
             int length = search.length();
             for (int i = 0; i <= length; i++) {
@@ -447,14 +416,14 @@ public class SearchActivity extends BaseActivity {
         cancelTagCall();
         mTagCall = OkHttp.getInstance().connect(url, new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if (OkHttp.isNetworkProblem(e) && call == mTagCall) {
                     getTagListFromNetwork(url);
                 }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (call == mTagCall) {
                     if (response.isSuccessful()) {
                         String json = response.body().string();
@@ -483,13 +452,10 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void setCompleteSearchTags() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mCompleteSearchAdapter.clear();
-                mCompleteSearchAdapter.addData(mPromptMap.keySet());
-                mRvCompleteSearch.setVisibility(View.VISIBLE);
-            }
+        runOnUiThread(() -> {
+            mCompleteSearchAdapter.clear();
+            mCompleteSearchAdapter.addData(mPromptMap.keySet());
+            mRvCompleteSearch.setVisibility(View.VISIBLE);
         });
     }
 
@@ -504,6 +470,12 @@ public class SearchActivity extends BaseActivity {
             mTagCall.cancel();
             mTagCall = null;
         }
+    }
+
+    @OnClick(R.id.tv_cancel_search)
+    @Override
+    public void finish() {
+        super.finish();
     }
 
     @Override
