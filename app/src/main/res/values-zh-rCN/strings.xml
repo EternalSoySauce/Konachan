@@ -132,6 +132,8 @@
     <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系。\n邮箱: qiaolimama@gmail.com</string>
     <string name="dialog_feedback_sure">发送</string>
     <string name="dialog_feedback_cancel">取消</string>
+    <string name="dialog_saucenao_help">是一个线上图片逆向搜索工具。名称来源于英文Source? Now! 找来源？立刻就找到！\n\n通过上传本地图片或键入图片的url地址，在互联网上的多个数据库进行相似度匹配从而找到所求图片、其相关信息以及相似的其他图片，目前已经成为主流的图片搜索工具。</string>
+    <string name="dialog_tracemoe_help">是一个概念测试原型搜索引擎，可帮助用户通过屏幕截图追溯原始动漫。\n\n它搜索超过22300小时的动漫并找到最佳匹配场景，显示出这是什么动画，在哪个剧集和场景出现的时间。由于搜索结果可能不准确，因此它提供了几秒的预览验证。</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

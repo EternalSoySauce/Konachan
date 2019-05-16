@@ -15,7 +15,18 @@
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_back"
             app:theme="@style/ToolbarTheme"
-            app:titleTextAppearance="@style/Toolbar.TitleText" />
+            app:titleTextAppearance="@style/Toolbar.TitleText">
+
+            <ImageView
+                android:id="@+id/iv_help"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/background_item_selected"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_help" />
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout

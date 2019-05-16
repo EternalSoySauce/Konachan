@@ -26,6 +26,7 @@ public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseVi
         GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(commentBean.avatar))
                 .placeholder(R.drawable.ic_placeholder_comment)
+                .circleCrop()
                 .priority(Priority.NORMAL)
                 .into((ImageView) holder.getView(R.id.iv_head));
 

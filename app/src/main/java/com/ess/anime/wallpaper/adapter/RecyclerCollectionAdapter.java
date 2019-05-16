@@ -2,11 +2,11 @@ package com.ess.anime.wallpaper.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.util.Pair;
 
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -105,11 +105,11 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
 
                 // TODO 点击全屏查看图片缩放动画
                 Activity activity = (Activity) mContext;
-                ActivityOptionsCompat compat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        activity, new Pair<>(ivCollection, "s"));
+                Bundle options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, ivCollection, "s").toBundle();
                 Intent intent = new Intent(mContext, FullscreenActivity.class);
                 activity.startActivityForResult(intent, Constants.FULLSCREEN_CODE);
-//                ActivityCompat.startActivityForResult(activity, intent, Constants.FULLSCREEN_CODE, compat.toBundle());
+//                ActivityCompat.startActivityForResult(activity, intent, Constants.FULLSCREEN_CODE, options);
             }
         });
 

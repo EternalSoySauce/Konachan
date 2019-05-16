@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
@@ -27,13 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 public class CustomDialog extends MaterialDialog.Builder {
 
     public CustomDialog(@NonNull Context context) {
         super(context);
-        this.titleColorRes(R.color.color_dialog_text)
+        this.titleColorRes(R.color.color_dialog_button)
                 .contentColorRes(R.color.color_dialog_text)
                 .positiveColorRes(R.color.color_dialog_button)
                 .negativeColorRes(R.color.color_dialog_button)
@@ -49,7 +49,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showPromptToReloadImage(Context context, final OnDialogActionListener listener) {
+    public static void showPromptToReloadImage(Context context, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .content(R.string.dialog_reload_msg)
                 .negativeText(R.string.dialog_reload_no)
@@ -63,7 +63,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showDeleteCollectionDialog(Context context, String msg, final OnDialogActionListener listener) {
+    public static void showDeleteCollectionDialog(Context context, String msg, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .content(msg)
                 .negativeText(R.string.dialog_delete_cancel)
@@ -113,9 +113,11 @@ public class CustomDialog extends MaterialDialog.Builder {
      */
     public static void showRequestPermissionDialog(Context context, String title, String msg, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
+                .title(title)
                 .content(msg)
                 .negativeText(R.string.dialog_permission_rationale_deny)
                 .positiveText(R.string.dialog_permission_rationale_grant)
+                .canceledOnTouchOutside(false)
                 .onNegative((dialog1, which) -> {
                     if (listener != null) {
                         listener.onNegative();
@@ -148,18 +150,15 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .title(R.string.dialog_change_base_url_title)
                 .negativeText(R.string.dialog_change_base_url_cancel)
                 .items(R.array.website_list_item)
-                .itemsCallbackSingleChoice(baseIndex, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                        if (which != baseIndex) {
-                            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                    .putString(Constants.BASE_URL, baseList.get(which)).apply();
-                            // 发送通知到PostFragment, PoolFragment
-                            EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
-                        }
-                        listener.onPositive();
-                        return true;
+                .itemsCallbackSingleChoice(baseIndex, (dialog1, itemView, which, text) -> {
+                    if (which != baseIndex) {
+                        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                .putString(Constants.BASE_URL, baseList.get(which)).apply();
+                        // 发送通知到PostFragment, PoolFragment
+                        EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
                     }
+                    listener.onPositive();
+                    return true;
                 })
                 .alwaysCallSingleChoiceCallback()
                 .show();
@@ -172,7 +171,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param itemList 三种尺寸详细数据
      * @param listener 事件监听器
      */
-    public static void showChooseToDownloadDialog(final Context context, final List<DownloadBean> itemList, final OnDialogActionListener listener) {
+    public static void showChooseToDownloadDialog(Context context, List<DownloadBean> itemList, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.save_image)
                 .negativeText(R.string.dialog_download_cancel)
@@ -194,7 +193,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param context 上下文
      * @param apkBean 新版本信息
      */
-    public static void showUpdateDialog(final Context context, final ApkBean apkBean) {
+    public static void showUpdateDialog(Context context, ApkBean apkBean) {
         String updateContent = DocDataHelper.isChinese() ? apkBean.updatedContentZh : apkBean.updatedContentEn;
         MaterialDialog dialog = new CustomDialog(context)
                 .title(context.getString(R.string.dialog_update_title))
@@ -221,7 +220,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      *
      * @param context 上下文
      */
-    public static void showFeedbackDialog(final Context context) {
+    public static void showFeedbackDialog(Context context) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_feedback_title)
                 .content(R.string.dialog_feedback_msg)
@@ -235,6 +234,14 @@ public class CustomDialog extends MaterialDialog.Builder {
                             + "] Feedback - K Anime Wallpaper");
                     context.startActivity(Intent.createChooser(intent, context.getString(R.string.feedback_title)));
                 }).show();
+    }
+
+    public static void showWebsiteHelpDialog(Context context, int titleRes, int msgRes) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(titleRes)
+                .content(msgRes)
+                .positiveText(R.string.dialog_doc_sure)
+                .show();
     }
 
     public interface OnDialogActionListener {

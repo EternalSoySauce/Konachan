@@ -8,13 +8,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.just.agentweb.AgentWeb;
 import com.yanzhenjie.permission.runtime.Permission;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
+import butterknife.OnClick;
 
 public abstract class BaseWebActivity extends BaseActivity {
 
@@ -24,6 +26,9 @@ public abstract class BaseWebActivity extends BaseActivity {
 
     abstract String webUrl();
 
+    @OnClick(R.id.iv_help)
+    abstract void showHelpDialog();
+
     @Override
     int layoutRes() {
         return R.layout.activity_web;
@@ -32,12 +37,8 @@ public abstract class BaseWebActivity extends BaseActivity {
     @Override
     void init(Bundle savedInstanceState) {
         initToolBarLayout();
-        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
-            @Override
-            public void onGranted() {
-                initWebView();
-            }
-
+        initWebView();
+        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
             @Override
             public void onDenied() {
                 finish();
