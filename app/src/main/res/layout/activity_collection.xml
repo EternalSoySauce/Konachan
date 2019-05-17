@@ -60,20 +60,22 @@
                 <TextView
                     android:id="@+id/tv_share"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="12dp"
                     android:layout_toStartOf="@+id/tv_delete"
+                    android:gravity="center"
                     android:text="@string/share"
                     android:textColor="@color/colorAccent" />
 
                 <TextView
                     android:id="@+id/tv_delete"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
+                    android:gravity="center"
                     android:text="@string/delete"
                     android:textColor="@color/colorAccent" />
             </RelativeLayout>
@@ -81,9 +83,10 @@
             <TextView
                 android:id="@+id/tv_edit"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="8dp"
+                android:gravity="center"
                 android:text="@string/edit"
                 android:textColor="@color/colorAccent" />
         </androidx.appcompat.widget.Toolbar>

@@ -2,6 +2,11 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
@@ -12,7 +17,7 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParser;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -25,10 +30,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -123,7 +124,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
-                        addMoreThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
+                        addMoreThumbList(HtmlParserFactory.createParser(getActivity(), html).getThumbListOfPool());
                     }
                 } else {
                     mLoadMoreCall = OkHttp.getInstance().connect(url, this);
@@ -148,7 +149,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                 if (response.isSuccessful()) {
                     String html = response.body().string();
                     if (getActivity() != null) {
-                        refreshThumbList(HtmlParser.getThumbListOfPool(getActivity(), html));
+                        refreshThumbList(HtmlParserFactory.createParser(getActivity(), html).getThumbListOfPool());
                     }
                 } else {
                     mNewCall = OkHttp.getInstance().connect(url, this);

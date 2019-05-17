@@ -259,7 +259,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
     }
 
-    @OnClick(R.id.fab_home)
+    @OnClick(R.id.fab_random)
     void searchRandom() {
         mFloatingMenu.close(true);
         Intent intent = new Intent();

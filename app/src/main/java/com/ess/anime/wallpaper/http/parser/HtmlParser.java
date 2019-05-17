@@ -38,14 +38,9 @@ public abstract class HtmlParser {
 
     public abstract List<PoolListBean> getPoolList();
 
-    public Document getDocument() {
-        return mDoc;
-    }
-
-    public static List<ThumbBean> getThumbListOfPool(Context context, String html) {
-        HtmlParser parser = HtmlParserFactory.createParser(context, html);
-        List<ThumbBean> thumbList = parser.getThumbList();
-        Elements scripts = parser.getDocument().getElementsByTag("script");
+    public List<ThumbBean> getThumbListOfPool() {
+        List<ThumbBean> thumbList = getThumbList();
+        Elements scripts = mDoc.getElementsByTag("script");
         for (Element script : scripts) {
             try {
                 String text = script.html();

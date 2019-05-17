@@ -31,7 +31,7 @@
 
         <item
             android:id="@+id/nav_trace_moe"
-            android:icon="@drawable/ic_nav_menu_sauce_nao"
+            android:icon="@drawable/ic_nav_menu_trace_moe"
             android:title="@string/nav_trace_moe"/>
 
         <item

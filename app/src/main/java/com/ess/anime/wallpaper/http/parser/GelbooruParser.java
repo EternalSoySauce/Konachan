@@ -197,4 +197,29 @@ public class GelbooruParser extends HtmlParser {
         }
         return poolList;
     }
+
+    @Override
+    public List<ThumbBean> getThumbListOfPool() {
+        List<ThumbBean> thumbList = new ArrayList<>();
+        Elements elements = mDoc.getElementsByClass("thumb");
+        for (Element e : elements) {
+            try {
+                String id = e.id().replaceAll("[^0-9]", "");
+                Element img = e.getElementsByClass("preview").first();
+                String thumbUrl = img.attr("src");
+                if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = "https:" + thumbUrl;
+                }
+                String realSize = e.attr("width") + " x " + e.attr("height");
+                String linkToShow = "https://gelbooru.com/index.php?page=post&s=view&id=" + id;
+                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+//                thumbBean.tempPost = parseTempPost(e);
+                thumbList.add(thumbBean);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return thumbList;
+    }
+
 }
