@@ -186,7 +186,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mSwipeRefresh.setOnRefreshListener(() -> {
             getNewPosts(mGoToPage);
             if (mPostAdapter.getData().isEmpty()) {
-                mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
+                mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
             }
         });
     }
@@ -201,7 +201,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
-        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
+        mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
@@ -342,7 +342,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
      */
     private void resetAll(int startPage) {
         OkHttp.getInstance().cancelAll();
-        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
+        mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
         mPostAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
         mCurrentPage = startPage;

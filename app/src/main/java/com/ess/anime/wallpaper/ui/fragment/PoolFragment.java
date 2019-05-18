@@ -206,7 +206,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mSwipeRefresh.setOnRefreshListener(() -> {
             getNewPools(mGoToPage);
             if (mPoolAdapter.getData().isEmpty()) {
-                mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
+                mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
             }
         });
     }
@@ -220,7 +220,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mPoolAdapter.setOnLoadMoreListener(this, mRvPools);
         mPoolAdapter.setPreLoadNumber(5);
         mPoolAdapter.setLoadMoreView(new CustomLoadMoreView());
-        mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
+        mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
         mPoolAdapter.setOnItemClickListener((adapter, view, position) -> {
             PoolListBean poolListBean = mPoolAdapter.getItem(position);
             if (poolListBean != null) {
@@ -343,7 +343,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
-        mPoolAdapter.setEmptyView(R.layout.layout_loading, mRvPools);
+        mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
         mPoolAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
         mCurrentPage = startPage;

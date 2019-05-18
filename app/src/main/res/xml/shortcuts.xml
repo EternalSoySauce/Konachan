@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_nav_menu_sauce_nao"
+        android:shortcutId="nav_sauce_nao"
+        android:shortcutLongLabel="@string/nav_sauce_nao"
+        android:shortcutShortLabel="@string/nav_sauce_nao">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.SauceNaoActivity"
+            android:targetPackage="com.ess.anime.wallpaper" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_nav_menu_trace_moe"
+        android:shortcutId="nav_trace_moe"
+        android:shortcutLongLabel="@string/nav_trace_moe"
+        android:shortcutShortLabel="@string/nav_trace_moe">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.TraceMoeActivity"
+            android:targetPackage="com.ess.anime.wallpaper" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_nav_menu_game"
+        android:shortcutId="nav_game"
+        android:shortcutLongLabel="@string/nav_game"
+        android:shortcutShortLabel="@string/nav_game">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.GameActivity"
+            android:targetPackage="com.ess.anime.wallpaper" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

@@ -98,7 +98,6 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
-        mPostAdapter.setEmptyView(R.layout.layout_loading, mRvPosts);
         mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(getActivity(), 5);

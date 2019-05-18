@@ -13,7 +13,7 @@
         android:layout_width="100dp"
         android:layout_height="147dp"
         android:layout_marginStart="7dp"
-        app:src="@drawable/gif_loading" />
+        app:src="@drawable/gif_loading_cirno" />
 
     <TextView
         android:layout_width="match_parent"
