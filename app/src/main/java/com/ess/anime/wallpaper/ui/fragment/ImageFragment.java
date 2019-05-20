@@ -57,11 +57,25 @@ public class ImageFragment extends BaseFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // 防止软件进入后台过久被系统回收导致切换回来时产生空指针异常
         outState.putParcelable(Constants.THUMB_BEAN, mThumbBean);
         outState.putParcelable(Constants.IMAGE_BEAN, mImageBean);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 发送通知到MultipleMediaLayout
+        EventBus.getDefault().post(new MsgBean(Constants.RESUME_VIDEO, mMediaLayout.getMediaPath()));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 发送通知到MultipleMediaLayout
+        EventBus.getDefault().post(new MsgBean(Constants.PAUSE_VIDEO, mMediaLayout.getMediaPath()));
     }
 
     @Override

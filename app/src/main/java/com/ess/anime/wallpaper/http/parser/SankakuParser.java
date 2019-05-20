@@ -222,7 +222,9 @@ public class SankakuParser extends HtmlParser {
                     poolListBean.linkToShow = Constants.BASE_URL_SANKAKU + href;
                     poolListBean.creator = tds.get(1).text();
                     poolListBean.postCount = tds.get(2).text();
-                    poolList.add(poolListBean);
+                    if (Integer.parseInt(poolListBean.postCount) > 0) {
+                        poolList.add(poolListBean);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

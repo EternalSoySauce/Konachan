@@ -65,7 +65,7 @@ public class DanbooruParser extends HtmlParser {
             String jpegFileSize = "";
             for (Element li : info.getElementsByTag("li")) {
                 if (li.text().contains("Size")) {
-                    String size = li.getElementsByTag("a").get(0).text();
+                    String size = li.getElementsByTag("a").first().text();
                     jpegFileSize = String.valueOf(FileUtils.parseFileSile(size));
                     break;
                 }
@@ -100,17 +100,20 @@ public class DanbooruParser extends HtmlParser {
                     .flagDetail(container.attr("data-flags"));
 
             // 解析图集信息
-            Element pool = mDoc.getElementsByClass("pool-name active").first();
+            Element pool = mDoc.getElementById("pool-nav");
             if (pool != null) {
-                Element a = pool.getElementsByTag("a").first();
-                if (a != null) {
-                    String href = a.attr("href");
-                    builder.poolId(href.substring(href.lastIndexOf("/") + 1));
-                    String name = a.text();
-                    builder.poolName(name.substring(name.indexOf(":") + 1).trim());
-                    builder.poolCreatedTime("");
-                    builder.poolUpdatedTime("");
-                    builder.poolDescription("");
+                Element span = pool.getElementsByClass("pool-name").first();
+                if (span != null) {
+                    Element a = span.getElementsByTag("a").first();
+                    if (a != null) {
+                        String href = a.attr("href");
+                        builder.poolId(href.substring(href.lastIndexOf("/") + 1));
+                        String name = a.text();
+                        builder.poolName(name.substring(name.indexOf(":") + 1).trim());
+                        builder.poolCreatedTime("");
+                        builder.poolUpdatedTime("");
+                        builder.poolDescription("");
+                    }
                 }
             }
 
@@ -176,16 +179,15 @@ public class DanbooruParser extends HtmlParser {
     @Override
     public List<PoolListBean> getPoolList() {
         List<PoolListBean> poolList = new ArrayList<>();
-        for (Element pool : mDoc.select("tr[id]")) {
+        for (Element pool : mDoc.getElementsByTag("article")) {
             try {
                 PoolListBean poolListBean = new PoolListBean();
-                Elements tds = pool.getElementsByTag("td");
-                Element link = tds.get(1).getElementsByTag("a").first();
+                Element link = pool.getElementsByTag("a").last();
                 String href = link.attr("href");
-                poolListBean.id = href.substring(href.lastIndexOf("/") + 1);
-                poolListBean.name = link.text();
+                poolListBean.id = href.replaceAll("[^0-9]", "");
+                poolListBean.name = link.text().trim();
                 poolListBean.linkToShow = Constants.BASE_URL_DANBOORU + href;
-                poolListBean.postCount = tds.last().text();
+                poolListBean.thumbUrl = pool.attr("data-large-file-url");
                 poolList.add(poolListBean);
             } catch (Exception e) {
                 e.printStackTrace();

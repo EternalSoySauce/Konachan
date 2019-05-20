@@ -10,6 +10,9 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -27,9 +30,6 @@ import com.sprylab.android.widget.TextureVideoView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 
@@ -233,7 +233,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     public void resumeVideo(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.RESUME_VIDEO)) {
             String url = (String) msgBean.obj;
-            if (TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
+            if (!TextUtils.isEmpty(mMediaPath) && TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
                 mVideoView.start();
             }
         }
@@ -244,7 +244,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     public void pauseVideo(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.PAUSE_VIDEO)) {
             String url = (String) msgBean.obj;
-            if (TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
+            if (!TextUtils.isEmpty(mMediaPath) && TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
                 mVideoView.pause();
             }
         }

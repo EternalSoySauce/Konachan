@@ -41,6 +41,7 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
         holder.setText(R.id.tv_creator, creator);
 
         //图片数量
+        holder.setGone(R.id.tv_post_count, !TextUtils.isEmpty(poolListBean.postCount));
         holder.setText(R.id.tv_post_count, poolListBean.postCount);
 
         //创建时间

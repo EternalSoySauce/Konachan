@@ -127,10 +127,11 @@ public class OkHttp {
         }
 
         String baseUrl = getBaseUrl(context);
-        if (baseUrl.equals(Constants.BASE_URL_GELBOORU)) {
-            return baseUrl + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
-        } else {
-            return baseUrl + "post?page=" + page + "&tags=" + tags;
+        switch (baseUrl) {
+            case Constants.BASE_URL_GELBOORU:
+                return baseUrl + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
+            default:
+                return baseUrl + "post?page=" + page + "&tags=" + tags;
         }
     }
 
@@ -138,16 +139,27 @@ public class OkHttp {
     public static String getPoolUrl(Context context, int page, String name) {
         name = name == null ? "" : name;
         String baseUrl = getBaseUrl(context);
-        if (baseUrl.equals(Constants.BASE_URL_GELBOORU)) {
-            return baseUrl + "index.php?page=pool&s=list&pid=" + (page - 1) * 25;
-        } else {
-            return baseUrl + "pool?page=" + page + "&query=" + name;
+        switch (baseUrl) {
+            case Constants.BASE_URL_DANBOORU:
+                return baseUrl + "pools/gallery?commit=Search&limit=20&page=" + page + "&search[name_matches]=" + name + "&search[order]=&utf8=%E2%9C%93";
+            case Constants.BASE_URL_SANKAKU:
+                return baseUrl + "pool/index?page=" + page + "&query=" + name;
+            case Constants.BASE_URL_GELBOORU:   // gelbooru无法搜索
+                return baseUrl + "index.php?page=pool&s=list&pid=" + (page - 1) * 25;
+            default:
+                return baseUrl + "pool?commit=Search&page=" + page + "&query=" + name;
         }
     }
 
     // 搜索图集中的图片
     public static String getPoolPostUrl(Context context, String linkToShow, int page) {
-        return linkToShow + "?page=" + page;
+        String baseUrl = getBaseUrl(context);
+        switch (baseUrl) {
+            case Constants.BASE_URL_GELBOORU:
+                return linkToShow;
+            default:
+                return linkToShow + "?page=" + page;
+        }
     }
 
     public static String getBaseUrl(Context context) {
