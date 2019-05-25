@@ -2,11 +2,6 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
@@ -30,6 +25,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -134,7 +133,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     private void getNewPosts(int page) {
-        final String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
+        String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
         mNewCall = OkHttp.getInstance().connect(url, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {

@@ -22,13 +22,14 @@ public class PoolListBean {
     public boolean equals(Object obj) {
         if (obj instanceof PoolListBean) {
             PoolListBean poolListBean = (PoolListBean) obj;
-            return !(this.id == null || poolListBean.id == null) && this.id.equals(poolListBean.id);
+            return !(this.linkToShow == null || poolListBean.linkToShow == null)
+                    && this.linkToShow.equals(poolListBean.linkToShow);
         }
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return thumbUrl.hashCode();
+        return linkToShow.hashCode();
     }
 }

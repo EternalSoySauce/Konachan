@@ -23,7 +23,7 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
     protected void convert(BaseViewHolder holder, PoolListBean poolListBean) {
         //缩略图
         Object imgUrl = TextUtils.isEmpty(poolListBean.thumbUrl)
-                ? R.drawable.ic_placeholder_pool_no_cover
+                ? poolListBean
                 : MyGlideModule.makeGlideUrl(poolListBean.thumbUrl);
         GlideApp.with(mContext)
                 .load(imgUrl)

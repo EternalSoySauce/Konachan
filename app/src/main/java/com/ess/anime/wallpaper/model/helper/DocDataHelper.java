@@ -5,7 +5,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.SpannedString;
 
-import com.ess.anime.wallpaper.utils.HtmlFontSizeTagHandler;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
@@ -87,7 +86,9 @@ public class DocDataHelper {
             is = context.getAssets().open(fileName);
             String html = FileUtils.decodeXorString(FileUtils.streamToString(is),
                     FileUtils.encodeMD5String(fileName));
-            return Html.fromHtml(html, null, new HtmlFontSizeTagHandler(context));
+            // AndroidX后的sdk反射不到了，没找到相关源码是啥
+//            return Html.fromHtml(html, null, new HtmlFontSizeTagHandler(context));
+            return Html.fromHtml(html);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
