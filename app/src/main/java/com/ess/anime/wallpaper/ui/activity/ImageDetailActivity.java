@@ -218,11 +218,11 @@ public class ImageDetailActivity extends BaseActivity {
         for (int i = 0; i < downloadList.size(); i++) {
             final DownloadBean downloadBean = downloadList.get(i);
             mHandler.postDelayed(() -> {
-                if (!OkHttp.getInstance().isUrlInDownloadQueue(downloadBean.downloadUrl)) {
+                if (!OkHttp.isUrlInDownloadQueue(downloadBean.downloadUrl)) {
                     Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
                     downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
                     startService(downloadIntent);
-                    OkHttp.getInstance().addUrlToDownloadQueue(downloadBean.downloadUrl);
+                    OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
                 }
             }, i * 100);
         }

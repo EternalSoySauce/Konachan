@@ -7,11 +7,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -36,6 +31,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -218,31 +217,27 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onFileAdded(final File file) {
-        runOnUiThread(() -> {
-            if (mCollectionAdapter.isEditMode()) {
-                exitEditMode(false);
-            }
-            CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
-            if (!mCollectionAdapter.getData().contains(collectionBean)) {
-                mCollectionAdapter.addData(0, collectionBean);
-            }
-            mRvCollection.scrollToPosition(0);
-            // 发送通知到FullscreenActivity
-            EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
-        });
+        if (mCollectionAdapter.isEditMode()) {
+            exitEditMode(false);
+        }
+        CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
+        if (!mCollectionAdapter.getData().contains(collectionBean)) {
+            mCollectionAdapter.addData(0, collectionBean);
+        }
+        mRvCollection.scrollToPosition(0);
+        // 发送通知到FullscreenActivity
+        EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
     }
 
     @Override
     public void onFileRemoved(final File file) {
-        runOnUiThread(() -> {
-            if (mCollectionAdapter.isEditMode()) {
-                exitEditMode(false);
-            }
-            CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
-            mCollectionAdapter.removeData(collectionBean);
-            // 发送通知到FullscreenActivity
-            EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
-        });
+        if (mCollectionAdapter.isEditMode()) {
+            exitEditMode(false);
+        }
+        CollectionBean collectionBean = CollectionBean.createCollectionFromFile(file);
+        mCollectionAdapter.removeData(collectionBean);
+        // 发送通知到FullscreenActivity
+        EventBus.getDefault().post(new MsgBean(Constants.LOCAL_FILES_CHANGED, null));
     }
 
     @Override

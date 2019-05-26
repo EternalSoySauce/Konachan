@@ -59,11 +59,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
-    // Okhttp (https://github.com/square/okhttp)
-    implementation 'com.squareup.okhttp3:okhttp:3.14.1'
-
-    // 监听Okhttp和Glide等的下载进度
-    implementation 'me.jessyan:progressmanager:1.5.0'
+    // http (https://github.com/yanzhenjie/Kalle)
+    implementation 'com.yanzhenjie:kalle:0.1.6'
 
     // Gson (https://github.com/google/gson)
     implementation 'com.google.code.gson:gson:2.8.5'

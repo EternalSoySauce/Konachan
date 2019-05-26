@@ -112,7 +112,7 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolList() {
+    public List<PoolListBean> getPoolListList() {
         //解析预览图和id
         List<PoolListBean> poolList = new ArrayList<>();
         PoolListBean poolListBean = new PoolListBean();

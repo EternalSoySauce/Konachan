@@ -207,7 +207,7 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolList() {
+    public List<PoolListBean> getPoolListList() {
         List<PoolListBean> poolList = new ArrayList<>();
         Element body = mDoc.getElementsByTag("tbody").first();
         if (body != null) {

@@ -12,14 +12,12 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.download.SimpleCallback;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-
-import me.jessyan.progressmanager.ProgressManager;
-import okhttp3.Response;
+import java.util.List;
 
 public class DownloadImageService extends Service {
 
@@ -28,7 +26,7 @@ public class DownloadImageService extends Service {
         return null;
     }
 
-    private final ArrayList<Runnable> mThreadList = new ArrayList<>();
+    private final List<Runnable> mThreadList = new ArrayList<>();
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
@@ -64,12 +62,11 @@ public class DownloadImageService extends Service {
 
         // 绑定下载进度监听器
         DownloadImageProgressListener listener;
-        if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
+        if (!OkHttp.isUrlInProgressListener(url)) {
             listener = new DownloadImageProgressListener(this, downloadBean, intent);
-            ProgressManager.getInstance().addResponseListener(url, listener);
-            OkHttp.getInstance().addUrlToProgressListener(url, listener);
+            OkHttp.addUrlToProgressListener(url, listener);
         } else {
-            listener = (DownloadImageProgressListener) OkHttp.getInstance().getProgressListener(url);
+            listener = (DownloadImageProgressListener) OkHttp.getProgressListener(url);
             listener.prepareNotification();
         }
 
@@ -77,36 +74,45 @@ public class DownloadImageService extends Service {
         File tempFolder = new File(Constants.IMAGE_TEMP);
         String tempName = savePath.substring(savePath.lastIndexOf("/") + 1, savePath.lastIndexOf("."));
         File tempFile = new File(tempFolder, tempName);
+        if (!tempFolder.exists() && !tempFolder.mkdirs()) {
+            OkHttp.removeUrlFromDownloadQueue(url);
+            return;
+        }
 
         // 下载
-        Response response = null;
-        try {
-            response = OkHttp.getInstance().execute(url);
-            if (tempFolder.exists() || tempFolder.mkdirs()) {
-                InputStream inputStream = response.body().byteStream();
-                FileUtils.streamToFile(inputStream, tempFile);
+        Kalle.Download.get(url)
+                .directory(tempFolder.getAbsolutePath())
+                .fileName(tempName)
+                .onProgress(listener::onProgress)
+                .perform(new SimpleCallback() {
+                    @Override
+                    public void onFinish(String path) {
+                        super.onFinish(path);
+                        // 下载成功，保存为图片
+                        File folder = new File(Constants.IMAGE_DIR);
+                        if (folder.exists() || folder.mkdirs()) {
+                            File file = new File(savePath);
+                            FileUtils.copyFile(tempFile, file);
+                            // 添加图片到媒体库（刷新相册）
+                            BitmapUtils.insertToMediaStore(DownloadImageService.this, file);
+                            // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
+                            listener.onFinish();
+                        }
+                    }
 
-                // 下载成功，保存为图片
-                File folder = new File(Constants.IMAGE_DIR);
-                if (folder.exists() || folder.mkdirs()) {
-                    File file = new File(savePath);
-                    FileUtils.copyFile(tempFile, file);
-                    // 添加图片到媒体库（刷新相册）
-                    BitmapUtils.insertToMediaStore(this, file);
-                    // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
-                    listener.performFinish();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            ProgressManager.getInstance().notifyOnErorr(url, e);
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-            OkHttp.getInstance().removeUrlFromDownloadQueue(url);
-            tempFile.delete();
-        }
+                    @Override
+                    public void onException(Exception e) {
+                        super.onException(e);
+                        listener.onError();
+                    }
+
+                    @Override
+                    public void onEnd() {
+                        super.onEnd();
+                        OkHttp.removeUrlFromDownloadQueue(url);
+                        tempFile.delete();
+                    }
+                });
     }
 
     private void checkToStopService() {

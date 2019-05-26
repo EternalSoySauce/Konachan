@@ -17,23 +17,22 @@ import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.yanzhenjie.kalle.Kalle;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+
+    public final static String TAG = PoolPostFragment.class.getName();
 
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
@@ -41,9 +40,6 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     private RecyclerPostAdapter mPostAdapter;
     private String mLinkToShow;
     private int mCurrentPage;
-
-    private Call mNewCall;
-    private Call mLoadMoreCall;
 
     @Override
     int layoutRes() {
@@ -71,11 +67,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mNewCall.cancel();
-        if (mLoadMoreCall != null) {
-            mLoadMoreCall.cancel();
-        }
-        mPostAdapter.cancelAll();
+        Kalle.cancel(TAG);
         mSwipeRefresh.setRefreshing(false);
         EventBus.getDefault().unregister(this);
     }
@@ -93,7 +85,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         mLayoutManager = new GridLayoutManager(getActivity(), span);
         mRvPosts.setLayoutManager(mLayoutManager);
 
-        mPostAdapter = new RecyclerPostAdapter();
+        mPostAdapter = new RecyclerPostAdapter(TAG);
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
@@ -109,82 +101,58 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     @Override
     public void onLoadMoreRequested() {
         String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
-        mLoadMoreCall = OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
-                }
+            public void onFailure() {
+                onLoadMoreRequested();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    if (getActivity() != null) {
-                        addMoreThumbList(HtmlParserFactory.createParser(getActivity(), html).getThumbListOfPool());
-                    }
-                } else {
-                    mLoadMoreCall = OkHttp.getInstance().connect(url, this);
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                addMoreThumbList(HtmlParserFactory.createParser(getActivity(), body).getThumbListOfPool());
             }
         });
     }
 
+    //加载更多完成后刷新界面
+    private void addMoreThumbList(final List<ThumbBean> newList) {
+        if (getActivity() == null || !mPostAdapter.isLoading()) {
+            return;
+        }
+
+        mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+        if (mPostAdapter.loadMoreDatas(newList)) {
+            mPostAdapter.loadMoreComplete();
+        } else {
+            mPostAdapter.loadMoreEnd();
+        }
+    }
+
     private void getNewPosts(int page) {
         String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
-        mNewCall = OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    mNewCall = OkHttp.getInstance().connect(url, this);
-                }
+            public void onFailure() {
+                getNewPosts(page);
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    if (getActivity() != null) {
-                        refreshThumbList(HtmlParserFactory.createParser(getActivity(), html).getThumbListOfPool());
-                    }
-                } else {
-                    mNewCall = OkHttp.getInstance().connect(url, this);
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                refreshThumbList(HtmlParserFactory.createParser(getActivity(), body).getThumbListOfPool());
             }
         });
     }
 
     // 搜索新内容或下拉刷新完成后刷新界面
     private void refreshThumbList(final List<ThumbBean> newList) {
-        if (!mSwipeRefresh.isRefreshing()) {
+        if (getActivity() == null || !mSwipeRefresh.isRefreshing()) {
             return;
         }
 
-        getActivity().runOnUiThread(() -> {
-            if (mPostAdapter.refreshDatas(newList)) {
-                scrollToTop();
-            }
-            mSwipeRefresh.setRefreshing(false);
-        });
-    }
-
-    //加载更多完成后刷新界面
-    private void addMoreThumbList(final List<ThumbBean> newList) {
-        if (!mPostAdapter.isLoading()) {
-            return;
+        if (mPostAdapter.refreshDatas(newList)) {
+            scrollToTop();
         }
-
-        getActivity().runOnUiThread(() -> {
-            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-            if (mPostAdapter.loadMoreDatas(newList)) {
-                mPostAdapter.loadMoreComplete();
-            } else {
-                mPostAdapter.loadMoreEnd();
-            }
-        });
+        mSwipeRefresh.setRefreshing(false);
     }
 
     void scrollToTop() {

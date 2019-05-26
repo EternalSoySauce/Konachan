@@ -8,14 +8,10 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadApkProgressListener;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
-import com.ess.anime.wallpaper.utils.FileUtils;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.download.SimpleCallback;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import me.jessyan.progressmanager.ProgressManager;
-import okhttp3.Response;
 
 public class DownloadApkService extends IntentService {
 
@@ -36,31 +32,42 @@ public class DownloadApkService extends IntentService {
 
         // 绑定下载进度监听器
         DownloadApkProgressListener listener;
-        if (!OkHttp.getInstance().isUrlInProgressListener(url)) {
+        if (!OkHttp.isUrlInProgressListener(url)) {
             listener = new DownloadApkProgressListener(this, apkBean, intent);
-            ProgressManager.getInstance().addResponseListener(url, listener);
-            OkHttp.getInstance().addUrlToProgressListener(url, listener);
+            OkHttp.addUrlToProgressListener(url, listener);
         } else {
-            listener = (DownloadApkProgressListener) OkHttp.getInstance().getProgressListener(url);
+            listener = (DownloadApkProgressListener) OkHttp.getProgressListener(url);
             listener.prepareNotification();
         }
 
-        Response response = null;
-        try {
-            // 下载
-            File apkFile = new File(apkBean.localFilePath);
-            response = OkHttp.getInstance().execute(url);
-            InputStream inputStream = response.body().byteStream();
-            FileUtils.streamToFile(inputStream, apkFile);
-            ComponentUtils.installApk(this, apkFile, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-            ProgressManager.getInstance().notifyOnErorr(url, e);
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-            OkHttp.getInstance().removeUrlFromDownloadQueue(url);
-        }
+
+        // 下载
+        Kalle.Download.get(url)
+                .directory(apkBean.localFileFolder)
+                .fileName(apkBean.localFileName)
+                .onProgress(listener::onProgress)
+                .perform(new SimpleCallback() {
+                    @Override
+                    public void onFinish(String path) {
+                        super.onFinish(path);
+                        File apkFile = new File(path);
+                        // 下载完成，自动启动安装
+                        ComponentUtils.installApk(DownloadApkService.this, apkFile, true);
+                        // 通知监听器完成下载
+                        listener.onFinish();
+                    }
+
+                    @Override
+                    public void onException(Exception e) {
+                        super.onException(e);
+                        listener.onError();
+                    }
+
+                    @Override
+                    public void onEnd() {
+                        super.onEnd();
+                        OkHttp.removeUrlFromDownloadQueue(url);
+                    }
+                });
     }
 }

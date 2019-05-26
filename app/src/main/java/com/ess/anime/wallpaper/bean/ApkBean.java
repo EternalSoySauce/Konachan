@@ -22,11 +22,17 @@ public class ApkBean implements Parcelable {
 
     public String updatedContentZh;
 
+    public String localFileFolder;
+
+    public String localFileName;
+
     public String localFilePath;
 
     public static ApkBean getApkDetailFromJson(Context context, String json) {
         ApkBean apkBean = new Gson().fromJson(json, ApkBean.class);
-        apkBean.localFilePath = context.getExternalFilesDir(null) + "/" + apkBean.apkName;
+        apkBean.localFileFolder = context.getExternalFilesDir(null).getAbsolutePath();
+        apkBean.localFileName = apkBean.apkName;
+        apkBean.localFilePath = apkBean.localFileFolder + "/" + apkBean.localFileName;
         return apkBean;
     }
 
@@ -38,6 +44,8 @@ public class ApkBean implements Parcelable {
         apkSize = in.readLong();
         updatedContentEn = in.readString();
         updatedContentZh = in.readString();
+        localFileFolder = in.readString();
+        localFileName = in.readString();
         localFilePath = in.readString();
     }
 
@@ -50,6 +58,8 @@ public class ApkBean implements Parcelable {
         dest.writeLong(apkSize);
         dest.writeString(updatedContentEn);
         dest.writeString(updatedContentZh);
+        dest.writeString(localFileFolder);
+        dest.writeString(localFileName);
         dest.writeString(localFilePath);
     }
 

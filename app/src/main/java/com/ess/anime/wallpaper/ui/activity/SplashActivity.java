@@ -13,14 +13,10 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
 import java.io.File;
-import java.io.IOException;
-
-import androidx.annotation.NonNull;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class SplashActivity extends BaseActivity {
+
+    public final static String TAG = SplashActivity.class.getName();
 
     @Override
     int layoutRes() {
@@ -50,27 +46,19 @@ public class SplashActivity extends BaseActivity {
     }
 
     // 获取存储着K站所有tag的Json，用于搜索提示
-    private void getTagJson(final String url) {
-        OkHttp.getInstance().connect(url, new Callback() {
+    private void getTagJson(String url) {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    OkHttp.getInstance().connect(url, this);
-                }
+            public void onFailure() {
+                getTagJson(url);
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    String path = getFilesDir().getPath();
-                    String name = FileUtils.encodeMD5String(url);
-                    File file = new File(path, name);
-                    FileUtils.stringToFile(html, file);
-                } else {
-                    OkHttp.getInstance().connect(url, this);
-                }
-                response.close();
+            public void onSuccessful(String json) {
+                String path = getFilesDir().getPath();
+                String name = FileUtils.encodeMD5String(url);
+                File file = new File(path, name);
+                FileUtils.stringToFile(json, file);
             }
         });
     }

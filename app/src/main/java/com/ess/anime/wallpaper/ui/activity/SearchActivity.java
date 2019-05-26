@@ -22,10 +22,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
@@ -41,27 +37,29 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
+import com.yanzhenjie.kalle.Kalle;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 import static com.jiang.android.indicatordialog.IndicatorBuilder.GRAVITY_LEFT;
 
 public class SearchActivity extends BaseActivity {
+
+    public final static String TAG = SearchActivity.class.getName();
 
     @BindView(R.id.et_search)
     EditText mEtSearch;
@@ -89,9 +87,6 @@ public class SearchActivity extends BaseActivity {
 
     // 筛选下拉提示异步任务
     private AsyncTask mAutoCompleteTask;
-
-    // Sankaku, Gelbooru网络请求下拉提示
-    private Call mTagCall;
 
     @Override
     int layoutRes() {
@@ -164,7 +159,7 @@ public class SearchActivity extends BaseActivity {
                 findViewById(R.id.iv_clear).setVisibility(visible);
 
                 cancelAutoCompleteTask();
-                cancelTagCall();
+                Kalle.cancel(TAG);
                 if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
                     // TODO 完善搜索提示（现在与K站算法不完全一样）
                     String tag = s.toString();
@@ -412,63 +407,44 @@ public class SearchActivity extends BaseActivity {
     }
 
     // Sankaku, Gelbooru搜索提示为动态请求
-    private void getTagListFromNetwork(final String url) {
-        cancelTagCall();
-        mTagCall = OkHttp.getInstance().connect(url, new Callback() {
+    private void getTagListFromNetwork(String url) {
+        Kalle.cancel(TAG);
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e) && call == mTagCall) {
-                    getTagListFromNetwork(url);
-                }
+            public void onFailure() {
+                getTagListFromNetwork(url);
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (call == mTagCall) {
-                    if (response.isSuccessful()) {
-                        String json = response.body().string();
-                        JsonArray tagArray = null;
-                        switch (OkHttp.getBaseUrl(SearchActivity.this)) {
-                            case Constants.BASE_URL_SANKAKU:
-                                tagArray = new JsonParser().parse(json).getAsJsonArray().get(1).getAsJsonArray();
-                                break;
-                            case Constants.BASE_URL_GELBOORU:
-                                tagArray = new JsonParser().parse(json).getAsJsonArray();
-                                break;
-                        }
-                        if (tagArray != null) {
-                            for (int i = 0; i < tagArray.size(); i++) {
-                                mPromptMap.put(tagArray.get(i).getAsString(), 0);
-                            }
-                        }
-                        setCompleteSearchTags();
-                    } else {
-                        getTagListFromNetwork(url);
+            public void onSuccessful(String json) {
+                JsonArray tagArray = null;
+                switch (OkHttp.getBaseUrl(SearchActivity.this)) {
+                    case Constants.BASE_URL_SANKAKU:
+                        tagArray = new JsonParser().parse(json).getAsJsonArray().get(1).getAsJsonArray();
+                        break;
+                    case Constants.BASE_URL_GELBOORU:
+                        tagArray = new JsonParser().parse(json).getAsJsonArray();
+                        break;
+                }
+                if (tagArray != null) {
+                    for (int i = 0; i < tagArray.size(); i++) {
+                        mPromptMap.put(tagArray.get(i).getAsString(), 0);
                     }
                 }
-                response.close();
+                setCompleteSearchTags();
             }
         });
     }
 
     private void setCompleteSearchTags() {
-        runOnUiThread(() -> {
-            mCompleteSearchAdapter.clear();
-            mCompleteSearchAdapter.addData(mPromptMap.keySet());
-            mRvCompleteSearch.setVisibility(View.VISIBLE);
-        });
+        mCompleteSearchAdapter.clear();
+        mCompleteSearchAdapter.addData(mPromptMap.keySet());
+        mRvCompleteSearch.setVisibility(View.VISIBLE);
     }
 
     private void cancelAutoCompleteTask() {
         if (mAutoCompleteTask != null) {
             mAutoCompleteTask.cancel(true);
-        }
-    }
-
-    private void cancelTagCall() {
-        if (mTagCall != null && !mTagCall.isCanceled()) {
-            mTagCall.cancel();
-            mTagCall = null;
         }
     }
 
@@ -482,7 +458,7 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancelAutoCompleteTask();
-        cancelTagCall();
+        Kalle.cancel(TAG);
     }
 
     // 异步执行筛选下拉提示操作

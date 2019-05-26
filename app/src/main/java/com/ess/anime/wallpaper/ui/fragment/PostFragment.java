@@ -4,18 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -38,24 +31,31 @@ import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.github.clans.fab.FloatingActionMenu;
+import com.yanzhenjie.kalle.Canceller;
+import com.yanzhenjie.kalle.Kalle;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class PostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+
+    public final static String TAG = PostFragment.class.getName();
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
@@ -109,6 +109,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Kalle.cancel(TAG);
         EventBus.getDefault().unregister(this);
     }
 
@@ -196,7 +197,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mLayoutManager = new GridLayoutManager(mActivity, span);
         mRvPosts.setLayoutManager(mLayoutManager);
 
-        mPostAdapter = new RecyclerPostAdapter();
+        mPostAdapter = new RecyclerPostAdapter(TAG);
         mPostAdapter.setOnItemClickListener(() -> mFloatingMenu.close(true));
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
@@ -232,25 +233,32 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onLoadMoreRequested() {
         String url = OkHttp.getPostUrl(mActivity, ++mCurrentPage, mCurrentTagList);
-        OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
+            public void onFailure() {
+                checkNetwork();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    addMoreThumbList(HtmlParserFactory.createParser(mActivity, html).getThumbList());
-                } else {
-                    checkNetwork();
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                addMoreThumbList(HtmlParserFactory.createParser(mActivity, body).getThumbList());
             }
         });
+    }
+
+    //加载更多完成后刷新界面
+    private void addMoreThumbList(final List<ThumbBean> newList) {
+        if (!mPostAdapter.isLoading()) {
+            return;
+        }
+
+        mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+        if (mPostAdapter.loadMoreDatas(newList)) {
+            mPostAdapter.loadMoreComplete();
+            changeToPage(mCurrentPage);
+        } else {
+            mPostAdapter.loadMoreEnd();
+        }
     }
 
     @OnClick(R.id.fab_home)
@@ -341,7 +349,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
-        OkHttp.getInstance().cancelAll();
+        Kalle.cancel(TAG);
         mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
         mPostAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
@@ -351,24 +359,17 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     private void getNewPosts(int page) {
         String url = OkHttp.getPostUrl(mActivity, page, mCurrentTagList);
-        OkHttp.getInstance().connect(url, new Callback() {
+        Log.i("rrr",url);
+        Canceller canceller = OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
+            public void onFailure() {
+                checkNetwork();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    List<ThumbBean> thumbList = HtmlParserFactory.createParser(mActivity, html).getThumbList();
-                    refreshThumbList(thumbList);
-                } else {
-                    checkNetwork();
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                Log.i("rrr", body);
+                refreshThumbList(HtmlParserFactory.createParser(mActivity, body).getThumbList());
             }
         });
     }
@@ -379,72 +380,44 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             return;
         }
 
-        mActivity.runOnUiThread(() -> {
-            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-            if (mPostAdapter.refreshDatas(newList)) {
-                scrollToTop();
-            } else if (mPostAdapter.getData().isEmpty()) {
-                getNoData();
-            }
-            mSwipeRefresh.setRefreshing(false);
-        });
-    }
-
-    //加载更多完成后刷新界面
-    private void addMoreThumbList(final List<ThumbBean> newList) {
-        if (!mPostAdapter.isLoading()) {
-            return;
+        mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
+        if (mPostAdapter.refreshDatas(newList)) {
+            scrollToTop();
+        } else if (mPostAdapter.getData().isEmpty()) {
+            loadNothing();
         }
-
-        mActivity.runOnUiThread(() -> {
-            mPostAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPosts);
-            if (mPostAdapter.loadMoreDatas(newList)) {
-                mPostAdapter.loadMoreComplete();
-                changeToPage(mCurrentPage);
-            } else {
-                mPostAdapter.loadMoreEnd();
-            }
-        });
+        mSwipeRefresh.setRefreshing(false);
     }
 
+    // 根据汉语从百度百科搜索对应罗马音
     private void getNameFromBaidu(String searchTag) {
         String url = Constants.BASE_URL_BAIDU + searchTag;
-        OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
+            public void onFailure() {
+                checkNetwork();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    String name = HtmlParser.getNameFromBaidu(html);
-                    if (!TextUtils.isEmpty(name)) {
-                        String tag1 = "~" + name;
-                        mCurrentTagList.add(tag1);
+            public void onSuccessful(String body) {
+                String name = HtmlParser.getNameFromBaidu(body);
+                if (!TextUtils.isEmpty(name)) {
+                    String tag1 = "~" + name;
+                    mCurrentTagList.add(tag1);
 
-                        String[] split = name.split("_");
-                        StringBuilder tag2 = new StringBuilder("~");
-                        for (int i = split.length - 1; i >= 0; i--) {
-                            tag2.append(split[i]).append("_");
-                        }
-                        tag2.replace(tag2.length() - 1, tag2.length(), "");
-                        mCurrentTagList.add(tag2.toString());
-                        getNewPosts(mCurrentPage);
-                        mActivity.runOnUiThread(() -> {
-                            changeFromPage(mCurrentPage);
-                            changeToPage(mCurrentPage);
-                        });
-                    } else {
-                        getNoData();
+                    String[] split = name.split("_");
+                    StringBuilder tag2 = new StringBuilder("~");
+                    for (int i = split.length - 1; i >= 0; i--) {
+                        tag2.append(split[i]).append("_");
                     }
+                    tag2.replace(tag2.length() - 1, tag2.length(), "");
+                    mCurrentTagList.add(tag2.toString());
+                    getNewPosts(mCurrentPage);
+                    changeFromPage(mCurrentPage);
+                    changeToPage(mCurrentPage);
                 } else {
-                    checkNetwork();
+                    loadNothing();
                 }
-                response.close();
             }
         });
     }
@@ -475,25 +448,21 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     }
 
     //百度或K站搜所无结果
-    private void getNoData() {
-        mActivity.runOnUiThread(() -> {
-            mPostAdapter.setNewData(null);
-            mSwipeRefresh.setRefreshing(false);
-            SoundHelper.getInstance().playLoadNothingSound(getActivity());
-        });
+    private void loadNothing() {
+        mPostAdapter.setNewData(null);
+        mSwipeRefresh.setRefreshing(false);
+        SoundHelper.getInstance().playLoadNothingSound(getActivity());
     }
 
     //访问网络失败
     private void checkNetwork() {
-        mActivity.runOnUiThread(() -> {
-            mSwipeRefresh.setRefreshing(false);
-            if (mPostAdapter.getData().isEmpty()) {
-                mPostAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPosts);
-                SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
-            } else {
-                mPostAdapter.loadMoreFail();
-            }
-        });
+        mSwipeRefresh.setRefreshing(false);
+        if (mPostAdapter.getData().isEmpty()) {
+            mPostAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPosts);
+            SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
+        } else {
+            mPostAdapter.loadMoreFail();
+        }
     }
 
     //切换搜图网站后收到的通知，obj 为 null

@@ -1,7 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
 import android.content.Intent;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -20,21 +19,16 @@ import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
 
-    private ArrayList<Call> mCallList = new ArrayList<>();
+    private String mHttpTag;
     private OnItemClickListener mItemClickListener;
 
-    public RecyclerPostAdapter() {
+    public RecyclerPostAdapter(String httpTag) {
         super(R.layout.recyclerview_item_post);
+        mHttpTag = httpTag;
     }
 
     @Override
@@ -50,18 +44,15 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         holder.setText(R.id.tv_size, thumbBean.realSize);
 
         //点击进入详细页面
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int index = holder.getLayoutPosition() - getHeaderLayoutCount();
-                ImageDataHolder.setThumbList(mData, index);
-                Intent intent = new Intent(mContext, ImageDetailActivity.class);
-                intent.putExtra(Constants.THUMB_BEAN, thumbBean);
-                mContext.startActivity(intent);
+        holder.itemView.setOnClickListener(v -> {
+            int index = holder.getLayoutPosition() - getHeaderLayoutCount();
+            ImageDataHolder.setThumbList(mData, index);
+            Intent intent = new Intent(mContext, ImageDetailActivity.class);
+            intent.putExtra(Constants.THUMB_BEAN, thumbBean);
+            mContext.startActivity(intent);
 
-                if (mItemClickListener != null) {
-                    mItemClickListener.onViewDetails();
-                }
+            if (mItemClickListener != null) {
+                mItemClickListener.onViewDetails();
             }
         });
     }
@@ -91,30 +82,20 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     private void getImageDetail(List<ThumbBean> thumbList) {
         for (final ThumbBean thumbBean : thumbList) {
             if (thumbBean.imageBean == null) {
-                Call call = OkHttp.getInstance().connect(thumbBean.linkToShow, new Callback() {
+                String url = thumbBean.linkToShow;
+                OkHttp.connect(url, mHttpTag, new OkHttp.OkHttpCallback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-                        if (OkHttp.isNetworkProblem(e)) {
-                            Call newCall = OkHttp.getInstance().connect(thumbBean.linkToShow, this);
-                            mCallList.add(newCall);
-                        }
+                    public void onFailure() {
+                        OkHttp.connect(url, mHttpTag, this);
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            String html = response.body().string();
-                            String json = HtmlParserFactory.createParser(mContext, html).getImageDetailJson();
-                            // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
-                            EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
-                        } else {
-                            Call newCall = OkHttp.getInstance().connect(thumbBean.linkToShow, this);
-                            mCallList.add(newCall);
-                        }
-                        response.close();
+                    public void onSuccessful(String body) {
+                        String json = HtmlParserFactory.createParser(mContext, body).getImageDetailJson();
+                        // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
+                        EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
                     }
                 });
-                mCallList.add(call);
             }
         }
     }
@@ -128,12 +109,6 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public void cancelAll() {
-        for (Call call : mCallList) {
-            call.cancel();
         }
     }
 

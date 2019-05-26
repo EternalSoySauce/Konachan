@@ -36,7 +36,7 @@ public abstract class HtmlParser {
 
     public abstract List<CommentBean> getCommentList();
 
-    public abstract List<PoolListBean> getPoolList();
+    public abstract List<PoolListBean> getPoolListList();
 
     public List<ThumbBean> getThumbListOfPool() {
         List<ThumbBean> thumbList = getThumbList();

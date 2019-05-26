@@ -9,52 +9,51 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import okhttp3.Response;
 
 public class PoolListDataFetcher implements DataFetcher<InputStream> {
 
     private Context mContext;
     private PoolListBean mPoolListBean;
     private volatile boolean mIsCancelled;
+    private String mHttpTag;
 
     public PoolListDataFetcher(Context context, PoolListBean poolListBean) {
         mContext = context;
         mPoolListBean = poolListBean;
+        mHttpTag = mPoolListBean.linkToShow;
     }
 
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
         try {
             String url = OkHttp.getPoolPostUrl(mContext, mPoolListBean.linkToShow, 1);
-            Response response = OkHttp.getInstance().execute(url);
+            SimpleResponse<String, String> response = OkHttp.execute(url, mHttpTag);
             if (mIsCancelled) {
-                response.close();
                 return;
-            } else if (response.isSuccessful()) {
-                String html = response.body().string();
-                response.close();
+            } else if (response.isSucceed()) {
+                String html = response.succeed();
                 List<ThumbBean> thumbList = HtmlParserFactory.createParser(mContext, html).getThumbListOfPool();
                 if (thumbList.isEmpty()) {
                     return;
                 }
-                Response thumbResponse = OkHttp.getInstance().execute(thumbList.get(0).thumbUrl);
+                SimpleResponse<String, String> thumbResponse = OkHttp.execute(thumbList.get(0).thumbUrl, mHttpTag);
                 if (mIsCancelled) {
-                    thumbResponse.close();
                     return;
-                } else if (thumbResponse.isSuccessful()) {
-                    callback.onDataReady(thumbResponse.body().byteStream());
+                } else if (thumbResponse.isSucceed()) {
+                    // todo response
+//                    callback.onDataReady(thumbResponse.succeed());
                 } else {
                     onResponseFailed(callback, thumbResponse);
                 }
-                thumbResponse.close();
             } else {
-                response.close();
                 onResponseFailed(callback, response);
             }
         } catch (Exception e) {
@@ -63,17 +62,19 @@ public class PoolListDataFetcher implements DataFetcher<InputStream> {
         }
     }
 
-    private void onResponseFailed(DataCallback callback, Response response) {
+    private void onResponseFailed(DataCallback callback, SimpleResponse<String, String> response) {
         callback.onLoadFailed(new IOException("Request failed with code: " + response.code()));
     }
 
     @Override
     public void cleanup() {
+        Kalle.cancel(mPoolListBean.linkToShow);
     }
 
     @Override
     public void cancel() {
         mIsCancelled = true;
+        Kalle.cancel(mHttpTag);
     }
 
     @NonNull

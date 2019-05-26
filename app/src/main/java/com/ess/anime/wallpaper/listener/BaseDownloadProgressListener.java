@@ -12,10 +12,7 @@ import android.os.Build;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
-import me.jessyan.progressmanager.ProgressListener;
-import me.jessyan.progressmanager.body.ProgressInfo;
-
-public abstract class BaseDownloadProgressListener<T> implements ProgressListener {
+public abstract class BaseDownloadProgressListener<T> {
 
     private static final String NOTIFY_CHANNEL_ID = "notification";
     private static final String NOTIFY_CHANNEL_NAME = "notification";
@@ -79,25 +76,33 @@ public abstract class BaseDownloadProgressListener<T> implements ProgressListene
 
     abstract String getNotifyTitle();
 
-    @Override
-    public void onProgress(ProgressInfo progressInfo) {
-        int progress = progressInfo.getPercent();
+    /**
+     * 下载进度
+     *
+     * @param progress  进度 [0, 100]
+     * @param byteCount 目前已经下载的byte大小
+     * @param speed     此时每秒下载的byte大小
+     */
+    public void onProgress(int progress, long byteCount, long speed) {
         mNotifyBuilder.setProgress(100, progress, false);
-        String content = FileUtils.computeFileSize(progressInfo.getCurrentbytes())
+        String content = FileUtils.computeFileSize(byteCount)
                 + " / " + mFileAvailable;
         mNotifyBuilder.setContentText(content);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
-
-        if (progressInfo.isFinish() && autoPerformFinish()) {
-            // 下载完成
-            performFinish();
-        }
     }
 
-    abstract boolean autoPerformFinish();
+    // 下载完成
+    public void onFinish() {
+        String finish = mContext.getString(R.string.download_finished, mFileAvailable);
+        mNotifyBuilder.setProgress(100, 100, false);
+        mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
+        mNotifyBuilder.setContentText(finish);
+        mNotifyBuilder.setOngoing(false);
+        mNotifyBuilder.setContentIntent(mOperateIntent);
+        mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
+    }
 
-    @Override
-    public void onError(long id, Exception e) {
+    public void onError() {
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_failed);
         mNotifyBuilder.setContentText(mContext.getString(R.string.download_failed));
         mNotifyBuilder.setOngoing(false);
@@ -116,13 +121,4 @@ public abstract class BaseDownloadProgressListener<T> implements ProgressListene
 
     abstract void createOperatePendingIntent();
 
-    public void performFinish() {
-        String finish = mContext.getString(R.string.download_finished, mFileAvailable);
-        mNotifyBuilder.setProgress(100, 100, false);
-        mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);
-        mNotifyBuilder.setContentText(finish);
-        mNotifyBuilder.setOngoing(false);
-        mNotifyBuilder.setContentIntent(mOperateIntent);
-        mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
-    }
 }

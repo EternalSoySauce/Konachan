@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -18,7 +16,7 @@ import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
-import me.jessyan.progressmanager.body.ProgressInfo;
+import androidx.annotation.Nullable;
 
 public class DownloadImageProgressListener extends BaseDownloadProgressListener<DownloadBean> implements RequestListener<Bitmap> {
 
@@ -72,17 +70,11 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     }
 
     @Override
-    public void onProgress(ProgressInfo progressInfo) {
-        super.onProgress(progressInfo);
+    public void onProgress(int progress, long byteCount, long speed) {
+        super.onProgress(progress, byteCount, speed);
         if (mNeedToReloadThumbnail) {
             loadThumbnail();
         }
-    }
-
-    @Override
-    boolean autoPerformFinish() {
-        // 由于lolibooru监听不到下载进度，所以将下载完成操作移动到service中执行通知
-        return false;
     }
 
     @Override

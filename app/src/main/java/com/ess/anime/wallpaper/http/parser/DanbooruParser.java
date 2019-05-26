@@ -177,7 +177,7 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolList() {
+    public List<PoolListBean> getPoolListList() {
         List<PoolListBean> poolList = new ArrayList<>();
         for (Element pool : mDoc.getElementsByTag("article")) {
             try {

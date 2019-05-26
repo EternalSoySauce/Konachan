@@ -10,7 +10,9 @@ import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.ui.fragment.PoolPostFragment;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,8 +20,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Response;
 
 public class GelbooruParser extends HtmlParser {
 
@@ -174,7 +174,7 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolList() {
+    public List<PoolListBean> getPoolListList() {
         List<PoolListBean> poolList = new ArrayList<>();
         Element table = mDoc.getElementsByClass("highlightable").first();
         if (table != null) {
@@ -214,9 +214,10 @@ public class GelbooruParser extends HtmlParser {
                 List<String> tagList = new ArrayList<>();
                 tagList.add("id:" + id);
                 String detailUrl = OkHttp.getPostUrl(mContext, 1, tagList);
-                Response response = OkHttp.getInstance().execute(detailUrl);
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
+                SimpleResponse<String, String> response = OkHttp.execute(detailUrl, PoolPostFragment.TAG);
+                if (response.isSucceed()) {
+                    // todo 异步
+                    String html = response.succeed();
                     ThumbBean thumbBean = HtmlParserFactory.createParser(mContext, html).getThumbList().get(0);
                     thumbList.add(thumbBean);
                 }

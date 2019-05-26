@@ -6,12 +6,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
 import com.ess.anime.wallpaper.bean.CommentBean;
@@ -22,16 +16,20 @@ import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.yanzhenjie.kalle.Kalle;
 
-import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class CommentFragment extends BaseFragment {
+
+    public final static String TAG = CommentFragment.class.getName();
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
@@ -40,7 +38,6 @@ public class CommentFragment extends BaseFragment {
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
-    private Call mCommentCall;
     private RecyclerCommentAdapter mCommentAdapter;
 
     @Override
@@ -71,6 +68,12 @@ public class CommentFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
         // 防止软件进入后台过久被系统回收导致切换回来时产生空指针异常
         outState.putParcelable(Constants.THUMB_BEAN, mThumbBean);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Kalle.cancel(TAG);
     }
 
     private void initView() {
@@ -109,42 +112,25 @@ public class CommentFragment extends BaseFragment {
 
     // 获取评论列表
     private void getCommentList() {
-        mCommentCall = OkHttp.getInstance().connect(mThumbBean.linkToShow, new Callback() {
+        OkHttp.connect(mThumbBean.linkToShow, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    getCommentList();
-                }
+            public void onFailure() {
+                getCommentList();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    List<CommentBean> commentList = HtmlParserFactory.createParser(mActivity, html).getCommentList();
-                    setCommentList(commentList);
-                } else {
-                    getCommentList();
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                setCommentList(HtmlParserFactory.createParser(mActivity, body).getCommentList());
             }
         });
     }
 
     // 获取到评论列表后刷新界面
     private void setCommentList(final List<CommentBean> commentList) {
-        mActivity.runOnUiThread(() -> {
-            if (!mActivity.isFinishing() && !mActivity.isDestroyed()) {
-                showComments(commentList);
-                mSwipeRefresh.setRefreshing(false);
-            }
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mCommentCall.cancel();
+        if (!mActivity.isFinishing() && !mActivity.isDestroyed()) {
+            showComments(commentList);
+            mSwipeRefresh.setRefreshing(false);
+        }
     }
 
 }

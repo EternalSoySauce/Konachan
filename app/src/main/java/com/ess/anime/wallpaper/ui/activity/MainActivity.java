@@ -9,21 +9,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
@@ -38,12 +29,19 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
 
-    private final static String TAG_FRG_POST = PostFragment.class.getName();
-    private final static String TAG_FRG_POOL = PoolFragment.class.getName();
+    private final static String TAG_FRG_POST = PostFragment.TAG;
+    private final static String TAG_FRG_POOL = PoolFragment.TAG;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -272,7 +270,6 @@ public class MainActivity extends BaseActivity {
         mIsForeground = false;
         EventBus.getDefault().unregister(this);
         SoundHelper.getInstance().release();
-        OkHttp.getInstance().cancelAll();
         FireBase.getInstance().cancelAll();
     }
 

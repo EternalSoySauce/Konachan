@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.OkHttp;
 
 import androidx.multidex.MultiDex;
 
@@ -16,8 +17,10 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
+        OkHttp.initHttpConfig(this);
         initData();
     }
+
 
     private void initData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);

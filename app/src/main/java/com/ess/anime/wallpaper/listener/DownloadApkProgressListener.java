@@ -35,11 +35,6 @@ public class DownloadApkProgressListener extends BaseDownloadProgressListener<Ap
     }
 
     @Override
-    boolean autoPerformFinish() {
-        return true;
-    }
-
-    @Override
     Class<?> getClassToReload() {
         return DownloadApkService.class;
     }

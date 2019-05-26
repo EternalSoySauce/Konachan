@@ -10,16 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
@@ -34,22 +24,30 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.yanzhenjie.kalle.Kalle;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class PoolFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+
+    public final static String TAG = PoolFragment.class.getName();
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
@@ -125,10 +123,9 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Kalle.cancel(TAG);
         EventBus.getDefault().unregister(this);
     }
-
-    private long lastClickTime = 0;
 
     private void initToolBarLayout() {
         mActivity.setSupportActionBar(mToolbar);
@@ -238,25 +235,32 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onLoadMoreRequested() {
         String url = OkHttp.getPoolUrl(mActivity, ++mCurrentPage, mCurrentSearchName);
-        OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
+            public void onFailure() {
+                checkNetwork();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    addMorePoolList(HtmlParserFactory.createParser(mActivity, html).getPoolList());
-                } else {
-                    checkNetwork();
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                addMorePoolList(HtmlParserFactory.createParser(mActivity, body).getPoolListList());
             }
         });
+    }
+
+    //加载更多完成后刷新界面
+    private void addMorePoolList(final List<PoolListBean> newList) {
+        if (!mPoolAdapter.isLoading()) {
+            return;
+        }
+
+        mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+        if (mPoolAdapter.loadMoreDatas(newList)) {
+            mPoolAdapter.loadMoreComplete();
+            changeToPage(mCurrentPage);
+        } else {
+            mPoolAdapter.loadMoreEnd();
+        }
     }
 
     private void changeFromPage(int page) {
@@ -343,6 +347,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
+        Kalle.cancel(TAG);
         mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
         mPoolAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
@@ -352,24 +357,15 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     private void getNewPools(int page) {
         String url = OkHttp.getPoolUrl(mActivity, page, mCurrentSearchName);
-        OkHttp.getInstance().connect(url, new Callback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if (OkHttp.isNetworkProblem(e)) {
-                    checkNetwork();
-                }
+            public void onFailure() {
+                checkNetwork();
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String html = response.body().string();
-                    List<PoolListBean> poolList = HtmlParserFactory.createParser(mActivity, html).getPoolList();
-                    refreshPoolList(poolList);
-                } else {
-                    checkNetwork();
-                }
-                response.close();
+            public void onSuccessful(String body) {
+                refreshPoolList(HtmlParserFactory.createParser(mActivity, body).getPoolListList());
             }
         });
     }
@@ -380,54 +376,31 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
             return;
         }
 
-        mActivity.runOnUiThread(() -> {
-            mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
-            if (mPoolAdapter.refreshDatas(newList)) {
-                scrollToTop();
-            } else if (mPoolAdapter.getData().isEmpty()) {
-                getNoData();
-            }
-            mSwipeRefresh.setRefreshing(false);
-        });
-    }
-
-    //加载更多完成后刷新界面
-    private void addMorePoolList(final List<PoolListBean> newList) {
-        if (!mPoolAdapter.isLoading()) {
-            return;
+        mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+        if (mPoolAdapter.refreshDatas(newList)) {
+            scrollToTop();
+        } else if (mPoolAdapter.getData().isEmpty()) {
+            getNoData();
         }
-
-        mActivity.runOnUiThread(() -> {
-            mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
-            if (mPoolAdapter.loadMoreDatas(newList)) {
-                mPoolAdapter.loadMoreComplete();
-                changeToPage(mCurrentPage);
-            } else {
-                mPoolAdapter.loadMoreEnd();
-            }
-        });
+        mSwipeRefresh.setRefreshing(false);
     }
 
     //搜所无结果
     private void getNoData() {
-        mActivity.runOnUiThread(() -> {
-            mPoolAdapter.setNewData(null);
-            mSwipeRefresh.setRefreshing(false);
-            SoundHelper.getInstance().playLoadNothingSound(getActivity());
-        });
+        mPoolAdapter.setNewData(null);
+        mSwipeRefresh.setRefreshing(false);
+        SoundHelper.getInstance().playLoadNothingSound(getActivity());
     }
 
     //访问网络失败
     private void checkNetwork() {
-        mActivity.runOnUiThread(() -> {
-            mSwipeRefresh.setRefreshing(false);
-            if (mPoolAdapter.getData().isEmpty()) {
-                mPoolAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPools);
-                SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
-            } else {
-                mPoolAdapter.loadMoreFail();
-            }
-        });
+        mSwipeRefresh.setRefreshing(false);
+        if (mPoolAdapter.getData().isEmpty()) {
+            mPoolAdapter.setEmptyView(R.layout.layout_load_no_network, mRvPools);
+            SoundHelper.getInstance().playLoadNoNetworkSound(getActivity());
+        } else {
+            mPoolAdapter.loadMoreFail();
+        }
     }
 
     //切换搜图网站后收到的通知，obj 为 null
