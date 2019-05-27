@@ -12,8 +12,10 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.download.SimpleCallback;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.model.Response;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,14 +82,10 @@ public class DownloadImageService extends Service {
         }
 
         // 下载
-        Kalle.Download.get(url)
-                .directory(tempFolder.getAbsolutePath())
-                .fileName(tempName)
-                .onProgress(listener::onProgress)
-                .perform(new SimpleCallback() {
+        OkGo.<File>get(OkHttp.convertSchemeToHttps(url))
+                .execute(new FileCallback(tempFolder.getAbsolutePath(), tempName) {
                     @Override
-                    public void onFinish(String path) {
-                        super.onFinish(path);
+                    public void onSuccess(Response<File> response) {
                         // 下载成功，保存为图片
                         File folder = new File(Constants.IMAGE_DIR);
                         if (folder.exists() || folder.mkdirs()) {
@@ -101,16 +99,22 @@ public class DownloadImageService extends Service {
                     }
 
                     @Override
-                    public void onException(Exception e) {
-                        super.onException(e);
+                    public void onError(Response<File> response) {
+                        super.onError(response);
                         listener.onError();
                     }
 
                     @Override
-                    public void onEnd() {
-                        super.onEnd();
+                    public void onFinish() {
+                        super.onFinish();
                         OkHttp.removeUrlFromDownloadQueue(url);
                         tempFile.delete();
+                    }
+
+                    @Override
+                    public void downloadProgress(Progress progress) {
+                        super.downloadProgress(progress);
+                        listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
                     }
                 });
     }

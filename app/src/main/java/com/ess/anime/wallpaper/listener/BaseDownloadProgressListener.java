@@ -29,10 +29,10 @@ public abstract class BaseDownloadProgressListener<T> {
     BaseDownloadProgressListener(Context context, T data, Intent intent) {
         setData(data);
         mContext = context;
-        createNotifyChannel();
-        prepareNotification();
         createReloadPendingIntent(intent);
         createOperatePendingIntent();
+        createNotifyChannel();
+        prepareNotification();
     }
 
     abstract void setData(T data);
@@ -68,9 +68,11 @@ public abstract class BaseDownloadProgressListener<T> {
         mNotifyBuilder.setContentText("0B / " + mFileAvailable);
         mNotifyBuilder.setProgress(100, 0, false);
         mNotifyBuilder.setOngoing(true);
-        mNotifyBuilder.setContentIntent(null);
+        mNotifyBuilder.setContentIntent(prepareContentIntent());
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
+
+    abstract PendingIntent prepareContentIntent();
 
     abstract long getTotalFileSize();
 

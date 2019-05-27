@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.utils;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -12,10 +13,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
+import androidx.core.content.FileProvider;
+
 import java.io.File;
 import java.util.List;
-
-import androidx.core.content.FileProvider;
 
 /**
  * 通过ActivityManager获取当前系统中的Activity与Service的运行状态
@@ -194,5 +195,9 @@ public class ComponentUtils {
      */
     public static String getAndroidId(Context context) {
         return Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    public static boolean isActivityActive(Activity activity) {
+        return activity != null && !activity.isFinishing() && !activity.isDestroyed();
     }
 }

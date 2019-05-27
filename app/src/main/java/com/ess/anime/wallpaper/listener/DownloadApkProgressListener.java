@@ -25,6 +25,11 @@ public class DownloadApkProgressListener extends BaseDownloadProgressListener<Ap
     }
 
     @Override
+    PendingIntent prepareContentIntent() {
+        return null;
+    }
+
+    @Override
     long getTotalFileSize() {
         return mApkBean.apkSize;
     }

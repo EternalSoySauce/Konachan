@@ -185,6 +185,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
 
     private void setAsWallpaper() {
         try {
+            // todo 小米手机只能跳转到设置联系人头像
             Uri uri = BitmapUtils.getContentUriFromFile(this,
                     new File(mCollectionList.get(mCurrentPos).filePath));
             Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);

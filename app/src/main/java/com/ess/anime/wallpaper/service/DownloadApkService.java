@@ -8,8 +8,10 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadApkProgressListener;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.download.SimpleCallback;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.model.Response;
 
 import java.io.File;
 
@@ -40,17 +42,12 @@ public class DownloadApkService extends IntentService {
             listener.prepareNotification();
         }
 
-
         // 下载
-        Kalle.Download.get(url)
-                .directory(apkBean.localFileFolder)
-                .fileName(apkBean.localFileName)
-                .onProgress(listener::onProgress)
-                .perform(new SimpleCallback() {
+        OkGo.<File>get(OkHttp.convertSchemeToHttps(url))
+                .execute(new FileCallback(apkBean.localFileFolder, apkBean.localFileName) {
                     @Override
-                    public void onFinish(String path) {
-                        super.onFinish(path);
-                        File apkFile = new File(path);
+                    public void onSuccess(Response<File> response) {
+                        File apkFile = response.body();
                         // 下载完成，自动启动安装
                         ComponentUtils.installApk(DownloadApkService.this, apkFile, true);
                         // 通知监听器完成下载
@@ -58,15 +55,21 @@ public class DownloadApkService extends IntentService {
                     }
 
                     @Override
-                    public void onException(Exception e) {
-                        super.onException(e);
+                    public void onError(Response<File> response) {
+                        super.onError(response);
                         listener.onError();
                     }
 
                     @Override
-                    public void onEnd() {
-                        super.onEnd();
+                    public void onFinish() {
+                        super.onFinish();
                         OkHttp.removeUrlFromDownloadQueue(url);
+                    }
+
+                    @Override
+                    public void downloadProgress(Progress progress) {
+                        super.downloadProgress(progress);
+                        listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
                     }
                 });
     }

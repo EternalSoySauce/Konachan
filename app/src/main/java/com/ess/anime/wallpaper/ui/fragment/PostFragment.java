@@ -4,11 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -19,6 +26,7 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
@@ -28,11 +36,10 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.github.clans.fab.FloatingActionMenu;
-import com.yanzhenjie.kalle.Canceller;
-import com.yanzhenjie.kalle.Kalle;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,13 +50,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -109,7 +109,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
         EventBus.getDefault().unregister(this);
     }
 
@@ -241,7 +241,15 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
             @Override
             public void onSuccessful(String body) {
-                addMoreThumbList(HtmlParserFactory.createParser(mActivity, body).getThumbList());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(mActivity, body1).getThumbList();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(thumbList -> {
+                            addMoreThumbList(thumbList);
+                        });
+
             }
         });
     }
@@ -269,6 +277,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     @OnClick(R.id.fab_random)
     void searchRandom() {
+        // todo gelbooru random
         mFloatingMenu.close(true);
         Intent intent = new Intent();
         intent.putExtra(Constants.SEARCH_TAG, "order:random");
@@ -349,7 +358,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
         mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
         mPostAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
@@ -359,8 +368,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     private void getNewPosts(int page) {
         String url = OkHttp.getPostUrl(mActivity, page, mCurrentTagList);
-        Log.i("rrr",url);
-        Canceller canceller = OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
                 checkNetwork();
@@ -368,8 +376,14 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
             @Override
             public void onSuccessful(String body) {
-                Log.i("rrr", body);
-                refreshThumbList(HtmlParserFactory.createParser(mActivity, body).getThumbList());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(mActivity, body1).getThumbList();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(thumbList -> {
+                            refreshThumbList(thumbList);
+                        });
             }
         });
     }
@@ -435,7 +449,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                         thumbBean.imageBean = imageBean;
                         thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].sampleUrl;
-                        if (FileUtils.isImageType(url) && !mActivity.isDestroyed()) {
+                        if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(mActivity)) {
                             GlideApp.with(mActivity)
                                     .load(MyGlideModule.makeGlideUrl(url))
                                     .submit();

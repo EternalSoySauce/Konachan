@@ -6,25 +6,27 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
-import com.ess.anime.wallpaper.bean.CommentBean;
-import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
-import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.UIUtils;
-import com.yanzhenjie.kalle.Kalle;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
+import com.ess.anime.wallpaper.bean.CommentBean;
+import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
+import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
+import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
+
+import java.util.List;
+
 import butterknife.BindView;
 
 public class CommentFragment extends BaseFragment {
@@ -73,7 +75,7 @@ public class CommentFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
     }
 
     private void initView() {
@@ -120,14 +122,21 @@ public class CommentFragment extends BaseFragment {
 
             @Override
             public void onSuccessful(String body) {
-                setCommentList(HtmlParserFactory.createParser(mActivity, body).getCommentList());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(mActivity, body1).getCommentList();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(commentList -> {
+                            setCommentList(commentList);
+                        });
             }
         });
     }
 
     // 获取到评论列表后刷新界面
     private void setCommentList(final List<CommentBean> commentList) {
-        if (!mActivity.isFinishing() && !mActivity.isDestroyed()) {
+        if (ComponentUtils.isActivityActive(mActivity)) {
             showComments(commentList);
             mSwipeRefresh.setRefreshing(false);
         }

@@ -9,10 +9,7 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.ui.fragment.PoolPostFragment;
 import com.ess.anime.wallpaper.utils.TimeFormat;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -209,18 +206,31 @@ public class GelbooruParser extends HtmlParser {
         Elements elements = mDoc.getElementsByClass("thumb");
         for (Element e : elements) {
             try {
+//                String id = e.id().replaceAll("[^0-9]", "");
+//                // 根据图片ID用搜索方法获取PostBean详细信息
+//                List<String> tagList = new ArrayList<>();
+//                tagList.add("id:" + id);
+//                String detailUrl = OkHttp.getPostUrl(mContext, 1, tagList);
+//                Response response = OkHttp.execute(detailUrl, PoolPostFragment.TAG);
+//                if (response.isSuccessful()) {
+//                    // todo 异步
+//                    String html = response.body().string();
+//                    ThumbBean thumbBean = HtmlParserFactory.createParser(mContext, html).getThumbList().get(0);
+//                    thumbList.add(thumbBean);
+//                }
+//                response.close();
+
                 String id = e.id().replaceAll("[^0-9]", "");
-                // 根据图片ID用搜索方法获取PostBean详细信息
-                List<String> tagList = new ArrayList<>();
-                tagList.add("id:" + id);
-                String detailUrl = OkHttp.getPostUrl(mContext, 1, tagList);
-                SimpleResponse<String, String> response = OkHttp.execute(detailUrl, PoolPostFragment.TAG);
-                if (response.isSucceed()) {
-                    // todo 异步
-                    String html = response.succeed();
-                    ThumbBean thumbBean = HtmlParserFactory.createParser(mContext, html).getThumbList().get(0);
-                    thumbList.add(thumbBean);
+                Element img = e.getElementsByClass("preview").first();
+                String thumbUrl = img.attr("src");
+                if (!thumbUrl.startsWith("http")) {
+                    thumbUrl = "https:" + thumbUrl;
                 }
+                String realSize = e.attr("width") + " x " + e.attr("height");
+                String linkToShow = "https://gelbooru.com/index.php?page=post&s=view&id=" + id;
+                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+                //                thumbBean.tempPost = parseTempPost(e);
+                thumbList.add(thumbBean);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

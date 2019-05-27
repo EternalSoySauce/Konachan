@@ -8,17 +8,16 @@ import android.preference.PreferenceManager;
 
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
-import com.yanzhenjie.kalle.Canceller;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.KalleConfig;
-import com.yanzhenjie.kalle.connect.BroadcastNetwork;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.Response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public class OkHttp {
 
@@ -66,42 +65,52 @@ public class OkHttp {
 
     // 初始化全局配置
     public static void initHttpConfig(Application application) {
-        KalleConfig config = KalleConfig.newBuilder()
-                .connectionTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-                .network(new BroadcastNetwork(application))
-                .converter(new HtmlConverter())
-                .build();
-        Kalle.setConfig(config);
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.readTimeout(15, TimeUnit.SECONDS);
+        builder.writeTimeout(15, TimeUnit.SECONDS);
+        builder.connectTimeout(15, TimeUnit.SECONDS);
+        OkGo.getInstance().init(application)
+                .setOkHttpClient(builder.build())
+                .setRetryCount(0);
     }
 
     // 异步网络请求
-    public static Canceller connect(String url, String tag, OkHttpCallback callback) {
-        return Kalle.get(url)
+    public static void connect(String url, Object tag, OkHttpCallback callback) {
+        OkGo.<String>get(convertSchemeToHttps(url))
                 .tag(tag)
-                .perform(new SimpleCallback<String>() {
+                .execute(new StringCallback() {
                     @Override
-                    public void onException(Exception e) {
-                        super.onException(e);
-                        callback.onFailure();
-                    }
-
-                    @Override
-                    public void onResponse(SimpleResponse<String, String> response) {
-                        if (response.isSucceed()) {
-                            callback.onSuccessful(response.succeed());
+                    public void onSuccess(Response<String> response) {
+                        if (response.isSuccessful() && response.code() >= 200 && response.code() < 300) {
+                            callback.onSuccessful(response.body());
                         } else {
                             callback.onFailure();
                         }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        callback.onFailure();
                     }
                 });
     }
 
     // 同步网络请求
-    public static SimpleResponse<String, String> execute(String url, String tag) throws Exception {
-        return Kalle.get(url)
+    public static okhttp3.Response execute(String url, Object tag) throws Exception {
+        return OkGo.<String>get(convertSchemeToHttps(url))
                 .tag(tag)
-                .perform(String.class, String.class);
+                .execute();
+    }
+
+    // 检测将http协议转换为https协议
+    public static String convertSchemeToHttps(String url) {
+        return url.replace("http://", "https://");
+    }
+
+    // 取消请求
+    public static void cancel(Object tag) {
+        OkGo.getInstance().cancelTag(tag);
     }
 
     // 通过tags搜索图片

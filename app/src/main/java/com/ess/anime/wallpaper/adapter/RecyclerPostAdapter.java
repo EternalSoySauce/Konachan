@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.widget.ImageView;
 
@@ -12,10 +13,12 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -91,9 +94,15 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
 
                     @Override
                     public void onSuccessful(String body) {
-                        String json = HtmlParserFactory.createParser(mContext, body).getImageDetailJson();
-                        // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
-                        EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
+                        HandlerFuture.ofWork(body)
+                                .applyThen(body1 -> {
+                                    return HtmlParserFactory.createParser(mContext, body1).getImageDetailJson();
+                                })
+                                .runOn(HandlerFuture.IO.UI)
+                                .applyThen(json -> {
+                                    // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
+                                    EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
+                                });
                     }
                 });
             }
@@ -101,14 +110,12 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     private void preloadThumbnail(List<ThumbBean> thumbList) {
-        try {
-            for (ThumbBean thumbBean : thumbList) {
+        for (ThumbBean thumbBean : thumbList) {
+            if (ComponentUtils.isActivityActive((Activity) mContext)) {
                 GlideApp.with(mContext)
                         .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                         .submit();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

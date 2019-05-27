@@ -2,6 +2,11 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
@@ -11,24 +16,20 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.yanzhenjie.kalle.Kalle;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
@@ -67,7 +68,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
         mSwipeRefresh.setRefreshing(false);
         EventBus.getDefault().unregister(this);
     }
@@ -100,6 +101,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     // 滑动加载更多
     @Override
     public void onLoadMoreRequested() {
+        if (!ComponentUtils.isActivityActive(getActivity())) {
+            return;
+        }
+
         String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
@@ -109,14 +114,21 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
             @Override
             public void onSuccessful(String body) {
-                addMoreThumbList(HtmlParserFactory.createParser(getActivity(), body).getThumbListOfPool());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(getActivity(), body1).getThumbListOfPool();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(thumbList -> {
+                            addMoreThumbList(thumbList);
+                        });
             }
         });
     }
 
     //加载更多完成后刷新界面
     private void addMoreThumbList(final List<ThumbBean> newList) {
-        if (getActivity() == null || !mPostAdapter.isLoading()) {
+        if (!ComponentUtils.isActivityActive(getActivity()) || !mPostAdapter.isLoading()) {
             return;
         }
 
@@ -129,6 +141,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     private void getNewPosts(int page) {
+        if (!ComponentUtils.isActivityActive(getActivity())) {
+            return;
+        }
+
         String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
@@ -138,14 +154,21 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
             @Override
             public void onSuccessful(String body) {
-                refreshThumbList(HtmlParserFactory.createParser(getActivity(), body).getThumbListOfPool());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(getActivity(), body1).getThumbListOfPool();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(thumbList -> {
+                            refreshThumbList(thumbList);
+                        });
             }
         });
     }
 
     // 搜索新内容或下拉刷新完成后刷新界面
     private void refreshThumbList(final List<ThumbBean> newList) {
-        if (getActivity() == null || !mSwipeRefresh.isRefreshing()) {
+        if (!ComponentUtils.isActivityActive(getActivity()) || !mSwipeRefresh.isRefreshing()) {
             return;
         }
 
@@ -176,7 +199,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                         thumbBean.imageBean = imageBean;
                         thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].sampleUrl;
-                        if (FileUtils.isImageType(url) && !getActivity().isDestroyed()) {
+                        if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(getActivity())) {
                             GlideApp.with(getActivity())
                                     .load(MyGlideModule.makeGlideUrl(url))
                                     .submit();

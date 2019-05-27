@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -15,8 +17,6 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
-
-import androidx.annotation.Nullable;
 
 public class DownloadImageProgressListener extends BaseDownloadProgressListener<DownloadBean> implements RequestListener<Bitmap> {
 
@@ -31,6 +31,11 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     @Override
     void setData(DownloadBean data) {
         mDownloadBean = data;
+    }
+
+    @Override
+    PendingIntent prepareContentIntent() {
+        return mOperateIntent;
     }
 
     @Override

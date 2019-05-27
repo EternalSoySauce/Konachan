@@ -23,7 +23,9 @@ import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.VideoCache;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.sprylab.android.widget.TextureVideoView;
@@ -104,7 +106,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         Object url = isWebPath() ? MyGlideModule.makeGlideUrl(mMediaPath) : mMediaPath;
         int placeHolder = isWebPath() ? R.drawable.ic_placeholder_detail : 0;
         Activity activity = (Activity) getContext();
-        if (activity != null && !activity.isDestroyed()) {
+        if (ComponentUtils.isActivityActive(activity)) {
             GlideApp.with(getContext())
                     .load(url)
                     .placeholder(placeHolder)
@@ -151,7 +153,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mVideoView.setOnInfoListener(this);
         mVideoView.setOnErrorListener(this);
 
-        String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(mMediaPath) : mMediaPath;
+        String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
         mVideoView.setVideoPath(url);
     }
 

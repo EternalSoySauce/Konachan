@@ -10,29 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
-import com.ess.anime.wallpaper.bean.MsgBean;
-import com.ess.anime.wallpaper.bean.PoolListBean;
-import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
-import com.ess.anime.wallpaper.listener.DoubleTapEffector;
-import com.ess.anime.wallpaper.model.helper.SoundHelper;
-import com.ess.anime.wallpaper.ui.activity.MainActivity;
-import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
-import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.UIUtils;
-import com.yanzhenjie.kalle.Kalle;
-import com.zyyoona7.popup.EasyPopup;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -42,6 +19,30 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
+import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.bean.PoolListBean;
+import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
+import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.listener.DoubleTapEffector;
+import com.ess.anime.wallpaper.model.helper.SoundHelper;
+import com.ess.anime.wallpaper.ui.activity.MainActivity;
+import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
+import com.ess.anime.wallpaper.utils.UIUtils;
+import com.zyyoona7.popup.EasyPopup;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -123,7 +124,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
         EventBus.getDefault().unregister(this);
     }
 
@@ -243,7 +244,14 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
             @Override
             public void onSuccessful(String body) {
-                addMorePoolList(HtmlParserFactory.createParser(mActivity, body).getPoolListList());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(mActivity, body1).getPoolListList();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(poolListList -> {
+                            addMorePoolList(poolListList);
+                        });
             }
         });
     }
@@ -347,7 +355,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
      * @param startPage 加载的起始页
      */
     private void resetAll(int startPage) {
-        Kalle.cancel(TAG);
+        OkHttp.cancel(TAG);
         mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
         mPoolAdapter.setNewData(null);
         mSwipeRefresh.setRefreshing(true);
@@ -365,7 +373,14 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
             @Override
             public void onSuccessful(String body) {
-                refreshPoolList(HtmlParserFactory.createParser(mActivity, body).getPoolListList());
+                HandlerFuture.ofWork(body)
+                        .applyThen(body1 -> {
+                            return HtmlParserFactory.createParser(mActivity, body1).getPoolListList();
+                        })
+                        .runOn(HandlerFuture.IO.UI)
+                        .applyThen(poolListList -> {
+                            refreshPoolList(poolListList);
+                        });
             }
         });
     }
