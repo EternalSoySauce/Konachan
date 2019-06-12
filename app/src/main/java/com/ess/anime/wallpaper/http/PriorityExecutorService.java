@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.http;
 
+import android.util.Log;
+
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -28,6 +30,7 @@ public class PriorityExecutorService extends ThreadPoolExecutor {
 
         @Override
         public int compare(Runnable o1, Runnable o2) {
+            Log.i("rrr","pro "+getPriority(o1));
             return Integer.compare(getPriority(o2), getPriority(o1));
         }
 
