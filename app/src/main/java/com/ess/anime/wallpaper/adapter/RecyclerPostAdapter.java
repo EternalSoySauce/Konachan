@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -25,6 +27,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 
 public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
+
+    private final static int REPLACE_DATA = 1;
 
     private String mHttpTag;
     private OnItemClickListener mItemClickListener;
@@ -60,6 +64,23 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         });
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty() || position == 1) {
+            onBindViewHolder(holder, position);
+        } else {
+            ThumbBean thumbBean = mData.get(position);
+            for (Object payload : payloads) {
+                int operate = (int) payload;
+                if (operate == REPLACE_DATA) {
+                    //尺寸
+                    holder.setText(R.id.tv_size, thumbBean.realSize);
+                }
+            }
+        }
+    }
+
+
     public boolean loadMoreDatas(List<ThumbBean> imageList) {
         return addDatas(mData.size(), imageList);
     }
@@ -83,7 +104,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     private void getImageDetail(List<ThumbBean> thumbList) {
-        for (final ThumbBean thumbBean : thumbList) {
+        for (ThumbBean thumbBean : thumbList) {
             if (thumbBean.imageBean == null) {
                 String url = thumbBean.linkToShow;
                 OkHttp.connect(url, mHttpTag, new OkHttp.OkHttpCallback() {
@@ -112,10 +133,16 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     private void preloadThumbnail(List<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
             if (ComponentUtils.isActivityActive((Activity) mContext)) {
-                GlideApp.with(mContext)
-                        .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
-                        .submit();
+                MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
             }
+        }
+    }
+
+    public void replaceData(ThumbBean newThumb) {
+        int index = mData.indexOf(newThumb);
+        if (index != -1) {
+            mData.set(index, newThumb);
+            notifyItemChanged(index, REPLACE_DATA);
         }
     }
 

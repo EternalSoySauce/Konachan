@@ -29,6 +29,16 @@ public class ImageBean implements Parcelable {
     public ImageBean() {
     }
 
+    public boolean hasPostBean() {
+        if (posts == null || posts.length == 0) {
+            return false;
+        } else {
+            PostBean postBean = posts[0];
+            return !TextUtils.isEmpty(postBean.sampleUrl)
+                    && !TextUtils.equals(postBean.sampleUrl.toLowerCase(), "null");
+        }
+    }
+
     public static ImageBean getImageDetailFromJson(String json) {
         try {
             Gson gson = new Gson();

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 public class OkHttp {
@@ -69,6 +70,7 @@ public class OkHttp {
         builder.readTimeout(15, TimeUnit.SECONDS);
         builder.writeTimeout(15, TimeUnit.SECONDS);
         builder.connectTimeout(15, TimeUnit.SECONDS);
+        builder.dispatcher(new Dispatcher(new PriorityExecutorService()));
         OkGo.getInstance().init(application)
                 .setOkHttpClient(builder.build())
                 .setRetryCount(0);

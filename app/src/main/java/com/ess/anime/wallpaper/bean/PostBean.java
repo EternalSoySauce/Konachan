@@ -110,6 +110,44 @@ public class PostBean implements Parcelable {
     public PostBean() {
     }
 
+    protected PostBean(Parcel in) {
+        id = in.readString();
+        tags = in.readString();
+        createdTime = in.readLong();
+        creatorId = in.readString();
+        author = in.readString();
+        change = in.readString();
+        source = in.readString();
+        score = in.readInt();
+        md5 = in.readString();
+        fileSize = in.readLong();
+        fileUrl = in.readString();
+        isShownInIndex = in.readByte() != 0;
+        previewUrl = in.readString();
+        previewWidth = in.readInt();
+        previewHeight = in.readInt();
+        actualPreviewWidth = in.readInt();
+        actualPreviewHeight = in.readInt();
+        sampleUrl = in.readString();
+        sampleWidth = in.readInt();
+        sampleHeight = in.readInt();
+        sampleFileSize = in.readLong();
+        jpegUrl = in.readString();
+        jpegWidth = in.readInt();
+        jpegHeight = in.readInt();
+        jpegFileSize = in.readLong();
+        rating = in.readString();
+        hasChildren = in.readByte() != 0;
+        parentId = in.readString();
+        status = in.readString();
+        width = in.readInt();
+        height = in.readInt();
+        isHeld = in.readByte() != 0;
+        framesPendingString = in.readString();
+        framesString = in.readString();
+        flagDetail = in.readString();
+    }
+
     /**
      * 用newPost中的非null和0的数据替换掉原有数据
      *
@@ -225,44 +263,6 @@ public class PostBean implements Parcelable {
         if (!TextUtils.isEmpty(newPost.flagDetail)) {
             flagDetail = newPost.flagDetail;
         }
-    }
-
-    protected PostBean(Parcel in) {
-        id = in.readString();
-        tags = in.readString();
-        createdTime = in.readLong();
-        creatorId = in.readString();
-        author = in.readString();
-        change = in.readString();
-        source = in.readString();
-        score = in.readInt();
-        md5 = in.readString();
-        fileSize = in.readLong();
-        fileUrl = in.readString();
-        isShownInIndex = in.readByte() != 0;
-        previewUrl = in.readString();
-        previewWidth = in.readInt();
-        previewHeight = in.readInt();
-        actualPreviewWidth = in.readInt();
-        actualPreviewHeight = in.readInt();
-        sampleUrl = in.readString();
-        sampleWidth = in.readInt();
-        sampleHeight = in.readInt();
-        sampleFileSize = in.readLong();
-        jpegUrl = in.readString();
-        jpegWidth = in.readInt();
-        jpegHeight = in.readInt();
-        jpegFileSize = in.readLong();
-        rating = in.readString();
-        hasChildren = in.readByte() != 0;
-        parentId = in.readString();
-        status = in.readString();
-        width = in.readInt();
-        height = in.readInt();
-        isHeld = in.readByte() != 0;
-        framesPendingString = in.readString();
-        framesString = in.readString();
-        flagDetail = in.readString();
     }
 
     @Override

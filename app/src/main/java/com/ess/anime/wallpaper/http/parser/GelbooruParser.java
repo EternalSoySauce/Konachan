@@ -206,20 +206,6 @@ public class GelbooruParser extends HtmlParser {
         Elements elements = mDoc.getElementsByClass("thumb");
         for (Element e : elements) {
             try {
-//                String id = e.id().replaceAll("[^0-9]", "");
-//                // 根据图片ID用搜索方法获取PostBean详细信息
-//                List<String> tagList = new ArrayList<>();
-//                tagList.add("id:" + id);
-//                String detailUrl = OkHttp.getPostUrl(mContext, 1, tagList);
-//                Response response = OkHttp.execute(detailUrl, PoolPostFragment.TAG);
-//                if (response.isSuccessful()) {
-//                    // todo 异步
-//                    String html = response.body().string();
-//                    ThumbBean thumbBean = HtmlParserFactory.createParser(mContext, html).getThumbList().get(0);
-//                    thumbList.add(thumbBean);
-//                }
-//                response.close();
-
                 String id = e.id().replaceAll("[^0-9]", "");
                 Element img = e.getElementsByClass("preview").first();
                 String thumbUrl = img.attr("src");
@@ -229,7 +215,6 @@ public class GelbooruParser extends HtmlParser {
                 String realSize = e.attr("width") + " x " + e.attr("height");
                 String linkToShow = "https://gelbooru.com/index.php?page=post&s=view&id=" + id;
                 ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
-                //                thumbBean.tempPost = parseTempPost(e);
                 thumbList.add(thumbBean);
             } catch (Exception ex) {
                 ex.printStackTrace();

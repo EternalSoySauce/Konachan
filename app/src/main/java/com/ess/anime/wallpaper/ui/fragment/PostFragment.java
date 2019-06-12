@@ -23,7 +23,6 @@ import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
@@ -450,9 +449,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                         thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].sampleUrl;
                         if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(mActivity)) {
-                            GlideApp.with(mActivity)
-                                    .load(MyGlideModule.makeGlideUrl(url))
-                                    .submit();
+                            MyGlideModule.preloadImage(mActivity, url);
                         }
                     }
                     break;

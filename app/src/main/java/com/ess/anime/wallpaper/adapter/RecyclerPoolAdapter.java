@@ -78,9 +78,7 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
     private void preloadThumbnail(List<PoolListBean> poolList) {
         try {
             for (PoolListBean poolListBean : poolList) {
-                GlideApp.with(mContext)
-                        .load(MyGlideModule.makeGlideUrl(poolListBean.thumbUrl))
-                        .submit();
+                MyGlideModule.preloadImage(mContext, poolListBean.thumbUrl);
             }
         } catch (Exception e) {
             e.printStackTrace();

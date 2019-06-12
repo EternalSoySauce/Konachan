@@ -41,6 +41,7 @@ public class Constants {
     public final static String CHECK_UPDATE = "checkUpdate";  // 检测到新版本后通知 MainActivity
     public final static String CHANGE_BASE_URL = "changeBaseUrl";  // 切换搜图网站后通知 PostFragment和PoolFragment更新adapter
     public final static String GET_IMAGE_DETAIL = "getImageDetail";  // 获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter
+    public final static String RELOAD_DETAIL_BY_ID = "reloadDetailById";  // PoolPostFragment获取到imageBean后重新根据ID请求tempPost
     public final static String LOCAL_FILES_CHANGED = "localFilesChanged";  // 收藏夹本地文件发生变动后通知FullscreenActivity退出页面
     public final static String START_VIDEO = "startVideo";  // FullscreenActivity翻页后通知MultipleMediaLayout播放Video
     public final static String RESUME_VIDEO = "resumeVideo";  // ImageFragment和FullscreenActivity触发onResume()后通知MultipleMediaLayout恢复Video

@@ -6,6 +6,10 @@ import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -31,9 +35,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -79,10 +80,10 @@ public class ImageDetailActivity extends BaseActivity {
         if (savedInstanceState == null) {
             mCurrentPage = getIntent().getIntExtra(Constants.CURRENT_PAGE, 0);
             mThumbBean = getIntent().getParcelableExtra(Constants.THUMB_BEAN);
-            mImageBean = mThumbBean.imageBean;
+            setImageBean(mThumbBean.imageBean);
         } else {
             mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
-            mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
+            setImageBean(savedInstanceState.getParcelable(Constants.IMAGE_BEAN));
             mCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 0);
         }
     }
@@ -125,7 +126,13 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     public void setImageBean(ImageBean imageBean) {
-        mImageBean = imageBean;
+        if (imageBean != null && imageBean.hasPostBean()) {
+            mImageBean = imageBean;
+        }
+    }
+
+    public ImageBean getImageBean() {
+        return mImageBean;
     }
 
     private void showChooseToDownloadDialog() {

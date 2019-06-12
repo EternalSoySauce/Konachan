@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -50,7 +51,7 @@ public class ImageFragment extends BaseFragment {
             mImageBean = savedInstanceState.getParcelable(Constants.IMAGE_BEAN);
         } else {
             mThumbBean = mActivity.getThumbBean();
-            mImageBean = mThumbBean.imageBean;
+            mImageBean = mActivity.getImageBean();
         }
         initView();
         EventBus.getDefault().register(this);
@@ -106,17 +107,33 @@ public class ImageFragment extends BaseFragment {
         if (msgBean.msg.equals(Constants.GET_IMAGE_DETAIL)) {
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
-            if (mThumbBean.checkImageBelongs(imageBean)) {
-                mThumbBean.imageBean = imageBean;
-                mThumbBean.checkToReplacePostData();
-                mImageBean = imageBean;
-                loadMedia();
-                mSwipeRefresh.setRefreshing(false);
-                mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
-                mActivity.setId(imageBean);
-                mActivity.setImageBean(imageBean);
+            if (mThumbBean.checkImageBelongs(imageBean) && imageBean.hasPostBean()) {
+                setImageDetail(imageBean);
             }
         }
+    }
+
+    // PoolPostFragment获取到imageBean后重新根据ID请求tempPost后收到的通知，obj 为 thumbBean
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void reloadDetailById(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.RELOAD_DETAIL_BY_ID)) {
+            ThumbBean thumbBean = (ThumbBean) msgBean.obj;
+            if (TextUtils.equals(mThumbBean.linkToShow, thumbBean.linkToShow)) {
+                mThumbBean = thumbBean;
+                setImageDetail(thumbBean.imageBean);
+            }
+        }
+    }
+
+    private void setImageDetail(ImageBean imageBean) {
+        mThumbBean.imageBean = imageBean;
+        mThumbBean.checkToReplacePostData();
+        mImageBean = imageBean;
+        loadMedia();
+        mSwipeRefresh.setRefreshing(false);
+        mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
+        mActivity.setId(imageBean);
+        mActivity.setImageBean(imageBean);
     }
 
 }
