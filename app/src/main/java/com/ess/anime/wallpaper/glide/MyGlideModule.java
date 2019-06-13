@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.glide;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
@@ -19,15 +20,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 
-import java.io.InputStream;
-
 @GlideModule
 public class MyGlideModule extends AppGlideModule {
 
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         super.registerComponents(context, glide, registry);
-        registry.prepend(PoolListBean.class, InputStream.class, new PoolListModelLoaderFactory(context));
+        registry.prepend(PoolListBean.class, Bitmap.class, new PoolListModelLoaderFactory(context));
     }
 
 

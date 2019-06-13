@@ -62,6 +62,9 @@ dependencies {
     // OkGo (https://github.com/jeasonlzy/okhttp-OkGo)
     implementation 'com.lzy.net:okgo:3.0.4'
 
+    // Volley (https://github.com/google/volley)
+    implementation 'com.android.volley:volley:1.1.1'
+
     // Gson (https://github.com/google/gson)
     implementation 'com.google.code.gson:gson:2.8.5'
 

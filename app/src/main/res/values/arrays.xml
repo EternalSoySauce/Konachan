@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="spinner_list_item">
+    <string-array name="spinner_list_item_search_mode">
         <item>@string/spinner_search_tags</item>
         <item>@string/spinner_search_id</item>
         <item>@string/spinner_search_chinese</item>
         <item>@string/spinner_search_advanced</item>
+    </string-array>
+
+    <string-array name="spinner_list_item_webview_more">
+        <item>@string/spinner_copy_link</item>
+        <item>@string/spinner_share_link</item>
+        <item>@string/spinner_browse_link</item>
     </string-array>
 
     <string-array name="website_list_item">

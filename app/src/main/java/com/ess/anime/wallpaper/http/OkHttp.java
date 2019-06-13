@@ -4,21 +4,21 @@ package com.ess.anime.wallpaper.http;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.Volley;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.model.Response;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Dispatcher;
-import okhttp3.OkHttpClient;
 
 public class OkHttp {
 
@@ -29,80 +29,88 @@ public class OkHttp {
     }
 
     // 需要避免重复访问的url保存在这里
-    private static List<String> mUrlInQueueList = new ArrayList<>();
+    private static List<String> sUrlInQueueList = new ArrayList<>();
 
     // 需要避免进度监听器重复添加的url保存在这里
-    private static HashMap<String, BaseDownloadProgressListener> mUrlInListenerMap = new HashMap<>();
+    private static HashMap<String, BaseDownloadProgressListener> sUrlInListenerMap = new HashMap<>();
 
     // 添加需要避免重复访问的url
     public static void addUrlToDownloadQueue(String url) {
-        mUrlInQueueList.add(url);
+        sUrlInQueueList.add(url);
     }
 
     // url访问成功后即可从队列中移除，以便下次可以再次访问
     public static void removeUrlFromDownloadQueue(String url) {
-        mUrlInQueueList.remove(url);
+        sUrlInQueueList.remove(url);
     }
 
     // 判断当前url是否正在访问中
     public static boolean isUrlInDownloadQueue(String url) {
-        return mUrlInQueueList.contains(url);
+        return sUrlInQueueList.contains(url);
     }
 
     // 添加需要避免进度监听器重复添加的url
     public static void addUrlToProgressListener(String url, BaseDownloadProgressListener listener) {
-        mUrlInListenerMap.put(url, listener);
+        sUrlInListenerMap.put(url, listener);
     }
 
     // 判断当前url是否已经添加到进度监听器中
     public static boolean isUrlInProgressListener(String url) {
-        return mUrlInListenerMap.containsKey(url);
+        return sUrlInListenerMap.containsKey(url);
     }
 
     // 获取url所对应的进度监听器
     public static BaseDownloadProgressListener getProgressListener(String url) {
-        return mUrlInListenerMap.get(url);
+        return sUrlInListenerMap.get(url);
     }
+
+    private static RequestQueue sRequestQueue;
 
     // 初始化全局配置
     public static void initHttpConfig(Application application) {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.readTimeout(15, TimeUnit.SECONDS);
-        builder.writeTimeout(15, TimeUnit.SECONDS);
-        builder.connectTimeout(15, TimeUnit.SECONDS);
-        builder.dispatcher(new Dispatcher(new PriorityExecutorService()));
-        OkGo.getInstance().init(application)
-                .setOkHttpClient(builder.build())
-                .setRetryCount(0);
+//        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+//        builder.readTimeout(15, TimeUnit.SECONDS);
+//        builder.writeTimeout(15, TimeUnit.SECONDS);
+//        builder.connectTimeout(15, TimeUnit.SECONDS);
+
+        sRequestQueue = Volley.newRequestQueue(application);
     }
 
     // 异步网络请求
     public static void connect(String url, Object tag, OkHttpCallback callback) {
-        OkGo.<String>get(convertSchemeToHttps(url))
-                .tag(tag)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        if (response.isSuccessful() && response.code() >= 200 && response.code() < 300) {
-                            callback.onSuccessful(response.body());
-                        } else {
-                            callback.onFailure();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        callback.onFailure();
-                    }
-                });
+        connect(url, tag, callback, Request.Priority.NORMAL);
     }
 
-    // 同步网络请求
-    public static okhttp3.Response execute(String url, Object tag) throws Exception {
-        return OkGo.<String>get(convertSchemeToHttps(url))
-                .tag(tag)
-                .execute();
+    // 异步网络请求带优先级
+    public static void connect(String url, Object tag, OkHttpCallback callback, Request.Priority priority) {
+        PriorityStringRequest request = new PriorityStringRequest(
+                convertSchemeToHttps(url),
+                callback::onSuccessful,
+                error -> callback.onFailure());
+        request.setTag(tag);
+        request.setPriority(priority);
+        sRequestQueue.add(request);
+    }
+
+    // 同步网络请求Html
+    public static String executeHtml(String url, Object tag) throws Exception {
+        RequestFuture<String> future = RequestFuture.newFuture();
+        PriorityStringRequest request = new PriorityStringRequest(convertSchemeToHttps(url), future, future);
+        request.setTag(tag);
+        request.setPriority(Request.Priority.NORMAL);
+        sRequestQueue.add(request);
+        return future.get();
+    }
+
+    // 同步网络请求图片
+    public static Bitmap executeImage(String url, Object tag) throws Exception {
+        RequestFuture<Bitmap> future = RequestFuture.newFuture();
+        PriorityImageRequest request = new PriorityImageRequest(convertSchemeToHttps(url), future,
+                0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.ARGB_8888, future);
+        request.setTag(tag);
+        request.setPriority(Request.Priority.NORMAL);
+        sRequestQueue.add(request);
+        return future.get();
     }
 
     // 检测将http协议转换为https协议
@@ -112,7 +120,7 @@ public class OkHttp {
 
     // 取消请求
     public static void cancel(Object tag) {
-        OkGo.getInstance().cancelTag(tag);
+        sRequestQueue.cancelAll(tag);
     }
 
     // 通过tags搜索图片
@@ -165,6 +173,10 @@ public class OkHttp {
     // 当前网站源的网址
     public static String getBaseUrl(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN_S);
+        String baseUrl = preferences.getString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN_S);
+        if (!Arrays.asList(Constants.BASE_URLS).contains(baseUrl)) {
+            baseUrl = Constants.BASE_URL_KONACHAN_S;
+        }
+        return baseUrl;
     }
 }

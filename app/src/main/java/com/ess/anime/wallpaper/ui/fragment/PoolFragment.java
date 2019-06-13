@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
@@ -253,7 +254,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
                             addMorePoolList(poolListList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //加载更多完成后刷新界面
@@ -382,7 +383,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
                             refreshPoolList(poolListList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //搜索新内容或下拉刷新完成后刷新界面

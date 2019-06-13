@@ -1,17 +1,16 @@
 package com.ess.anime.wallpaper.glide;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+
+import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 
-import java.io.InputStream;
-
-import androidx.annotation.NonNull;
-
-public class PoolListModelLoaderFactory implements ModelLoaderFactory<PoolListBean, InputStream> {
+public class PoolListModelLoaderFactory implements ModelLoaderFactory<PoolListBean, Bitmap> {
 
     private Context mContext;
 
@@ -21,7 +20,7 @@ public class PoolListModelLoaderFactory implements ModelLoaderFactory<PoolListBe
 
     @NonNull
     @Override
-    public ModelLoader<PoolListBean, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
+    public ModelLoader<PoolListBean, Bitmap> build(@NonNull MultiModelLoaderFactory multiFactory) {
         return new PoolListModelLoader(mContext);
     }
 

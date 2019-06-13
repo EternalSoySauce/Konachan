@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
@@ -260,7 +261,7 @@ public class SearchActivity extends BaseActivity {
 
     private void initListPopupWindow() {
         // 选择搜索模式弹窗
-        List<String> searchModeList = Arrays.asList(getResources().getStringArray(R.array.spinner_list_item));
+        List<String> searchModeList = Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_search_mode));
         mSpinnerAdapter = new RecyclerSearchModePopupAdapter(searchModeList);
         mSpinnerAdapter.setSelection(mSelectedPos);
         mSpinnerAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -433,7 +434,7 @@ public class SearchActivity extends BaseActivity {
                 }
                 setCompleteSearchTags();
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     private void setCompleteSearchTags() {

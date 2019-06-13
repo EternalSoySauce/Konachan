@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.glide;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 
@@ -12,13 +13,9 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import okhttp3.Response;
-
-public class PoolListDataFetcher implements DataFetcher<InputStream> {
+public class PoolListDataFetcher implements DataFetcher<Bitmap> {
 
     private Context mContext;
     private PoolListBean mPoolListBean;
@@ -32,46 +29,28 @@ public class PoolListDataFetcher implements DataFetcher<InputStream> {
     }
 
     @Override
-    public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
-        Response response = null;
-        Response thumbResponse = null;
+    public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super Bitmap> callback) {
         try {
             String url = OkHttp.getPoolPostUrl(mContext, mPoolListBean.linkToShow, 1);
-            response = OkHttp.execute(url, mHttpTag);
+            String html = OkHttp.executeHtml(url, mHttpTag);
             if (mIsCancelled) {
                 return;
-            } else if (response.isSuccessful()) {
-                String html = response.body().string();
+            } else {
                 List<ThumbBean> thumbList = HtmlParserFactory.createParser(mContext, html).getThumbListOfPool();
                 if (thumbList.isEmpty()) {
                     return;
                 }
-                thumbResponse = OkHttp.execute(thumbList.get(0).thumbUrl, mHttpTag);
+                Bitmap bitmap = OkHttp.executeImage(thumbList.get(0).thumbUrl, mHttpTag);
                 if (mIsCancelled) {
                     return;
-                } else if (thumbResponse.isSuccessful()) {
-                    callback.onDataReady(thumbResponse.body().byteStream());
                 } else {
-                    onResponseFailed(callback, thumbResponse);
+                    callback.onDataReady(bitmap);
                 }
-            } else {
-                onResponseFailed(callback, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             callback.onLoadFailed(e);
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-            if (thumbResponse != null) {
-                thumbResponse.close();
-            }
         }
-    }
-
-    private void onResponseFailed(DataCallback callback, Response response) {
-        callback.onLoadFailed(new IOException("Request failed with code: " + response.code()));
     }
 
     @Override
@@ -87,8 +66,8 @@ public class PoolListDataFetcher implements DataFetcher<InputStream> {
 
     @NonNull
     @Override
-    public Class<InputStream> getDataClass() {
-        return InputStream.class;
+    public Class<Bitmap> getDataClass() {
+        return Bitmap.class;
     }
 
     @NonNull

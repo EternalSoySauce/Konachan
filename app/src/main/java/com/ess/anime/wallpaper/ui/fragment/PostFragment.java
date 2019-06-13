@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
@@ -250,7 +252,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                         });
 
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //加载更多完成后刷新界面
@@ -276,11 +278,14 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     @OnClick(R.id.fab_random)
     void searchRandom() {
-        // todo gelbooru random
         mFloatingMenu.close(true);
-        Intent intent = new Intent();
-        intent.putExtra(Constants.SEARCH_TAG, "order:random");
-        onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
+        if (TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_GELBOORU)) {
+            Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.SEARCH_TAG, "order:random");
+            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
+        }
     }
 
     private void changeFromPage(int page) {
@@ -384,7 +389,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                             refreshThumbList(thumbList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //搜索新内容或下拉刷新完成后刷新界面
@@ -432,7 +437,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                     loadNothing();
                 }
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)

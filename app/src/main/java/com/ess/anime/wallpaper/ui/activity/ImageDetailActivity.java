@@ -6,6 +6,10 @@ import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -31,9 +35,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -125,9 +126,9 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     public void setImageBean(ImageBean imageBean) {
-//        if (imageBean != null && imageBean.hasPostBean()) {
+        if (imageBean != null && imageBean.hasPostBean()) {
             mImageBean = imageBean;
-//        }
+        }
     }
 
     public ImageBean getImageBean() {

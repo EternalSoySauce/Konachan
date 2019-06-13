@@ -5,6 +5,8 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -195,6 +197,20 @@ public class ComponentUtils {
      */
     public static String getAndroidId(Context context) {
         return Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * 将字符串复制到剪贴板
+     *
+     * @param context 上下文
+     * @param str     字符串
+     */
+    public static void setClipString(Context context, String str) {
+        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (manager != null) {
+            ClipData clip = ClipData.newPlainText("clip", str);
+            manager.setPrimaryClip(clip);
+        }
     }
 
     public static boolean isActivityActive(Activity activity) {

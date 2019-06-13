@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPostAdapter;
@@ -17,7 +18,6 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.PriorityExecutorService;
 import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
@@ -35,7 +35,6 @@ import java.util.List;
 public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
     public final static String TAG = PoolPostFragment.class.getName();
-    public final static String TAG_PRIORITY = TAG + PriorityExecutorService.PRIORITY_KEY + "1"; // 用作OkHttp优先级排序
 
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRvPosts;
@@ -71,7 +70,6 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     public void onDestroyView() {
         super.onDestroyView();
         OkHttp.cancel(TAG);
-        OkHttp.cancel(TAG_PRIORITY);
         mSwipeRefresh.setRefreshing(false);
         EventBus.getDefault().unregister(this);
     }
@@ -126,7 +124,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                             addMoreThumbList(thumbList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     //加载更多完成后刷新界面
@@ -166,7 +164,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                             refreshThumbList(thumbList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     // 搜索新内容或下拉刷新完成后刷新界面
@@ -220,10 +218,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         List<String> tagList = new ArrayList<>();
         tagList.add("id:" + thumbBean.id);
         String url = OkHttp.getPostUrl(getActivity(), 1, tagList);
-        OkHttp.connect(url, TAG_PRIORITY, new OkHttp.OkHttpCallback() {
+        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
-                OkHttp.connect(url, TAG_PRIORITY, this);
+                OkHttp.connect(url, TAG, this, Request.Priority.HIGH);
             }
 
             @Override
@@ -241,7 +239,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                             EventBus.getDefault().post(new MsgBean(Constants.RELOAD_DETAIL_BY_ID, thumbBean1));
                         });
             }
-        });
+        }, Request.Priority.HIGH);
     }
 
     private void checkImageBean(ThumbBean thumbBean) {

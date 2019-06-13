@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
 import com.ess.anime.wallpaper.bean.CommentBean;
@@ -131,7 +132,7 @@ public class CommentFragment extends BaseFragment {
                             setCommentList(commentList);
                         });
             }
-        });
+        }, Request.Priority.IMMEDIATE);
     }
 
     // 获取到评论列表后刷新界面
