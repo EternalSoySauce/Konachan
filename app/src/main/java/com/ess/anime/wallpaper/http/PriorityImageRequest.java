@@ -5,7 +5,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
@@ -34,7 +33,7 @@ public class PriorityImageRequest extends ImageRequest {
     }
 
     @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
+    public Map<String, String> getHeaders() {
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36");
         return headers;

@@ -444,7 +444,7 @@ public class FileUtils {
     public static boolean isImageType(String filePath) {
         String extension = getFileExtension(filePath).toLowerCase();
         return extension.equals("bmp") || extension.equals("jpg") || extension.equals("jpeg")
-                || extension.equals("png") || extension.equals("gif");
+                || extension.equals("png") || extension.equals("gif") || extension.equals("webp");
     }
 
     /**

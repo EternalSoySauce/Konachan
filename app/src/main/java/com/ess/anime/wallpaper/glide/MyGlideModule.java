@@ -40,6 +40,15 @@ public class MyGlideModule extends AppGlideModule {
         return new GlideUrl(imgUrl, headers);
     }
 
+    // P站等下载高清大图需要给服务器发送一个“Referer”参数，用来告诉服务器你是从哪个网址进入图片链接的
+    public static GlideUrl makeGlideUrlWithReferer(String imgUrl, String webUrl) {
+        LazyHeaders headers = new LazyHeaders.Builder()
+                .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36")
+                .addHeader("Referer", webUrl)
+                .build();
+        return new GlideUrl(imgUrl, headers);
+    }
+
     public static void preloadImage(Context context, String oriUrl) {
         GlideApp.with(context)
                 .load(MyGlideModule.makeGlideUrl(oriUrl))

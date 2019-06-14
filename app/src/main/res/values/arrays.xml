@@ -12,6 +12,7 @@
         <item>@string/spinner_copy_link</item>
         <item>@string/spinner_share_link</item>
         <item>@string/spinner_browse_link</item>
+        <item>@string/nav_collection</item>
     </string-array>
 
     <string-array name="website_list_item">

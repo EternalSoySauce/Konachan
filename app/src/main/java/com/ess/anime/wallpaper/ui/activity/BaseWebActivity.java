@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextPaint;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -24,8 +28,10 @@ import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerWebviewMoreAdapter;
 import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -35,6 +41,7 @@ import com.just.agentweb.AgentWeb;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -97,53 +104,92 @@ public abstract class BaseWebActivity extends BaseActivity {
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
 
-        mAgentWeb.getWebCreator().getWebView().setOnLongClickListener(v -> {
-            // TODO sauceNAO长按下载图片
-            WebView.HitTestResult result = ((WebView) v).getHitTestResult();
+        WebView webView = mAgentWeb.getWebCreator().getWebView();
+        webView.setOnLongClickListener(v -> {
+            WebView.HitTestResult result = webView.getHitTestResult();
             int type = result.getType();
             if (type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
                     || type == WebView.HitTestResult.IMAGE_TYPE) {
                 String imgUrl = result.getExtra();
-                if (imgUrl == null) {
+                if (!TextUtils.isEmpty(imgUrl)) {
+                    Log.i("rrr", "" + type + "   " + imgUrl);
+                    saveImage(imgUrl, webView.getUrl());
                     return true;
                 }
-
-                if (imgUrl.startsWith("http")) {
-                    try {
-                        URL url = new URL(imgUrl);
-                        String fileName = url.getFile();
-                        int index = fileName.lastIndexOf("/");
-                        if (index != -1) {
-                            fileName = fileName.substring(index + 1);
-                        }
-                        Log.i("rrr", "" + type + "   " + imgUrl + "   " + fileName);
-                        String finalFileName = fileName;
-                        GlideApp.with(getApplicationContext())
-                                .asFile()
-                                .load(imgUrl)
-                                .listener(new RequestListener<File>() {
-                                    @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
-                                        Toast.makeText(BaseWebActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
-                                        Log.i("rrr","fileName "+resource.getName());
-                                        FileUtils.copyFile(resource, new File(Constants.IMAGE_DIR, finalFileName));
-                                        Toast.makeText(BaseWebActivity.this, "下载成功", Toast.LENGTH_SHORT).show();
-                                        return false;
-                                    }
-                                }).submit();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "下载失败", Toast.LENGTH_SHORT).show();
-                    }
-                }
             }
-            return true;
+            return false;
         });
+    }
+
+    private void saveImage(String imgUrl, String webUrl) {
+        Object objToLoad = null;
+        String fileName = "";
+        if (imgUrl.startsWith("http")) {
+            // 普通http协议图片
+            try {
+                URL url = new URL(imgUrl);
+                fileName = url.getPath();
+                int index = fileName.lastIndexOf("/");
+                if (index != -1) {
+                    fileName = fileName.substring(index + 1);
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            objToLoad = MyGlideModule.makeGlideUrlWithReferer(imgUrl, webUrl);
+        } else if (imgUrl.startsWith("data:image/") && imgUrl.contains(";base64,")) {
+            // base64图片
+            // TODO 下载P站base64图片
+            int index = imgUrl.indexOf(",");
+            String base64 = imgUrl.substring(index + 1);
+            objToLoad = Base64.decode(base64, Base64.DEFAULT);
+        }
+
+        final String[] finalFileName = {fileName};
+        GlideApp.with(getApplicationContext())
+                .asFile()
+                .load(objToLoad)
+                .listener(new RequestListener<File>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
+                        toastSaveFailed();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
+                        if (!FileUtils.isMediaType(finalFileName[0])) {
+                            finalFileName[0] = resource.getName() + ".jpg";
+                        }
+                        File file = new File(Constants.IMAGE_DIR, finalFileName[0]);
+                        FileUtils.copyFile(resource, file);
+                        BitmapUtils.insertToMediaStore(BaseWebActivity.this, file);
+                        toastSaveSuccessfully();
+                        return false;
+                    }
+                }).submit();
+    }
+
+    private void toastSaveSuccessfully() {
+        runOnUiThread(() -> {
+            Toast toast = new Toast(this);
+
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_toast_save_image_successfully, null);
+            TextView tvLink = view.findViewById(R.id.tv_link);
+            tvLink.setMovementMethod(LinkMovementMethod.getInstance());
+            tvLink.setOnClickListener(v -> {
+                toast.cancel();
+                startActivity(new Intent(this, CollectionActivity.class));
+            });
+
+            toast.setView(view);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.show();
+        });
+    }
+
+    private void toastSaveFailed() {
+        runOnUiThread(() -> Toast.makeText(this, R.string.save_failed, Toast.LENGTH_SHORT).show());
     }
 
     private void initListPopupWindow() {
@@ -151,7 +197,9 @@ public abstract class BaseWebActivity extends BaseActivity {
         List<String> searchModeList = Arrays.asList(getResources().getStringArray(R.array.spinner_list_item_webview_more));
         RecyclerWebviewMoreAdapter adapter = new RecyclerWebviewMoreAdapter(searchModeList);
         adapter.setOnItemClickListener((adapter1, view, position) -> {
-            String url = mAgentWeb.getWebCreator().getWebView().getUrl();
+            WebView webView = mAgentWeb.getWebCreator().getWebView();
+            String title = webView.getTitle();
+            String url = webView.getUrl();
             switch (position) {
                 case 0: // 复制链接
                     ComponentUtils.setClipString(this, url);
@@ -159,8 +207,12 @@ public abstract class BaseWebActivity extends BaseActivity {
                     break;
 
                 case 1: // 分享链接
+                    String share = url;
+                    if (!TextUtils.isEmpty(title)) {
+                        share = title + "\n" + url;
+                    }
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, share);
                     shareIntent.setType("text/plain");
                     startActivity(Intent.createChooser(shareIntent, getString(R.string.share_title)));
                     break;
@@ -168,6 +220,10 @@ public abstract class BaseWebActivity extends BaseActivity {
                 case 2: // 用浏览器打开
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+                    break;
+
+                case 3: // 打开我的收藏
+                    startActivity(new Intent(this, CollectionActivity.class));
                     break;
             }
             mPopup.dismiss();

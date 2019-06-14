@@ -221,13 +221,14 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param context 上下文
      */
     public static void showFeedbackDialog(Context context) {
+        String email = "1018717197@qq.com";
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_feedback_title)
-                .content(R.string.dialog_feedback_msg)
+                .content(context.getString(R.string.dialog_feedback_msg, email))
                 .negativeText(R.string.dialog_feedback_cancel)
                 .positiveText(R.string.dialog_feedback_sure)
                 .onPositive((dialog1, which) -> {
-                    Uri uri = Uri.parse("mailto:" + "qiaolimama@gmail.com");
+                    Uri uri = Uri.parse("mailto:" + email);
                     Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                     intent.putExtra(Intent.EXTRA_SUBJECT, "["
                             + ComponentUtils.getVersionName(context)

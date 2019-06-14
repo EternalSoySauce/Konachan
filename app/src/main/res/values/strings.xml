@@ -14,6 +14,9 @@
     <string name="cannot_set_as_wallpaper">Can not set as wallpaper</string>
     <string name="cannot_search_random">The current website cannot be randomly viewed</string>
     <string name="copied_link">Copied link</string>
+    <string name="save_successfully">Save successfully</string>
+    <string name="save_failed">Save failed</string>
+    <string name="click_to_view"><u>Click to view</u></string>
 
     <!-- Notification -->
     <string name="download_started">%s Start download</string>
@@ -156,7 +159,7 @@
     <string name="dialog_update_update">Update</string>
     <string name="dialog_feedback_title">Feedback</string>
     <string name="dialog_feedback_msg">If you have any questions or have any good comments or
-        suggestions, you can contact us by email.\nEmail: qiaolimama@gmail.com</string>
+        suggestions, you can contact us by email.\nEmail: %s</string>
     <string name="dialog_feedback_sure">Send</string>
     <string name="dialog_feedback_cancel">Cancel</string>
     <string name="dialog_saucenao_help">Is an online image reverse search tool. Name from Source? Now! Looking for a source? Find it now! \n\n By uploading a local image or typing the url address of an image, similarity matching is performed on multiple databases on the Internet to find the requested image, its related information, and other similar images, which has become a mainstream image search tool.</string>

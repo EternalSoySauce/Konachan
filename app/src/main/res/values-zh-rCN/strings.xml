@@ -14,6 +14,9 @@
     <string name="cannot_set_as_wallpaper">无法设置为壁纸</string>
     <string name="cannot_search_random">当前网站源无法随机看图</string>
     <string name="copied_link">已复制链接</string>
+    <string name="save_successfully">保存成功</string>
+    <string name="save_failed">保存失败</string>
+    <string name="click_to_view"><u>点击查看</u></string>
 
     <!-- Notification -->
     <string name="download_started">%s开始下载</string>
@@ -137,7 +140,7 @@
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
     <string name="dialog_feedback_title">反馈建议</string>
-    <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系。\n邮箱: qiaolimama@gmail.com</string>
+    <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系。\n邮箱: %s</string>
     <string name="dialog_feedback_sure">发送</string>
     <string name="dialog_feedback_cancel">取消</string>
     <string name="dialog_saucenao_help">是一个线上图片逆向搜索工具。名称来源于英文Source? Now! 找来源？立刻就找到！\n\n通过上传本地图片或键入图片的url地址，在互联网上的多个数据库进行相似度匹配从而找到所求图片、其相关信息以及相似的其他图片，目前已经成为主流的图片搜索工具。</string>
