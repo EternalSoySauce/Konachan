@@ -4,21 +4,22 @@ package com.ess.anime.wallpaper.http;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
-import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
+import com.lzy.okgo.OkGo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 public class OkHttp {
 
@@ -68,11 +69,16 @@ public class OkHttp {
 
     // 初始化全局配置
     public static void initHttpConfig(Application application) {
-//        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-//        builder.readTimeout(15, TimeUnit.SECONDS);
-//        builder.writeTimeout(15, TimeUnit.SECONDS);
-//        builder.connectTimeout(15, TimeUnit.SECONDS);
+        // 同步请求和下载文件用OkGo
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.readTimeout(15, TimeUnit.SECONDS);
+        builder.writeTimeout(15, TimeUnit.SECONDS);
+        builder.connectTimeout(15, TimeUnit.SECONDS);
+        OkGo.getInstance().init(application)
+                .setOkHttpClient(builder.build())
+                .setRetryCount(0);
 
+        // 异步请求用Volley
         sRequestQueue = Volley.newRequestQueue(application);
     }
 
@@ -92,25 +98,12 @@ public class OkHttp {
         sRequestQueue.add(request);
     }
 
-    // 同步网络请求Html
-    public static String executeHtml(String url, Object tag) throws Exception {
-        RequestFuture<String> future = RequestFuture.newFuture();
-        PriorityStringRequest request = new PriorityStringRequest(convertSchemeToHttps(url), future, future);
-        request.setTag(tag);
-        request.setPriority(Request.Priority.NORMAL);
-        sRequestQueue.add(request);
-        return future.get();
-    }
-
-    // 同步网络请求图片
-    public static Bitmap executeImage(String url, Object tag) throws Exception {
-        RequestFuture<Bitmap> future = RequestFuture.newFuture();
-        PriorityImageRequest request = new PriorityImageRequest(convertSchemeToHttps(url), future,
-                0, 0, ImageView.ScaleType.CENTER_INSIDE, Bitmap.Config.ARGB_8888, future);
-        request.setTag(tag);
-        request.setPriority(Request.Priority.NORMAL);
-        sRequestQueue.add(request);
-        return future.get();
+    // 同步网络请求
+    // 这里用OkGo进行同步请求，用Volley的话cancel同步请求无效
+    public static okhttp3.Response execute(String url, Object tag) throws Exception {
+        return OkGo.<String>get(convertSchemeToHttps(url))
+                .tag(tag)
+                .execute();
     }
 
     // 检测将http协议转换为https协议
@@ -121,6 +114,7 @@ public class OkHttp {
     // 取消请求
     public static void cancel(Object tag) {
         sRequestQueue.cancelAll(tag);
+        OkGo.getInstance().cancelTag(tag);
     }
 
     // 通过tags搜索图片

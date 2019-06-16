@@ -12,15 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
@@ -28,6 +25,7 @@ import com.ess.anime.wallpaper.utils.UIUtils;
 import com.github.chrisbanes.photoview.OnOutsidePhotoTapListener;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.yanzhenjie.permission.runtime.Permission;
 import com.zjca.qqdialog.ActionSheetDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +34,9 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -68,6 +69,10 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         mCollectionList = ImageDataHolder.getCollectionList();
         mCurrentPos = ImageDataHolder.getCollectionCurrentItem();
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
+        if (mCollectionList.isEmpty() || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+            finish();
+            return;
+        }
 
         initViews();
         initFullScreenViewPager();

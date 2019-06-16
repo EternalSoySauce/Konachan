@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
@@ -20,6 +17,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
 public class ImageFragment extends BaseFragment {
@@ -81,6 +80,7 @@ public class ImageFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        mMediaLayout.reset();
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
     }

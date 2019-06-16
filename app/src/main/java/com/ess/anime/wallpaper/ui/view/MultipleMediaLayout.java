@@ -10,9 +10,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -33,17 +30,24 @@ import com.sprylab.android.widget.TextureVideoView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 
 public class MultipleMediaLayout extends FrameLayout implements RequestListener<Drawable>,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener {
 
-    private PhotoView mPhotoView;
-    private TextureVideoView mVideoView;
-    private MediaPlayer mMediaPlayer;
+    @BindView(R.id.photo_view)
+    PhotoView mPhotoView;
+    @BindView(R.id.video_view)
+    TextureVideoView mVideoView;
 
     private String mMediaPath;
     private boolean mAutoPlay;
+    private MediaPlayer mMediaPlayer;
 
     public MultipleMediaLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -56,8 +60,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mPhotoView = findViewById(R.id.photo_view);
-        mVideoView = findViewById(R.id.video_view);
+        ButterKnife.bind(this);
     }
 
 

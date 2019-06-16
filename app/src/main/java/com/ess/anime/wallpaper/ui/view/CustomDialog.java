@@ -173,7 +173,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      */
     public static void showChooseToDownloadDialog(Context context, List<DownloadBean> itemList, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
-                .title(R.string.save_image)
+                .title(R.string.save)
                 .negativeText(R.string.dialog_download_cancel)
                 .positiveText(R.string.dialog_download_sure)
                 .items(itemList)

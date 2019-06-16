@@ -7,17 +7,17 @@
         <item
             android:id="@+id/nav_post"
             android:icon="@drawable/ic_nav_menu_post"
-            android:title="@string/nav_post"/>
+            android:title="@string/nav_post" />
 
         <item
             android:id="@+id/nav_pool"
             android:icon="@drawable/ic_nav_menu_pool"
-            android:title="@string/nav_pool"/>
+            android:title="@string/nav_pool" />
 
         <item
             android:id="@+id/nav_collection"
             android:icon="@drawable/ic_nav_menu_collection"
-            android:title="@string/nav_collection"/>
+            android:title="@string/nav_collection" />
     </group>
 
     <group
@@ -27,17 +27,17 @@
         <item
             android:id="@+id/nav_sauce_nao"
             android:icon="@drawable/ic_nav_menu_sauce_nao"
-            android:title="@string/nav_sauce_nao"/>
+            android:title="@string/nav_sauce_nao" />
 
         <item
             android:id="@+id/nav_trace_moe"
             android:icon="@drawable/ic_nav_menu_trace_moe"
-            android:title="@string/nav_trace_moe"/>
+            android:title="@string/nav_trace_moe" />
 
         <item
             android:id="@+id/nav_game"
             android:icon="@drawable/ic_nav_menu_game"
-            android:title="@string/nav_game"/>
+            android:title="@string/nav_game" />
     </group>
 
     <group
@@ -45,13 +45,18 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/nav_github"
+            android:icon="@drawable/ic_nav_menu_github"
+            android:title="@string/nav_github" />
+
+        <item
             android:id="@+id/nav_feedback"
             android:icon="@drawable/ic_nav_menu_feedback"
-            android:title="@string/nav_feedback"/>
+            android:title="@string/nav_feedback" />
 
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_nav_menu_setting"
-            android:title="@string/nav_setting"/>
+            android:title="@string/nav_setting" />
     </group>
 </menu>

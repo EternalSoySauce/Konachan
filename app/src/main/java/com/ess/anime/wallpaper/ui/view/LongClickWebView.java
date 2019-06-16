@@ -2,7 +2,6 @@ package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -11,9 +10,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +28,11 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.zyyoona7.popup.EasyPopup;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -42,7 +43,7 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
     private int mTouchX;
     private int mTouchY;
     private EasyPopup mPopupPage;
-    private TextView textView;
+    private TextView mTvSave;
 
     public LongClickWebView(Context context) {
         super(context);
@@ -59,7 +60,7 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         mTouchX = (int) event.getX();
-        mTouchY = (int) event.getY();
+        mTouchY = (int) event.getY() + QMUIStatusBarHelper.getStatusbarHeight(getContext());
         return super.onInterceptTouchEvent(event);
     }
 
@@ -76,18 +77,13 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
     }
 
     private void initPopupPage() {
-        textView = new TextView(getContext());
-        textView.setLayoutParams(new FrameLayout.LayoutParams(100, 90));
-        textView.setBackgroundColor(Color.WHITE);
-        textView.setTextColor(Color.BLACK);
-        textView.setText("保存图片");
-        textView.setPaddingRelative(30, 30, 30, 30);
-
         mPopupPage = EasyPopup.create()
-                .setContentView(textView)
+                .setContentView(getContext(), R.layout.layout_popup_webview_long_click)
                 .setBackgroundDimEnable(true)
                 .setDimValue(0.4f)
                 .apply();
+
+        mTvSave = mPopupPage.findViewById(R.id.tv_save);
     }
 
     @Override
@@ -107,7 +103,7 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
 
     private void showPopup(String imgUrl, String webUrl) {
         mPopupPage.showAtLocation(this, Gravity.START | Gravity.TOP, mTouchX, mTouchY);
-        textView.setOnClickListener(v -> {
+        mTvSave.setOnClickListener(v -> {
             mPopupPage.dismiss();
             saveImage(imgUrl, webUrl);
         });
@@ -166,6 +162,19 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
     private void toastSaveSuccessfully() {
         post(() -> {
             Toast toast = new Toast(getContext());
+            try {
+                // 使Toast可接收点击事件
+                Field field = toast.getClass().getDeclaredField("mTN");
+                field.setAccessible(true);
+                Object mTN = field.get(toast);
+                field = mTN.getClass().getDeclaredField("mParams");
+                field.setAccessible(true);
+                WindowManager.LayoutParams mParams = (WindowManager.LayoutParams) field.get(mTN);
+                mParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_toast_save_image_successfully, null);
             TextView tvLink = view.findViewById(R.id.tv_link);

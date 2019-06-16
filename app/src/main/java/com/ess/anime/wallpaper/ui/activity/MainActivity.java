@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -135,6 +136,11 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.nav_game:
                         startActivity(new Intent(MainActivity.this, GameActivity.class));
+                        break;
+                    case R.id.nav_github:
+                        String url = "https://github.com/EternalSoySauce/Konachan";
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(Intent.createChooser(intent, getString(R.string.browse_title)));
                         break;
                     case R.id.nav_feedback:
                         CustomDialog.showFeedbackDialog(MainActivity.this);

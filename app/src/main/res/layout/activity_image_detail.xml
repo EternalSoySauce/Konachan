@@ -53,7 +53,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:padding="15dp"
-                android:text="@string/save_image"
+                android:text="@string/save"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp" />
         </RelativeLayout>

@@ -4,11 +4,9 @@ import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.text.TextUtils;
 import android.view.WindowManager;
 
 import com.ess.anime.wallpaper.R;
@@ -22,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.AppOpsManagerCompat;
-import androidx.core.content.ContextCompat;
 
 public class PermissionHelper {
 
@@ -37,18 +33,19 @@ public class PermissionHelper {
      * @return 是否拥有该权限
      */
     public static boolean hasPermissions(Context context, @NonNull String... permissions) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
-        for (String permission : permissions) {
-            int result = ContextCompat.checkSelfPermission(context, permission);
-            if (result == PackageManager.PERMISSION_DENIED) return false;
-
-            String op = AppOpsManagerCompat.permissionToOp(permission);
-            if (TextUtils.isEmpty(op)) continue;
-            result = AppOpsManagerCompat.noteProxyOp(context, op, context.getPackageName());
-            if (result != AppOpsManagerCompat.MODE_ALLOWED) return false;
-
-        }
-        return true;
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
+//        for (String permission : permissions) {
+//            int result = ContextCompat.checkSelfPermission(context, permission);
+//            if (result == PackageManager.PERMISSION_DENIED) return false;
+//
+//            String op = AppOpsManagerCompat.permissionToOp(permission);
+//            if (TextUtils.isEmpty(op)) continue;
+//            result = AppOpsManagerCompat.noteProxyOp(context, op, context.getPackageName());
+//            if (result != AppOpsManagerCompat.MODE_ALLOWED) return false;
+//
+//        }
+//        return true;
+        return AndPermission.hasPermissions(context, permissions);
     }
 
     /**

@@ -110,7 +110,7 @@ public abstract class BaseWebActivity extends BaseActivity {
 
                 case 2: // 用浏览器打开
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+                    startActivity(Intent.createChooser(intent, getString(R.string.browse_title)));
                     break;
 
                 case 3: // 打开我的收藏

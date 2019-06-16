@@ -12,7 +12,7 @@
     <string name="already_first_image">已經是第一張了</string>
     <string name="already_last_image">已經是最後一張了</string>
     <string name="cannot_set_as_wallpaper">無法設置為壁紙</string>
-    <string name="cannot_search_random">當前網站源無法隨機看圖</string>
+    <string name="cannot_search_random">當前網站源不支持隨機看圖</string>
     <string name="copied_link">已復制鏈接</string>
     <string name="save_successfully">保存成功</string>
     <string name="save_failed">保存失敗</string>
@@ -35,10 +35,11 @@
     <string name="nav_feedback">反饋建議</string>
     <string name="nav_setting">設置與幫助</string>
     <string name="nav_game">拼圖遊戲</string>
+    <string name="nav_github">Github主頁</string>
     <string name="feedback_title">發送郵件通過</string>
 
     <!-- Widget -->
-    <string name="save_image">保存</string>
+    <string name="save">保存</string>
     <string name="fab_home">回到首頁</string>
     <string name="fab_random">隨機看圖</string>
     <string name="currently_loaded">當前加載頁碼:&#160;</string>
@@ -102,6 +103,7 @@
     <string name="spinner_share_link">分享鏈接</string>
     <string name="spinner_browse_link">用瀏覽器打開</string>
     <string name="browse_title">打開方式</string>
+    <string name="save_image">保存圖片</string>
 
     <!-- Surface View -->
     <string name="game_current_step">步數：%d</string>
