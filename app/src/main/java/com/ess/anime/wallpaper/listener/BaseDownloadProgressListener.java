@@ -30,7 +30,6 @@ public abstract class BaseDownloadProgressListener<T> {
         setData(data);
         mContext = context;
         createReloadPendingIntent(intent);
-        createOperatePendingIntent();
         createNotifyChannel();
         prepareNotification();
     }
@@ -95,6 +94,7 @@ public abstract class BaseDownloadProgressListener<T> {
 
     // 下载完成
     public void onFinish() {
+        createOperatePendingIntent();
         String finish = mContext.getString(R.string.download_finished, mFileAvailable);
         mNotifyBuilder.setProgress(100, 100, false);
         mNotifyBuilder.setSmallIcon(R.drawable.ic_notification_download_succeed);

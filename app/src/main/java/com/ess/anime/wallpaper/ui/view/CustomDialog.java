@@ -226,6 +226,12 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .title(R.string.dialog_feedback_title)
                 .content(context.getString(R.string.dialog_feedback_msg, email))
                 .negativeText(R.string.dialog_feedback_cancel)
+                .neutralText(R.string.dialog_feedback_neutral)
+                .onNeutral((dialog12, which) -> {
+                    String url = "https://github.com/EternalSoySauce/Konachan/issues";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.browse_title)));
+                })
                 .positiveText(R.string.dialog_feedback_sure)
                 .onPositive((dialog1, which) -> {
                     Uri uri = Uri.parse("mailto:" + email);

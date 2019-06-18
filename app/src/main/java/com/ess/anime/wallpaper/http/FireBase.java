@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.http;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 
 import com.ess.anime.wallpaper.bean.ApkBean;
@@ -35,6 +36,7 @@ public class FireBase {
         return FirebaseHolder.instance;
     }
 
+    public final static String UPDATE_FILE_URL = "https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/latest_version";
     public final static String UPDATE_FILE_NAME = "latest_version";
     private FirebaseStorage mStorage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef = mStorage.getReference();
@@ -50,42 +52,64 @@ public class FireBase {
     private FireBase() {
     }
 
+//    public void checkUpdate() {
+//        cancelCheckUpdate();
+//
+//        StorageReference islandRef = mStorageRef.child(UPDATE_FILE_NAME);
+//        mCheckUpdateTask = islandRef.getStream();
+//        mCheckUpdateTask.addOnSuccessListener(new OnSuccessListener<StreamDownloadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(final StreamDownloadTask.TaskSnapshot taskSnapshot) {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        String json = FileUtils.streamToString(taskSnapshot.getStream());
+//                        FileUtils.stringToFile(json, new File(mContext.getExternalFilesDir(null), UPDATE_FILE_NAME));
+//                        ApkBean apkBean = ApkBean.getApkDetailFromJson(mContext, json);
+//                        if (apkBean.versionCode > ComponentUtils.getVersionCode(mContext)) {
+//                            // 发送通知到 MainActivity
+//                            EventBus.getDefault().postSticky(new MsgBean(Constants.CHECK_UPDATE, apkBean));
+//                        }
+//                    }
+//                }).start();
+//            }
+//        })/*.addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                if (exception instanceof StorageException
+//                        && ((StorageException) exception).getErrorCode() == StorageException.ERROR_CANCELED) {
+//                    return;
+//                }
+//            }
+//        })*/;
+//    }
+
     public void checkUpdate() {
         cancelCheckUpdate();
 
-        StorageReference islandRef = mStorageRef.child(UPDATE_FILE_NAME);
-        mCheckUpdateTask = islandRef.getStream();
-        mCheckUpdateTask.addOnSuccessListener(new OnSuccessListener<StreamDownloadTask.TaskSnapshot>() {
+        OkHttp.connect(UPDATE_FILE_URL, UPDATE_FILE_URL, new OkHttp.OkHttpCallback() {
             @Override
-            public void onSuccess(final StreamDownloadTask.TaskSnapshot taskSnapshot) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String json = FileUtils.streamToString(taskSnapshot.getStream());
-                        FileUtils.stringToFile(json, new File(mContext.getExternalFilesDir(null), UPDATE_FILE_NAME));
-                        ApkBean apkBean = ApkBean.getApkDetailFromJson(mContext, json);
-                        if (apkBean.versionCode > ComponentUtils.getVersionCode(mContext)) {
-                            // 发送通知到 MainActivity
-                            EventBus.getDefault().postSticky(new MsgBean(Constants.CHECK_UPDATE, apkBean));
-                        }
-                    }
-                }).start();
+            public void onFailure() {
+                checkUpdate();
             }
-        })/*.addOnFailureListener(new OnFailureListener() {
+
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                if (exception instanceof StorageException
-                        && ((StorageException) exception).getErrorCode() == StorageException.ERROR_CANCELED) {
-                    return;
+            public void onSuccessful(String json) {
+                FileUtils.stringToFile(json, new File(mContext.getExternalFilesDir(null), UPDATE_FILE_NAME));
+                ApkBean apkBean = ApkBean.getApkDetailFromJson(mContext, json);
+                if (apkBean.versionCode > ComponentUtils.getVersionCode(mContext)) {
+                    // 发送通知到 MainActivity
+                    EventBus.getDefault().postSticky(new MsgBean(Constants.CHECK_UPDATE, apkBean));
                 }
             }
-        })*/;
+        });
     }
 
     private void cancelCheckUpdate() {
         if (mCheckUpdateTask != null) {
             mCheckUpdateTask.cancel();
         }
+        OkHttp.cancel(UPDATE_FILE_URL);
     }
 
     public void checkToAddUser() {
@@ -108,7 +132,7 @@ public class FireBase {
                     DocumentSnapshot document = task.getResult();
                     if (document == null || !document.exists()) {
                         addUser(docRef, user);
-                    }else {
+                    } else {
                         mPreference.edit().putBoolean(Constants.ALREADY_ADD_USER, true).apply();
                     }
                 }
