@@ -1,13 +1,12 @@
 package com.ess.anime.wallpaper.ui.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -18,6 +17,7 @@ import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
+import com.ess.anime.wallpaper.model.helper.DonateHelper;
 import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -28,6 +28,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -243,11 +245,35 @@ public class CustomDialog extends MaterialDialog.Builder {
                 }).show();
     }
 
+    /**
+     * 网站功能说明
+     *
+     * @param context  上下文
+     * @param titleRes title
+     * @param msgRes   msg
+     */
     public static void showWebsiteHelpDialog(Context context, int titleRes, int msgRes) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(titleRes)
                 .content(msgRes)
                 .positiveText(R.string.dialog_doc_sure)
+                .show();
+    }
+
+    /**
+     * 打赏弹窗
+     *
+     * @param activity 上下文
+     */
+    public static void showDonateDialog(Activity activity) {
+        MaterialDialog dialog = new CustomDialog(activity)
+                .title("打赏")
+                .content("谢谢")
+                .negativeText(R.string.dialog_donate_cancel)
+                .positiveText(R.string.dialog_donate_alipay)
+                .onPositive((dialog1, which) -> DonateHelper.donateByAlipay(activity))
+                .neutralText(R.string.dialog_donate_wechat)
+                .onNeutral((dialog2, which) -> DonateHelper.donateByWechat(activity))
                 .show();
     }
 

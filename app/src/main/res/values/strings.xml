@@ -168,6 +168,9 @@
     <string name="dialog_feedback_neutral">Jump to Github</string>
     <string name="dialog_saucenao_help">Is an online image reverse search tool. Name from Source? Now! Looking for a source? Find it now! \n\n By uploading a local image or typing the url address of an image, similarity matching is performed on multiple databases on the Internet to find the requested image, its related information, and other similar images, which has become a mainstream image search tool.</string>
     <string name="dialog_tracemoe_help">Is a test-of-concept prototype search engine that helps users trace back the original anime by screenshot. It searches over 22300 hours of anime and find the best matching scene. It tells you what anime it is, from which episode and the time that scene appears. Since the search result may not be accurate, it provides a few seconds of preview for verification.</string>
+    <string name="dialog_donate_cancel">Cancel</string>
+    <string name="dialog_donate_alipay">Alipay</string>
+    <string name="dialog_donate_wechat">WeChat</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

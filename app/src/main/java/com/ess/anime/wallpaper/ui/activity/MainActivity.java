@@ -10,14 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
@@ -38,6 +30,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
@@ -150,8 +149,7 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
                     case R.id.nav_donate:
-                        //        DonateHelper.donateByAlipay(this);
-                        //        DonateHelper.donateWeChat(this);
+                        CustomDialog.showDonateDialog(MainActivity.this);
                         break;
                 }
                 mCurrentNavId = 0;

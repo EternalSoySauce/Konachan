@@ -149,6 +149,9 @@
     <string name="dialog_feedback_neutral">跳轉至Github</string>
     <string name="dialog_saucenao_help">是一個線上圖片逆向搜索工具。名稱來源於英文Source? Now! 找來源？立刻就找到！ \n\n通過上傳本地圖片或鍵入圖片的url地址，在互聯網上的多個數據庫進行相似度匹配從而找到所求圖片、其相關信息以及相似的其他圖片，目前已經成為主流的圖片搜索工具。</string>
     <string name="dialog_tracemoe_help">是一個概念測試原型搜索引擎，可幫助用戶通過屏幕截圖追溯原始動漫。 \n\n它搜索超過22300小時的動漫並找到最佳匹配場景，顯示出這是什麼動畫，在哪個劇集和場景出現的時間。由於搜索結果可能不准確，因此它提供了幾秒的預覽驗證。</string>
+    <string name="dialog_donate_cancel">取消</string>
+    <string name="dialog_donate_alipay">支付寶</string>
+    <string name="dialog_donate_wechat">微信</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

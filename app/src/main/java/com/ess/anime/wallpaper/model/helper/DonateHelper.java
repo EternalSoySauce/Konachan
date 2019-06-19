@@ -32,7 +32,7 @@ public class DonateHelper {
     /**
      * 需要提前准备好 微信收款码 照片，可通过微信客户端生成
      */
-    public static void donateWeChat(Activity activity) {
+    public static void donateByWechat(Activity activity) {
         InputStream inputStream = activity.getResources().openRawResource(R.raw.donate_wechat);
         File qrImage = new File(Constants.IMAGE_DONATE, "donate_wechat.png");
         String qrPath = qrImage.getAbsolutePath();
