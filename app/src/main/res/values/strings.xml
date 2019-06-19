@@ -45,6 +45,7 @@
     <string name="nav_trace_moe" translatable="false">Trace.moe</string>
     <string name="nav_game">Puzzle Game</string>
     <string name="nav_github">Github Page</string>
+    <string name="nav_donate">Donate Us</string>
     <string name="feedback_title">E-mail via</string>
 
     <!-- Widget -->
@@ -67,7 +68,7 @@
     <string name="setting_allow_play_sound">Allow to play sound</string>
     <string name="setting_help_tag_type">See all tag types and meanings</string>
     <string name="setting_help_advanced_search">See cheat sheet of advanced search</string>
-    <string name="setting_check_update">Check update (Need VPN &amp; Google Service)</string>
+    <string name="setting_check_update">Check update</string>
     <string name="setting_current_version">Current version: %s</string>
 
     <!-- Image Detail -->

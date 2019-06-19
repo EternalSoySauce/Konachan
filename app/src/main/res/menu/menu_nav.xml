@@ -59,4 +59,14 @@
             android:icon="@drawable/ic_nav_menu_setting"
             android:title="@string/nav_setting" />
     </group>
+
+    <group
+        android:id="@+id/g4"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_donate"
+            android:icon="@drawable/ic_nav_menu_github"
+            android:title="@string/nav_donate" />
+    </group>
 </menu>

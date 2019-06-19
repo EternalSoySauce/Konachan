@@ -111,6 +111,9 @@ dependencies {
 
     // 高度自定义的popup window (https://github.com/zyyoona7/EasyPopup)
     implementation 'com.github.zyyoona7:EasyPopup:1.1.2'
+
+    // 微信/支付宝打赏 (https://github.com/didikee/AndroidDonate)
+    implementation 'com.github.didikee:AndroidDonate:0.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

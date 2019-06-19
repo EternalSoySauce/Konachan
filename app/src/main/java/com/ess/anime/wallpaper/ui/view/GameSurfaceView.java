@@ -86,6 +86,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     private void draw() {
         Canvas canvas = getHolder().lockCanvas();
+        if (canvas == null) {
+            return;
+        }
+
         // 清理画布
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         canvas.drawPaint(mPaint);

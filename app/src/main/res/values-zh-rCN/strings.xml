@@ -36,6 +36,7 @@
     <string name="nav_setting">设置与帮助</string>
     <string name="nav_game">拼图游戏</string>
     <string name="nav_github">Github主页</string>
+    <string name="nav_donate">赞助我们</string>
     <string name="feedback_title">发送邮件通过</string>
 
     <!-- Widget -->
@@ -58,7 +59,7 @@
     <string name="setting_allow_play_sound">允许播放语音</string>
     <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
     <string name="setting_help_advanced_search">查看高级搜索指令表</string>
-    <string name="setting_check_update">检查更新（需要有VPN和谷歌服务）</string>
+    <string name="setting_check_update">检查更新</string>
     <string name="setting_current_version">当前版本：%s</string>
 
     <!-- Image Detail -->
