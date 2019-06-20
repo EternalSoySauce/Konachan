@@ -10,10 +10,6 @@ import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
@@ -22,6 +18,10 @@ import com.ess.anime.wallpaper.ui.view.image.MyImageSwitcher;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
+import java.util.Random;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,10 +31,10 @@ public class DonateFragment extends DialogFragment {
 
     private Unbinder mUnbinder;
 
-    @BindView(R.id.tv_title)
-    TextView mTvTitle;
-    @BindView(R.id.image_switcher)
-    MyImageSwitcher mImageSwitcher;
+    @BindView(R.id.switcher_title)
+    MyImageSwitcher mSwitcherTitle;
+    @BindView(R.id.switcher_image)
+    MyImageSwitcher mSwitcherImage;
     @BindView(R.id.layout_donate)
     ViewGroup mLayoutDonate;
     @BindView(R.id.iv_alipay)
@@ -63,13 +63,24 @@ public class DonateFragment extends DialogFragment {
         mIvAlipay.setOnTouchListener(listener);
         mIvWechat.setOnTouchListener(listener);
 
-        mImageSwitcher.loadImage(R.drawable.d2, R.drawable.d4);
+        int index = new Random().nextInt(2);
+        int titleA = getResources().getIdentifier("ic_donate_title_a_" + index,
+                "drawable", getContext().getPackageName());
+        int titleB = getResources().getIdentifier("ic_donate_title_b_" + index,
+                "drawable", getContext().getPackageName());
+        mSwitcherTitle.loadImage(titleA, titleB);
+
+        int imgA = getResources().getIdentifier("img_donate_a_" + index,
+                "drawable", getContext().getPackageName());
+        int imgB = getResources().getIdentifier("img_donate_b_" + index,
+                "drawable", getContext().getPackageName());
+        mSwitcherImage.loadImage(imgA, imgB);
     }
 
     private void startAnim() {
-        mImageSwitcher.setScaleX(0);
-        mImageSwitcher.setScaleY(0);
-        mImageSwitcher.animate()
+        mSwitcherImage.setScaleX(0);
+        mSwitcherImage.setScaleY(0);
+        mSwitcherImage.animate()
                 .scaleX(1)
                 .scaleY(1)
                 .setInterpolator(new BounceInterpolator())
@@ -93,9 +104,9 @@ public class DonateFragment extends DialogFragment {
                 .setStartDelay(1300)
                 .start();
 
-        transY = -mTvTitle.getY() - mTvTitle.getHeight() - UIUtils.getStatusBarHeight(getContext());
-        mTvTitle.setTranslationY(transY);
-        mTvTitle.animate()
+        transY = -mSwitcherTitle.getY() - mSwitcherTitle.getHeight() - UIUtils.getStatusBarHeight(getContext());
+        mSwitcherTitle.setTranslationY(transY);
+        mSwitcherTitle.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator())
                 .setDuration(800)
@@ -113,7 +124,7 @@ public class DonateFragment extends DialogFragment {
 
     @OnClick(R.id.iv_alipay)
     void donateViaAlipay() {
-        if (!mHasClickedDonateButton && ComponentUtils.isActivityActive(getActivity())) {
+        if (ComponentUtils.isActivityActive(getActivity())) {
             mHasClickedDonateButton = true;
             DonateHelper.donateViaAlipay(getActivity());
         }
@@ -121,7 +132,7 @@ public class DonateFragment extends DialogFragment {
 
     @OnClick(R.id.iv_wechat)
     void donateViaWechat() {
-        if (!mHasClickedDonateButton && ComponentUtils.isActivityActive(getActivity())) {
+        if (ComponentUtils.isActivityActive(getActivity())) {
             mHasClickedDonateButton = true;
             DonateHelper.donateViaWechat(getActivity());
         }
@@ -148,7 +159,8 @@ public class DonateFragment extends DialogFragment {
             mHasFlipped = true;
             mIvAlipay.setVisibility(View.GONE);
             mIvWechat.setVisibility(View.GONE);
-            mImageSwitcher.flipImage();
+            mSwitcherTitle.flipImage();
+            mSwitcherImage.flipImage();
         }
     }
 

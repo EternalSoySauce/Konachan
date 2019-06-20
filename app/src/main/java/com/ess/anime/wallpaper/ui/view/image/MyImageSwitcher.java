@@ -11,11 +11,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Priority;
-import com.ess.anime.wallpaper.glide.GlideApp;
-import com.ess.anime.wallpaper.utils.UIUtils;
-
-public class MyImageSwitcher extends FrameLayout {
+public abstract class MyImageSwitcher extends FrameLayout {
 
     private ImageView mIvA;
     private ImageView mIvB;
@@ -46,15 +42,7 @@ public class MyImageSwitcher extends FrameLayout {
         initScaleAnim();
     }
 
-    private ImageView createImageView() {
-        int width = LayoutParams.MATCH_PARENT;
-        int height = (int) (UIUtils.getScreenHeight(getContext()) * 0.6f);
-        FrameLayout.LayoutParams params = new LayoutParams(width, height);
-        ImageView imageView = new ImageView(getContext());
-        imageView.setLayoutParams(params);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        return imageView;
-    }
+    abstract ImageView createImageView();
 
     private void showImageA() {
         mIvA.setAnimation(null);
@@ -109,15 +97,11 @@ public class MyImageSwitcher extends FrameLayout {
      * @param imgA 第一张内容
      * @param imgB 第二张内容
      */
-    public void loadImage(Object imgA, Object imgB) {
+    public void loadImage(int imgA, int imgB) {
         loadImage(imgA, mIvA);
         loadImage(imgB, mIvB);
     }
 
-    private void loadImage(Object obj, ImageView imageView) {
-        GlideApp.with(getContext())
-                .load(obj)
-                .priority(Priority.IMMEDIATE)
-                .into(imageView);
-    }
+    abstract void loadImage(int resId, ImageView imageView);
+
 }
