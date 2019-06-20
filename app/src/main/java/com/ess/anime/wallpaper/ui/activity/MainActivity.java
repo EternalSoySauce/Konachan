@@ -10,6 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
@@ -17,6 +25,7 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
+import com.ess.anime.wallpaper.ui.fragment.DonateFragment;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
@@ -30,13 +39,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
@@ -149,7 +151,7 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
                     case R.id.nav_donate:
-                        CustomDialog.showDonateDialog(MainActivity.this);
+                        new DonateFragment().show(getSupportFragmentManager(), null);
                         break;
                 }
                 mCurrentNavId = 0;
