@@ -20,6 +20,8 @@
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_9.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_8.jpg" width="30%"/></a>
  <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_18.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_18.jpg" width="30%"/></a>
 
+<a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_19.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_19.jpg" width="30%"/></a>
+
 ## 使用说明
 * 详见[Wiki](https://github.com/EternalSoySauce/Konachan/wiki)
 
@@ -50,9 +52,9 @@
 * Lolibooru
 * Danbooru
 * Sankaku
+* Gelbooru
 
 #### 后续即将支持网站源：
-* Gelbooru
 * 3dbooru
 * Zerochan
 * E-shuushuu
