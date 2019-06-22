@@ -6,10 +6,6 @@ import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -35,6 +31,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -239,7 +238,7 @@ public class ImageDetailActivity extends BaseActivity {
         String extension = FileUtils.getFileExtensionWithDot(url);
 //        url = url.substring(0, url.lastIndexOf(extension) + extension.length()).replaceAll(".com|.net", "");
 //        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
-        // 图片命名方式改为"网站名-图片id-图片尺寸样式"，eg. Konachan-123456-Sample.jpg
+        // 图片命名方式改为"网站名-图片id-图片尺寸"样式，eg. Konachan-123456-Sample.jpg
         // 但这样无法识别此版本(v1.7)之前下载的图片是下载过的
         String bitmapName = getImageHead() + postId + fileType + extension;
         return new File(Constants.IMAGE_DIR, bitmapName);
