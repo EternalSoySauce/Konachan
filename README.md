@@ -1,10 +1,10 @@
 # K Anime Wallpaper (K动漫壁纸)
 一款动漫图片搜索软件，集合了多网站图源，可在线预览、标签/中文搜索，多尺寸下载、分享给好友、设为手机壁纸。
 
-## 最新版本【v1.6.2】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/125mkF_F1kpKaSVrcugXpIw)，提取码: 81as
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.6.2.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.6.2.apk?alt=media&token=c64d428c-9ede-4219-b9c3-da4846c8a275)
+## 最新版本【v1.7】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/10LW6Mr6jc1tqp9mIr383pg)，提取码: qubx
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.apk?alt=media&token=a0e81e69-ac9a-4af4-954f-433e9bfc52d7)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
