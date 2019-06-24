@@ -3,21 +3,23 @@ package com.ess.anime.wallpaper.listener;
 import android.os.FileObserver;
 import android.os.Handler;
 
+import androidx.annotation.Nullable;
+
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
 import java.io.File;
 
-import androidx.annotation.Nullable;
-
 // 监听收藏夹sd卡文件变动
 public class LocalCollectionsListener extends FileObserver {
+
+    private static final int EVENTS = CREATE | MOVED_TO | DELETE | DELETE_SELF | MOVED_FROM | MOVE_SELF;
 
     private OnFilesChangedListener mListener;
     private Handler mHandler = new Handler();
 
     public LocalCollectionsListener(OnFilesChangedListener listener) {
-        super(Constants.IMAGE_DIR);
+        super(Constants.IMAGE_DIR, EVENTS);
         mListener = listener;
     }
 
