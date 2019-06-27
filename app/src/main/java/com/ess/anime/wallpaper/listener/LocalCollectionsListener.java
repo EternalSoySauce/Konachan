@@ -13,7 +13,7 @@ import java.io.File;
 // 监听收藏夹sd卡文件变动
 public class LocalCollectionsListener extends FileObserver {
 
-    private static final int EVENTS = CREATE | MOVED_TO | DELETE | DELETE_SELF | MOVED_FROM | MOVE_SELF;
+    private static final int EVENTS = CREATE | MOVED_TO | DELETE | DELETE_SELF | MOVED_FROM | MOVE_SELF | CLOSE_WRITE;
 
     private OnFilesChangedListener mListener;
     private Handler mHandler = new Handler();
@@ -34,14 +34,17 @@ public class LocalCollectionsListener extends FileObserver {
             return;
 
         File file = new File(Constants.IMAGE_DIR, path);
-        if (file.isDirectory() || !FileUtils.isMediaType(path))
+        if (file.isDirectory()) {
             return;
+        }
 
         switch (event) {
             case CREATE:
             case MOVED_TO:
-                mHandler.post(() -> mListener.onFileAdded(file));
-                break;
+            case CLOSE_WRITE:
+                if (file.length() > 0 && FileUtils.isMediaType(path)) {
+                    mHandler.post(() -> mListener.onFileAdded(file));
+                }
 
             case DELETE:
             case DELETE_SELF:
