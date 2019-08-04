@@ -99,7 +99,11 @@
 
     <!-- Fullscreen Activity -->
     <string name="action_wallpaper">設為壁紙</string>
+    <string name="action_custom_wallpaper">自定義壁紙</string>
     <string name="action_share">分享到其他應用</string>
+
+    <!-- Crop Wallpaper Activity-->
+    <string name="crop_image">裁剪圖片</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">複製鏈接</string>

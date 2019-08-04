@@ -114,7 +114,11 @@
 
     <!-- Fullscreen Activity -->
     <string name="action_wallpaper">Set as wallpaper</string>
+    <string name="action_custom_wallpaper">Custom wallpaper</string>
     <string name="action_share">Share to others</string>
+
+    <!-- Crop Wallpaper Activity-->
+    <string name="crop_image">Crop Image</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">Copy Link</string>

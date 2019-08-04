@@ -6,9 +6,10 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 11
-        versionName "1.7"
+        versionCode 12
+        versionName "1.7.1"
         multiDexEnabled true
+        resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
     }
     buildTypes {
         release {
@@ -25,7 +26,7 @@ android {
 dependencies {
     // Android 基础库
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
@@ -114,6 +115,9 @@ dependencies {
 
     // 微信/支付宝打赏 (https://github.com/didikee/AndroidDonate)
     implementation 'com.github.didikee:AndroidDonate:0.1.0'
+
+    // 图片裁剪（https://github.com/Yalantis/uCrop）
+    implementation 'com.github.yalantis:ucrop:2.2.3-native'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -467,4 +467,5 @@ public class FileUtils {
     public static boolean isMediaType(String filePath) {
         return isImageType(filePath) || isVideoType(filePath);
     }
+
 }
