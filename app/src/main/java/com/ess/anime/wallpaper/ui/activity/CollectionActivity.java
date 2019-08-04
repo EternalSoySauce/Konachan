@@ -81,7 +81,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
 
     private void initWhenPermissionGranted() {
         initRecyclerView();
-        mFilesListener = new LocalCollectionsListener(CollectionActivity.this);
+        mFilesListener = new LocalCollectionsListener(this);
         mFilesListener.startWatching();
     }
 
