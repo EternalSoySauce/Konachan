@@ -1,27 +1,39 @@
 package com.ess.anime.wallpaper.ui.activity;
 
+import android.annotation.TargetApi;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
-import com.ess.anime.wallpaper.utils.WallpaperUtil;
+import com.ess.anime.wallpaper.utils.BitmapUtils;
+import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.utils.WallpaperUtils;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropFragment;
 import com.yalantis.ucrop.UCropFragmentCallback;
 import com.yanzhenjie.permission.runtime.Permission;
+import com.zjca.qqdialog.ActionSheetDialog;
 
 import java.io.File;
-import java.net.URI;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class CropWallpaperActivity extends BaseActivity implements UCropFragmentCallback {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     public final static String FILE_URI = "FILE_URI";
 
@@ -29,6 +41,7 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
     Toolbar mToolbar;
 
     private UCropFragment mUCropFragment;
+    private ActionSheetDialog mActionSheet;
 
     @Override
     int layoutRes() {
@@ -91,17 +104,52 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
         if (result.mResultCode == RESULT_OK && result.mResultData != null) {
             try {
                 Uri uri = UCrop.getOutput(result.mResultData);
-                File file = new File(new URI(uri.toString()));
-                WallpaperUtil.setWallpaper(this, file, WallpaperUtil.FLAG_DESKTOP);
-                // todo toast
-                Toast.makeText(this, "设置成功", Toast.LENGTH_SHORT).show();
+                String imagePath = BitmapUtils.getImagePathFromUri(this, uri);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    chooseWallpaperFlag(imagePath);
+                } else {
+                    WallpaperUtils.setWallpaperDirectly(this, imagePath);
+                    Toast.makeText(this, R.string.set_successfully, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            // todo toast
-            Toast.makeText(this, "裁剪失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.crop_failed, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private void chooseWallpaperFlag(String imagePath) {
+        if (mActionSheet == null) {
+            mActionSheet = new ActionSheetDialog(this);
+            mActionSheet.builder()
+                    .addSheetItem(getString(R.string.action_wallpaper_flag_desktop), null, which -> {
+                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_DESKTOP);
+                    })
+                    .addSheetItem(getString(R.string.action_wallpaper_flag_lockscreen), null, which -> {
+                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_LOCKSCREEN);
+                    })
+                    .addSheetItem(getString(R.string.action_wallpaper_flag_both), null, which -> {
+                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_BOTH);
+                    });
+        }
+        mActionSheet.show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private void setWallpaperDirectly(String imagePath, int flag) {
+        boolean successful = WallpaperUtils.setWallpaperDirectly(this, imagePath, flag);
+        int toastRes = successful ? R.string.set_successfully : R.string.set_failed;
+        Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
     }
 
 }

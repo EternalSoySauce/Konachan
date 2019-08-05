@@ -16,7 +16,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -65,7 +65,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     private MainActivity mActivity;
     private FragmentManager mFragmentManager;
     private PoolPostFragment mPoolPostFragment;
-    private LinearLayoutManager mLayoutManager;
+    private GridLayoutManager mLayoutManager;
     private RecyclerPoolAdapter mPoolAdapter;
 
     private EasyPopup mPopupPage;
@@ -211,7 +211,8 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     }
 
     private void initRecyclerView() {
-        mLayoutManager = new LinearLayoutManager(mActivity);
+        int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 342, 1);
+        mLayoutManager = new GridLayoutManager(mActivity, span);
         mRvPools.setLayoutManager(mLayoutManager);
 
         mPoolAdapter = new RecyclerPoolAdapter();
@@ -228,9 +229,10 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
             }
         });
 
-        int space = UIUtils.dp2px(mActivity, 12);
+        int spaceHor = UIUtils.dp2px(mActivity, 6);
+        int spaceVer = UIUtils.dp2px(mActivity, 12);
         mRvPools.addItemDecoration(new GridDividerItemDecoration(
-                1, GridDividerItemDecoration.VERTICAL, space, true));
+                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
     }
 
     // 滑动加载更多
@@ -281,7 +283,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     }
 
     private void scrollToTop() {
-        int smoothPos = 4;
+        int smoothPos = 4 * mLayoutManager.getSpanCount();
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
             mRvPools.scrollToPosition(smoothPos);
         }

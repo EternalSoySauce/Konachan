@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.ui.activity;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -10,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
@@ -22,6 +24,7 @@ import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.utils.WallpaperUtils;
 import com.github.chrisbanes.photoview.OnOutsidePhotoTapListener;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -37,9 +40,6 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -193,19 +193,9 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     }
 
     private void setAsWallpaper() {
-        try {
-            // todo 小米手机只能跳转到设置联系人头像
-            Uri uri = BitmapUtils.getContentUriFromFile(this,
-                    new File(mCollectionList.get(mCurrentPos).filePath));
-            Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.putExtra("mimeType", "video/*;image/*");
-            intent.setData(uri);
-            startActivity(Intent.createChooser(intent, getString(R.string.action_wallpaper)));
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-            Toast.makeText(this, R.string.cannot_set_as_wallpaper, Toast.LENGTH_SHORT).show();
-        }
+        File file = new File(mCollectionList.get(mCurrentPos).filePath);
+        Uri uri = BitmapUtils.getContentUriFromFile(this, file);
+        WallpaperUtils.setWallpaperBySystemApp(this, uri);
     }
 
     private void customWallpaper() {

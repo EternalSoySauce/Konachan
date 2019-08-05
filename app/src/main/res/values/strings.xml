@@ -119,6 +119,12 @@
 
     <!-- Crop Wallpaper Activity-->
     <string name="crop_image">Crop Image</string>
+    <string name="crop_failed">Crop failed</string>
+    <string name="action_wallpaper_flag_desktop">Set as Home screen</string>
+    <string name="action_wallpaper_flag_lockscreen">Set as Lock screen</string>
+    <string name="action_wallpaper_flag_both">Set both</string>
+    <string name="set_successfully">Set successfully</string>
+    <string name="set_failed">Set failed</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">Copy Link</string>

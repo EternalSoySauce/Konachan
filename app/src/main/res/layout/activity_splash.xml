@@ -12,5 +12,6 @@
         android:layout_width="267.5dp"
         android:layout_height="208.5dp"
         android:src="@drawable/ic_splash"
+        app:maxRatio="1.2"
         app:relativeTo="width" />
 </LinearLayout>

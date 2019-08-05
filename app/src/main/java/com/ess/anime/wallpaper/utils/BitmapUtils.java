@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.utils;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -402,26 +403,34 @@ public class BitmapUtils {
     }
 
     /**
-     * Gets the corresponding path to a file from the given content:// URI
+     * 根据图片Uri获取路径
      *
-     * @param context    上下文
-     * @param contentUri The content:// URI to find the file path from
-     * @return the file path as a string
+     * @param context 上下文
+     * @param uri     图片Uri
+     * @return 图片文件路径
      */
-    public static String getFilePathFromContentUri(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] project = {MediaStore.Images.Media.DATA};
-            cursor = context.getContentResolver().query(contentUri, project, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            }
+    public static String getImagePathFromUri(Context context, Uri uri) {
+        if (uri == null) {
             return "";
-        } finally {
-            if (cursor != null) {
-                cursor.close();
+        }
+        String scheme = uri.getScheme();
+        String data = "";
+        if (scheme == null) {
+            data = uri.getPath();
+        } else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+            data = uri.getPath();
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            ContentResolver cr = context.getContentResolver();
+            String[] projection = new String[]{MediaStore.Images.ImageColumns.DATA};
+            try (Cursor cursor = cr.query(uri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    data = cursor.getString(cursor.getColumnIndex(projection[0]));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+        return data;
     }
 
 }

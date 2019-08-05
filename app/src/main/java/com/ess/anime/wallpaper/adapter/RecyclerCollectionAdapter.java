@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -22,17 +26,25 @@ import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-
 public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
 
     private boolean mEditing;
     private List<CollectionBean> mSelectList = new ArrayList<>();
     private OnSelectChangedListener mSelectChangedListener;
 
+    private int mImageSlideLength = -1;
+
     public RecyclerCollectionAdapter(@NonNull List<CollectionBean> collectionList) {
         super(R.layout.recyclerview_item_collection, collectionList);
+    }
+
+    private int getImageSlideLength() {
+        if (mImageSlideLength == -1) {
+            GridLayoutManager layoutManager = (GridLayoutManager) getRecyclerView().getLayoutManager();
+            int span = layoutManager.getSpanCount();
+            mImageSlideLength = ((UIUtils.getScreenWidth(mContext) - UIUtils.dp2px(mContext, 1.5f * (span + 1))) / span);
+        }
+        return mImageSlideLength;
     }
 
     @Override
@@ -77,9 +89,8 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
         // 图片
         // 固定ImageView尺寸防止notify时图片闪烁
         ImageView ivCollection = holder.getView(R.id.iv_collection);
-        int slideLength = (int) ((UIUtils.getScreenWidth(mContext) - UIUtils.dp2px(mContext, 6)) / 3f);
-        ivCollection.getLayoutParams().width = slideLength;
-        ivCollection.getLayoutParams().height = slideLength;
+        ivCollection.getLayoutParams().width = getImageSlideLength();
+        ivCollection.getLayoutParams().height = getImageSlideLength();
         GlideApp.with(mContext)
                 .asBitmap()
                 .load(imageUrl)

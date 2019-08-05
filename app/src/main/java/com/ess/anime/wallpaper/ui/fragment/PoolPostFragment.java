@@ -82,7 +82,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     private void initRecyclerView() {
-        int span = 2;
+        int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 165, 2);
         mRvPosts = mRootView.findViewById(R.id.rv_pool_post);
         mLayoutManager = new GridLayoutManager(getActivity(), span);
         mRvPosts.setLayoutManager(mLayoutManager);
@@ -180,7 +180,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     void scrollToTop() {
-        int smoothPos = 14;
+        int smoothPos = 7 * mLayoutManager.getSpanCount();
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
             mRvPosts.scrollToPosition(smoothPos);
         }

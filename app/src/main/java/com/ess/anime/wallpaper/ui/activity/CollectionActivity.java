@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -31,10 +36,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -126,14 +127,15 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void initRecyclerView() {
-        mLayoutManager = new GridLayoutManager(this, 3);
+        int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 120, 3);
+        mLayoutManager = new GridLayoutManager(this, span);
         mRvCollection.setLayoutManager(mLayoutManager);
         mCollectionAdapter = new RecyclerCollectionAdapter(CollectionBean.getCollectionImages());
-        mRvCollection.setAdapter(mCollectionAdapter);
+        mCollectionAdapter.bindToRecyclerView(mRvCollection);
         int spanHor = UIUtils.dp2px(this, 0.75f);
         int spanVer = UIUtils.dp2px(this, 1.5f);
         GridDividerItemDecoration itemDecoration = new GridDividerItemDecoration(
-                3, GridDividerItemDecoration.VERTICAL, spanHor, spanVer, true);
+                span, GridDividerItemDecoration.VERTICAL, spanHor, spanVer, true);
         mRvCollection.addItemDecoration(itemDecoration);
 
         // 长按进入编辑模式监听器

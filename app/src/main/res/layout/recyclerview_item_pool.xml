@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardBackgroundColor="@color/color_text_bg">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.ess.anime.wallpaper.ui.view.image.AutoFitImageView
+        <ImageView
             android:id="@+id/iv_pool_thumb"
-            android:layout_width="342dp"
-            android:layout_height="192dp"
-            android:layout_centerHorizontal="true"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@drawable/ic_bottom_line_pool"
             android:scaleType="centerCrop"
-            app:relativeTo="width" />
+            app:layout_constraintDimensionRatio="342:192"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_post_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_pool_thumb"
-            android:layout_alignEnd="@+id/iv_pool_thumb"
-            android:layout_marginBottom="6dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp"
             android:background="@drawable/bg_textview_post_count"
-            android:drawablePadding="7dp"
             android:drawableStart="@drawable/ic_post_count"
+            android:drawablePadding="7dp"
             android:gravity="center"
             android:textColor="@color/colorAccent"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_pool_thumb"
+            app:layout_constraintEnd_toEndOf="@+id/iv_pool_thumb" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/iv_pool_thumb"
-            android:layout_below="@+id/iv_pool_thumb"
-            android:layout_margin="8dp">
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_pool_thumb">
 
             <TextView
                 android:id="@+id/tv_name"
@@ -55,8 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_name"
                 android:layout_marginTop="4dp"
-                android:drawablePadding="2dp"
                 android:drawableStart="@drawable/ic_pool_artist"
+                android:drawablePadding="2dp"
                 android:textColor="@color/color_text_general"
                 android:textSize="12sp" />
 
@@ -68,9 +72,10 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="4dp"
                 android:layout_toEndOf="@+id/tv_creator"
-                android:drawablePadding="3dp"
                 android:drawableStart="@drawable/ic_pool_update_time"
+                android:drawablePadding="3dp"
                 android:gravity="center"
+                android:maxLines="1"
                 android:textColor="@color/color_text_general"
                 android:textSize="12sp" />
 
@@ -80,9 +85,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_creator"
                 android:layout_marginTop="4dp"
+                android:maxLines="1"
                 android:textColor="@color/color_text_general"
                 android:textSize="12sp"
                 android:visibility="gone" />
         </RelativeLayout>
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -104,6 +104,12 @@
 
     <!-- Crop Wallpaper Activity-->
     <string name="crop_image">裁剪圖片</string>
+    <string name="crop_failed">裁剪失敗</string>
+    <string name="action_wallpaper_flag_desktop">應用桌面</string>
+    <string name="action_wallpaper_flag_lockscreen">應用鎖屏</string>
+    <string name="action_wallpaper_flag_both">應用桌面和鎖屏</string>
+    <string name="set_successfully">設置成功</string>
+    <string name="set_failed">設置失敗</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">複製鏈接</string>
