@@ -167,9 +167,9 @@ public class ComponentUtils {
     public static Intent installApk(Context context, File apkFile, boolean start) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Uri contentUri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), apkFile);
                 intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
             } else {
