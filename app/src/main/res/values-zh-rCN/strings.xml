@@ -161,6 +161,9 @@
     <string name="dialog_feedback_neutral">跳转至Github</string>
     <string name="dialog_saucenao_help">是一个线上图片逆向搜索工具。名称来源于英文Source? Now! 找来源？立刻就找到！\n\n通过上传本地图片或键入图片的url地址，在互联网上的多个数据库进行相似度匹配从而找到所求图片、其相关信息以及相似的其他图片，目前已经成为主流的图片搜索工具。</string>
     <string name="dialog_tracemoe_help">是一个概念测试原型搜索引擎，可帮助用户通过屏幕截图追溯原始动漫。\n\n它搜索超过22300小时的动漫并找到最佳匹配场景，显示出这是什么动画，在哪个剧集和场景出现的时间。由于搜索结果可能不准确，因此它提供了几秒的预览验证。</string>
+    <string name="dialog_cannot_wallpaper_lockscreen_msg">您的设备可能无法将自定义壁纸应用为锁屏，如有此现象请使用“设为壁纸”功能。</string>
+    <string name="dialog_cannot_wallpaper_lockscreen_sure">我知道了</string>
+    <string name="dialog_cannot_wallpaper_lockscreen_neutral">不再显示</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

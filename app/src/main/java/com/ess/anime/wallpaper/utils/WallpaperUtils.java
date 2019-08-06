@@ -26,15 +26,15 @@ import java.lang.annotation.RetentionPolicy;
 public class WallpaperUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    @IntDef({FLAG_DESKTOP, FLAG_LOCKSCREEN, FLAG_BOTH})
+    @IntDef({FLAG_HOME_SCREEN, FLAG_LOCK_SCREEN, FLAG_BOTH})
     @Retention(RetentionPolicy.SOURCE)
     public @interface WallpaperFlag {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public final static int FLAG_DESKTOP = WallpaperManager.FLAG_SYSTEM;
+    public final static int FLAG_HOME_SCREEN = WallpaperManager.FLAG_SYSTEM;
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public final static int FLAG_LOCKSCREEN = WallpaperManager.FLAG_LOCK;
+    public final static int FLAG_LOCK_SCREEN = WallpaperManager.FLAG_LOCK;
     @RequiresApi(api = Build.VERSION_CODES.N)
     public final static int FLAG_BOTH = WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK;
 
@@ -43,7 +43,7 @@ public class WallpaperUtils {
      *
      * @param context  上下文
      * @param filePath 图片文件路径
-     * @param flag     系统壁纸模式 One of {@link #FLAG_DESKTOP}, {@link #FLAG_LOCKSCREEN}, or {@link #FLAG_BOTH}.
+     * @param flag     系统壁纸模式 One of {@link #FLAG_HOME_SCREEN}, {@link #FLAG_LOCK_SCREEN}, or {@link #FLAG_BOTH}.
      * @return 是否成功
      */
     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.utils.WallpaperUtils;
@@ -58,6 +59,7 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
 
         initToolBarLayout();
         initCropFragment(sourceUri);
+        CustomDialog.checkToShowCannotCustomLockscreenWallpaperDialog(this);
     }
 
     private void initToolBarLayout() {
@@ -126,10 +128,10 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
             mActionSheet = new ActionSheetDialog(this);
             mActionSheet.builder()
                     .addSheetItem(getString(R.string.action_wallpaper_flag_desktop), null, which -> {
-                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_DESKTOP);
+                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_HOME_SCREEN);
                     })
                     .addSheetItem(getString(R.string.action_wallpaper_flag_lockscreen), null, which -> {
-                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_LOCKSCREEN);
+                        setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_LOCK_SCREEN);
                     })
                     .addSheetItem(getString(R.string.action_wallpaper_flag_both), null, which -> {
                         setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_BOTH);

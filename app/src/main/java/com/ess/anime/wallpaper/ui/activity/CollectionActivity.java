@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ess.anime.wallpaper.R;
@@ -54,7 +53,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     @BindView(R.id.rv_collection)
     RecyclerView mRvCollection;
 
-    private LinearLayoutManager mLayoutManager;
+    private GridLayoutManager mLayoutManager;
     private RecyclerCollectionAdapter mCollectionAdapter;
 
     private LocalCollectionsListener mFilesListener;
@@ -92,7 +91,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         mToolbar.setNavigationOnClickListener(v -> finish());
-        DoubleTapEffector.addDoubleTapEffect(mToolbar, () -> scrollToTop());
+        DoubleTapEffector.addDoubleTapEffect(mToolbar, this::scrollToTop);
     }
 
     @OnClick({R.id.layout_choose_all, R.id.cb_choose_all, R.id.tv_edit, R.id.tv_share, R.id.tv_delete})
@@ -158,7 +157,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void scrollToTop() {
-        int smoothPos = 24;
+        int smoothPos = 8 * mLayoutManager.getSpanCount();;
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
             mRvCollection.scrollToPosition(smoothPos);
         }

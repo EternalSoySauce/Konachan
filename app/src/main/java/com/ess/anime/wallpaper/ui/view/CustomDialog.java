@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -256,6 +258,29 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(msgRes)
                 .positiveText(R.string.dialog_doc_sure)
                 .show();
+    }
+
+    private final static String NOT_SHOW_WALLPAPER_PROMPT_AGAIN = "NOT_SHOW_WALLPAPER_PROMPT_AGAIN";
+
+    /**
+     * 部分设备提示无法将自定义壁纸设置为锁屏
+     *
+     * @param context 上下文
+     */
+    public static void checkToShowCannotCustomLockscreenWallpaperDialog(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if ((!QMUIDeviceHelper.isMIUI() && !QMUIDeviceHelper.isHuawei())
+                || preferences.getBoolean(NOT_SHOW_WALLPAPER_PROMPT_AGAIN, false)) {
+            return;
+        }
+
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(R.string.dialog_cannot_wallpaper_lockscreen_msg)
+                .positiveText(R.string.dialog_cannot_wallpaper_lockscreen_sure)
+                .neutralText(R.string.dialog_cannot_wallpaper_lockscreen_neutral)
+                .onNeutral((dialog1, which) -> {
+                    preferences.edit().putBoolean(NOT_SHOW_WALLPAPER_PROMPT_AGAIN, true).apply();
+                }).show();
     }
 
     public interface OnDialogActionListener {

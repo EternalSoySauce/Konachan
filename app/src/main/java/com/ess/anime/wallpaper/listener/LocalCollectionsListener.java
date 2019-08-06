@@ -45,6 +45,7 @@ public class LocalCollectionsListener extends FileObserver {
                 if (file.length() > 0 && FileUtils.isMediaType(path)) {
                     mHandler.post(() -> mListener.onFileAdded(file));
                 }
+                break;
 
             case DELETE:
             case DELETE_SELF:
