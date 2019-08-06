@@ -2,9 +2,9 @@
 一款动漫图片搜索软件，集合了多网站图源，可在线预览、标签/中文搜索，多尺寸下载、分享给好友、设为手机壁纸。
 
 ## 最新版本【v1.7】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/10LW6Mr6jc1tqp9mIr383pg)，提取码: qubx
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.apk?alt=media&token=a0e81e69-ac9a-4af4-954f-433e9bfc52d7)
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1zf_qCedczqa2pQ-DBNSa2Q)，提取码: swmb
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.1.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.1.apk?alt=media&token=b4e03fb2-2b23-4cd9-83d6-f170593d6b8f)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -37,12 +37,6 @@
 ```
     应用内提供了四种搜索模式以满足不同用户的需求，『标签搜索』、『ID搜索』、『中文搜索』、『高级搜索』
     请先切换到对应的搜索模式后再进行搜索
-```
-
-* #### 为什么我的『设置为壁纸』功能只能设置联系人头像啊
-```
-    部分国内手机（如小米等）自带的壁纸软件非谷歌官方壁纸app，故暂时无法支持跳转，请自行去软件中设置壁纸
-    如果有谁知道怎么支持国内手机的壁纸软件请联系我，谢谢~
 ```
 
 ## 网站支持
