@@ -1,7 +1,7 @@
 # K Anime Wallpaper (K动漫壁纸)
 一款动漫图片搜索软件，集合了多网站图源，可在线预览、标签/中文搜索，多尺寸下载、分享给好友、设为手机壁纸。
 
-## 最新版本【v1.7】
+## 最新版本【v1.7.1】
 * 地址1：[百度云盘下载](https://pan.baidu.com/s/1zf_qCedczqa2pQ-DBNSa2Q)，提取码: swmb
 * 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.1.apk)
 * 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.1.apk?alt=media&token=b4e03fb2-2b23-4cd9-83d6-f170593d6b8f)
