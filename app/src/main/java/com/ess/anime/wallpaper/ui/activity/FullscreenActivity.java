@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -28,8 +24,6 @@ import com.ess.anime.wallpaper.utils.WallpaperUtils;
 import com.github.chrisbanes.photoview.OnOutsidePhotoTapListener;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.qmuiteam.qmui.util.QMUIDisplayHelper;
-import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
 import com.zjca.qqdialog.ActionSheetDialog;
 
@@ -38,8 +32,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -201,14 +197,6 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     private void customWallpaper() {
         Uri sourceUri = BitmapUtils.getContentUriFromFile(this,
                 new File(mCollectionList.get(mCurrentPos).filePath));
-        Uri destinationUri = AndPermission.getFileUri(this, new File(getFilesDir(), UUID.randomUUID().toString()));
-        int[] screenSize = QMUIDisplayHelper.getRealScreenSize(this);
-        int screenWidth = screenSize[0];
-        int screenHeight = screenSize[1];
-//        UCrop.of(sourceUri, destinationUri)
-//                .withAspectRatio(screenWidth, screenHeight)
-//                .withMaxResultSize(screenWidth, screenHeight)
-//                .start(this);
         Intent intent = new Intent(this, CropWallpaperActivity.class);
         intent.putExtra(CropWallpaperActivity.FILE_URI, sourceUri);
         startActivity(intent);

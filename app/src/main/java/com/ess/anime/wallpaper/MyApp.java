@@ -21,7 +21,6 @@ public class MyApp extends Application {
         initData();
     }
 
-
     private void initData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Constants.sAllowPlaySound = preferences.getBoolean(Constants.ALLOW_PLAY_SOUND, true);

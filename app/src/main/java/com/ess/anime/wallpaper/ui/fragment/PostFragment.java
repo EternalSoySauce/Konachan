@@ -2,21 +2,15 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -51,6 +45,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -68,7 +69,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     RecyclerView mRvPosts;
 
     private MainActivity mActivity;
-    private GridLayoutManager mLayoutManager;
+    private StaggeredGridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
 
     private EasyPopup mPopupPage;
@@ -134,6 +135,20 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         });
     }
 
+    // 切换图片显示方式（方格/瀑布流）
+    @OnClick({R.id.iv_format})
+    void toggleImageShownFormat() {
+        boolean newFormat = !isPostImageShownRectangular();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        preferences.edit().putBoolean(Constants.IS_POST_IMAGE_SHOWN_RECTANGULAR, newFormat).apply();
+        mPostAdapter.changeImageShownFormat(newFormat);
+    }
+
+    private boolean isPostImageShownRectangular() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return preferences.getBoolean(Constants.IS_POST_IMAGE_SHOWN_RECTANGULAR, true);
+    }
+
     // 弹出跳转页弹窗
     @OnClick(R.id.iv_page)
     void gotoPage(View view) {
@@ -195,16 +210,17 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     private void initRecyclerView() {
         int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 165, 2);
-        mLayoutManager = new GridLayoutManager(mActivity, span);
+        mLayoutManager = new StaggeredGridLayoutManager(span, StaggeredGridLayoutManager.VERTICAL);
         mRvPosts.setLayoutManager(mLayoutManager);
 
         mPostAdapter = new RecyclerPostAdapter(TAG);
+        mPostAdapter.bindToRecyclerView(mRvPosts);
         mPostAdapter.setOnItemClickListener(() -> mFloatingMenu.close(true));
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
         mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
-        mRvPosts.setAdapter(mPostAdapter);
+        mPostAdapter.changeImageShownFormat(isPostImageShownRectangular());
 
         int spaceHor = UIUtils.dp2px(mActivity, 5);
         int spaceVer = UIUtils.dp2px(mActivity, 10);
@@ -298,7 +314,8 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     private void scrollToTop() {
         int smoothPos = 7 * mLayoutManager.getSpanCount();
-        if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
+        int lastVisiblePos = mLayoutManager.findLastVisibleItemPositions(null)[0];
+        if (lastVisiblePos > smoothPos) {
             mRvPosts.scrollToPosition(smoothPos);
         }
         mRvPosts.smoothScrollToPosition(0);

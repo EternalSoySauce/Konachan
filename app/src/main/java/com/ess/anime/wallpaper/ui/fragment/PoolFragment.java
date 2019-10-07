@@ -10,16 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -44,6 +34,15 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -216,7 +215,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mRvPools.setLayoutManager(mLayoutManager);
 
         mPoolAdapter = new RecyclerPoolAdapter();
-        mRvPools.setAdapter(mPoolAdapter);
+        mPoolAdapter.bindToRecyclerView(mRvPools);
         mPoolAdapter.setOnLoadMoreListener(this, mRvPools);
         mPoolAdapter.setPreLoadNumber(5);
         mPoolAdapter.setLoadMoreView(new CustomLoadMoreView());

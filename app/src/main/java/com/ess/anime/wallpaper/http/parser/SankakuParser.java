@@ -33,6 +33,8 @@ public class SankakuParser extends HtmlParser {
             try {
                 String id = e.attr("id").replaceAll("[^0-9]", "");
                 Element img = e.getElementsByTag("img").first();
+                int thumbWidth = Integer.valueOf(img.attr("width")) * 2;
+                int thumbHeight = Integer.valueOf(img.attr("height")) * 2;
                 String thumbUrl = img.attr("src");
                 if (thumbUrl.contains("download-preview.png")) {
                     // 封面为这张图片就是flash，不解析，无意义
@@ -50,7 +52,7 @@ public class SankakuParser extends HtmlParser {
                     linkToShow = Constants.BASE_URL_SANKAKU + linkToShow;
                 }
                 // 最上方的四张有可能和普通列表中的图片重复，需要排除
-                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+                ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 if (!thumbList.contains(thumbBean)) {
                     thumbList.add(thumbBean);
                 }

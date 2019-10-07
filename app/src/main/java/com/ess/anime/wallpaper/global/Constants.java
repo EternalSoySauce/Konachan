@@ -15,6 +15,7 @@ public class Constants {
     public final static String ALLOW_PLAY_SOUND = "allowPlaySound";
     public final static String ALREADY_ADD_USER = "alreadyAddUser";
     public final static String VIDEO_SILENT = "videoSilent";
+    public final static String IS_POST_IMAGE_SHOWN_RECTANGULAR = "isPostImageShownRectangular";
 
     // Intent
     public final static String APK_BEAN = "APK_BEAN";

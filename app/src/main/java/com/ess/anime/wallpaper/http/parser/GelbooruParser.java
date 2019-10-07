@@ -31,13 +31,15 @@ public class GelbooruParser extends HtmlParser {
         for (Element e : elements) {
             try {
                 String id = e.id().replaceAll("[^0-9]", "");
+                int thumbWidth = Integer.valueOf(e.attr("preview_width"));
+                int thumbHeight = Integer.valueOf(e.attr("preview_height"));
                 String thumbUrl = e.attr("preview_url");
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = "https:" + thumbUrl;
                 }
                 String realSize = e.attr("width") + " x " + e.attr("height");
                 String linkToShow = "https://gelbooru.com/index.php?page=post&s=view&id=" + id;
-                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+                ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 thumbBean.tempPost = parseTempPost(e);
                 thumbList.add(thumbBean);
             } catch (Exception ex) {
@@ -207,6 +209,8 @@ public class GelbooruParser extends HtmlParser {
         for (Element e : elements) {
             try {
                 String id = e.id().replaceAll("[^0-9]", "");
+                int thumbWidth = 0;
+                int thumbHeight = 0;
                 Element img = e.getElementsByClass("preview").first();
                 String thumbUrl = img.attr("src");
                 if (!thumbUrl.startsWith("http")) {
@@ -214,7 +218,7 @@ public class GelbooruParser extends HtmlParser {
                 }
                 String realSize = e.attr("width") + " x " + e.attr("height");
                 String linkToShow = "https://gelbooru.com/index.php?page=post&s=view&id=" + id;
-                ThumbBean thumbBean = new ThumbBean(id, thumbUrl, realSize, linkToShow);
+                ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 thumbList.add(thumbBean);
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -26,12 +24,16 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
 
     private final static int REPLACE_DATA = 1;
 
     private String mHttpTag;
     private OnItemClickListener mItemClickListener;
+    private boolean mIsRectangular = true;  // 缩略图是否为方格
 
     public RecyclerPostAdapter(String httpTag) {
         super(R.layout.recyclerview_item_post);
@@ -39,13 +41,20 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     @Override
-    protected void convert(final BaseViewHolder holder, final ThumbBean thumbBean) {
+    protected void convert(@NonNull BaseViewHolder holder, @NonNull ThumbBean thumbBean) {
+        //缩略图尺寸（方格/瀑布流）
+        ImageView ivThumb = holder.getView(R.id.iv_post_thumb);
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) ivThumb.getLayoutParams();
+        layoutParams.dimensionRatio = mIsRectangular ? "165:130" : thumbBean.thumbWidth + ":" + thumbBean.thumbHeight;
+        ivThumb.setLayoutParams(layoutParams);
+
         //缩略图
         GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
-                .into((ImageView) holder.getView(R.id.iv_post_thumb));
+                .override(thumbBean.thumbWidth, thumbBean.thumbHeight)
+                .into(ivThumb);
 
         //尺寸
         holder.setText(R.id.tv_size, thumbBean.realSize);
@@ -65,21 +74,24 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (payloads.isEmpty() || position == 1) {
-            onBindViewHolder(holder, position);
-        } else {
-            ThumbBean thumbBean = mData.get(position);
-            for (Object payload : payloads) {
-                int operate = (int) payload;
-                if (operate == REPLACE_DATA) {
-                    //尺寸
-                    holder.setText(R.id.tv_size, thumbBean.realSize);
-                }
+    protected void convertPayloads(@NonNull BaseViewHolder holder, ThumbBean thumbBean, @NonNull List<Object> payloads) {
+        super.convertPayloads(holder, thumbBean, payloads);
+        for (Object payload : payloads) {
+            int operate = (int) payload;
+            if (operate == REPLACE_DATA) {
+                //尺寸
+                holder.setText(R.id.tv_size, thumbBean.realSize);
             }
         }
     }
 
+    // 切换缩略图显示尺寸（方格/瀑布流）
+    public void changeImageShownFormat(boolean isRectangular) {
+        if (mIsRectangular != isRectangular) {
+            mIsRectangular = isRectangular;
+            notifyItemRangeChanged(getHeaderLayoutCount(), getData().size());
+        }
+    }
 
     public boolean loadMoreDatas(List<ThumbBean> imageList) {
         return addDatas(mData.size(), imageList);

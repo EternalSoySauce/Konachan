@@ -36,12 +36,22 @@ public class DanbooruParser extends HtmlParser {
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
                 }
-                String realSize = e.attr("data-width") + " x " + e.attr("data-height");
+                int realWidth = Integer.valueOf(e.attr("data-width"));
+                int realHeight = Integer.valueOf(e.attr("data-height"));
+                String realSize = realWidth + " x " + realHeight;
+                int thumbWidth, thumbHeight;
+                if (realWidth >= realHeight) {
+                    thumbWidth = 150;
+                    thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
+                } else {
+                    thumbHeight = 150;
+                    thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
+                }
                 String linkToShow = e.getElementsByTag("a").attr("href");
                 if (!linkToShow.startsWith("http")) {
                     linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
                 }
-                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
+                thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

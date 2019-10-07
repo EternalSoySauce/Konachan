@@ -39,6 +39,15 @@
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_page"/>
+
+            <ImageView
+                android:id="@+id/iv_format"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="end|center_vertical"
+                android:background="@drawable/background_item_selected"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_page"/>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

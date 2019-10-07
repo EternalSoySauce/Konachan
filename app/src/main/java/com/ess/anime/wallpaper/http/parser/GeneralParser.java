@@ -38,7 +38,10 @@ public class GeneralParser extends HtmlParser {
         for (Element e : elements) {
             try {
                 String id = e.attr("id").replaceAll("[^0-9]", "");
-                String thumbUrl = e.getElementsByTag("img").attr("src");
+                Element img = e.getElementsByTag("img").first();
+                int thumbWidth = Integer.valueOf(img.attr("width")) * 2;
+                int thumbHeight = Integer.valueOf(img.attr("height")) * 2;
+                String thumbUrl = img.attr("src");
                 if (thumbUrl.contains("deleted-preview")) {
                     continue;
                 } else if (!thumbUrl.startsWith("http")) {
@@ -51,7 +54,7 @@ public class GeneralParser extends HtmlParser {
                 }
                 String linkToShow = e.getElementsByClass("plid").first().ownText();
                 linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
-                thumbList.add(new ThumbBean(id, thumbUrl, realSize, linkToShow));
+                thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

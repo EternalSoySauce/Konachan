@@ -2,11 +2,6 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
@@ -31,6 +26,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
 
@@ -88,10 +88,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         mRvPosts.setLayoutManager(mLayoutManager);
 
         mPostAdapter = new RecyclerPostAdapter(TAG);
+        mPostAdapter.bindToRecyclerView(mRvPosts);
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
         mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
-        mRvPosts.setAdapter(mPostAdapter);
 
         int spaceHor = UIUtils.dp2px(getActivity(), 5);
         int spaceVer = UIUtils.dp2px(getActivity(), 10);

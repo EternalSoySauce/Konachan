@@ -7,6 +7,8 @@ import android.text.TextUtils;
 public class ThumbBean implements Parcelable {
 
     public String id;
+    public int thumbWidth;
+    public int thumbHeight;
     public String thumbUrl;
     public String realSize;
     public String linkToShow;
@@ -17,8 +19,10 @@ public class ThumbBean implements Parcelable {
     //在解析完ImageBean后将此临时信息覆盖到imageBean.posts[0]上
     public PostBean tempPost;
 
-    public ThumbBean(String id, String thumbUrl, String realSize, String linkToShow) {
+    public ThumbBean(String id, int thumbWidth, int thumbHeight, String thumbUrl, String realSize, String linkToShow) {
         this.id = id;
+        this.thumbWidth = thumbWidth;
+        this.thumbHeight = thumbHeight;
         this.thumbUrl = thumbUrl;
         this.realSize = realSize;
         this.linkToShow = linkToShow;
@@ -51,6 +55,8 @@ public class ThumbBean implements Parcelable {
 
     protected ThumbBean(Parcel in) {
         id = in.readString();
+        thumbWidth = in.readInt();
+        thumbHeight = in.readInt();
         thumbUrl = in.readString();
         realSize = in.readString();
         linkToShow = in.readString();
@@ -61,6 +67,8 @@ public class ThumbBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
+        dest.writeInt(thumbWidth);
+        dest.writeInt(thumbHeight);
         dest.writeString(thumbUrl);
         dest.writeString(realSize);
         dest.writeString(linkToShow);
