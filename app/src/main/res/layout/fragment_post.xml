@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -29,7 +28,7 @@
                 android:layout_marginEnd="7dp"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_search"/>
+                android:src="@drawable/ic_search" />
 
             <ImageView
                 android:id="@+id/iv_page"
@@ -38,7 +37,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_page"/>
+                android:src="@drawable/ic_page" />
 
             <ImageView
                 android:id="@+id/iv_format"
@@ -47,7 +46,8 @@
                 android:layout_gravity="end|center_vertical"
                 android:background="@drawable/background_item_selected"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_page"/>
+                android:src="@drawable/ic_format_grid"
+                app:tint="@color/colorAccent" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -61,11 +61,11 @@
             android:id="@+id/rv_post"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingEnd="5dp"
             android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
     </com.ess.anime.wallpaper.ui.view.MySwipeRefreshLayout>
 
     <com.github.clans.fab.FloatingActionMenu
@@ -93,7 +93,7 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple_button"
             fab:fab_label="@string/fab_home"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_random"
@@ -104,6 +104,6 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/color_ripple_button"
             fab:fab_label="@string/fab_random"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
