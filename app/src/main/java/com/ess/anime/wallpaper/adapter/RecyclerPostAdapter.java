@@ -2,9 +2,18 @@ package com.ess.anime.wallpaper.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
@@ -23,9 +32,6 @@ import com.ess.anime.wallpaper.utils.ComponentUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
 
@@ -49,11 +55,24 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         ivThumb.setLayoutParams(layoutParams);
 
         //缩略图
+        ivThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
         GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
                 .override(thumbBean.thumbWidth, thumbBean.thumbHeight)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        ivThumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        return false;
+                    }
+                })
                 .into(ivThumb);
 
         //尺寸

@@ -54,7 +54,7 @@ public class Constants {
     public final static String BASE_URL_KONACHAN_E = "https://konachan.com/";
     public final static String BASE_URL_YANDE = "https://yande.re/";
     public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
-    public final static String BASE_URL_DANBOORU = "https://www.idanbooru.com/";
+    public final static String BASE_URL_DANBOORU = "https://danbooru.donmai.us/";
     public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
     public final static String BASE_URL_GELBOORU = "https://gelbooru.com/";
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
