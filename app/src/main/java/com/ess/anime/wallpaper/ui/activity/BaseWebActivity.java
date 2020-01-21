@@ -1,7 +1,9 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -11,23 +13,26 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerWebviewMoreAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.ui.view.LollipopFixedWebView;
 import com.ess.anime.wallpaper.ui.view.LongClickWebView;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.WebChromeClient;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import butterknife.OnClick;
 
 public abstract class BaseWebActivity extends BaseActivity {
@@ -74,8 +79,20 @@ public abstract class BaseWebActivity extends BaseActivity {
                 .setAgentWebParent(findViewById(R.id.layout_web_view),
                         new FrameLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(ResourcesCompat.getColor(getResources(), R.color.color_text_selected, null))
+                // 5.x机器的webview会出现资源Resources$NotFoundException错误，需对此进行适配
+                .setWebView(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT ? new LollipopFixedWebView(this) : null)
                 .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
                 .interceptUnkownUrl()
+                .setWebChromeClient(new WebChromeClient() {
+                    @Override
+                    public Bitmap getDefaultVideoPoster() {
+                        Bitmap bitmap = super.getDefaultVideoPoster();
+                        if (bitmap == null) {
+                            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+                        }
+                        return bitmap;
+                    }
+                })
                 .setWebView(webView)
                 .createAgentWeb()
                 .ready()
