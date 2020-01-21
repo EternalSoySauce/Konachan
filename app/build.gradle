@@ -6,8 +6,8 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 14
-        versionName "1.7.3"
+        versionCode 15
+        versionName "1.7.4"
         multiDexEnabled true
         resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
         vectorDrawables.useSupportLibrary = true
@@ -28,9 +28,10 @@ dependencies {
     // Android 基础库
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
 
 

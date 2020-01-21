@@ -10,8 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.adapter.ViewPagerFullscreenAdapter;
+import com.ess.anime.wallpaper.adapter.RecyclerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
@@ -31,11 +35,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
-import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -49,11 +49,10 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     @BindView(R.id.iv_menu)
     ImageView mIvMenu;
     @BindView(R.id.vp_full_screen)
-    ViewPager mVpFullScreen;
+    ViewPager2 mVpFullScreen;
     private ActionSheetDialog mActionSheet;
 
-    private List<CollectionBean> mCollectionList;
-    private int mCurrentPos;
+    private RecyclerFullscreenAdapter mFullscreenAdapter;
     private boolean mEnlarge;
 
     private boolean mForResult = true;
@@ -65,17 +64,15 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
 
     @Override
     void init(Bundle savedInstanceState) {
-        mCollectionList = ImageDataHolder.getCollectionList();
-        mCurrentPos = ImageDataHolder.getCollectionCurrentItem();
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
-        if (mCollectionList.isEmpty() || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+        if (ImageDataHolder.getCollectionList().isEmpty() || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
             finish();
             return;
         }
 
-        initViews();
         initFullScreenViewPager();
         initActionSheetDialog();
+        initNormalViews();
         EventBus.getDefault().register(this);
 
 //        ViewCompat.setTransitionName(mVpFullScreen, "s");
@@ -86,7 +83,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         super.onResume();
         UIUtils.hideNavigationBar(this);
 
-        String url = mCollectionList.get(mVpFullScreen.getCurrentItem()).url;
+        String url = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem()).url;
         // 发送通知到MultipleMediaLayout
         EventBus.getDefault().post(new MsgBean(Constants.RESUME_VIDEO, url));
     }
@@ -94,7 +91,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     @Override
     protected void onPause() {
         super.onPause();
-        String url = mCollectionList.get(mVpFullScreen.getCurrentItem()).url;
+        String url = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem()).url;
         // 发送通知到MultipleMediaLayout
         EventBus.getDefault().post(new MsgBean(Constants.PAUSE_VIDEO, url));
     }
@@ -105,42 +102,35 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         UIUtils.hideNavigationBar(this);
     }
 
-    private void initViews() {
+    private void initNormalViews() {
         setSerial();
         mIvMenu.setVisibility(mEnlarge ? View.GONE : View.VISIBLE);
     }
 
     private void initFullScreenViewPager() {
-        mVpFullScreen.setAdapter(new ViewPagerFullscreenAdapter(mCollectionList));
-        mVpFullScreen.setCurrentItem(mCurrentPos, false);
-        final ViewPager.OnPageChangeListener listener = new ViewPager.SimpleOnPageChangeListener() {
+        mFullscreenAdapter = new RecyclerFullscreenAdapter(ImageDataHolder.getCollectionList());
+        mVpFullScreen.setAdapter(mFullscreenAdapter);
+        mVpFullScreen.setCurrentItem(ImageDataHolder.getCollectionCurrentItem(), false);
+        ViewPager2.OnPageChangeCallback callback = new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 ImageDataHolder.setCollectionCurrentItem(position);
-                mCurrentPos = position;
                 setSerial();
 
                 int childCount = mVpFullScreen.getChildCount();
                 for (int i = 0; i < childCount; i++) {
-                    MultipleMediaLayout mediaLayout = (MultipleMediaLayout) mVpFullScreen.getChildAt(i);
+                    MultipleMediaLayout mediaLayout = mVpFullScreen.getChildAt(i).findViewById(R.id.layout_multiple_media);
                     mediaLayout.reset();
-                    mediaLayout.setOnClickListener(v -> toggleOperateLayout());
-                    mediaLayout.setOnLongClickListener(FullscreenActivity.this);
-
-                    PhotoView photoView = mediaLayout.getPhotoView();
-                    photoView.setOnPhotoTapListener(FullscreenActivity.this);
-                    photoView.setOnOutsidePhotoTapListener(FullscreenActivity.this);
-                    photoView.setOnLongClickListener(FullscreenActivity.this);
                 }
 
-                String url = mCollectionList.get(position).url;
+                String url = mFullscreenAdapter.getData().get(position).url;
                 // 发送通知到MultipleMediaLayout
                 EventBus.getDefault().post(new MsgBean(Constants.START_VIDEO, url));
             }
         };
-        mVpFullScreen.addOnPageChangeListener(listener);
-        mVpFullScreen.post(() -> listener.onPageSelected(mCurrentPos));
+        mVpFullScreen.registerOnPageChangeCallback(callback);
+        mVpFullScreen.post(() -> callback.onPageSelected(mVpFullScreen.getCurrentItem()));
     }
 
     @Override
@@ -153,7 +143,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         toggleOperateLayout();
     }
 
-    private void toggleOperateLayout() {
+    public void toggleOperateLayout() {
         mLayoutOperate.setVisibility(View.GONE - mLayoutOperate.getVisibility());
     }
 
@@ -183,27 +173,30 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
 
     private void setSerial() {
         if (!mEnlarge) {
-            String serial = (mCurrentPos + 1) + "/" + mCollectionList.size();
+            String serial = (mVpFullScreen.getCurrentItem() + 1) + "/" + mFullscreenAdapter.getItemCount();
             mTvSerial.setText(serial);
         }
     }
 
     private void setAsWallpaper() {
-        File file = new File(mCollectionList.get(mCurrentPos).filePath);
+        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
+        File file = new File(collectionBean.filePath);
         Uri uri = BitmapUtils.getContentUriFromFile(this, file);
         WallpaperUtils.setWallpaperBySystemApp(this, uri);
     }
 
     private void customWallpaper() {
-        Uri sourceUri = BitmapUtils.getContentUriFromFile(this,
-                new File(mCollectionList.get(mCurrentPos).filePath));
+        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
+        File file = new File(collectionBean.filePath);
+        Uri sourceUri = BitmapUtils.getContentUriFromFile(this, file);
         Intent intent = new Intent(this, CropWallpaperActivity.class);
         intent.putExtra(CropWallpaperActivity.FILE_URI, sourceUri);
         startActivity(intent);
     }
 
     private void shareImage() {
-        Uri uri = Uri.parse(mCollectionList.get(mCurrentPos).url);
+        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
+        Uri uri = Uri.parse(collectionBean.url);
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("video/*;image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
