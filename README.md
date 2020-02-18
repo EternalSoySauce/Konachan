@@ -120,7 +120,6 @@
 谢谢大家的支持~
 
 <a href="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/alipay.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png"><img src="https://github.com/EternalSoySauce/images/blob/master/wechat_pay.png" width="37.5%"/>
-<a href="https://github.com/EternalSoySauce/images/blob/master/afdian-秋葵酱.png"><img src="https://github.com/EternalSoySauce/images/blob/master/afdian-秋葵酱.png" width="32%"/>
 
 ## License 
 ```
