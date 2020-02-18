@@ -4,7 +4,7 @@
 
 个人爱发电主页：[https://afdian.net/@eternalsoysauce](https://afdian.net/@eternalsoysauce)
 
-或者在[爱发电](https://afdian.ne)中搜索【秋葵酱】也可找到我~
+或者在[爱发电](https://afdian.net/)中搜索【秋葵酱】也可找到我~
 
 ## 最新版本【v1.7.3】
 * 地址1：[百度云盘下载](https://pan.baidu.com/s/1tSUmGkaYFXpdHni9mIjwPw)，提取码: ye4d
