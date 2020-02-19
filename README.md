@@ -6,7 +6,7 @@
 
 或者在[爱发电](https://afdian.net/)中搜索【秋葵酱】也可找到我~
 
-## 最新版本【v1.7.3】
+## 最新版本【v1.7.4】
 * 地址1：[百度云盘下载](https://pan.baidu.com/s/1eHQvk3ogMvJw-fGGD5JrQA)，提取码: e6uu
 * 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.4.apk)
 * 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.4.apk?alt=media&token=ad380c90-8811-414f-9303-1e083937334a)
@@ -62,6 +62,10 @@
 * 其他
 
 ## 历史更新
+* 【v1.7.4】
+	* 紧急修复Danbooru网站图片详情标签栏无数据的问题
+	* 修复安卓5.0手机打开SauceNAO和TraceMoe闪退的问题
+	
 * 【v1.7.3】
 	* 紧急修复Danbooru网站无法访问的问题
 
