@@ -7,9 +7,9 @@
 或者在[爱发电](https://afdian.net/)中搜索【秋葵酱】也可找到我~
 
 ## 最新版本【v1.7.3】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1tSUmGkaYFXpdHni9mIjwPw)，提取码: ye4d
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.3.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.3.apk?alt=media&token=90858ed6-251b-4712-8881-ec8fc1359b2b)
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1eHQvk3ogMvJw-fGGD5JrQA)，提取码: e6uu
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.4.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.4.apk?alt=media&token=ad380c90-8811-414f-9303-1e083937334a)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
