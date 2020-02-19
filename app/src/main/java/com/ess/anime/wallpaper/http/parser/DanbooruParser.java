@@ -129,19 +129,19 @@ public class DanbooruParser extends HtmlParser {
 
             // tags
             Element tag = mDoc.getElementById("tag-list");
-            for (Element copyright : tag.getElementsByClass("category-3")) {
+            for (Element copyright : tag.getElementsByClass("tag-type-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
                         .first().text().replace(" ", "_"));
             }
-            for (Element character : tag.getElementsByClass("category-4")) {
+            for (Element character : tag.getElementsByClass("tag-type-4")) {
                 builder.addCharacterTags(character.getElementsByClass("search-tag")
                         .first().text().replace(" ", "_"));
             }
-            for (Element artist : tag.getElementsByClass("category-1")) {
+            for (Element artist : tag.getElementsByClass("tag-type-1")) {
                 builder.addArtistTags(artist.getElementsByClass("search-tag")
                         .first().text().replace(" ", "_"));
             }
-            for (Element general : tag.getElementsByClass("category-0")) {
+            for (Element general : tag.getElementsByClass("tag-type-0")) {
                 builder.addGeneralTags(general.getElementsByClass("search-tag")
                         .first().text().replace(" ", "_"));
             }
