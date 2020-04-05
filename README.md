@@ -2,14 +2,11 @@
 一款动漫图片搜索软件，集合了多网站图源，可在线预览、标签/中文搜索，多尺寸下载、分享给好友、设为手机壁纸。
 
 
-个人爱发电主页：[https://afdian.net/@eternalsoysauce](https://afdian.net/@eternalsoysauce)
 
-或者在[爱发电](https://afdian.net/)中搜索【秋葵酱】也可找到我~
-
-## 最新版本【v1.7.4】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1eHQvk3ogMvJw-fGGD5JrQA)，提取码: e6uu
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.4.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.4.apk?alt=media&token=ad380c90-8811-414f-9303-1e083937334a)
+## 最新版本【v1.7.5】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1V9yBkccKw-PmoVyOabVsug)，提取码: jsys
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.5.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.5.apk?alt=media&token=d3ef3cee-9235-41f8-980b-d24ba546d49c)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -62,6 +59,10 @@
 * 其他
 
 ## 历史更新
+* 【v1.7.5】
+	* 紧急修复Danbooru网站图片详情页无数据的问题
+	* 啊啊啊啊这个沙雕Danbooru我真是佛了，你们的程序猿是天天闲的没事干吗总改网页标签？！！
+	
 * 【v1.7.4】
 	* 紧急修复Danbooru网站图片详情标签栏无数据的问题
 	* 修复安卓5.0手机打开SauceNAO和TraceMoe闪退的问题
