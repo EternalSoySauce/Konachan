@@ -6,8 +6,8 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 15
-        versionName "1.7.4"
+        versionCode 16
+        versionName "1.7.5"
         multiDexEnabled true
         resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
         vectorDrawables.useSupportLibrary = true

@@ -81,7 +81,7 @@ public class DanbooruParser extends HtmlParser {
                 }
             }
 
-            Element container = mDoc.getElementById("image-container");
+            Element container = mDoc.getElementsByClass("image-container").first();
             Element image = mDoc.getElementById("image");
             builder.id(container.attr("data-id"))
                     .tags(container.attr("data-tags"))
