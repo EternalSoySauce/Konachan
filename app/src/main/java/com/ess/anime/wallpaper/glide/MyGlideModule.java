@@ -1,12 +1,10 @@
 package com.ess.anime.wallpaper.glide;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
@@ -19,6 +17,10 @@ import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.bean.PoolListBean;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 @GlideModule
 public class MyGlideModule extends AppGlideModule {
@@ -55,7 +57,9 @@ public class MyGlideModule extends AppGlideModule {
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        if (isFirstResource) {
+                        if (isFirstResource
+                                && (!(context instanceof Activity)
+                                || ComponentUtils.isActivityActive((Activity) context))) {
                             preloadImage(context, oriUrl);
                         }
                         return false;

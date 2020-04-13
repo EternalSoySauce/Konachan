@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager2.widget.ViewPager2;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerFullscreenAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -36,6 +32,9 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager2.widget.ViewPager2;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -83,17 +82,21 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         super.onResume();
         UIUtils.hideNavigationBar(this);
 
-        String url = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem()).url;
-        // 发送通知到MultipleMediaLayout
-        EventBus.getDefault().post(new MsgBean(Constants.RESUME_VIDEO, url));
+        CollectionBean collectionBean = getCurrentCollection();
+        if (collectionBean != null) {
+            // 发送通知到MultipleMediaLayout
+            EventBus.getDefault().post(new MsgBean(Constants.RESUME_VIDEO, collectionBean.url));
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        String url = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem()).url;
-        // 发送通知到MultipleMediaLayout
-        EventBus.getDefault().post(new MsgBean(Constants.PAUSE_VIDEO, url));
+        CollectionBean collectionBean = getCurrentCollection();
+        if (collectionBean != null) {
+            // 发送通知到MultipleMediaLayout
+            EventBus.getDefault().post(new MsgBean(Constants.PAUSE_VIDEO, collectionBean.url));
+        }
     }
 
     @Override
@@ -121,12 +124,16 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
                 int childCount = mVpFullScreen.getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     MultipleMediaLayout mediaLayout = mVpFullScreen.getChildAt(i).findViewById(R.id.layout_multiple_media);
-                    mediaLayout.reset();
+                    if (mediaLayout != null) {
+                        mediaLayout.reset();
+                    }
                 }
 
-                String url = mFullscreenAdapter.getData().get(position).url;
-                // 发送通知到MultipleMediaLayout
-                EventBus.getDefault().post(new MsgBean(Constants.START_VIDEO, url));
+                CollectionBean collectionBean = mFullscreenAdapter.getItem(position);
+                if (collectionBean != null) {
+                    // 发送通知到MultipleMediaLayout
+                    EventBus.getDefault().post(new MsgBean(Constants.START_VIDEO, collectionBean.url));
+                }
             }
         };
         mVpFullScreen.registerOnPageChangeCallback(callback);
@@ -179,28 +186,38 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     }
 
     private void setAsWallpaper() {
-        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
-        File file = new File(collectionBean.filePath);
-        Uri uri = BitmapUtils.getContentUriFromFile(this, file);
-        WallpaperUtils.setWallpaperBySystemApp(this, uri);
+        CollectionBean collectionBean = getCurrentCollection();
+        if (collectionBean != null) {
+            File file = new File(collectionBean.filePath);
+            Uri uri = BitmapUtils.getContentUriFromFile(this, file);
+            WallpaperUtils.setWallpaperBySystemApp(this, uri);
+        }
     }
 
     private void customWallpaper() {
-        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
-        File file = new File(collectionBean.filePath);
-        Uri sourceUri = BitmapUtils.getContentUriFromFile(this, file);
-        Intent intent = new Intent(this, CropWallpaperActivity.class);
-        intent.putExtra(CropWallpaperActivity.FILE_URI, sourceUri);
-        startActivity(intent);
+        CollectionBean collectionBean = getCurrentCollection();
+        if (collectionBean != null) {
+            File file = new File(collectionBean.filePath);
+            Uri sourceUri = BitmapUtils.getContentUriFromFile(this, file);
+            Intent intent = new Intent(this, CropWallpaperActivity.class);
+            intent.putExtra(CropWallpaperActivity.FILE_URI, sourceUri);
+            startActivity(intent);
+        }
     }
 
     private void shareImage() {
-        CollectionBean collectionBean = mFullscreenAdapter.getData().get(mVpFullScreen.getCurrentItem());
-        Uri uri = Uri.parse(collectionBean.url);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("video/*;image/*");
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+        CollectionBean collectionBean = getCurrentCollection();
+        if (collectionBean != null) {
+            Uri uri = Uri.parse(collectionBean.url);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("video/*;image/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+        }
+    }
+
+    private CollectionBean getCurrentCollection() {
+        return mFullscreenAdapter == null ? null : mFullscreenAdapter.getItem(mVpFullScreen.getCurrentItem());
     }
 
     @Override
