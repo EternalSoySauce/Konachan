@@ -92,7 +92,14 @@ public class OkHttp {
         PriorityStringRequest request = new PriorityStringRequest(
                 convertSchemeToHttps(url),
                 callback::onSuccessful,
-                error -> callback.onFailure());
+                error -> {
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                        // 404按成功处理，UI显示无搜索结果而不是访问失败
+                        callback.onSuccessful("");
+                    } else {
+                        callback.onFailure();
+                    }
+                });
         request.setTag(tag);
         request.setPriority(priority);
         sRequestQueue.add(request);
@@ -125,6 +132,9 @@ public class OkHttp {
 
         StringBuilder tags = new StringBuilder();
         for (String tag : tagList) {
+            if (OkHttp.getBaseUrl(context).equals(Constants.BASE_URL_ZEROCHAN)) {
+                tag = tag.replaceAll("_", " ");
+            }
             tags.append(tag).append("+");
         }
 
@@ -132,6 +142,8 @@ public class OkHttp {
         switch (baseUrl) {
             case Constants.BASE_URL_GELBOORU:
                 return baseUrl + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
+            case Constants.BASE_URL_ZEROCHAN:
+                return baseUrl + tags + "?s=id&p=" + page;
             default:
                 return baseUrl + "post?page=" + page + "&tags=" + tags;
         }

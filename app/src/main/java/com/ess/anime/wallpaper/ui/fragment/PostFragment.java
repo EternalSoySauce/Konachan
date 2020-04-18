@@ -284,7 +284,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             mPostAdapter.loadMoreComplete();
             changeToPage(mCurrentPage);
         } else {
-            mPostAdapter.loadMoreEnd();
+            mPostAdapter.loadMoreEnd(true);
         }
     }
 
@@ -297,7 +297,8 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @OnClick(R.id.fab_random)
     void searchRandom() {
         mFloatingMenu.close(true);
-        if (TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_GELBOORU)) {
+        if (TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_GELBOORU)
+                || TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_ZEROCHAN)) {
             Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent();
@@ -439,16 +440,22 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             public void onSuccessful(String body) {
                 String name = HtmlParser.getNameFromBaidu(body);
                 if (!TextUtils.isEmpty(name)) {
-                    String tag1 = "~" + name;
-                    mCurrentTagList.add(tag1);
+                    if (OkHttp.getBaseUrl(mActivity).equals(Constants.BASE_URL_ZEROCHAN)
+                            || OkHttp.getBaseUrl(mActivity).equals(Constants.BASE_URL_GELBOORU)) {
+                        // Zerochan和Gelbooru不支持高级搜索
+                        mCurrentTagList.add(name);
+                    } else {
+                        String tag1 = "~" + name;
+                        mCurrentTagList.add(tag1);
 
-                    String[] split = name.split("_");
-                    StringBuilder tag2 = new StringBuilder("~");
-                    for (int i = split.length - 1; i >= 0; i--) {
-                        tag2.append(split[i]).append("_");
+                        String[] split = name.split("_");
+                        StringBuilder tag2 = new StringBuilder("~");
+                        for (int i = split.length - 1; i >= 0; i--) {
+                            tag2.append(split[i]).append("_");
+                        }
+                        tag2.replace(tag2.length() - 1, tag2.length(), "");
+                        mCurrentTagList.add(tag2.toString());
                     }
-                    tag2.replace(tag2.length() - 1, tag2.length(), "");
-                    mCurrentTagList.add(tag2.toString());
                     getNewPosts(mCurrentPage);
                     changeFromPage(mCurrentPage);
                     changeToPage(mCurrentPage);

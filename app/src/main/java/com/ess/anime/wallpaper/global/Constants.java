@@ -57,6 +57,7 @@ public class Constants {
     public final static String BASE_URL_DANBOORU = "https://danbooru.donmai.us/";
     public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
     public final static String BASE_URL_GELBOORU = "https://gelbooru.com/";
+    public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
     public final static String TAG_JSON_URL_KONACHAN_E = "https://konachan.com/tag/summary.json";
     public final static String TAG_JSON_URL_YANDE = "https://yande.re/tag/summary.json";
@@ -64,10 +65,11 @@ public class Constants {
 //    public final static String TAG_JSON_URL_DANBOORU = "";  // Danbooru没有搜索提示
 //    public final static String TAG_JSON_URL_SANKAKU = "";  // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
 //    public final static String TAG_JSON_URL_GELBOORU = "";  // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
+//    public final static String TAG_JSON_URL_ZEROCHAN = "";  // Zerochan搜索提示为动态请求：https://www.zerochan.net/suggest?q=xxx
 
     public final static String[] BASE_URLS = {
             BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_LOLIBOORU,
-            BASE_URL_DANBOORU, BASE_URL_SANKAKU, BASE_URL_GELBOORU
+            BASE_URL_DANBOORU, BASE_URL_SANKAKU, BASE_URL_GELBOORU, BASE_URL_ZEROCHAN
     };
 
     public final static String[] TAG_JSON_URLS = {
@@ -89,4 +91,5 @@ public class Constants {
     public final static String IMAGE_HEAD_DANBOORU = "Danbooru-";
     public final static String IMAGE_HEAD_SANKAKU = "Sankaku-";
     public final static String IMAGE_HEAD_GELBOORU = "Gelbooru-";
+    public final static String IMAGE_HEAD_ZEROCHAN = "Zerochan-";
 }

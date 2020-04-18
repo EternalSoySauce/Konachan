@@ -46,8 +46,13 @@ public class TimeFormat {
 
     // 带时区的标准时间格式string转换为long
     public static long timeToMillsWithZone(String time, String format, TimeZone timeZone) {
+        return timeToMillsWithLocaleAndZone(time, format, Locale.getDefault(), timeZone);
+    }
+
+    // 精确语种的带时区的标准时间格式string转换为long
+    public static long timeToMillsWithLocaleAndZone(String time, String format, Locale locale, TimeZone timeZone) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format, locale);
             dateFormat.setTimeZone(timeZone);
             Date date = dateFormat.parse(time);
             return date.getTime();

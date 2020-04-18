@@ -76,7 +76,7 @@ public class DanbooruParser extends HtmlParser {
             for (Element li : info.getElementsByTag("li")) {
                 if (li.text().contains("Size")) {
                     String size = li.getElementsByTag("a").first().text();
-                    jpegFileSize = String.valueOf(FileUtils.parseFileSile(size));
+                    jpegFileSize = String.valueOf(FileUtils.parseFileSize(size));
                     break;
                 }
             }

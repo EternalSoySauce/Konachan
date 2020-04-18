@@ -15,6 +15,8 @@ public class HtmlParserFactory {
             return new DanbooruParser(context, doc);
         } else if (webTitle.toLowerCase().contains("sankaku")) {
             return new SankakuParser(context, doc);
+        } else if (webTitle.toLowerCase().contains("zerochan")) {
+            return new ZerochanParser(context, doc);
         } else if (TextUtils.isEmpty(webTitle) || webTitle.toLowerCase().contains("gelbooru")) {
             // Gelbooru用特殊url获取的图片列表数据，html无webTitle
             return new GelbooruParser(context, doc);

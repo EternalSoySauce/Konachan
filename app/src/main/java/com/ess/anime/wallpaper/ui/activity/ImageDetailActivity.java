@@ -267,6 +267,9 @@ public class ImageDetailActivity extends BaseActivity {
             case Constants.BASE_URL_GELBOORU:
                 imgHead = Constants.IMAGE_HEAD_GELBOORU;
                 break;
+            case Constants.BASE_URL_ZEROCHAN:
+                imgHead = Constants.IMAGE_HEAD_ZEROCHAN;
+                break;
         }
         return imgHead;
     }

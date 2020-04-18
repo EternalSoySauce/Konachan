@@ -399,14 +399,14 @@ public class FileUtils {
      * @param fileSize 文件大小字符串
      * @return 文件大小
      */
-    public static long parseFileSile(String fileSize) {
+    public static long parseFileSize(String fileSize) {
         try {
             double size = Double.parseDouble(fileSize.replaceAll("[^-*\\d+(\\.)?]", "")); // 提取数字
-            if (fileSize.contains("G")) {
+            if (fileSize.toUpperCase().contains("G")) {
                 size *= 1024 * 1024 * 1024;
-            } else if (fileSize.contains("M")) {
+            } else if (fileSize.toUpperCase().contains("M")) {
                 size *= 1024 * 1024;
-            } else if (fileSize.contains("K")) {
+            } else if (fileSize.toUpperCase().contains("K")) {
                 size *= 1024;
             }
             return (long) size;

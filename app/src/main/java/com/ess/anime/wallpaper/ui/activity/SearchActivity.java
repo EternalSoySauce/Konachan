@@ -22,10 +22,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
@@ -35,6 +31,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -49,10 +46,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -84,7 +83,7 @@ public class SearchActivity extends BaseActivity {
     private ArrayList<SearchBean> mSearchList = new ArrayList<>();
 
     // 当前搜索内容的下拉提示内容
-    private LinkedHashMap<String, Integer> mPromptMap = new LinkedHashMap<>();
+    private ArrayList<String> mPromptList = new ArrayList<>();
 
     // 筛选下拉提示异步任务
     private AsyncTask mAutoCompleteTask;
@@ -167,7 +166,7 @@ public class SearchActivity extends BaseActivity {
                     int splitIndex = Math.max(tag.lastIndexOf(","), tag.lastIndexOf("，"));
                     tag = tag.substring(splitIndex + 1);
                     if (!TextUtils.isEmpty(tag) && mUserInput) {
-                        mPromptMap.clear();
+                        mPromptList.clear();
                         switch (OkHttp.getBaseUrl(SearchActivity.this)) {
                             case Constants.BASE_URL_SANKAKU:
                                 // Sankaku搜索提示需动态请求网络
@@ -176,6 +175,10 @@ public class SearchActivity extends BaseActivity {
                             case Constants.BASE_URL_GELBOORU:
                                 // Gelbooru搜索提示需动态请求网络
                                 getTagListFromNetwork("https://gelbooru.com/index.php?page=autocomplete&term=" + tag);
+                                break;
+                            case Constants.BASE_URL_ZEROCHAN:
+                                // Zerochan搜索提示需动态请求网络
+                                getTagListFromNetwork("https://www.zerochan.net/suggest?q=" + tag);
                                 break;
                             default:
                                 mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
@@ -337,6 +340,9 @@ public class SearchActivity extends BaseActivity {
             case Constants.BASE_URL_GELBOORU:
                 // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
                 break;
+            case Constants.BASE_URL_ZEROCHAN:
+                // Zerochan搜索提示为动态请求：https://www.zerochan.net/suggest?q=xxx
+                break;
         }
 
         File file = new File(path, name);
@@ -370,7 +376,7 @@ public class SearchActivity extends BaseActivity {
                 String start = search.substring(0, length - i).toLowerCase();
                 String contain = search.substring(length - i).toLowerCase();
                 filter(start, contain);
-                if (mPromptMap.size() >= 10) {
+                if (mPromptList.size() >= 10) {
                     break;
                 }
             }
@@ -390,8 +396,8 @@ public class SearchActivity extends BaseActivity {
                 String[] parts = tag.split("_");
                 for (String part : parts) {
                     if (part.startsWith(start) && part.contains(contain)) {
-                        if (!mPromptMap.containsKey(tag)) {
-                            mPromptMap.put(tag, searchBean.colorId);
+                        if (!mPromptList.contains(tag)) {
+                            mPromptList.add(tag);
                         }
                         find = true;
                         break;
@@ -401,7 +407,7 @@ public class SearchActivity extends BaseActivity {
                     break;
                 }
             }
-            if (mPromptMap.size() >= 15) {
+            if (mPromptList.size() >= 15) {
                 break;
             }
         }
@@ -417,20 +423,29 @@ public class SearchActivity extends BaseActivity {
             }
 
             @Override
-            public void onSuccessful(String json) {
-                JsonArray tagArray = null;
+            public void onSuccessful(String body) {
                 switch (OkHttp.getBaseUrl(SearchActivity.this)) {
                     case Constants.BASE_URL_SANKAKU:
-                        tagArray = new JsonParser().parse(json).getAsJsonArray().get(1).getAsJsonArray();
+                        JsonArray tagArray = new JsonParser().parse(body).getAsJsonArray().get(1).getAsJsonArray();
+                        for (int i = 0; i < tagArray.size(); i++) {
+                            mPromptList.add(tagArray.get(i).getAsString());
+                        }
                         break;
+
                     case Constants.BASE_URL_GELBOORU:
-                        tagArray = new JsonParser().parse(json).getAsJsonArray();
+                        tagArray = new JsonParser().parse(body).getAsJsonArray();
+                        for (int i = 0; i < tagArray.size(); i++) {
+                            mPromptList.add(tagArray.get(i).getAsString());
+                        }
                         break;
-                }
-                if (tagArray != null) {
-                    for (int i = 0; i < tagArray.size(); i++) {
-                        mPromptMap.put(tagArray.get(i).getAsString(), 0);
-                    }
+
+                    case Constants.BASE_URL_ZEROCHAN:
+                        String[] items = body.split("\n");
+                        for (String item : items) {
+                            String tag = item.split("\\|")[0];
+                            mPromptList.add(tag);
+                        }
+                        break;
                 }
                 setCompleteSearchTags();
             }
@@ -439,7 +454,7 @@ public class SearchActivity extends BaseActivity {
 
     private void setCompleteSearchTags() {
         mCompleteSearchAdapter.clear();
-        mCompleteSearchAdapter.addData(mPromptMap.keySet());
+        mCompleteSearchAdapter.addData(mPromptList);
         mRvCompleteSearch.setVisibility(View.VISIBLE);
     }
 
@@ -467,14 +482,18 @@ public class SearchActivity extends BaseActivity {
 
         @Override
         protected Void doInBackground(String... params) {
-            getTagList(params[0]);
+            if (!isCancelled() && ComponentUtils.isActivityActive(SearchActivity.this)) {
+                getTagList(params[0]);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            setCompleteSearchTags();
+            if (!isCancelled() && ComponentUtils.isActivityActive(SearchActivity.this)) {
+                setCompleteSearchTags();
+            }
         }
     }
 }

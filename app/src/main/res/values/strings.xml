@@ -36,6 +36,7 @@
     <string name="base_danbooru" translatable="false">Danbooru</string>
     <string name="base_sankaku" translatable="false">Sankaku</string>
     <string name="base_gelbooru" translatable="false">Gelbooru</string>
+    <string name="base_zerochan" translatable="false">Zerochan</string>
     <string name="navigation_drawer_open">Open drawer layout</string>
     <string name="navigation_drawer_close">Close drawer layout</string>
     <string name="nav_post">Image</string>
