@@ -3,20 +3,13 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
@@ -39,6 +32,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity {
@@ -178,6 +178,11 @@ public class MainActivity extends BaseActivity {
         NavigationMenuView navMenu = (NavigationMenuView) mNavigation.getChildAt(0);
         if (navMenu != null) {
             navMenu.setVerticalScrollBarEnabled(false);
+        }
+
+        // 临时解决切换fragment导致侧拉栏上移的问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            mNavigation.setOnApplyWindowInsetsListener(null);
         }
     }
 
