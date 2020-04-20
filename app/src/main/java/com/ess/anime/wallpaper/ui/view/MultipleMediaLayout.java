@@ -19,11 +19,13 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
+import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.VideoCache;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.sprylab.android.widget.TextureVideoView;
 
@@ -38,16 +40,8 @@ import butterknife.ButterKnife;
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 
 public class MultipleMediaLayout extends FrameLayout implements RequestListener<Drawable>,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener {
-
-    @BindView(R.id.photo_view)
-    PhotoView mPhotoView;
-    @BindView(R.id.video_view)
-    TextureVideoView mVideoView;
-
-    private String mMediaPath;
-    private boolean mAutoPlay;
-    private MediaPlayer mMediaPlayer;
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener,
+        MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
     public MultipleMediaLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -65,6 +59,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
 
     /***********************************  Path  ***********************************/
+    private String mMediaPath;
+
     public String getMediaPath() {
         return mMediaPath;
     }
@@ -92,11 +88,14 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     private boolean isWebPath() {
-        return mMediaPath.startsWith("http");
+        return StringUtils.isURL(mMediaPath);
     }
 
 
     /***********************************  Image  ***********************************/
+    @BindView(R.id.photo_view)
+    PhotoView mPhotoView;
+
     public PhotoView getPhotoView() {
         return mPhotoView;
     }
@@ -117,22 +116,35 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
                     .priority(Priority.IMMEDIATE)
                     .into(mPhotoView);
         }
+
+        if (isWebPath()) {
+            ProgressInterceptor.addListener(mMediaPath, progress -> {
+            });
+        }
     }
 
     @Override
     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+        ProgressInterceptor.removeListener(mMediaPath);
         mPhotoView.post(this::showImage);
         return true;
     }
 
     @Override
     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+        ProgressInterceptor.removeListener(mMediaPath);
         mPhotoView.setZoomable(true);
         return false;
     }
 
 
     /***********************************  Video  ***********************************/
+    @BindView(R.id.video_view)
+    TextureVideoView mVideoView;
+
+    private boolean mAutoPlay;
+    private MediaPlayer mMediaPlayer;
+
     public TextureVideoView getVideoView() {
         return mVideoView;
     }
@@ -164,6 +176,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     public void onPrepared(MediaPlayer mp) {
         mMediaPlayer = mp;
         mp.setLooping(true);
+        mp.setOnBufferingUpdateListener(this);
         setVideoVolume();
         if (mAutoPlay) {
             mVideoView.start();
@@ -180,8 +193,14 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+    }
+
+    @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        showVideo();
+        if (isWebPath()) {
+            showVideo();
+        }
         return true;
     }
 
@@ -189,6 +208,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         if (mMediaPlayer != null) {
             int volume = isVideoSilent() ? 0 : 1;
             mMediaPlayer.setVolume(volume, volume);
+            mVideoView.setShouldRequestAudioFocus(!isVideoSilent());
         }
     }
 

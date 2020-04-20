@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.utils;
 
+import android.text.TextUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,5 +47,57 @@ public class StringUtils {
 			filter += matcher.group();
 		}
 		return filter;
+	}
+
+	/**
+	 * 判断一个字符串是否为url
+	 *
+	 * @param str String 字符串
+	 * @return boolean 是否为url
+	 **/
+	public static boolean isURL(String str) {
+		if (TextUtils.isEmpty(str)) {
+			return false;
+		}
+
+		str = str.toLowerCase();
+
+		String regex = "^((https|http|ftp|rtsp|mms)?://)"  //https、http、ftp、rtsp、mms
+
+				+ "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" //ftp的user@
+
+				+ "(([0-9]{1,3}\\.){3}[0-9]{1,3}" // IP形式的URL- 例如：199.194.52.184
+
+				+ "|" // 允许IP和DOMAIN（域名）
+
+				+ "([0-9a-z_!~*'()-]+\\.)*" // 域名- www.
+
+				+ "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\\." // 二级域名
+
+				+ "[a-z]{2,6})" // first level domain- .com or .museum
+
+				+ "(:[0-9]{1,5})?" // 端口号最大为65535,5位数
+
+				+ "((/?)|" // a slash isn't required if there is no file name
+
+				+ "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+
+		return str.matches(regex);
+	}
+
+	/**
+	 * 判断一个字符串是否以网络协议开头
+	 *
+	 * @param str String 字符串
+	 * @return boolean 是否以网络协议开头
+	 */
+	public static boolean isStartWidthProtocol(String str) {
+		if (TextUtils.isEmpty(str)) {
+			return false;
+		}
+
+		str = str.toLowerCase();
+		String regex = "^((https|http|ftp|rtsp|mms)?://).*";
+		return str.matches(regex);
 	}
 }
