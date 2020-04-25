@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -24,14 +20,19 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jsoup.Jsoup;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHolder> {
 
@@ -148,7 +149,10 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
                     public void onSuccessful(String body) {
                         HandlerFuture.ofWork(body)
                                 .applyThen(body1 -> {
-                                    return HtmlParserFactory.createParser(mContext, body1).getImageDetailJson();
+                                    return WebsiteManager.getInstance()
+                                            .getWebsiteConfig()
+                                            .getHtmlParser()
+                                            .getImageDetailJson(Jsoup.parse(body1));
                                 })
                                 .runOn(HandlerFuture.IO.UI)
                                 .applyThen(json -> {

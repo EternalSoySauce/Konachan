@@ -40,8 +40,7 @@ import butterknife.ButterKnife;
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 
 public class MultipleMediaLayout extends FrameLayout implements RequestListener<Drawable>,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener,
-        MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener {
 
     public MultipleMediaLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -88,7 +87,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     private boolean isWebPath() {
-        return StringUtils.isURL(mMediaPath);
+        return StringUtils.isStartWidthProtocol(mMediaPath);
     }
 
 
@@ -102,6 +101,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     private void showImage() {
         mVideoView.setVisibility(GONE);
+        mLayoutVideoController.setVisibility(GONE);
+        mPhotoView.setVisibility(VISIBLE);
         mPhotoView.setAlpha(1f);
         mPhotoView.setZoomable(false);
 
@@ -141,6 +142,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     /***********************************  Video  ***********************************/
     @BindView(R.id.video_view)
     TextureVideoView mVideoView;
+    @BindView(R.id.layout_video_controller)
+    VideoControllerLayout mLayoutVideoController;
 
     private boolean mAutoPlay;
     private MediaPlayer mMediaPlayer;
@@ -150,6 +153,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     private void showVideo() {
+        mPhotoView.setVisibility(VISIBLE);
         mPhotoView.setZoomable(false);
         if (isWebPath()) {
             mPhotoView.setAlpha(1f);
@@ -170,14 +174,18 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
         String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
         mVideoView.setVideoPath(url);
+
+        mLayoutVideoController.setVisibility(VISIBLE);
+        mLayoutVideoController.setAlpha(0);
+        mLayoutVideoController.attachTo(mVideoView, isWebPath());
+        mLayoutVideoController.reset();
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         mMediaPlayer = mp;
         mp.setLooping(true);
-        mp.setOnBufferingUpdateListener(this);
-        setVideoVolume();
+        updateVideoVolume();
         if (mAutoPlay) {
             mVideoView.start();
         }
@@ -188,12 +196,10 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         if (what == MEDIA_INFO_VIDEO_RENDERING_START) {
             mPhotoView.setAlpha(0f);
             mVideoView.setAlpha(1);
+            mLayoutVideoController.setAlpha(1);
+            mLayoutVideoController.startUpdateRunnable();
         }
         return false;
-    }
-
-    @Override
-    public void onBufferingUpdate(MediaPlayer mp, int percent) {
     }
 
     @Override
@@ -204,7 +210,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         return true;
     }
 
-    private void setVideoVolume() {
+    private void updateVideoVolume() {
         if (mMediaPlayer != null) {
             int volume = isVideoSilent() ? 0 : 1;
             mMediaPlayer.setVolume(volume, volume);
@@ -228,6 +234,9 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mPhotoView.setScale(1f);
         mVideoView.setKeepScreenOn(false);
         mVideoView.stopPlayback();
+        mVideoView.setVisibility(GONE);
+        mLayoutVideoController.reset();
+        mLayoutVideoController.setVisibility(GONE);
     }
 
     @Override

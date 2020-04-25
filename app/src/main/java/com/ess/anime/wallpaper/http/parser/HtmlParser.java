@@ -1,12 +1,12 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.utils.StringUtils;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,25 +22,23 @@ import java.util.regex.Pattern;
 
 public abstract class HtmlParser {
 
-    Context mContext;
-    Document mDoc;
+    WebsiteConfig mWebsiteConfig;
 
-    HtmlParser(Context context, Document doc) {
-        mContext = context;
-        mDoc = doc;
+    public HtmlParser(WebsiteConfig websiteConfig) {
+        mWebsiteConfig = websiteConfig;
     }
 
-    public abstract List<ThumbBean> getThumbList();
+    public abstract List<ThumbBean> getThumbList(Document doc);
 
-    public abstract String getImageDetailJson();
+    public abstract String getImageDetailJson(Document doc);
 
-    public abstract List<CommentBean> getCommentList();
+    public abstract List<CommentBean> getCommentList(Document doc);
 
-    public abstract List<PoolListBean> getPoolListList();
+    public abstract List<PoolListBean> getPoolListList(Document doc);
 
-    public List<ThumbBean> getThumbListOfPool() {
-        List<ThumbBean> thumbList = getThumbList();
-        Elements scripts = mDoc.getElementsByTag("script");
+    public List<ThumbBean> getThumbListOfPool(Document doc) {
+        List<ThumbBean> thumbList = getThumbList(doc);
+        Elements scripts = doc.getElementsByTag("script");
         for (Element script : scripts) {
             try {
                 String text = script.html();

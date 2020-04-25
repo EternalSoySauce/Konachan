@@ -2,19 +2,14 @@ package com.ess.anime.wallpaper.http;
 
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
 import com.lzy.okgo.OkGo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -124,65 +119,4 @@ public class OkHttp {
         OkGo.getInstance().cancelTag(tag);
     }
 
-    // 通过tags搜索图片
-    public static String getPostUrl(Context context, int page, List<String> tagList) {
-        if (tagList == null) {
-            tagList = new ArrayList<>();
-        }
-
-        StringBuilder tags = new StringBuilder();
-        for (String tag : tagList) {
-            if (OkHttp.getBaseUrl(context).equals(Constants.BASE_URL_ZEROCHAN)) {
-                tag = tag.replaceAll("_", " ");
-            }
-            tags.append(tag).append("+");
-        }
-
-        String baseUrl = getBaseUrl(context);
-        switch (baseUrl) {
-            case Constants.BASE_URL_GELBOORU:
-                return baseUrl + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
-            case Constants.BASE_URL_ZEROCHAN:
-                return baseUrl + tags + "?s=id&p=" + page;
-            default:
-                return baseUrl + "post?page=" + page + "&tags=" + tags;
-        }
-    }
-
-    // 搜索图集
-    public static String getPoolUrl(Context context, int page, String name) {
-        name = name == null ? "" : name;
-        String baseUrl = getBaseUrl(context);
-        switch (baseUrl) {
-            case Constants.BASE_URL_DANBOORU:
-                return baseUrl + "pools/gallery?commit=Search&limit=20&page=" + page + "&search[name_matches]=" + name + "&search[order]=&utf8=%E2%9C%93";
-            case Constants.BASE_URL_SANKAKU:
-                return baseUrl + "pool/index?page=" + page + "&query=" + name;
-            case Constants.BASE_URL_GELBOORU:   // gelbooru无法搜索
-                return baseUrl + "index.php?page=pool&s=list&pid=" + (page - 1) * 25;
-            default:
-                return baseUrl + "pool?commit=Search&page=" + page + "&query=" + name;
-        }
-    }
-
-    // 搜索图集中的图片
-    public static String getPoolPostUrl(Context context, String linkToShow, int page) {
-        String baseUrl = getBaseUrl(context);
-        switch (baseUrl) {
-            case Constants.BASE_URL_GELBOORU:
-                return linkToShow;
-            default:
-                return linkToShow + "?page=" + page;
-        }
-    }
-
-    // 当前网站源的网址
-    public static String getBaseUrl(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String baseUrl = preferences.getString(Constants.BASE_URL, Constants.BASE_URL_KONACHAN_S);
-        if (!Arrays.asList(Constants.BASE_URLS).contains(baseUrl)) {
-            baseUrl = Constants.BASE_URL_KONACHAN_S;
-        }
-        return baseUrl;
-    }
 }

@@ -8,28 +8,26 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ApkBean;
 import com.ess.anime.wallpaper.bean.DownloadBean;
-import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.qmuiteam.qmui.util.QMUIDeviceHelper;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -143,10 +141,10 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showChangeBaseUrlDialog(final Context context, final OnDialogActionListener listener) {
-        String baseUrl = OkHttp.getBaseUrl(context);
-        final List<String> baseList = Arrays.asList(Constants.BASE_URLS);
-        final int baseIndex = baseList.indexOf(baseUrl);
+    public static void showChangeBaseUrlDialog(Context context, OnDialogActionListener listener) {
+        String baseUrl = WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl();
+        List<String> baseList = Arrays.asList(WebsiteConfig.BASE_URLS);
+        int baseIndex = baseList.indexOf(baseUrl);
 
         MaterialDialog dialog = new CustomDialog(context)
                 .title(R.string.dialog_change_base_url_title)
@@ -154,10 +152,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .items(R.array.website_list_item)
                 .itemsCallbackSingleChoice(baseIndex, (dialog1, itemView, which, text) -> {
                     if (which != baseIndex) {
-                        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                .putString(Constants.BASE_URL, baseList.get(which)).apply();
-                        // 发送通知到PostFragment, PoolFragment
-                        EventBus.getDefault().post(new MsgBean(Constants.CHANGE_BASE_URL, null));
+                        WebsiteManager.getInstance().changeWebsite(baseList.get(which));
                     }
                     listener.onPositive();
                     return true;

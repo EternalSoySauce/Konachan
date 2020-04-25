@@ -13,16 +13,17 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,8 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             return;
         }
 
-        String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, ++mCurrentPage);
+        String url = WebsiteManager.getInstance().getWebsiteConfig()
+                .getPoolPostUrl(mLinkToShow, ++mCurrentPage);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -117,7 +119,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(getActivity(), body1).getThumbListOfPool();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getThumbListOfPool(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(thumbList -> {
@@ -146,7 +151,8 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             return;
         }
 
-        String url = OkHttp.getPoolPostUrl(getActivity(), mLinkToShow, page);
+        String url = WebsiteManager.getInstance().getWebsiteConfig()
+                .getPoolPostUrl(mLinkToShow, page);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -157,7 +163,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(getActivity(), body1).getThumbListOfPool();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getThumbListOfPool(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(thumbList -> {
@@ -217,7 +226,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     private void reloadDetailById(ThumbBean thumbBean) {
         List<String> tagList = new ArrayList<>();
         tagList.add("id:" + thumbBean.id);
-        String url = OkHttp.getPostUrl(getActivity(), 1, tagList);
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(1, tagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -228,7 +237,11 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(getActivity(), body1).getThumbList().get(0);
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getThumbList(Jsoup.parse(body1))
+                                    .get(0);
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(thumbBean1 -> {

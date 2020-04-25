@@ -35,6 +35,8 @@ import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
@@ -167,16 +169,16 @@ public class SearchActivity extends BaseActivity {
                     tag = tag.substring(splitIndex + 1);
                     if (!TextUtils.isEmpty(tag) && mUserInput) {
                         mPromptList.clear();
-                        switch (OkHttp.getBaseUrl(SearchActivity.this)) {
-                            case Constants.BASE_URL_SANKAKU:
+                        switch (WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl()) {
+                            case WebsiteConfig.BASE_URL_SANKAKU:
                                 // Sankaku搜索提示需动态请求网络
                                 getTagListFromNetwork("https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag);
                                 break;
-                            case Constants.BASE_URL_GELBOORU:
+                            case WebsiteConfig.BASE_URL_GELBOORU:
                                 // Gelbooru搜索提示需动态请求网络
                                 getTagListFromNetwork("https://gelbooru.com/index.php?page=autocomplete&term=" + tag);
                                 break;
-                            case Constants.BASE_URL_ZEROCHAN:
+                            case WebsiteConfig.BASE_URL_ZEROCHAN:
                                 // Zerochan搜索提示需动态请求网络
                                 getTagListFromNetwork("https://www.zerochan.net/suggest?q=" + tag);
                                 break;
@@ -316,31 +318,31 @@ public class SearchActivity extends BaseActivity {
     private void initTagList() {
         String name = "";
         String path = getFilesDir().getPath();
-        String baseUrl = OkHttp.getBaseUrl(this);
+        String baseUrl = WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl();
         switch (baseUrl) {
-            case Constants.BASE_URL_KONACHAN_S:
-                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN_S);
+            case WebsiteConfig.BASE_URL_KONACHAN_S:
+                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_S);
                 break;
-            case Constants.BASE_URL_KONACHAN_E:
-                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN_E);
+            case WebsiteConfig.BASE_URL_KONACHAN_E:
+                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_E);
                 break;
-            case Constants.BASE_URL_YANDE:
-                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_YANDE);
+            case WebsiteConfig.BASE_URL_YANDE:
+                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_YANDE);
                 break;
-            case Constants.BASE_URL_LOLIBOORU:
-                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_LOLIBOORU);
+            case WebsiteConfig.BASE_URL_LOLIBOORU:
+                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_LOLIBOORU);
                 break;
-            case Constants.BASE_URL_DANBOORU:
+            case WebsiteConfig.BASE_URL_DANBOORU:
                 // Danbooru没有搜索提示，借用Konachan(r18)的
-                name = FileUtils.encodeMD5String(Constants.TAG_JSON_URL_KONACHAN_E);
+                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_E);
                 break;
-            case Constants.BASE_URL_SANKAKU:
+            case WebsiteConfig.BASE_URL_SANKAKU:
                 // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
                 break;
-            case Constants.BASE_URL_GELBOORU:
+            case WebsiteConfig.BASE_URL_GELBOORU:
                 // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
                 break;
-            case Constants.BASE_URL_ZEROCHAN:
+            case WebsiteConfig.BASE_URL_ZEROCHAN:
                 // Zerochan搜索提示为动态请求：https://www.zerochan.net/suggest?q=xxx
                 break;
         }
@@ -424,22 +426,22 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public void onSuccessful(String body) {
-                switch (OkHttp.getBaseUrl(SearchActivity.this)) {
-                    case Constants.BASE_URL_SANKAKU:
+                switch (WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl()) {
+                    case WebsiteConfig.BASE_URL_SANKAKU:
                         JsonArray tagArray = new JsonParser().parse(body).getAsJsonArray().get(1).getAsJsonArray();
                         for (int i = 0; i < tagArray.size(); i++) {
                             mPromptList.add(tagArray.get(i).getAsString());
                         }
                         break;
 
-                    case Constants.BASE_URL_GELBOORU:
+                    case WebsiteConfig.BASE_URL_GELBOORU:
                         tagArray = new JsonParser().parse(body).getAsJsonArray();
                         for (int i = 0; i < tagArray.size(); i++) {
                             mPromptList.add(tagArray.get(i).getAsString());
                         }
                         break;
 
-                    case Constants.BASE_URL_ZEROCHAN:
+                    case WebsiteConfig.BASE_URL_ZEROCHAN:
                         String[] items = body.split("\n");
                         for (String item : items) {
                             String tag = item.split("\\|")[0];

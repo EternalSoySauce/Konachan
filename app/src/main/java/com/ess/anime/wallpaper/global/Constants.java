@@ -40,41 +40,12 @@ public class Constants {
 
     // EventBus
     public final static String CHECK_UPDATE = "checkUpdate";  // 检测到新版本后通知 MainActivity
-    public final static String CHANGE_BASE_URL = "changeBaseUrl";  // 切换搜图网站后通知 PostFragment和PoolFragment更新adapter
     public final static String GET_IMAGE_DETAIL = "getImageDetail";  // 获取到图片详细信息后通知详情页显示信息，PostFragment和PoolFragment更新adapter
     public final static String RELOAD_DETAIL_BY_ID = "reloadDetailById";  // PoolPostFragment获取到imageBean后重新根据ID请求tempPost
     public final static String LOCAL_FILES_CHANGED = "localFilesChanged";  // 收藏夹本地文件发生变动后通知FullscreenActivity退出页面
     public final static String START_VIDEO = "startVideo";  // FullscreenActivity翻页后通知MultipleMediaLayout播放Video
     public final static String RESUME_VIDEO = "resumeVideo";  // ImageFragment和FullscreenActivity触发onResume()后通知MultipleMediaLayout恢复Video
     public final static String PAUSE_VIDEO = "pauseVideo";  // ImageFragment和FullscreenActivity触发onPause()后通知MultipleMediaLayout暂停Video
-
-    // Http
-    public final static String BASE_URL_BAIDU = "https://baike.baidu.com/item/";
-    public final static String BASE_URL_KONACHAN_S = "https://konachan.net/";
-    public final static String BASE_URL_KONACHAN_E = "https://konachan.com/";
-    public final static String BASE_URL_YANDE = "https://yande.re/";
-    public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
-    public final static String BASE_URL_DANBOORU = "https://danbooru.donmai.us/";
-    public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
-    public final static String BASE_URL_GELBOORU = "https://gelbooru.com/";
-    public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
-    public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
-    public final static String TAG_JSON_URL_KONACHAN_E = "https://konachan.com/tag/summary.json";
-    public final static String TAG_JSON_URL_YANDE = "https://yande.re/tag/summary.json";
-    public final static String TAG_JSON_URL_LOLIBOORU = "https://lolibooru.moe/tag/summary.json";
-//    public final static String TAG_JSON_URL_DANBOORU = "";  // Danbooru没有搜索提示
-//    public final static String TAG_JSON_URL_SANKAKU = "";  // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
-//    public final static String TAG_JSON_URL_GELBOORU = "";  // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
-//    public final static String TAG_JSON_URL_ZEROCHAN = "";  // Zerochan搜索提示为动态请求：https://www.zerochan.net/suggest?q=xxx
-
-    public final static String[] BASE_URLS = {
-            BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_LOLIBOORU,
-            BASE_URL_DANBOORU, BASE_URL_SANKAKU, BASE_URL_GELBOORU, BASE_URL_ZEROCHAN
-    };
-
-    public final static String[] TAG_JSON_URLS = {
-            TAG_JSON_URL_KONACHAN_S, TAG_JSON_URL_KONACHAN_E, TAG_JSON_URL_YANDE, TAG_JSON_URL_LOLIBOORU
-    };
 
     // Image Detail
     public final static String RATING_S = "s";
@@ -85,11 +56,4 @@ public class Constants {
     public final static String IMAGE_DIR = Environment.getExternalStorageDirectory() + "/Konachan/konachan";
     public final static String IMAGE_TEMP = Environment.getExternalStorageDirectory() + "/Konachan/temp";
     public final static String IMAGE_DONATE = Environment.getExternalStorageDirectory() + "/Konachan/donate";
-    public final static String IMAGE_HEAD_KONACHAN = "Konachan-";
-    public final static String IMAGE_HEAD_YANDE = "Yande-";
-    public final static String IMAGE_HEAD_LOLIBOORU = "Lolibooru-";
-    public final static String IMAGE_HEAD_DANBOORU = "Danbooru-";
-    public final static String IMAGE_HEAD_SANKAKU = "Sankaku-";
-    public final static String IMAGE_HEAD_GELBOORU = "Gelbooru-";
-    public final static String IMAGE_HEAD_ZEROCHAN = "Zerochan-";
 }

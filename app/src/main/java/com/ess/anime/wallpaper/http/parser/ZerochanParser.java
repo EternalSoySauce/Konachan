@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.Html;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
@@ -10,6 +9,7 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -24,14 +24,14 @@ import java.util.TimeZone;
 
 public class ZerochanParser extends HtmlParser {
 
-    ZerochanParser(Context context, Document doc) {
-        super(context, doc);
+    public ZerochanParser(WebsiteConfig websiteConfig) {
+        super(websiteConfig);
     }
 
     @Override
-    public List<ThumbBean> getThumbList() {
+    public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByTag("li");
+        Elements elements = doc.getElementsByTag("li");
         for (Element e : elements) {
             try {
                 Element img = e.getElementsByTag("img").first();
@@ -43,7 +43,7 @@ public class ZerochanParser extends HtmlParser {
                     String style = img.attr("style");
                     int thumbWidth = Integer.parseInt(style.substring(0, style.indexOf(";")).replaceAll("[^0-9]", ""));
                     int thumbHeight = Integer.parseInt(style.substring(style.indexOf(";")).replaceAll("[^0-9]", ""));
-                    String linkToShow = Constants.BASE_URL_ZEROCHAN + id;
+                    String linkToShow = mWebsiteConfig.getBaseUrl() + id;
                     thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
                 }
             } catch (Exception ex) {
@@ -54,10 +54,10 @@ public class ZerochanParser extends HtmlParser {
     }
 
     @Override
-    public String getImageDetailJson() {
+    public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
-            Element scriptJson = mDoc.getElementsByAttributeValue("type", "application/ld+json").first();
+            Element scriptJson = doc.getElementsByAttributeValue("type", "application/ld+json").first();
             JsonObject json = new JsonParser().parse(scriptJson.data()).getAsJsonObject();
 
             // 解析时间字符串，格式：Sun Mar 8 15:05:41 2020
@@ -69,7 +69,7 @@ public class ZerochanParser extends HtmlParser {
             builder.createdTime(createdTime);
 
             // 解析收藏数
-            Element favorite = mDoc.getElementsContainingOwnText("favorites.").first();
+            Element favorite = doc.getElementsContainingOwnText("favorites.").first();
             if (favorite != null) {
                 builder.score(favorite.ownText().replaceAll("[^0-9]", ""));
             }
@@ -90,7 +90,7 @@ public class ZerochanParser extends HtmlParser {
                     .rating(Constants.RATING_S);
 
 
-            Elements scripts = mDoc.getElementsByAttributeValue("type", "text/javascript");
+            Elements scripts = doc.getElementsByAttributeValue("type", "text/javascript");
             for (Element scriptData : scripts) {
                 String text = scriptData.data();
                 if (text.contains("<![CDATA[")) {
@@ -118,10 +118,10 @@ public class ZerochanParser extends HtmlParser {
             builder.source("").md5("").parentId("");
 
             // 解析tags
-            Element preview = mDoc.getElementsByAttributeValueStarting("alt", "Tags:").first();
+            Element preview = doc.getElementsByAttributeValueStarting("alt", "Tags:").first();
             builder.tags(preview.nextElementSibling().text().trim().replaceAll(",", ""));
 
-            Element ul = mDoc.getElementById("tags");
+            Element ul = doc.getElementById("tags");
             if (ul != null) {
                 for (Element li : ul.getElementsByTag("li")) {
                     String tag = li.getElementsByTag("a").first().ownText().trim();
@@ -159,9 +159,9 @@ public class ZerochanParser extends HtmlParser {
     }
 
     @Override
-    public List<CommentBean> getCommentList() {
+    public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Element post = mDoc.getElementById("posts");
+        Element post = doc.getElementById("posts");
         if (post != null) {
             Elements elements = post.getElementsByTag("li");
             for (Element e : elements) {
@@ -184,7 +184,7 @@ public class ZerochanParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolListList() {
+    public List<PoolListBean> getPoolListList(Document doc) {
         return new ArrayList<>();
     }
 }

@@ -17,12 +17,9 @@ import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.bean.PoolListBean;
-import com.ess.anime.wallpaper.glide.glide_url.OkHttpUrlLoader;
 import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.glide.pool_list.PoolListModelLoaderFactory;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
-
-import java.io.InputStream;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +38,8 @@ public class MyGlideModule extends AppGlideModule {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new ProgressInterceptor())
                 .build();
-        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(okHttpClient));
+        // todo 自定义OkHttpClient会影响glide内置加载顺序
+//        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(okHttpClient));
     }
 
 

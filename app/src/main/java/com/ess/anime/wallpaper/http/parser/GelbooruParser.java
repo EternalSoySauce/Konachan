@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.Html;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
@@ -8,8 +7,8 @@ import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,14 +19,14 @@ import java.util.List;
 
 public class GelbooruParser extends HtmlParser {
 
-    GelbooruParser(Context context, Document doc) {
-        super(context, doc);
+    public GelbooruParser(WebsiteConfig websiteConfig) {
+        super(websiteConfig);
     }
 
     @Override
-    public List<ThumbBean> getThumbList() {
+    public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByTag("post");
+        Elements elements = doc.getElementsByTag("post");
         for (Element e : elements) {
             try {
                 String id = e.id().replaceAll("[^0-9]", "");
@@ -86,11 +85,11 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public String getImageDetailJson() {
+    public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
             // 解析基础图片信息
-            for (Element li : mDoc.getElementsByTag("li")) {
+            for (Element li : doc.getElementsByTag("li")) {
                 if (li.text().startsWith("Id:")) {
                     // Id
                     builder.id(li.text().replaceAll("[^0-9]", ""));
@@ -113,23 +112,23 @@ public class GelbooruParser extends HtmlParser {
             builder.source("").parentId("");
 
             // tags
-            for (Element copyright : mDoc.getElementsByClass("tag-type-copyright")) {
+            for (Element copyright : doc.getElementsByClass("tag-type-copyright")) {
                 builder.addCopyrightTags(copyright.getElementsByTag("a")
                         .get(1).text().replace(" ", "_"));
             }
-            for (Element character : mDoc.getElementsByClass("tag-type-character")) {
+            for (Element character : doc.getElementsByClass("tag-type-character")) {
                 builder.addCharacterTags(character.getElementsByTag("a")
                         .get(1).text().replace(" ", "_"));
             }
-            for (Element artist : mDoc.getElementsByClass("tag-type-artist")) {
+            for (Element artist : doc.getElementsByClass("tag-type-artist")) {
                 builder.addArtistTags(artist.getElementsByTag("a")
                         .get(1).text().replace(" ", "_"));
             }
-            for (Element general : mDoc.getElementsByClass("tag-type-metadata")) {
+            for (Element general : doc.getElementsByClass("tag-type-metadata")) {
                 builder.addGeneralTags(general.getElementsByTag("a")
                         .get(1).text().replace(" ", "_"));
             }
-            for (Element general : mDoc.getElementsByClass("tag-type-general")) {
+            for (Element general : doc.getElementsByClass("tag-type-general")) {
                 builder.addGeneralTags(general.getElementsByTag("a")
                         .get(1).text().replace(" ", "_"));
             }
@@ -140,16 +139,16 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<CommentBean> getCommentList() {
+    public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByClass("commentBox");
+        Elements elements = doc.getElementsByClass("commentBox");
         for (Element e : elements) {
             try {
                 String id = "#" + e.id();
                 Element img = e.getElementsByTag("img").first();
                 String avatar = img == null
                         ? "https://gelbooru.com/user_avatars/avatar_anonymous.jpg"
-                        : Constants.BASE_URL_GELBOORU + img.attr("src");
+                        : mWebsiteConfig.getBaseUrl() + img.attr("src");
                 String author = e.getElementsByTag("a").first().text().trim();
                 String date = e.getElementsByTag("b").first().text().trim();
                 int index = date.indexOf("(");
@@ -173,9 +172,9 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolListList() {
+    public List<PoolListBean> getPoolListList(Document doc) {
         List<PoolListBean> poolList = new ArrayList<>();
-        Element table = mDoc.getElementsByClass("highlightable").first();
+        Element table = doc.getElementsByClass("highlightable").first();
         if (table != null) {
             Elements pools = table.getElementsByTag("tr");
             for (Element pool : pools) {
@@ -187,7 +186,7 @@ public class GelbooruParser extends HtmlParser {
                     String href = link.attr("href");
                     poolListBean.id = href.substring(href.lastIndexOf("=") + 1);
                     poolListBean.name = link.text();
-                    poolListBean.linkToShow = Constants.BASE_URL_GELBOORU + href;
+                    poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + href;
                     poolListBean.creator = detail.getElementsByTag("a").get(1).text();
                     poolListBean.updateTime = detail.text().substring(detail.text().lastIndexOf("about"));
                     poolListBean.postCount = tds.get(2).text().replaceAll("[^0-9]", "");
@@ -203,9 +202,9 @@ public class GelbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<ThumbBean> getThumbListOfPool() {
+    public List<ThumbBean> getThumbListOfPool(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByClass("thumb");
+        Elements elements = doc.getElementsByClass("thumb");
         for (Element e : elements) {
             try {
                 String id = e.id().replaceAll("[^0-9]", "");

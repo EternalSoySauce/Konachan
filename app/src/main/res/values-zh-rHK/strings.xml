@@ -6,6 +6,7 @@
     <string name="no_more_load">没有更多了</string>
     <string name="check_network">加載失敗，請檢查您的網絡並下拉刷新重試</string>
     <string name="loading">別著急哦，馬上就好</string>
+    <string name="load_no_pool">圖集被22吃了~ 嗝~</string>
     <string name="webview_error">呃…似乎網頁出現了一點小問題。\n輕觸頁面刷新DA✩ZE。</string>
     <string name="loading_image">正在獲取圖片信息，請稍候</string>
     <string name="check_no_new_version">當前已是最新版本</string>

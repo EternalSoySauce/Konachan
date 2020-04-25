@@ -24,7 +24,6 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.parser.HtmlParser;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
@@ -34,12 +33,15 @@ import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.github.clans.fab.FloatingActionMenu;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +57,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class PostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class PostFragment extends BaseFragment implements
+        WebsiteManager.OnWebsiteChangeListener,
+        BaseQuickAdapter.RequestLoadMoreListener {
 
     public final static String TAG = PostFragment.class.getName();
 
@@ -106,6 +110,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         changeFromPage(mCurrentPage);
         changeToPage(mCurrentPage);
         EventBus.getDefault().register(this);
+        WebsiteManager.getInstance().registerWebsiteChangeListener(this);
     }
 
     @Override
@@ -113,6 +118,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         super.onDestroyView();
         OkHttp.cancel(TAG);
         EventBus.getDefault().unregister(this);
+        WebsiteManager.getInstance().unregisterWebsiteChangeListener(this);
     }
 
     private void initToolBarLayout() {
@@ -251,7 +257,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     // 滑动加载更多
     @Override
     public void onLoadMoreRequested() {
-        String url = OkHttp.getPostUrl(mActivity, ++mCurrentPage, mCurrentTagList);
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(++mCurrentPage, mCurrentTagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -262,7 +268,10 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(mActivity, body1).getThumbList();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getThumbList(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(thumbList -> {
@@ -297,13 +306,12 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     @OnClick(R.id.fab_random)
     void searchRandom() {
         mFloatingMenu.close(true);
-        if (TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_GELBOORU)
-                || TextUtils.equals(OkHttp.getBaseUrl(mActivity), Constants.BASE_URL_ZEROCHAN)) {
-            Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
-        } else {
+        if (WebsiteManager.getInstance().getWebsiteConfig().isSupportRandomPost()) {
             Intent intent = new Intent();
             intent.putExtra(Constants.SEARCH_TAG, "order:random");
             onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
+        } else {
+            Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -391,7 +399,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
     }
 
     private void getNewPosts(int page) {
-        String url = OkHttp.getPostUrl(mActivity, page, mCurrentTagList);
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(page, mCurrentTagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -402,7 +410,10 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(mActivity, body1).getThumbList();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getThumbList(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(thumbList -> {
@@ -429,7 +440,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
 
     // 根据汉语从百度百科搜索对应罗马音
     private void getNameFromBaidu(String searchTag) {
-        String url = Constants.BASE_URL_BAIDU + searchTag;
+        String url = WebsiteConfig.BASE_URL_BAIDU + searchTag;
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -440,11 +451,7 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
             public void onSuccessful(String body) {
                 String name = HtmlParser.getNameFromBaidu(body);
                 if (!TextUtils.isEmpty(name)) {
-                    if (OkHttp.getBaseUrl(mActivity).equals(Constants.BASE_URL_ZEROCHAN)
-                            || OkHttp.getBaseUrl(mActivity).equals(Constants.BASE_URL_GELBOORU)) {
-                        // Zerochan和Gelbooru不支持高级搜索
-                        mCurrentTagList.add(name);
-                    } else {
+                    if (WebsiteManager.getInstance().getWebsiteConfig().isSupportAdvancedSearch()) {
                         String tag1 = "~" + name;
                         mCurrentTagList.add(tag1);
 
@@ -455,6 +462,8 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                         }
                         tag2.replace(tag2.length() - 1, tag2.length(), "");
                         mCurrentTagList.add(tag2.toString());
+                    } else {
+                        mCurrentTagList.add(name);
                     }
                     getNewPosts(mCurrentPage);
                     changeFromPage(mCurrentPage);
@@ -464,6 +473,14 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
                 }
             }
         }, Request.Priority.IMMEDIATE);
+    }
+
+    @Override
+    public void onWebsiteChanged(String baseUrl) {
+        resetAll(1);
+        getNewPosts(mCurrentPage);
+        changeFromPage(mCurrentPage);
+        changeToPage(mCurrentPage);
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
@@ -508,19 +525,10 @@ public class PostFragment extends BaseFragment implements BaseQuickAdapter.Reque
         }
     }
 
-    //切换搜图网站后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeBaseUrl(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.CHANGE_BASE_URL)) {
-            resetAll(1);
-            getNewPosts(mCurrentPage);
-            changeFromPage(mCurrentPage);
-            changeToPage(mCurrentPage);
-        }
-    }
-
     public static PostFragment newInstance() {
         PostFragment fragment = new PostFragment();
         return fragment;
     }
+
+
 }

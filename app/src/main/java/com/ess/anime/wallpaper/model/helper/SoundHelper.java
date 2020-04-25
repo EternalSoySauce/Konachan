@@ -12,21 +12,16 @@ public class SoundHelper {
         private static final SoundHelper instance = new SoundHelper();
     }
 
-    private MediaPlayer mMediaPlayer;
+    public static SoundHelper getInstance() {
+        return SoundHolder.instance;
+    }
 
     private SoundHelper() {
     }
 
-    public static SoundHelper getInstance() {
-        return SoundHolder.instance.createPlayerIfNull();
-    }
+    /*******************************************************************/
 
-    private SoundHelper createPlayerIfNull() {
-        if (mMediaPlayer == null) {
-            mMediaPlayer = new MediaPlayer();
-        }
-        return this;
-    }
+    private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     // 允许播放声音
     public void playSoundEnabled(Context context) {

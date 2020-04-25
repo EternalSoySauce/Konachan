@@ -1,12 +1,11 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.Html;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -22,14 +21,14 @@ import java.util.List;
  */
 public class GeneralParser extends HtmlParser {
 
-    GeneralParser(Context context, Document doc) {
-        super(context, doc);
+    public GeneralParser(WebsiteConfig websiteConfig) {
+        super(websiteConfig);
     }
 
     @Override
-    public List<ThumbBean> getThumbList() {
+    public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Element list = mDoc.getElementById("post-list-posts");
+        Element list = doc.getElementById("post-list-posts");
         if (list == null) {
             return thumbList;
         }
@@ -63,9 +62,9 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public String getImageDetailJson() {
+    public String getImageDetailJson(Document doc) {
         try {
-            Element div = mDoc.getElementById("post-view");
+            Element div = doc.getElementById("post-view");
             String json = div.getElementsByTag("script").get(0).html();
             json = json.substring(json.indexOf("{"), json.lastIndexOf("}") + 1);
             json = json.replace("\\/", "/");
@@ -84,9 +83,9 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public List<CommentBean> getCommentList() {
+    public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByClass("comment avatar-container");
+        Elements elements = doc.getElementsByClass("comment avatar-container");
         for (Element e : elements) {
             try {
                 String id = "#" + e.attr("id");
@@ -98,7 +97,7 @@ public class GeneralParser extends HtmlParser {
                     avatar = avatars.first().attr("src");
                     if (!avatar.startsWith("http")) {
                         avatar = avatar.startsWith("//") ? "https:" + avatar
-                                : OkHttp.getBaseUrl(mContext) + avatar;
+                                : mWebsiteConfig.getBaseUrl() + avatar;
                     }
                 }
                 Element body = e.getElementsByClass("body").first();
@@ -115,11 +114,11 @@ public class GeneralParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolListList() {
+    public List<PoolListBean> getPoolListList(Document doc) {
         //解析预览图和id
         List<PoolListBean> poolList = new ArrayList<>();
         PoolListBean poolListBean = new PoolListBean();
-        Elements eleScripts = mDoc.getElementsByTag("script");
+        Elements eleScripts = doc.getElementsByTag("script");
         for (Element script : eleScripts) {
             String text = script.html().trim();
             if (text.startsWith("var thumb = $(\"hover-thumb\");")) {
@@ -147,14 +146,14 @@ public class GeneralParser extends HtmlParser {
 
         //根据id解析详细信息
         for (PoolListBean pool : poolList) {
-            Element poolDetail = mDoc.getElementById(pool.id);
+            Element poolDetail = doc.getElementById(pool.id);
             Elements tds = poolDetail.getElementsByTag("td");
             for (int index = 0; index < tds.size(); index++) {
                 Element td = tds.get(index);
                 switch (index) {
                     case 0:
                         String linkToShow = td.getElementsByTag("a").first().attr("href");
-                        linkToShow = OkHttp.getBaseUrl(mContext) + linkToShow.substring(1);
+                        linkToShow = mWebsiteConfig.getBaseUrl() + linkToShow.substring(1);
                         pool.linkToShow = linkToShow;
                         pool.name = td.text();
                         break;

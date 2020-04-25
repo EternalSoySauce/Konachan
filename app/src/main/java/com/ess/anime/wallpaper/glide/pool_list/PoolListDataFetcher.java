@@ -10,7 +10,9 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
+import com.ess.anime.wallpaper.website.WebsiteManager;
+
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,13 +38,17 @@ public class PoolListDataFetcher implements DataFetcher<Bitmap> {
         Response response = null;
         Response thumbResponse = null;
         try {
-            String url = OkHttp.getPoolPostUrl(mContext, mPoolListBean.linkToShow, 1);
+            String url = WebsiteManager.getInstance().getWebsiteConfig()
+                    .getPoolPostUrl(mPoolListBean.linkToShow, 1);
             response = OkHttp.execute(url, mHttpTag);
             if (mIsCancelled) {
                 return;
             } else if (response.isSuccessful()) {
                 String html = response.body().string();
-                List<ThumbBean> thumbList = HtmlParserFactory.createParser(mContext, html).getThumbListOfPool();
+                List<ThumbBean> thumbList = WebsiteManager.getInstance()
+                        .getWebsiteConfig()
+                        .getHtmlParser()
+                        .getThumbListOfPool(Jsoup.parse(html));
                 if (thumbList.isEmpty()) {
                     return;
                 }

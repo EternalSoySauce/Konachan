@@ -6,12 +6,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCommentAdapter;
@@ -20,14 +14,21 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
+
+import org.jsoup.Jsoup;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
 public class CommentFragment extends BaseFragment {
@@ -125,7 +126,10 @@ public class CommentFragment extends BaseFragment {
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(mActivity, body1).getCommentList();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getCommentList(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(commentList -> {

@@ -14,24 +14,21 @@ import com.android.volley.Request;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPoolAdapter;
-import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParserFactory;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.zyyoona7.popup.EasyPopup;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import org.jsoup.Jsoup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -46,7 +43,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class PoolFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
+public class PoolFragment extends BaseFragment implements
+        WebsiteManager.OnWebsiteChangeListener,
+        BaseQuickAdapter.RequestLoadMoreListener {
 
     public final static String TAG = PoolFragment.class.getName();
 
@@ -93,12 +92,11 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         initPopupPage();
         initSwipeRefreshLayout();
         initRecyclerView();
-        mCurrentPage = 1;
-        mGoToPage = 1;
+        resetAll(1);
         getNewPools(mCurrentPage);
         changeFromPage(mCurrentPage);
         changeToPage(mCurrentPage);
-        EventBus.getDefault().register(this);
+        WebsiteManager.getInstance().registerWebsiteChangeListener(this);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     public void onDestroyView() {
         super.onDestroyView();
         OkHttp.cancel(TAG);
-        EventBus.getDefault().unregister(this);
+        WebsiteManager.getInstance().unregisterWebsiteChangeListener(this);
     }
 
     private void initToolBarLayout() {
@@ -202,10 +200,10 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         mSwipeRefresh.setRefreshing(true);
         //下拉刷新
         mSwipeRefresh.setOnRefreshListener(() -> {
-            getNewPools(mGoToPage);
             if (mPoolAdapter.getData().isEmpty()) {
                 mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
             }
+            getNewPools(mGoToPage);
         });
     }
 
@@ -237,7 +235,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     // 滑动加载更多
     @Override
     public void onLoadMoreRequested() {
-        String url = OkHttp.getPoolUrl(mActivity, ++mCurrentPage, mCurrentSearchName);
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(++mCurrentPage, mCurrentSearchName);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure() {
@@ -248,7 +246,10 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
             public void onSuccessful(String body) {
                 HandlerFuture.ofWork(body)
                         .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(mActivity, body1).getPoolListList();
+                            return WebsiteManager.getInstance()
+                                    .getWebsiteConfig()
+                                    .getHtmlParser()
+                                    .getPoolListList(Jsoup.parse(body1));
                         })
                         .runOn(HandlerFuture.IO.UI)
                         .applyThen(poolListList -> {
@@ -264,7 +265,7 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
             return;
         }
 
-        mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+        mPoolAdapter.setEmptyView(R.layout.layout_load_no_pool, mRvPools);
         if (mPoolAdapter.loadMoreDatas(newList)) {
             mPoolAdapter.loadMoreComplete();
             changeToPage(mCurrentPage);
@@ -366,34 +367,41 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
     }
 
     private void getNewPools(int page) {
-        String url = OkHttp.getPoolUrl(mActivity, page, mCurrentSearchName);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
-            @Override
-            public void onFailure() {
-                checkNetwork();
-            }
+        if (WebsiteManager.getInstance().getWebsiteConfig().hasPool()) {
+            String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(page, mCurrentSearchName);
+            OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+                @Override
+                public void onFailure() {
+                    checkNetwork();
+                }
 
-            @Override
-            public void onSuccessful(String body) {
-                HandlerFuture.ofWork(body)
-                        .applyThen(body1 -> {
-                            return HtmlParserFactory.createParser(mActivity, body1).getPoolListList();
-                        })
-                        .runOn(HandlerFuture.IO.UI)
-                        .applyThen(poolListList -> {
-                            refreshPoolList(poolListList);
-                        });
-            }
-        }, Request.Priority.IMMEDIATE);
+                @Override
+                public void onSuccessful(String body) {
+                    HandlerFuture.ofWork(body)
+                            .applyThen(body1 -> {
+                                return WebsiteManager.getInstance()
+                                        .getWebsiteConfig()
+                                        .getHtmlParser()
+                                        .getPoolListList(Jsoup.parse(body1));
+                            })
+                            .runOn(HandlerFuture.IO.UI)
+                            .applyThen(poolListList -> {
+                                refreshPoolList(poolListList);
+                            });
+                }
+            }, Request.Priority.IMMEDIATE);
+        } else {
+            refreshPoolList(new ArrayList<>());
+        }
     }
 
     //搜索新内容或下拉刷新完成后刷新界面
-    private void refreshPoolList(final List<PoolListBean> newList) {
+    private void refreshPoolList(List<PoolListBean> newList) {
         if (!mSwipeRefresh.isRefreshing()) {
             return;
         }
 
-        mPoolAdapter.setEmptyView(R.layout.layout_load_nothing, mRvPools);
+        mPoolAdapter.setEmptyView(R.layout.layout_load_no_pool, mRvPools);
         if (mPoolAdapter.refreshDatas(newList)) {
             scrollToTop();
         } else if (mPoolAdapter.getData().isEmpty()) {
@@ -420,22 +428,20 @@ public class PoolFragment extends BaseFragment implements BaseQuickAdapter.Reque
         }
     }
 
-    //切换搜图网站后收到的通知，obj 为 null
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changeBaseUrl(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.CHANGE_BASE_URL)) {
-            if (isPoolPostFragmentVisible()) {
-                removePoolPostFragment();
-            }
-            resetAll(1);
-            getNewPools(mCurrentPage);
-            changeFromPage(mCurrentPage);
-            changeToPage(mCurrentPage);
+    @Override
+    public void onWebsiteChanged(String baseUrl) {
+        if (isPoolPostFragmentVisible()) {
+            removePoolPostFragment();
         }
+        resetAll(1);
+        getNewPools(mCurrentPage);
+        changeFromPage(mCurrentPage);
+        changeToPage(mCurrentPage);
     }
 
     public static PoolFragment newInstance() {
         PoolFragment fragment = new PoolFragment();
         return fragment;
     }
+
 }

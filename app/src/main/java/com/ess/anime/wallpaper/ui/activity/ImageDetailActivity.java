@@ -22,6 +22,7 @@ import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
@@ -240,38 +241,9 @@ public class ImageDetailActivity extends BaseActivity {
 //        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
         // 图片命名方式改为"网站名-图片id-图片尺寸"样式，eg. Konachan-123456-Sample.jpg
         // 但这样无法识别此版本(v1.7)之前下载的图片是下载过的
-        String bitmapName = getImageHead() + postId + fileType + extension;
+        String imgHead = WebsiteManager.getInstance().getWebsiteConfig().getSavedImageHead();
+        String bitmapName = imgHead + postId + fileType + extension;
         return new File(Constants.IMAGE_DIR, bitmapName);
-    }
-
-    private String getImageHead() {
-        String imgHead = "";
-        String baseUrl = OkHttp.getBaseUrl(this);
-        switch (baseUrl) {
-            case Constants.BASE_URL_KONACHAN_S:
-            case Constants.BASE_URL_KONACHAN_E:
-                imgHead = Constants.IMAGE_HEAD_KONACHAN;
-                break;
-            case Constants.BASE_URL_YANDE:
-                imgHead = Constants.IMAGE_HEAD_YANDE;
-                break;
-            case Constants.BASE_URL_LOLIBOORU:
-                imgHead = Constants.IMAGE_HEAD_LOLIBOORU;
-                break;
-            case Constants.BASE_URL_DANBOORU:
-                imgHead = Constants.IMAGE_HEAD_DANBOORU;
-                break;
-            case Constants.BASE_URL_SANKAKU:
-                imgHead = Constants.IMAGE_HEAD_SANKAKU;
-                break;
-            case Constants.BASE_URL_GELBOORU:
-                imgHead = Constants.IMAGE_HEAD_GELBOORU;
-                break;
-            case Constants.BASE_URL_ZEROCHAN:
-                imgHead = Constants.IMAGE_HEAD_ZEROCHAN;
-                break;
-        }
-        return imgHead;
     }
 
     // 下载图片点击事件

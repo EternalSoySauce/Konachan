@@ -6,6 +6,7 @@
     <string name="no_more_load">Nothing more</string>
     <string name="check_network">Load failed. Please check your network and pull to refresh again.</string>
     <string name="loading">Don\'t worry, it\'s OK right away.</string>
+    <string name="load_no_pool">This website doesn\'t have album.</string>
     <string name="webview_error">Emm, it seems that something has gone wrong.\nTap to refresh DA✩ZE.</string>
     <string name="loading_image">Obtaining image information, please wait.</string>
     <string name="check_no_new_version">Currently is the latest version</string>

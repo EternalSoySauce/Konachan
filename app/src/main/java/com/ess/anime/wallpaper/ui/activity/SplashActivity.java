@@ -7,16 +7,11 @@ import android.os.Handler;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
-import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-
-import java.io.File;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 public class SplashActivity extends BaseActivity {
-
-    public final static String TAG = SplashActivity.class.getName();
 
     @Override
     int layoutRes() {
@@ -31,9 +26,7 @@ public class SplashActivity extends BaseActivity {
         FireBase.getInstance().checkToAddUser();
         FireBase.getInstance().checkUpdate();
 
-        for (String url : Constants.TAG_JSON_URLS) {
-            getTagJson(url);
-        }
+        WebsiteManager.getInstance().updateCurrentTagJson();
 
         new Handler().postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
@@ -43,24 +36,6 @@ public class SplashActivity extends BaseActivity {
         }, delayMills);
 
         Constants.sRestart = false;
-    }
-
-    // 获取存储着K站所有tag的Json，用于搜索提示
-    private void getTagJson(String url) {
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
-            @Override
-            public void onFailure() {
-                getTagJson(url);
-            }
-
-            @Override
-            public void onSuccessful(String json) {
-                String path = getFilesDir().getPath();
-                String name = FileUtils.encodeMD5String(url);
-                File file = new File(path, name);
-                FileUtils.stringToFile(json, file);
-            }
-        });
     }
 
     @Override

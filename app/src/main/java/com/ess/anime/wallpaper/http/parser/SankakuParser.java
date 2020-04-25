@@ -1,14 +1,13 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.Html;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,15 +19,15 @@ import java.util.TimeZone;
 
 public class SankakuParser extends HtmlParser {
 
-    SankakuParser(Context context, Document doc) {
-        super(context, doc);
+    public SankakuParser(WebsiteConfig websiteConfig) {
+        super(websiteConfig);
     }
 
     @Override
-    public List<ThumbBean> getThumbList() {
+    public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        //        mDoc.select("#popular-preview").remove();  // 移除最上方的四张popular
-        Elements elements = mDoc.getElementsByClass("thumb blacklisted");
+        //        doc.select("#popular-preview").remove();  // 移除最上方的四张popular
+        Elements elements = doc.getElementsByClass("thumb blacklisted");
         for (Element e : elements) {
             try {
                 String id = e.attr("id").replaceAll("[^0-9]", "");
@@ -49,7 +48,7 @@ public class SankakuParser extends HtmlParser {
                 String realSize = title.substring(startIndex, endIndex).trim().replace("x", " x ");
                 String linkToShow = e.getElementsByTag("a").attr("href");
                 if (!linkToShow.startsWith("http")) {
-                    linkToShow = Constants.BASE_URL_SANKAKU + linkToShow;
+                    linkToShow = mWebsiteConfig.getBaseUrl() + linkToShow;
                 }
                 // 最上方的四张有可能和普通列表中的图片重复，需要排除
                 ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
@@ -64,11 +63,11 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public String getImageDetailJson() {
+    public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
-            Element image = mDoc.getElementById("image");
-            builder.id(mDoc.getElementById("hidden_post_id").text())
+            Element image = doc.getElementById("image");
+            builder.id(doc.getElementById("hidden_post_id").text())
                     .tags(image.attr("alt"))
                     .md5(image.attr("pagespeed_url_hash"));
 
@@ -78,7 +77,7 @@ public class SankakuParser extends HtmlParser {
                     .creatorId("")
                     .author("");
 
-            Elements lis = mDoc.getElementsByTag("li");
+            Elements lis = doc.getElementsByTag("li");
             for (Element li : lis) {
                 String text = li.text();
                 if (text.contains("Posted:")) {
@@ -142,7 +141,7 @@ public class SankakuParser extends HtmlParser {
                 }
 
                 // tags
-                Element tag = mDoc.getElementById("tag-sidebar");
+                Element tag = doc.getElementById("tag-sidebar");
                 if (tag != null) {
                     for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
                         builder.addCopyrightTags(copyright.child(0).text().replace(" ", "_"));
@@ -171,9 +170,9 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public List<CommentBean> getCommentList() {
+    public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByClass("comment");
+        Elements elements = doc.getElementsByClass("comment");
         for (Element e : elements) {
             try {
                 Element a = e.getElementsByClass("avatar-medium").first();
@@ -209,9 +208,9 @@ public class SankakuParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolListList() {
+    public List<PoolListBean> getPoolListList(Document doc) {
         List<PoolListBean> poolList = new ArrayList<>();
-        Element body = mDoc.getElementsByTag("tbody").first();
+        Element body = doc.getElementsByTag("tbody").first();
         if (body != null) {
             for (Element pool : body.getElementsByTag("tr")) {
                 try {
@@ -221,7 +220,7 @@ public class SankakuParser extends HtmlParser {
                     String href = link.attr("href");
                     poolListBean.id = href.substring(href.lastIndexOf("/") + 1);
                     poolListBean.name = link.text();
-                    poolListBean.linkToShow = Constants.BASE_URL_SANKAKU + href;
+                    poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + href;
                     poolListBean.creator = tds.get(1).text();
                     poolListBean.postCount = tds.get(2).text();
                     if (Integer.parseInt(poolListBean.postCount) > 0) {

@@ -1,15 +1,14 @@
 package com.ess.anime.wallpaper.http.parser;
 
-import android.content.Context;
 import android.text.Html;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,20 +20,20 @@ import java.util.TimeZone;
 
 public class DanbooruParser extends HtmlParser {
 
-    DanbooruParser(Context context, Document doc) {
-        super(context, doc);
+    public DanbooruParser(WebsiteConfig websiteConfig) {
+        super(websiteConfig);
     }
 
     @Override
-    public List<ThumbBean> getThumbList() {
+    public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByTag("article");
+        Elements elements = doc.getElementsByTag("article");
         for (Element e : elements) {
             try {
                 String id = e.attr("data-id");
                 String thumbUrl = e.getElementsByTag("img").attr("src");
                 if (!thumbUrl.startsWith("http")) {
-                    thumbUrl = Constants.BASE_URL_DANBOORU + thumbUrl;
+                    thumbUrl = mWebsiteConfig.getBaseUrl() + thumbUrl;
                 }
                 int realWidth = Integer.valueOf(e.attr("data-width"));
                 int realHeight = Integer.valueOf(e.attr("data-height"));
@@ -49,7 +48,7 @@ public class DanbooruParser extends HtmlParser {
                 }
                 String linkToShow = e.getElementsByTag("a").attr("href");
                 if (!linkToShow.startsWith("http")) {
-                    linkToShow = Constants.BASE_URL_DANBOORU + linkToShow;
+                    linkToShow = mWebsiteConfig.getBaseUrl() + linkToShow;
                 }
                 thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
@@ -60,18 +59,18 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public String getImageDetailJson() {
+    public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
             // 解析时间字符串，格式：2018-05-29T21:06-04:00（-04:00为时区）
             // 注意PostBean.createdTime单位为second
-            Element time = mDoc.getElementsByTag("time").first();
+            Element time = doc.getElementsByTag("time").first();
             String createdTime = time.attr("datetime");
             long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-4:00"));
             createdTime = String.valueOf(mills / 1000);
 
             // 解析原图文件大小
-            Element info = mDoc.getElementById("post-information");
+            Element info = doc.getElementById("post-information");
             String jpegFileSize = "";
             for (Element li : info.getElementsByTag("li")) {
                 if (li.text().contains("Size")) {
@@ -81,8 +80,8 @@ public class DanbooruParser extends HtmlParser {
                 }
             }
 
-            Element container = mDoc.getElementsByClass("image-container").first();
-            Element image = mDoc.getElementById("image");
+            Element container = doc.getElementsByClass("image-container").first();
+            Element image = doc.getElementById("image");
             builder.id(container.attr("data-id"))
                     .tags(container.attr("data-tags"))
                     .createdTime(createdTime)
@@ -110,7 +109,7 @@ public class DanbooruParser extends HtmlParser {
                     .flagDetail(container.attr("data-flags"));
 
             // 解析图集信息
-            Element pool = mDoc.getElementById("pool-nav");
+            Element pool = doc.getElementById("pool-nav");
             if (pool != null) {
                 Element span = pool.getElementsByClass("pool-name").first();
                 if (span != null) {
@@ -128,7 +127,7 @@ public class DanbooruParser extends HtmlParser {
             }
 
             // tags
-            Element tag = mDoc.getElementById("tag-list");
+            Element tag = doc.getElementById("tag-list");
             for (Element copyright : tag.getElementsByClass("tag-type-3")) {
                 builder.addCopyrightTags(copyright.getElementsByClass("search-tag")
                         .first().text().replace(" ", "_"));
@@ -152,9 +151,9 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<CommentBean> getCommentList() {
+    public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = mDoc.getElementsByClass("comment");
+        Elements elements = doc.getElementsByClass("comment");
         for (Element e : elements) {
             try {
                 String id = "#c" + e.attr("data-comment-id");
@@ -187,16 +186,16 @@ public class DanbooruParser extends HtmlParser {
     }
 
     @Override
-    public List<PoolListBean> getPoolListList() {
+    public List<PoolListBean> getPoolListList(Document doc) {
         List<PoolListBean> poolList = new ArrayList<>();
-        for (Element pool : mDoc.getElementsByTag("article")) {
+        for (Element pool : doc.getElementsByTag("article")) {
             try {
                 PoolListBean poolListBean = new PoolListBean();
                 Element link = pool.getElementsByTag("a").last();
                 String href = link.attr("href");
                 poolListBean.id = href.replaceAll("[^0-9]", "");
                 poolListBean.name = link.text().trim();
-                poolListBean.linkToShow = Constants.BASE_URL_DANBOORU + href;
+                poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + href;
                 poolListBean.thumbUrl = pool.attr("data-large-file-url");
                 poolList.add(poolListBean);
             } catch (Exception e) {
