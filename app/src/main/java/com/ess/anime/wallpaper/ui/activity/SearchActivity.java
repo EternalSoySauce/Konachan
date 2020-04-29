@@ -30,13 +30,14 @@ import com.ess.anime.wallpaper.bean.SearchBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
+import com.ess.anime.wallpaper.model.manager.SearchAutoCompleteManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.model.manager.WebsiteManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
@@ -473,8 +474,17 @@ public class SearchActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (isFinishing()) {
+            SearchAutoCompleteManager.getInstance().stopTask();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        SearchAutoCompleteManager.getInstance().stopTask();
         cancelAutoCompleteTask();
         OkHttp.cancel(TAG);
     }

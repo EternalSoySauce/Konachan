@@ -20,16 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--repackageclasses 'com.ess.anime.wallpaper'
-
 -keepclassmembers class **.R$* {
     public static <fields>;
     public static final int *;
 }
-
-#-obfuscationdictionary 'keywords1.txt'
-#-classobfuscationdictionary 'keywords1.txt'
-#-packageobfuscationdictionary 'keywords1.txt'
 
 #error : Note: the configuration refers to the unknown class 'com.google.vending.licensing.ILicensingService'
 #solution : @link http://stackoverflow.com/a/14463528

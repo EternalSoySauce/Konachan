@@ -22,7 +22,7 @@ import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.model.manager.WebsiteManager;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;

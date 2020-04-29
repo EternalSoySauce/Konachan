@@ -5,7 +5,7 @@ import com.ess.anime.wallpaper.http.parser.ZerochanParser;
 import java.util.ArrayList;
 import java.util.List;
 
-class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
+public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
 
     @Override
     public String getBaseUrl() {

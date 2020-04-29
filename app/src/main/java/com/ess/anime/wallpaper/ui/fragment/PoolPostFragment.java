@@ -18,7 +18,7 @@ import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.model.manager.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

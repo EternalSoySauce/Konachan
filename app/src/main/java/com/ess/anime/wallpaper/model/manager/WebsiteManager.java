@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.website;
+package com.ess.anime.wallpaper.model.manager;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -8,6 +8,15 @@ import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.website.DanbooruConfig;
+import com.ess.anime.wallpaper.website.GelbooruConfig;
+import com.ess.anime.wallpaper.website.KonachanEConfig;
+import com.ess.anime.wallpaper.website.KonachanSConfig;
+import com.ess.anime.wallpaper.website.LolibooruConfig;
+import com.ess.anime.wallpaper.website.SankakuConfig;
+import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.ess.anime.wallpaper.website.YandeConfig;
+import com.ess.anime.wallpaper.website.ZerochanConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,8 +108,8 @@ public class WebsiteManager {
     // 下载更新当前网站源的搜索下拉提示
     public void updateCurrentTagJson() {
         synchronized (WebsiteManager.class) {
-            String url = mWebsiteConfig.getTagJsonUrl();
-            if (!TextUtils.isEmpty(url)) {
+            if (mWebsiteConfig.hasTagJson()) {
+                String url = mWebsiteConfig.getTagJsonUrl();
                 OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
                     @Override
                     public void onFailure() {

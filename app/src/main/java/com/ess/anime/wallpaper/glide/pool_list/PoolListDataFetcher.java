@@ -10,7 +10,7 @@ import com.bumptech.glide.load.data.DataFetcher;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.model.manager.WebsiteManager;
 
 import org.jsoup.Jsoup;
 

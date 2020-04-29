@@ -34,7 +34,7 @@ import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.model.manager.WebsiteManager;
 import com.github.clans.fab.FloatingActionMenu;
 import com.zyyoona7.popup.EasyPopup;
 
