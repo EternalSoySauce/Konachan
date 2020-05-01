@@ -19,7 +19,7 @@ import com.ess.anime.wallpaper.service.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 
 import java.io.File;

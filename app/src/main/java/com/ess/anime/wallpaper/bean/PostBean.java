@@ -265,6 +265,24 @@ public class PostBean implements Parcelable {
         }
     }
 
+    /**
+     * 获取fileSize最小的图片url，以便快速加载预览图
+     *
+     * @return
+     */
+    public String getMinSizeImageUrl() {
+        String url = fileUrl;
+        if (sampleFileSize != 0 && !TextUtils.equals(sampleUrl, fileUrl) && sampleFileSize < fileSize) {
+            url = sampleUrl;
+            if (jpegFileSize != 0 && !TextUtils.equals(jpegUrl, sampleUrl) && jpegFileSize < sampleFileSize) {
+                url = jpegUrl;
+            }
+        } else if (jpegFileSize != 0 && !TextUtils.equals(jpegUrl, fileUrl) && jpegFileSize < fileSize) {
+            url = jpegUrl;
+        }
+        return url;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);

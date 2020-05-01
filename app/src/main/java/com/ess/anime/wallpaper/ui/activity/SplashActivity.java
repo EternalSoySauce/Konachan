@@ -9,7 +9,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 public class SplashActivity extends BaseActivity {
 

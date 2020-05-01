@@ -2,18 +2,13 @@ package com.ess.anime.wallpaper.website;
 
 import android.text.TextUtils;
 
-import com.ess.anime.wallpaper.bean.SearchBean;
-import com.ess.anime.wallpaper.http.parser.HtmlParser;
+import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.utils.FileUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.ess.anime.wallpaper.website.parser.HtmlParser;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class WebsiteConfig<T extends HtmlParser> {
@@ -38,6 +33,8 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
             BASE_URL_DANBOORU, BASE_URL_SANKAKU, BASE_URL_GELBOORU, BASE_URL_ZEROCHAN
     };
 
+    protected String mTagJson;
+
     private T mHtmlParser;
 
     public WebsiteConfig() {
@@ -50,6 +47,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
             e.printStackTrace();
         }
     }
+
+    // 网站名
+    public abstract String getWebsiteName();
 
     // 爬虫解析器
     public HtmlParser getHtmlParser() {
@@ -64,6 +64,34 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
 
     // 搜索提示的Json文件地址
     public abstract String getTagJsonUrl();
+
+    // 存储TagJson文件
+    public void saveTagJson(String json) {
+        synchronized (WebsiteConfig.class) {
+            String dir = MyApp.getInstance().getFilesDir().getPath();
+            String name = FileUtils.encodeMD5String(getTagJsonUrl());
+            File file = new File(dir, name);
+            FileUtils.stringToFile(json, file);
+        }
+    }
+
+    // 获取TagJson内容
+    public String getTagJson() {
+        synchronized (WebsiteConfig.class) {
+            if (TextUtils.isEmpty(mTagJson)) {
+                String dir = MyApp.getInstance().getFilesDir().getPath();
+                String name = FileUtils.encodeMD5String(getTagJsonUrl());
+                File file = new File(dir, name);
+                if (file.exists() && file.isFile()) {
+                    mTagJson = FileUtils.fileToString(file);
+                }
+            }
+            return mTagJson == null ? "" : mTagJson;
+        }
+    }
+
+    // 从TagJson解析搜索提示
+    public abstract List<String> parseSearchAutoCompleteListFromTagJson(String search);
 
     // 通过tags搜索图片
     public abstract String getPostUrl(int page, List<String> tagList);
@@ -86,86 +114,10 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     // 是否支持高级搜索
     public abstract boolean isSupportAdvancedSearch();
 
-    // 本地json路径或网络请求地址
-    public abstract String getSearchAutoCompletePath();
+    // 动态请求搜索提示的网址
+    public abstract String getSearchAutoCompleteUrl(String tag);
 
-    // 根据返回内容解析下拉提示列表
-    public abstract List<String> parseSearchAutoCompleteList(String promptResult, String search);
-
-    // Konachan、Yande、Lolibooru网站通用解析TagJson逻辑
-    List<String> generalParseLocalTagJson(String filePath, String search, List<SearchBean> searchList, List<String> promptList) {
-        // 从Json中解析全部tag
-        if (searchList == null) {
-            searchList = new ArrayList<>();
-            File file = new File(filePath);
-            if (file.exists() && file.isFile()) {
-                String json = FileUtils.fileToString(file);
-                json = json == null ? "" : json;
-                try {
-                    String data = new JSONObject(json).getString("data");
-                    String[] tags = data.split(" ");
-                    for (String tag : tags) {
-                        String[] details = tag.split("`");
-                        if (details.length > 1) {
-                            SearchBean searchBean = new SearchBean(details[0]);
-                            searchBean.tagList.addAll(Arrays.asList(details).subList(1, details.length));
-                            searchList.add(searchBean);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // 筛选当前搜索内容的提示标签，最多10个
-        // 去除"_" "-"等连字符
-        if (promptList == null) {
-            promptList = new ArrayList<>();
-        }
-        search = search.replaceAll("[_\\-]", "");
-        if (!TextUtils.isEmpty(search)) {
-            int length = search.length();
-            for (int i = 0; i <= length; i++) {
-                String start = search.substring(0, length - i).toLowerCase();
-                String contain = search.substring(length - i).toLowerCase();
-                filter(start, contain, searchList, promptList);
-                if (promptList.size() >= 10) {
-                    break;
-                }
-            }
-        }
-        return promptList;
-    }
-
-    // 层级筛选
-    // 例：搜索fla，筛选顺序为
-    // startWith("fla")
-    // -> startWidth("fl"), contains("a")
-    // -> startWith("f"), contains("la")
-    // -> contains("fla")
-    private void filter(String start, String contain, List<SearchBean> searchList, List<String> promptList) {
-        for (SearchBean searchBean : searchList) {
-            for (String tag : searchBean.tagList) {
-                boolean find = false;
-                String[] parts = tag.split("_");
-                for (String part : parts) {
-                    if (part.startsWith(start) && part.contains(contain)) {
-                        if (!promptList.contains(tag)) {
-                            promptList.add(tag);
-                        }
-                        find = true;
-                        break;
-                    }
-                }
-                if (find) {
-                    break;
-                }
-            }
-            if (promptList.size() >= 15) {
-                break;
-            }
-        }
-    }
+    // 根据网络请求返回内容解析搜索提示
+    public abstract List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search);
 
 }

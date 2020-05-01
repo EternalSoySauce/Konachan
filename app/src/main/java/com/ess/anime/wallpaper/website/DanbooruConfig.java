@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.DanbooruParser;
+import com.ess.anime.wallpaper.website.parser.DanbooruParser;
+import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +9,39 @@ import java.util.List;
 public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "Danbooru";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_DANBOORU;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return true;
+    }
+
+    @Override
     public String getTagJsonUrl() {
-        return null;
+        // Danbooru没有搜索提示，借用Konachan(r18)的
+        return TAG_JSON_URL_KONACHAN_E;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+       super.saveTagJson(json);
+    }
+
+    @Override
+    public String getTagJson() {
+        return super.getTagJson();
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
+        return GeneralAutoCompleteParser.getSearchAutoCompleteListFromDB(getTagJson(), search);
     }
 
     @Override
@@ -60,6 +87,16 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return true;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        return null;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        return null;
     }
 
 }

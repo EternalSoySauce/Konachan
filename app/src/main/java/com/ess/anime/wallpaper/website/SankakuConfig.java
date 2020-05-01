@@ -1,6 +1,8 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.SankakuParser;
+import com.ess.anime.wallpaper.website.parser.SankakuParser;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +10,36 @@ import java.util.List;
 public class SankakuConfig extends WebsiteConfig<SankakuParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "Sankaku";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_SANKAKU;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return false;
+    }
+
+    @Override
     public String getTagJsonUrl() {
+        return null;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+    }
+
+    @Override
+    public String getTagJson() {
+        return null;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
         return null;
     }
 
@@ -60,6 +86,21 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return true;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        return "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        List<String> list = new ArrayList<>();
+        JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray().get(1).getAsJsonArray();
+        for (int i = 0; i < tagArray.size(); i++) {
+            list.add(tagArray.get(i).getAsString());
+        }
+        return list;
     }
 
 }

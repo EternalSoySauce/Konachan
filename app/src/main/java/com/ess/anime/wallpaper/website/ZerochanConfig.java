@@ -1,6 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.ZerochanParser;
+import com.ess.anime.wallpaper.website.parser.ZerochanParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +8,36 @@ import java.util.List;
 public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "Zerochan";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_ZEROCHAN;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return false;
+    }
+
+    @Override
     public String getTagJsonUrl() {
+        return null;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+    }
+
+    @Override
+    public String getTagJson() {
+        return null;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
         return null;
     }
 
@@ -60,6 +84,22 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return false;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        return "https://www.zerochan.net/suggest?q=" + tag;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        List<String> list = new ArrayList<>();
+        String[] items = promptResult.split("\n");
+        for (String item : items) {
+            String tag = item.split("\\|")[0];
+            list.add(tag);
+        }
+        return list;
     }
 
 }

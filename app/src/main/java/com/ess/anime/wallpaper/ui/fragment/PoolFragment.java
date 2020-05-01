@@ -23,7 +23,7 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.zyyoona7.popup.EasyPopup;
 
 import org.jsoup.Jsoup;

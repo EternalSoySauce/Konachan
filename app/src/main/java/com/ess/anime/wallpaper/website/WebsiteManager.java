@@ -1,24 +1,12 @@
-package com.ess.anime.wallpaper.model.manager;
+package com.ess.anime.wallpaper.website;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.website.DanbooruConfig;
-import com.ess.anime.wallpaper.website.GelbooruConfig;
-import com.ess.anime.wallpaper.website.KonachanEConfig;
-import com.ess.anime.wallpaper.website.KonachanSConfig;
-import com.ess.anime.wallpaper.website.LolibooruConfig;
-import com.ess.anime.wallpaper.website.SankakuConfig;
-import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.website.YandeConfig;
-import com.ess.anime.wallpaper.website.ZerochanConfig;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,10 +106,7 @@ public class WebsiteManager {
 
                     @Override
                     public void onSuccessful(String json) {
-                        String path = MyApp.getInstance().getFilesDir().getPath();
-                        String name = FileUtils.encodeMD5String(url);
-                        File file = new File(path, name);
-                        FileUtils.stringToFile(json, file);
+                        mWebsiteConfig.saveTagJson(json);
                     }
                 });
             }

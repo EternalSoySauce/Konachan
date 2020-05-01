@@ -23,7 +23,7 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;

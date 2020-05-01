@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.GeneralParser;
+import com.ess.anime.wallpaper.website.parser.GeneralParser;
+import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +9,38 @@ import java.util.List;
 public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "Lolibooru";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_LOLIBOORU;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return true;
+    }
+
+    @Override
     public String getTagJsonUrl() {
         return TAG_JSON_URL_LOLIBOORU;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+        super.saveTagJson(json);
+    }
+
+    @Override
+    public String getTagJson() {
+        return super.getTagJson();
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
+        return GeneralAutoCompleteParser.getSearchAutoCompleteListFromDB(getTagJson(), search);
     }
 
     @Override
@@ -60,6 +86,16 @@ public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return true;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        return null;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        return null;
     }
 
 }

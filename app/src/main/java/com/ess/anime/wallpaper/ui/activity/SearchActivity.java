@@ -2,7 +2,6 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -22,32 +21,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
-import com.ess.anime.wallpaper.bean.SearchBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
-import com.ess.anime.wallpaper.model.manager.SearchAutoCompleteManager;
+import com.ess.anime.wallpaper.website.search.SearchAutoCompleteManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
-import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -82,15 +67,6 @@ public class SearchActivity extends BaseActivity {
     // 判断EditText是用户输入还是setText的标志位，默认为true
     private boolean mUserInput = true;
 
-    // 存储着K站所有的tag，用于搜索提示
-    private ArrayList<SearchBean> mSearchList = new ArrayList<>();
-
-    // 当前搜索内容的下拉提示内容
-    private ArrayList<String> mPromptList = new ArrayList<>();
-
-    // 筛选下拉提示异步任务
-    private AsyncTask mAutoCompleteTask;
-
     @Override
     int layoutRes() {
         return R.layout.activity_search;
@@ -108,7 +84,6 @@ public class SearchActivity extends BaseActivity {
         initListPopupWindow();
         changeEditAttrs();
         changeDocumentColor();
-        initTagList();
     }
 
     // 下拉栏图标
@@ -161,34 +136,18 @@ public class SearchActivity extends BaseActivity {
                 int visible = TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE;
                 findViewById(R.id.iv_clear).setVisibility(visible);
 
-                cancelAutoCompleteTask();
-                OkHttp.cancel(TAG);
+                SearchAutoCompleteManager.getInstance().stopTask();
                 if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
-                    // TODO 完善搜索提示（现在与K站算法不完全一样）
                     String tag = s.toString();
                     int splitIndex = Math.max(tag.lastIndexOf(","), tag.lastIndexOf("，"));
                     tag = tag.substring(splitIndex + 1);
                     if (!TextUtils.isEmpty(tag) && mUserInput) {
-                        mPromptList.clear();
-                        switch (WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl()) {
-                            case WebsiteConfig.BASE_URL_SANKAKU:
-                                // Sankaku搜索提示需动态请求网络
-                                getTagListFromNetwork("https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag);
-                                break;
-                            case WebsiteConfig.BASE_URL_GELBOORU:
-                                // Gelbooru搜索提示需动态请求网络
-                                getTagListFromNetwork("https://gelbooru.com/index.php?page=autocomplete&term=" + tag);
-                                break;
-                            case WebsiteConfig.BASE_URL_ZEROCHAN:
-                                // Zerochan搜索提示需动态请求网络
-                                getTagListFromNetwork("https://www.zerochan.net/suggest?q=" + tag);
-                                break;
-                            default:
-                                mAutoCompleteTask = new AutoCompleteTagAsyncTask().execute(tag);
-                                break;
-                        }
+                        SearchAutoCompleteManager.getInstance().startTask(tag, promptList -> {
+                            mCompleteSearchAdapter.setNewData(promptList);
+                            mRvCompleteSearch.setVisibility(View.VISIBLE);
+                        });
                     } else {
-                        mCompleteSearchAdapter.clear();
+                        mCompleteSearchAdapter.setNewData(null);
                         mRvCompleteSearch.setVisibility(View.GONE);
                     }
                 }
@@ -276,7 +235,7 @@ public class SearchActivity extends BaseActivity {
                 mSpinnerAdapter.setSelection(position);
                 mCurrentSearchMode = position + Constants.SEARCH_CODE + 1;
                 mPreferences.edit().putInt(Constants.SEARCH_MODE, mCurrentSearchMode).apply();
-                mCompleteSearchAdapter.clear();
+                mCompleteSearchAdapter.setNewData(null);
                 mRvCompleteSearch.setVisibility(View.GONE);
                 changeEditAttrs();
                 changeDocumentColor();
@@ -315,158 +274,6 @@ public class SearchActivity extends BaseActivity {
         return (int) maxWidth;
     }
 
-    // 获取json文件里所有的搜索标签
-    private void initTagList() {
-        String name = "";
-        String path = getFilesDir().getPath();
-        String baseUrl = WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl();
-        switch (baseUrl) {
-            case WebsiteConfig.BASE_URL_KONACHAN_S:
-                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_S);
-                break;
-            case WebsiteConfig.BASE_URL_KONACHAN_E:
-                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_E);
-                break;
-            case WebsiteConfig.BASE_URL_YANDE:
-                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_YANDE);
-                break;
-            case WebsiteConfig.BASE_URL_LOLIBOORU:
-                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_LOLIBOORU);
-                break;
-            case WebsiteConfig.BASE_URL_DANBOORU:
-                // Danbooru没有搜索提示，借用Konachan(r18)的
-                name = FileUtils.encodeMD5String(WebsiteConfig.TAG_JSON_URL_KONACHAN_E);
-                break;
-            case WebsiteConfig.BASE_URL_SANKAKU:
-                // Sankaku搜索提示为动态请求：https://chan.sankakucomplex.com/tag/autosuggest?tag=xxx
-                break;
-            case WebsiteConfig.BASE_URL_GELBOORU:
-                // Gelbooru搜索提示为动态请求：https://gelbooru.com/index.php?page=autocomplete&term=xxx
-                break;
-            case WebsiteConfig.BASE_URL_ZEROCHAN:
-                // Zerochan搜索提示为动态请求：https://www.zerochan.net/suggest?q=xxx
-                break;
-        }
-
-        File file = new File(path, name);
-        if (file.exists() && file.isFile()) {
-            String json = FileUtils.fileToString(file);
-            json = json == null ? "" : json;
-            try {
-                String data = new JSONObject(json).getString("data");
-                String[] tags = data.split(" ");
-                for (String tag : tags) {
-                    String[] details = tag.split("`");
-                    if (details.length > 1) {
-                        SearchBean searchBean = new SearchBean(details[0]);
-                        searchBean.tagList.addAll(Arrays.asList(details).subList(1, details.length));
-                        mSearchList.add(searchBean);
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // 筛选当前搜索内容的提示标签，最多10个
-    // 去除"_" "-"等连字符
-    private void getTagList(String search) {
-        search = search.replaceAll("[_\\-]", "");
-        if (!TextUtils.isEmpty(search)) {
-            int length = search.length();
-            for (int i = 0; i <= length; i++) {
-                String start = search.substring(0, length - i).toLowerCase();
-                String contain = search.substring(length - i).toLowerCase();
-                filter(start, contain);
-                if (mPromptList.size() >= 10) {
-                    break;
-                }
-            }
-        }
-    }
-
-    // 层级筛选
-    // 例：搜索fla，筛选顺序为
-    // startWith("fla")
-    // -> startWidth("fl"), contains("a")
-    // -> startWith("f"), contains("la")
-    // -> contains("fla")
-    private void filter(String start, String contain) {
-        for (SearchBean searchBean : mSearchList) {
-            for (String tag : searchBean.tagList) {
-                boolean find = false;
-                String[] parts = tag.split("_");
-                for (String part : parts) {
-                    if (part.startsWith(start) && part.contains(contain)) {
-                        if (!mPromptList.contains(tag)) {
-                            mPromptList.add(tag);
-                        }
-                        find = true;
-                        break;
-                    }
-                }
-                if (find) {
-                    break;
-                }
-            }
-            if (mPromptList.size() >= 15) {
-                break;
-            }
-        }
-    }
-
-    // Sankaku, Gelbooru搜索提示为动态请求
-    private void getTagListFromNetwork(String url) {
-        OkHttp.cancel(TAG);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
-            @Override
-            public void onFailure() {
-                getTagListFromNetwork(url);
-            }
-
-            @Override
-            public void onSuccessful(String body) {
-                switch (WebsiteManager.getInstance().getWebsiteConfig().getBaseUrl()) {
-                    case WebsiteConfig.BASE_URL_SANKAKU:
-                        JsonArray tagArray = new JsonParser().parse(body).getAsJsonArray().get(1).getAsJsonArray();
-                        for (int i = 0; i < tagArray.size(); i++) {
-                            mPromptList.add(tagArray.get(i).getAsString());
-                        }
-                        break;
-
-                    case WebsiteConfig.BASE_URL_GELBOORU:
-                        tagArray = new JsonParser().parse(body).getAsJsonArray();
-                        for (int i = 0; i < tagArray.size(); i++) {
-                            mPromptList.add(tagArray.get(i).getAsString());
-                        }
-                        break;
-
-                    case WebsiteConfig.BASE_URL_ZEROCHAN:
-                        String[] items = body.split("\n");
-                        for (String item : items) {
-                            String tag = item.split("\\|")[0];
-                            mPromptList.add(tag);
-                        }
-                        break;
-                }
-                setCompleteSearchTags();
-            }
-        }, Request.Priority.IMMEDIATE);
-    }
-
-    private void setCompleteSearchTags() {
-        mCompleteSearchAdapter.clear();
-        mCompleteSearchAdapter.addData(mPromptList);
-        mRvCompleteSearch.setVisibility(View.VISIBLE);
-    }
-
-    private void cancelAutoCompleteTask() {
-        if (mAutoCompleteTask != null) {
-            mAutoCompleteTask.cancel(true);
-        }
-    }
-
     @OnClick(R.id.tv_cancel_search)
     @Override
     public void finish() {
@@ -485,27 +292,6 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         SearchAutoCompleteManager.getInstance().stopTask();
-        cancelAutoCompleteTask();
-        OkHttp.cancel(TAG);
     }
 
-    // 异步执行筛选下拉提示操作
-    private class AutoCompleteTagAsyncTask extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... params) {
-            if (!isCancelled() && ComponentUtils.isActivityActive(SearchActivity.this)) {
-                getTagList(params[0]);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (!isCancelled() && ComponentUtils.isActivityActive(SearchActivity.this)) {
-                setCompleteSearchTags();
-            }
-        }
-    }
 }

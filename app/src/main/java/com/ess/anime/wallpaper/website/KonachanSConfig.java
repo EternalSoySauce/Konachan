@@ -1,6 +1,9 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.GeneralParser;
+import com.ess.anime.wallpaper.MyApp;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.website.parser.GeneralParser;
+import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +11,38 @@ import java.util.List;
 public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "KonachanS";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_KONACHAN_S;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return true;
+    }
+
+    @Override
     public String getTagJsonUrl() {
         return TAG_JSON_URL_KONACHAN_S;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+        super.saveTagJson(json);
+    }
+
+    @Override
+    public String getTagJson() {
+        return super.getTagJson();
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
+        return GeneralAutoCompleteParser.getSearchAutoCompleteListFromDB(getTagJson(), search);
     }
 
     @Override
@@ -60,6 +88,18 @@ public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return true;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        String dirPath = MyApp.getInstance().getFilesDir().getPath();
+        String fileName = FileUtils.encodeMD5String(TAG_JSON_URL_KONACHAN_S);
+        return dirPath + "/" + fileName;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        return null;
     }
 
 }

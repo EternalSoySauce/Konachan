@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
@@ -155,7 +156,7 @@ public class ImageDetailActivity extends BaseActivity {
         String desc;
         boolean exists;
         // 0.Sample size
-        if (postBean.sampleFileSize != 0 && !postBean.fileUrl.equals(postBean.sampleUrl)) {
+        if (postBean.sampleFileSize != 0 && !TextUtils.equals(postBean.fileUrl, postBean.sampleUrl)) {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
@@ -185,7 +186,7 @@ public class ImageDetailActivity extends BaseActivity {
                 file.getAbsolutePath(), exists, desc));
 
         // 2.Origin size
-        if (postBean.jpegFileSize != 0 && !postBean.fileUrl.equals(postBean.jpegUrl)) {
+        if (postBean.jpegFileSize != 0 && !TextUtils.equals(postBean.fileUrl, postBean.jpegUrl)) {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),

@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import androidx.multidex.MultiDex;

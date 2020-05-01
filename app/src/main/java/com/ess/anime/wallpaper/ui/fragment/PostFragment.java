@@ -23,7 +23,7 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.http.parser.HtmlParser;
+import com.ess.anime.wallpaper.website.parser.HtmlParser;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
@@ -34,7 +34,7 @@ import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.github.clans.fab.FloatingActionMenu;
 import com.zyyoona7.popup.EasyPopup;
 
@@ -495,7 +495,7 @@ public class PostFragment extends BaseFragment implements
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
                         thumbBean.checkToReplacePostData();
-                        String url = imageBean.posts[0].sampleUrl;
+                        String url = imageBean.posts[0].getMinSizeImageUrl();
                         if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(mActivity)) {
                             MyGlideModule.preloadImage(mActivity, url);
                         }

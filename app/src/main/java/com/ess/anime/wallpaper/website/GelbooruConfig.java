@@ -1,6 +1,8 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.http.parser.GelbooruParser;
+import com.ess.anime.wallpaper.website.parser.GelbooruParser;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +10,36 @@ import java.util.List;
 public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
 
     @Override
+    public String getWebsiteName() {
+        return "Gelbooru";
+    }
+
+    @Override
     public String getBaseUrl() {
         return BASE_URL_GELBOORU;
     }
 
     @Override
+    public boolean hasTagJson() {
+        return false;
+    }
+
+    @Override
     public String getTagJsonUrl() {
+        return null;
+    }
+
+    @Override
+    public void saveTagJson(String json) {
+    }
+
+    @Override
+    public String getTagJson() {
+        return null;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
         return null;
     }
 
@@ -59,6 +85,21 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     @Override
     public boolean isSupportAdvancedSearch() {
         return false;
+    }
+
+    @Override
+    public String getSearchAutoCompleteUrl(String tag) {
+        return"https://gelbooru.com/index.php?page=autocomplete&term=" + tag;
+    }
+
+    @Override
+    public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
+        List<String> list = new ArrayList<>();
+        JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
+        for (int i = 0; i < tagArray.size(); i++) {
+            list.add(tagArray.get(i).getAsString());
+        }
+        return list;
     }
 
 }

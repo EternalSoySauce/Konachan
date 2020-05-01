@@ -80,7 +80,7 @@
         <activity
             android:name=".ui.activity.FullscreenActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:screenOrientation="sensor"
+            android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme.Fullscreen" />
 
         <activity

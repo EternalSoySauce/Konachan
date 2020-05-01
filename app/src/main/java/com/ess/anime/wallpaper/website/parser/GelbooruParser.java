@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.http.parser;
+package com.ess.anime.wallpaper.website.parser;
 
 import android.text.Html;
 

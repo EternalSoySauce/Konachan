@@ -18,7 +18,7 @@ import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
-import com.ess.anime.wallpaper.model.manager.WebsiteManager;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -257,7 +257,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
     private void checkImageBean(ThumbBean thumbBean) {
         thumbBean.checkToReplacePostData();
-        String url = thumbBean.imageBean.posts[0].sampleUrl;
+        String url = thumbBean.imageBean.posts[0].getMinSizeImageUrl();
         if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(getActivity())) {
             MyGlideModule.preloadImage(getActivity(), url);
         }

@@ -98,7 +98,7 @@ public class ImageFragment extends BaseFragment {
     }
 
     private void loadMedia() {
-        mMediaLayout.setMediaPath(mImageBean.posts[0].sampleUrl);
+        mMediaLayout.setMediaPath(mImageBean.posts[0].getMinSizeImageUrl());
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)
