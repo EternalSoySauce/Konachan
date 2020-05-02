@@ -119,7 +119,7 @@ public class GeneralAutoCompleteParser {
         List<String> tagList = new ArrayList<>();
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(tagJson);
-        while (matcher.find() && tagList.size() < maxResults) {
+        while (tagList.size() < maxResults && matcher.find()) {
             String tag = matcher.group();
             /* Ignore this tag.  We need a better way to blackhole tags. */
             if (tag.contains(":deletethistag:"))

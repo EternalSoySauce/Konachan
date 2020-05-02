@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Priority;
@@ -102,7 +103,6 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     private void showImage() {
         mVideoView.setVisibility(GONE);
         mLayoutVideoController.setVisibility(GONE);
-        mPhotoView.setVisibility(VISIBLE);
         mPhotoView.setAlpha(1f);
         mPhotoView.setZoomable(false);
 
@@ -144,6 +144,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     TextureVideoView mVideoView;
     @BindView(R.id.layout_video_controller)
     VideoControllerLayout mLayoutVideoController;
+    @BindView(R.id.layout_controller_wrapper)
+    ViewGroup mLayoutControllerWrapper;
 
     private boolean mAutoPlay;
     private MediaPlayer mMediaPlayer;
@@ -153,7 +155,6 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     private void showVideo() {
-        mPhotoView.setVisibility(VISIBLE);
         mPhotoView.setZoomable(false);
         if (isWebPath()) {
             mPhotoView.setAlpha(1f);
@@ -175,10 +176,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
         mVideoView.setVideoPath(url);
 
-        mLayoutVideoController.setVisibility(VISIBLE);
-        mLayoutVideoController.setAlpha(0);
-        mLayoutVideoController.attachTo(mVideoView, isWebPath());
-        mLayoutVideoController.reset();
+        mLayoutControllerWrapper.setVisibility(VISIBLE);
+        mLayoutControllerWrapper.setAlpha(0f);
     }
 
     @Override
@@ -196,7 +195,9 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         if (what == MEDIA_INFO_VIDEO_RENDERING_START) {
             mPhotoView.setAlpha(0f);
             mVideoView.setAlpha(1);
-            mLayoutVideoController.setAlpha(1);
+            mLayoutControllerWrapper.setAlpha(1);
+            mLayoutVideoController.attachTo(this);
+            mLayoutVideoController.reset();
             mLayoutVideoController.startUpdateRunnable();
         }
         return false;
@@ -210,7 +211,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         return true;
     }
 
-    private void updateVideoVolume() {
+    public void updateVideoVolume() {
         if (mMediaPlayer != null) {
             int volume = isVideoSilent() ? 0 : 1;
             mMediaPlayer.setVolume(volume, volume);
@@ -218,12 +219,12 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         }
     }
 
-    private void setVideoSilent(boolean silent) {
+    public void setVideoSilent(boolean silent) {
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .edit().putBoolean(Constants.VIDEO_SILENT, silent).apply();
     }
 
-    private boolean isVideoSilent() {
+    public boolean isVideoSilent() {
         return PreferenceManager.getDefaultSharedPreferences(getContext())
                 .getBoolean(Constants.VIDEO_SILENT, false);
     }
@@ -236,7 +237,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mVideoView.stopPlayback();
         mVideoView.setVisibility(GONE);
         mLayoutVideoController.reset();
-        mLayoutVideoController.setVisibility(GONE);
+        mLayoutControllerWrapper.setVisibility(GONE);
     }
 
     @Override
@@ -251,13 +252,17 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         EventBus.getDefault().unregister(this);
     }
 
-    // FullscreenActivity翻页后收到的通知，obj 为 image url
+    // FullscreenActivity翻页后收到的通知，obj 为 [imageUrl, controllerVisible]
     @Subscribe
     public void startVideo(MsgBean msgBean) {
         if (msgBean.msg.equals(Constants.START_VIDEO)) {
-            String url = (String) msgBean.obj;
+            String url = (String) ((Object[]) msgBean.obj)[0];
             if (TextUtils.equals(url, mMediaPath)) {
                 setMediaPath(url);
+                if (FileUtils.isVideoType(url)) {
+                    int visibility = (int) ((Object[]) msgBean.obj)[1];
+                    mLayoutControllerWrapper.setVisibility(visibility);
+                }
             }
         }
     }
@@ -280,6 +285,17 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
             String url = (String) msgBean.obj;
             if (!TextUtils.isEmpty(mMediaPath) && TextUtils.equals(url, mMediaPath) && FileUtils.isVideoType(url)) {
                 mVideoView.pause();
+            }
+        }
+    }
+
+    // FullscreenActivity单击页面后收到的通知，obj 为 visibility
+    @Subscribe
+    public void toggleVideoController(MsgBean msgBean) {
+        if (msgBean.msg.equals(Constants.TOGGLE_VIDEO_CONTROLLER)) {
+            if (FileUtils.isVideoType(mMediaPath)) {
+                int visibility = (int) msgBean.obj;
+                mLayoutControllerWrapper.setVisibility(visibility);
             }
         }
     }

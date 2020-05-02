@@ -67,17 +67,20 @@ public class WebsiteManager {
                 case WebsiteConfig.BASE_URL_YANDE:
                     websiteConfig = new YandeConfig();
                     break;
-                case WebsiteConfig.BASE_URL_LOLIBOORU:
-                    websiteConfig = new LolibooruConfig();
-                    break;
                 case WebsiteConfig.BASE_URL_DANBOORU:
                     websiteConfig = new DanbooruConfig();
                     break;
-                case WebsiteConfig.BASE_URL_SANKAKU:
-                    websiteConfig = new SankakuConfig();
+                case WebsiteConfig.BASE_URL_SAFEBOORU:
+                    websiteConfig = new SafebooruConfig();
                     break;
                 case WebsiteConfig.BASE_URL_GELBOORU:
                     websiteConfig = new GelbooruConfig();
+                    break;
+                case WebsiteConfig.BASE_URL_LOLIBOORU:
+                    websiteConfig = new LolibooruConfig();
+                    break;
+                case WebsiteConfig.BASE_URL_SANKAKU:
+                    websiteConfig = new SankakuConfig();
                     break;
                 case WebsiteConfig.BASE_URL_ZEROCHAN:
                     websiteConfig = new ZerochanConfig();

@@ -72,6 +72,11 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     }
 
     @Override
+    public boolean needReloadDetailByIdForPoolPost() {
+        return false;
+    }
+
+    @Override
     public String getSavedImageHead() {
         return "Zerochan-";
     }
@@ -88,7 +93,7 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return "https://www.zerochan.net/suggest?q=" + tag;
+        return getBaseUrl() + "suggest?q=" + tag;
     }
 
     @Override

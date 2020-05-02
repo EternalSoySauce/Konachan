@@ -17,10 +17,11 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String BASE_URL_KONACHAN_S = "https://konachan.net/";
     public final static String BASE_URL_KONACHAN_E = "https://konachan.com/";
     public final static String BASE_URL_YANDE = "https://yande.re/";
-    public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
     public final static String BASE_URL_DANBOORU = "https://danbooru.donmai.us/";
-    public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
+    public final static String BASE_URL_SAFEBOORU = "https://safebooru.org/";
     public final static String BASE_URL_GELBOORU = "https://gelbooru.com/";
+    public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
+    public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
     public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
 
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
@@ -29,8 +30,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String TAG_JSON_URL_LOLIBOORU = "https://lolibooru.moe/tag/summary.json";
 
     public final static String[] BASE_URLS = {
-            BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_LOLIBOORU,
-            BASE_URL_DANBOORU, BASE_URL_SANKAKU, BASE_URL_GELBOORU, BASE_URL_ZEROCHAN
+            BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_DANBOORU,
+            BASE_URL_SAFEBOORU, BASE_URL_GELBOORU, BASE_URL_LOLIBOORU, BASE_URL_SANKAKU,
+            BASE_URL_ZEROCHAN
     };
 
     protected String mTagJson;
@@ -104,6 +106,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
 
     // 搜索图集中的图片
     public abstract String getPoolPostUrl(String linkToShow, int page);
+
+    // 解析PoolPost之后是否需要根据postId重新进行一次Post查询
+    public abstract boolean needReloadDetailByIdForPoolPost();
 
     // 保存图片名前缀
     public abstract String getSavedImageHead();

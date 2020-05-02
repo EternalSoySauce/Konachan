@@ -74,6 +74,11 @@ public class YandeConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public boolean needReloadDetailByIdForPoolPost() {
+        return false;
+    }
+
+    @Override
     public String getSavedImageHead() {
         return "Yande-";
     }

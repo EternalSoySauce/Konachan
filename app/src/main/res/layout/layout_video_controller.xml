@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.ess.anime.wallpaper.ui.view.VideoControllerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:layout_height="wrap_content">
+
+    <com.ess.anime.wallpaper.ui.view.image.ToggleImageView
+        android:id="@+id/iv_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/toggle_media_layout_play"
+        app:layout_constraintBottom_toTopOf="@+id/sb_progress"
+        app:layout_constraintEnd_toStartOf="@+id/iv_volume"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.ess.anime.wallpaper.ui.view.image.ToggleImageView
+        android:id="@+id/iv_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:src="@drawable/toggle_media_layout_volume"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_play"
+        app:layout_constraintTop_toTopOf="@+id/iv_play" />
 
     <TextView
         android:id="@+id/tv_current"
@@ -11,6 +33,10 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorAccent"
         android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sb_progress"
+        app:layout_constraintEnd_toStartOf="@+id/sb_progress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/sb_progress"
         tools:text="00:40" />
 
     <SeekBar
@@ -18,6 +44,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_total"
+        app:layout_constraintStart_toEndOf="@+id/tv_current"
         tools:progress="50" />
 
     <TextView
@@ -26,5 +55,9 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorAccent"
         android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sb_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sb_progress"
+        app:layout_constraintTop_toTopOf="@+id/sb_progress"
         tools:text="01:20" />
 </com.ess.anime.wallpaper.ui.view.VideoControllerLayout>

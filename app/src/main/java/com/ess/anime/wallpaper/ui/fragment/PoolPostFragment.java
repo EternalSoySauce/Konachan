@@ -142,7 +142,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         if (mPostAdapter.loadMoreDatas(newList)) {
             mPostAdapter.loadMoreComplete();
         } else {
-            mPostAdapter.loadMoreEnd();
+            mPostAdapter.loadMoreEnd(true);
         }
     }
 
@@ -208,10 +208,10 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
                         thumbBean.imageBean = imageBean;
-                        if (imageBean.hasPostBean()) {
-                            checkImageBean(thumbBean);
-                        } else {
+                        if (WebsiteManager.getInstance().getWebsiteConfig().needReloadDetailByIdForPoolPost()) {
                             reloadDetailById(thumbBean);
+                        } else {
+                            checkImageBean(thumbBean);
                         }
                     }
                     break;

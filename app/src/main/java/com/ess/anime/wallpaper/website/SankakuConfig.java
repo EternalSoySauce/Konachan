@@ -74,6 +74,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     }
 
     @Override
+    public boolean needReloadDetailByIdForPoolPost() {
+        return false;
+    }
+
+    @Override
     public String getSavedImageHead() {
         return "Sankaku-";
     }
@@ -90,7 +95,7 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag;
+        return getBaseUrl() + "tag/autosuggest?tag=" + tag;
     }
 
     @Override

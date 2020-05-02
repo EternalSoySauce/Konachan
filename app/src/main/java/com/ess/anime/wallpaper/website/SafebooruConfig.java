@@ -1,46 +1,47 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.website.parser.GeneralParser;
-import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
+import com.ess.anime.wallpaper.website.parser.SafebooruParser;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class KonachanEConfig extends WebsiteConfig<GeneralParser> {
+public class SafebooruConfig extends WebsiteConfig<SafebooruParser> {
 
     @Override
     public String getWebsiteName() {
-        return "KonachanE";
+        return "Safebooru";
     }
 
     @Override
     public String getBaseUrl() {
-        return BASE_URL_KONACHAN_E;
+        return BASE_URL_SAFEBOORU;
     }
 
     @Override
     public boolean hasTagJson() {
-        return true;
+        return false;
     }
 
     @Override
     public String getTagJsonUrl() {
-        return TAG_JSON_URL_KONACHAN_E;
+        return null;
     }
 
     @Override
     public void saveTagJson(String json) {
-        super.saveTagJson(json);
     }
 
     @Override
     public String getTagJson() {
-        return super.getTagJson();
+        return null;
     }
 
     @Override
     public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
-        return GeneralAutoCompleteParser.getSearchAutoCompleteListFromDB(getTagJson(), search);
+        return null;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class KonachanEConfig extends WebsiteConfig<GeneralParser> {
             tags.append(tag).append("+");
         }
 
-        return getBaseUrl() + "post?page=" + page + "&tags=" + tags;
+        return getBaseUrl() + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=40";
     }
 
     @Override
@@ -64,43 +65,49 @@ public class KonachanEConfig extends WebsiteConfig<GeneralParser> {
 
     @Override
     public String getPoolUrl(int page, String name) {
-        name = name == null ? "" : name;
-        return getBaseUrl() + "pool?commit=Search&page=" + page + "&query=" + name;
+        return getBaseUrl() + "index.php?page=pool&s=list&pid=" + (page - 1) * 25;
     }
 
     @Override
     public String getPoolPostUrl(String linkToShow, int page) {
-        return linkToShow + "?page=" + page;
+        return linkToShow;
     }
 
     @Override
     public boolean needReloadDetailByIdForPoolPost() {
-        return false;
+        return true;
     }
 
     @Override
     public String getSavedImageHead() {
-        return "Konachan-";
+        return "Safebooru-";
     }
 
     @Override
     public boolean isSupportRandomPost() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isSupportAdvancedSearch() {
-        return true;
+        return false;
     }
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return null;
+        return getBaseUrl() + "autocomplete.php?q=" + tag;
     }
 
     @Override
     public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
-        return null;
+        List<String> list = new ArrayList<>();
+        JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
+        for (int i = 0; i < tagArray.size(); i++) {
+            JsonObject item = tagArray.get(i).getAsJsonObject();
+            if (item.has("value")) {
+                list.add(item.get("value").getAsString());
+            }
+        }
+        return list;
     }
-
 }

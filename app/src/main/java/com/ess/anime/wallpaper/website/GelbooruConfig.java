@@ -73,6 +73,11 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     }
 
     @Override
+    public boolean needReloadDetailByIdForPoolPost() {
+        return true;
+    }
+
+    @Override
     public String getSavedImageHead() {
         return "Gelbooru-";
     }
@@ -89,7 +94,7 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return"https://gelbooru.com/index.php?page=autocomplete&term=" + tag;
+        return getBaseUrl() + "index.php?page=autocomplete&term=" + tag;
     }
 
     @Override

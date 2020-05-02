@@ -24,6 +24,8 @@ import com.ess.anime.wallpaper.utils.WallpaperUtils;
 import com.github.chrisbanes.photoview.OnOutsidePhotoTapListener;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.yanzhenjie.permission.runtime.Permission;
 import com.zjca.qqdialog.ActionSheetDialog;
 
@@ -63,6 +65,8 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
 
     @Override
     void init(Bundle savedInstanceState) {
+        QMUIStatusBarHelper.translucent(this);
+        QMUIDisplayHelper.cancelFullScreen(this);
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
         if (ImageDataHolder.getCollectionList().isEmpty() || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
             finish();
@@ -132,7 +136,8 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
                 CollectionBean collectionBean = mFullscreenAdapter.getItem(position);
                 if (collectionBean != null) {
                     // 发送通知到MultipleMediaLayout
-                    EventBus.getDefault().post(new MsgBean(Constants.START_VIDEO, collectionBean.url));
+                    EventBus.getDefault().post(new MsgBean(Constants.START_VIDEO,
+                            new Object[]{collectionBean.url, mLayoutOperate.getVisibility()}));
                 }
             }
         };
@@ -151,7 +156,15 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     }
 
     public void toggleOperateLayout() {
-        mLayoutOperate.setVisibility(View.GONE - mLayoutOperate.getVisibility());
+        int visibility = View.GONE - mLayoutOperate.getVisibility();
+        mLayoutOperate.setVisibility(visibility);
+        // 发送通知到MultipleMediaLayout
+        EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_VIDEO_CONTROLLER, visibility));
+        if (visibility == View.VISIBLE) {
+            QMUIDisplayHelper.cancelFullScreen(this);
+        } else {
+            QMUIDisplayHelper.setFullScreen(this);
+        }
     }
 
     @Override

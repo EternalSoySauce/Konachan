@@ -270,7 +270,7 @@ public class PoolFragment extends BaseFragment implements
             mPoolAdapter.loadMoreComplete();
             changeToPage(mCurrentPage);
         } else {
-            mPoolAdapter.loadMoreEnd();
+            mPoolAdapter.loadMoreEnd(true);
         }
     }
 

@@ -272,7 +272,7 @@ public class PostBean implements Parcelable {
      */
     public String getMinSizeImageUrl() {
         String url = fileUrl;
-        if (sampleFileSize != 0 && !TextUtils.equals(sampleUrl, fileUrl) && sampleFileSize < fileSize) {
+        if (sampleFileSize != 0 && !TextUtils.equals(sampleUrl, fileUrl) && sampleFileSize <= fileSize) {
             url = sampleUrl;
             if (jpegFileSize != 0 && !TextUtils.equals(jpegUrl, sampleUrl) && jpegFileSize < sampleFileSize) {
                 url = jpegUrl;

@@ -75,6 +75,11 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     }
 
     @Override
+    public boolean needReloadDetailByIdForPoolPost() {
+        return false;
+    }
+
+    @Override
     public String getSavedImageHead() {
         return "Danbooru-";
     }

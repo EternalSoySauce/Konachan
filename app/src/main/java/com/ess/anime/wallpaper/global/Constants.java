@@ -46,6 +46,7 @@ public class Constants {
     public final static String START_VIDEO = "startVideo";  // FullscreenActivity翻页后通知MultipleMediaLayout播放Video
     public final static String RESUME_VIDEO = "resumeVideo";  // ImageFragment和FullscreenActivity触发onResume()后通知MultipleMediaLayout恢复Video
     public final static String PAUSE_VIDEO = "pauseVideo";  // ImageFragment和FullscreenActivity触发onPause()后通知MultipleMediaLayout暂停Video
+    public final static String TOGGLE_VIDEO_CONTROLLER = "toggleVideoController";  // FullscreenActivity单击页面后通知MultipleMediaLayout切换视频播放控制器显隐
 
     // Image Detail
     public final static String RATING_S = "s";

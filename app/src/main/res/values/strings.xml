@@ -33,10 +33,11 @@
     <string name="base_konachan_s" translatable="false">Konachan(safe)</string>
     <string name="base_konachan_e" translatable="false">Konachan(r18)</string>
     <string name="base_yande" translatable="false">Yande.re</string>
-    <string name="base_lolibooru" translatable="false">Lolibooru</string>
     <string name="base_danbooru" translatable="false">Danbooru</string>
-    <string name="base_sankaku" translatable="false">Sankaku</string>
+    <string name="base_safebooru" translatable="false">Safebooru</string>
     <string name="base_gelbooru" translatable="false">Gelbooru</string>
+    <string name="base_lolibooru" translatable="false">Lolibooru</string>
+    <string name="base_sankaku" translatable="false">Sankaku</string>
     <string name="base_zerochan" translatable="false">Zerochan</string>
     <string name="navigation_drawer_open">Open drawer layout</string>
     <string name="navigation_drawer_close">Close drawer layout</string>

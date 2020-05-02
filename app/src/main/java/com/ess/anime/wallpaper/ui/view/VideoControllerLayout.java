@@ -2,20 +2,26 @@ package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.ui.view.image.ToggleImageView;
 import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.sprylab.android.widget.TextureVideoView;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class VideoControllerLayout extends LinearLayout implements Runnable {
+public class VideoControllerLayout extends ConstraintLayout implements Runnable {
 
+    @BindView(R.id.iv_play)
+    ToggleImageView mIvPlay;
+    @BindView(R.id.iv_volume)
+    ToggleImageView mIvVolume;
     @BindView(R.id.tv_current)
     TextView mTvCurrent;
     @BindView(R.id.tv_total)
@@ -23,6 +29,7 @@ public class VideoControllerLayout extends LinearLayout implements Runnable {
     @BindView(R.id.sb_progress)
     SeekBar mSbProgress;
 
+    private MultipleMediaLayout mMediaLayout;
     private TextureVideoView mVideoView;
 
     public VideoControllerLayout(Context context) {
@@ -43,17 +50,18 @@ public class VideoControllerLayout extends LinearLayout implements Runnable {
         ButterKnife.bind(this);
     }
 
-    public void attachTo(TextureVideoView videoView, boolean isWebPath) {
-        mVideoView = videoView;
+    public void attachTo(MultipleMediaLayout mediaLayout) {
+        mMediaLayout = mediaLayout;
+        mVideoView = mediaLayout.getVideoView();
+        mIvPlay.setChecked(mVideoView.isPlaying());
+        mIvVolume.setChecked(mMediaLayout.isVideoSilent());
         mSbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private boolean isPlayingWhenTouch;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (!isWebPath && fromUser) {
-                    mVideoView.seekTo(progress);
-                }
                 if (fromUser) {
+                    mVideoView.seekTo(progress);
                     updateVideoProgress(progress, mVideoView.getDuration(), mVideoView.getBufferPercentage());
                 }
             }
@@ -83,7 +91,7 @@ public class VideoControllerLayout extends LinearLayout implements Runnable {
         mTvTotal.setText(TimeFormat.durationFormat(total));
         mSbProgress.setMax(total);
         mSbProgress.setProgress(current);
-        mSbProgress.setSecondaryProgress(bufferPercentage);
+        mSbProgress.setSecondaryProgress((int) (bufferPercentage / 100f * total));
     }
 
     public void reset() {
@@ -94,6 +102,25 @@ public class VideoControllerLayout extends LinearLayout implements Runnable {
     public void startUpdateRunnable() {
         removeCallbacks(this);
         post(this);
+    }
+
+    @OnClick(R.id.iv_play)
+    void togglePlay() {
+        if (mVideoView != null) {
+            if (mIvPlay.isChecked()) {
+                mVideoView.start();
+            } else {
+                mVideoView.pause();
+            }
+        }
+    }
+
+    @OnClick(R.id.iv_volume)
+    void toggleVolume() {
+        if (mMediaLayout != null) {
+            mMediaLayout.setVideoSilent(mIvVolume.isChecked());
+            mMediaLayout.updateVideoVolume();
+        }
     }
 
     @Override

@@ -470,28 +470,35 @@ public class ImageBean implements Parcelable {
                     .append("\"pool_posts\":[],")
                     .append("\"tags\":{");
             for (String copyright : tagBean.copyright) {
+                copyright = copyright.replace("\"", "\\\"");
                 json.append("\"").append(copyright).append("\":\"copyright\",");
             }
             for (String character : tagBean.character) {
+                character = character.replace("\"", "\\\"");
                 json.append("\"").append(character).append("\":\"character\",");
             }
             for (String artist : tagBean.artist) {
+                artist = artist.replace("\"", "\\\"");
                 json.append("\"").append(artist).append("\":\"artist\",");
             }
             for (String circle : tagBean.circle) {
+                circle = circle.replace("\"", "\\\"");
                 json.append("\"").append(circle).append("\":\"circle\",");
             }
             for (String style : tagBean.style) {
+                style = style.replace("\"", "\\\"");
                 json.append("\"").append(style).append("\":\"style\",");
             }
             for (String general : tagBean.general) {
+                general = general.replace("\"", "\\\"");
                 json.append("\"").append(general).append("\":\"general\",");
             }
             if (json.charAt(json.length() - 1) == ',') {
                 json.deleteCharAt(json.length() - 1);
             }
             json.append("},").append("\"votes\":{}}");
-            return json.toString().replace("\\", "\\\\");
+            return json.toString().replaceAll("(?=\\\\)(?!\\\\\")", "\\\\")
+                    .replace("\\\":\"", "\\\\\":\"");
         }
     }
 }
