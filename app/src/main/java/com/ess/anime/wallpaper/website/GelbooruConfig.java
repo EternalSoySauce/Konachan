@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.GelbooruParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -12,6 +13,11 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     @Override
     public String getWebsiteName() {
         return "Gelbooru";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_gelbooru;
     }
 
     @Override

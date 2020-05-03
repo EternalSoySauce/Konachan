@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.DanbooruParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
@@ -11,6 +12,11 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     @Override
     public String getWebsiteName() {
         return "Danbooru";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_danbooru;
     }
 
     @Override

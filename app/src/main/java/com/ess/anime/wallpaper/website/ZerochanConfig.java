@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.ZerochanParser;
 
 import java.util.ArrayList;
@@ -10,6 +11,11 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     @Override
     public String getWebsiteName() {
         return "Zerochan";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_zerochan;
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.bumptech.glide.Priority;
@@ -144,8 +143,6 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     TextureVideoView mVideoView;
     @BindView(R.id.layout_video_controller)
     VideoControllerLayout mLayoutVideoController;
-    @BindView(R.id.layout_controller_wrapper)
-    ViewGroup mLayoutControllerWrapper;
 
     private boolean mAutoPlay;
     private MediaPlayer mMediaPlayer;
@@ -176,8 +173,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
         mVideoView.setVideoPath(url);
 
-        mLayoutControllerWrapper.setVisibility(VISIBLE);
-        mLayoutControllerWrapper.setAlpha(0f);
+        mLayoutVideoController.setVisibility(VISIBLE);
+        mLayoutVideoController.setAlpha(0f);
     }
 
     @Override
@@ -195,7 +192,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         if (what == MEDIA_INFO_VIDEO_RENDERING_START) {
             mPhotoView.setAlpha(0f);
             mVideoView.setAlpha(1);
-            mLayoutControllerWrapper.setAlpha(1);
+            mLayoutVideoController.setAlpha(1);
             mLayoutVideoController.attachTo(this);
             mLayoutVideoController.reset();
             mLayoutVideoController.startUpdateRunnable();
@@ -237,7 +234,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mVideoView.stopPlayback();
         mVideoView.setVisibility(GONE);
         mLayoutVideoController.reset();
-        mLayoutControllerWrapper.setVisibility(GONE);
+        mLayoutVideoController.setVisibility(GONE);
     }
 
     @Override
@@ -261,7 +258,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
                 setMediaPath(url);
                 if (FileUtils.isVideoType(url)) {
                     int visibility = (int) ((Object[]) msgBean.obj)[1];
-                    mLayoutControllerWrapper.setVisibility(visibility);
+                    mLayoutVideoController.setVisibility(visibility);
                 }
             }
         }
@@ -295,7 +292,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         if (msgBean.msg.equals(Constants.TOGGLE_VIDEO_CONTROLLER)) {
             if (FileUtils.isVideoType(mMediaPath)) {
                 int visibility = (int) msgBean.obj;
-                mLayoutControllerWrapper.setVisibility(visibility);
+                mLayoutVideoController.setVisibility(visibility);
             }
         }
     }

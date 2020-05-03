@@ -137,7 +137,7 @@ public class PoolFragment extends BaseFragment implements
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        mToolbar.setNavigationIcon(R.drawable.ic_nav_drawer);
+        mToolbar.setNavigationIcon(WebsiteManager.getInstance().getWebsiteConfig().getWebsiteLogoRes());
 
         //双击返回顶部
         DoubleTapEffector.addDoubleTapEffect(mToolbar, () -> {
@@ -430,6 +430,7 @@ public class PoolFragment extends BaseFragment implements
 
     @Override
     public void onWebsiteChanged(String baseUrl) {
+        mToolbar.setNavigationIcon(WebsiteManager.getInstance().getWebsiteConfig().getWebsiteLogoRes());
         if (isPoolPostFragmentVisible()) {
             removePoolPostFragment();
         }

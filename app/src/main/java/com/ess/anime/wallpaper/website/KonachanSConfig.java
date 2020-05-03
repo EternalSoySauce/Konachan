@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
 import com.ess.anime.wallpaper.MyApp;
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.website.parser.GeneralParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
@@ -13,6 +14,11 @@ public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
     @Override
     public String getWebsiteName() {
         return "KonachanS";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_konachan_s;
     }
 
     @Override

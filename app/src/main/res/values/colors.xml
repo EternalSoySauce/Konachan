@@ -36,6 +36,11 @@
     <!-- scrollBar颜色 -->
     <color name="color_scroll_bar_thumb">#555555</color>
 
+    <!-- 视频控制器进度条颜色 -->
+    <color name="color_video_controller_bg">#555555</color>
+    <color name="color_video_controller_progress">#F1F1F1</color>
+    <color name="color_video_controller_second_progress">#808080</color>
+
     <!-- 程序内部hyperlink颜色 -->
     <color name="color_link">#5E97C8</color>
 

@@ -9,7 +9,7 @@
         android:id="@+id/iv_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/toggle_media_layout_play"
         app:layout_constraintBottom_toTopOf="@+id/sb_progress"
         app:layout_constraintEnd_toStartOf="@+id/iv_volume"
@@ -44,10 +44,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:maxHeight="3dp"
+        android:minHeight="3dp"
+        android:progressDrawable="@drawable/progress_seekbar_video_controller"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tv_total"
         app:layout_constraintStart_toEndOf="@+id/tv_current"
-        tools:progress="50" />
+        tools:progress="50"
+        tools:secondaryProgress="80" />
 
     <TextView
         android:id="@+id/tv_total"

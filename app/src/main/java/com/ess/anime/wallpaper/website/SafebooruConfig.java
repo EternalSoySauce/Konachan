@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.SafebooruParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -13,6 +14,11 @@ public class SafebooruConfig extends WebsiteConfig<SafebooruParser> {
     @Override
     public String getWebsiteName() {
         return "Safebooru";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_safebooru;
     }
 
     @Override

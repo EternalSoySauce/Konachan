@@ -76,7 +76,7 @@
             app:stl_underlineThickness="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <com.ess.anime.wallpaper.ui.view.NoScrollViewPager
         android:id="@+id/vp_image_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

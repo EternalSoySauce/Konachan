@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.SankakuParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -12,6 +13,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     @Override
     public String getWebsiteName() {
         return "Sankaku";
+    }
+
+    @Override
+    public int getWebsiteLogoRes() {
+        return R.drawable.ic_website_sankaku;
     }
 
     @Override

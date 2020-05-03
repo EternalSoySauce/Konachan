@@ -17,23 +17,15 @@
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
 
-    <FrameLayout
-        android:id="@+id/layout_controller_wrapper"
+    <include
+        android:id="@+id/layout_video_controller"
+        layout="@layout/layout_video_controller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@drawable/bg_video_controller">
-
-        <include
-            android:id="@+id/layout_video_controller"
-            layout="@layout/layout_video_controller"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="42dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="42dp"
-            android:layout_marginBottom="32dp"
-            android:visibility="visible" />
-    </FrameLayout>
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginBottom="32dp"
+        android:visibility="gone" />
 </com.ess.anime.wallpaper.ui.view.MultipleMediaLayout>

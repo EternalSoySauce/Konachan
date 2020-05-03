@@ -53,6 +53,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     // 网站名
     public abstract String getWebsiteName();
 
+    // 用于menu icon的网站图标
+    public abstract int getWebsiteLogoRes();
+
     // 爬虫解析器
     public HtmlParser getHtmlParser() {
         return mHtmlParser;
