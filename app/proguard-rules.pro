@@ -254,3 +254,8 @@
 ##############################
 -keep class com.ess.anime.wallpaper.bean.** { *; }
 -keep class com.ess.anime.wallpaper.bean.**$* { *; }
+
+##############################
+#        WebsiteConfig       #
+##############################
+-keep class com.ess.anime.wallpaper.website.parser.** { *; }
