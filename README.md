@@ -3,10 +3,10 @@
 
 
 
-## 最新版本【v1.8.0】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1zr2mMBDFd8adzQbpm9BLow)，提取码: cnde
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.0.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.0.apk?alt=media&token=7fe35bde-6207-4ec9-b22b-5beab3a2bbb4)
+## 最新版本【v1.8.1】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1UEKwMuyX-bmOGZrsIIw2Fg)，提取码: na6d 
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.1.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.1.apk?alt=media&token=0595aab6-07a7-47b1-8ecd-83c485c16f58)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -61,6 +61,9 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.1】
+	* 修复v1.8.0打包错误
+	
 * 【v1.8.0】
 	* 集成Safebooru和Zerochan图源，在侧拉栏中点滑稽切换
 	* 新增首页左上角显示当前所选网站logo
