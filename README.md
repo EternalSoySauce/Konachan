@@ -3,10 +3,10 @@
 
 
 
-## 最新版本【v1.7.5】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1V9yBkccKw-PmoVyOabVsug)，提取码: jsys
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.7.5.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.7.5.apk?alt=media&token=d3ef3cee-9235-41f8-980b-d24ba546d49c)
+## 最新版本【v1.8.0】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1zr2mMBDFd8adzQbpm9BLow)，提取码: cnde
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.0.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.0.apk?alt=media&token=7fe35bde-6207-4ec9-b22b-5beab3a2bbb4)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -45,20 +45,29 @@
 #### 目前已支持网站源：
 * Konachan
 * Yande.re
-* Lolibooru
 * Danbooru
-* Sankaku
+* Safebooru
 * Gelbooru
+* Lolibooru
+* Sankaku
+* Zerochan
+
 
 #### 后续即将支持网站源：
 * 3dbooru
-* Zerochan
 * E-shuushuu
 * Xbooru
 * The anime gallery
 * 其他
 
 ## 历史更新
+* 【v1.8.0】
+	* 集成Safebooru和Zerochan图源，在侧拉栏中点滑稽切换
+	* 新增首页左上角显示当前所选网站logo
+	* 新增播放视频文件时显示控制器
+	* 优化标签搜索联想提示算法
+	* 修复闪退和其他已知问题
+	
 * 【v1.7.5】
 	* 紧急修复Danbooru网站图片详情页无数据的问题
 	* 啊啊啊啊这个沙雕Danbooru我真是佛了，你们的程序猿是天天闲的没事干吗总改网页标签？！！
