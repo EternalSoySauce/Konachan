@@ -170,7 +170,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mVideoView.setOnInfoListener(this);
         mVideoView.setOnErrorListener(this);
 
-        String url = isWebPath() ? VideoCache.getInstance(getContext()).getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
+        String url = isWebPath() ? VideoCache.getInstance().getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
         mVideoView.setVideoPath(url);
 
         mLayoutVideoController.setVisibility(VISIBLE);

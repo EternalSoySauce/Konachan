@@ -1,9 +1,8 @@
 package com.ess.anime.wallpaper.http;
 
-import android.content.Context;
-
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.FileNameGenerator;
+import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
 public class VideoCache {
@@ -17,13 +16,13 @@ public class VideoCache {
     private VideoCache() {
     }
 
-    public static VideoCache getInstance(Context context) {
-        return VideoCacheHolder.instance.createHttpProxyCacheServer(context);
+    public static VideoCache getInstance() {
+        return VideoCacheHolder.instance.createHttpProxyCacheServer();
     }
 
-    private VideoCache createHttpProxyCacheServer(Context context) {
+    private VideoCache createHttpProxyCacheServer() {
         if (mProxy == null) {
-            mProxy = new HttpProxyCacheServer.Builder(context.getApplicationContext())
+            mProxy = new HttpProxyCacheServer.Builder(MyApp.getInstance())
                     .maxCacheSize(1024 * 1024 * 1024)
                     .fileNameGenerator(new MyFileNameGenerator())
                     .build();
