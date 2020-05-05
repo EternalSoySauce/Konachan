@@ -6,8 +6,8 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 18
-        versionName "1.8.1"
+        versionCode 19
+        versionName "1.8.2"
         multiDexEnabled true
         resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
         vectorDrawables.useSupportLibrary = true
@@ -123,6 +123,12 @@ dependencies {
 
     // 图片裁剪（https://github.com/Yalantis/uCrop）
     implementation 'com.github.yalantis:ucrop:2.2.3-native'
+
+    // zip (https://github.com/srikanth-lingala/zip4j)
+    implementation 'net.lingala.zip4j:zip4j:2.5.2'
+
+    // ffmpeg (https://github.com/bravobit/FFmpeg-Android)
+    implementation 'nl.bravobit:android-ffmpeg:1.1.7'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -130,6 +130,9 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_collection:
                         startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                         break;
+                    case R.id.nav_pixiv_gif:
+                        startActivity(new Intent(MainActivity.this, PixivGifActivity.class));
+                        break;
                     case R.id.nav_sauce_nao:
                         startActivity(new Intent(MainActivity.this, SauceNaoActivity.class));
                         break;

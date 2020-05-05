@@ -89,6 +89,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.activity.PixivGifActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.activity.SauceNaoActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
