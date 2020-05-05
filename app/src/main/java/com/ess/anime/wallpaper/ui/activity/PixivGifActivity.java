@@ -24,10 +24,6 @@ import com.lzy.okgo.utils.IOUtils;
 
 import net.lingala.zip4j.ZipFile;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
 import java.io.File;
 
 import butterknife.BindView;
@@ -41,8 +37,6 @@ public class PixivGifActivity extends BaseActivity {
 
     @BindView(R.id.et_id)
     EditText mEtId;
-    @BindView(R.id.et_fps)
-    EditText mEtFps;
 
     private MaterialDialog mDialog;
 
@@ -53,60 +47,40 @@ public class PixivGifActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
-        mEtFps.setText("25");
     }
 
     @OnClick(R.id.btn_download)
     void startDownload() {
         String pixivId = mEtId.getText().toString();
-        String fps = mEtFps.getText().toString();
-        if (!TextUtils.isEmpty(pixivId) && !TextUtils.isEmpty(fps)) {
-            File dir = new File(getCacheDir(), pixivId);
-            if (dir.exists() && dir.isDirectory() && dir.listFiles().length > 0) {
-                makeGif(pixivId, fps, dir.getAbsolutePath());
-            } else {
-                showDialog("正在连接P站", false);
-                String url = "https://www.pixiv.net/artworks/" + pixivId;
-                OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
-                    @Override
-                    public void onFailure() {
-                        showDialog("P站访问失败", true);
-                    }
+        if (!TextUtils.isEmpty(pixivId)) {
+            showDialog("正在连接P站", false);
+            String url = "https://www.pixiv.net/ajax/illust/" + pixivId + "/ugoira_meta?lang=zh";
+            OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+                @Override
+                public void onFailure() {
+                    showDialog("P站访问失败", true);
+                }
 
-                    @Override
-                    public void onSuccessful(String body) {
-                        String zipUrl = parseZipUrl(pixivId, body);
-                        if (!TextUtils.isEmpty(zipUrl)) {
-                            downloadZip(pixivId, fps, zipUrl);
-                            showDialog("开始下载压缩包", false);
-                        } else {
-                            showDialog("不是gif", true);
-                        }
+                @Override
+                public void onSuccessful(String json) {
+                    try {
+                        JsonObject body = new JsonParser().parse(json)
+                                .getAsJsonObject()
+                                .getAsJsonObject("body");
+                        String zipUrl = body.get("originalSrc").getAsString();
+                        float delay = body.getAsJsonArray("frames")
+                                .get(0).getAsJsonObject()
+                                .get("delay").getAsFloat();
+                        float fps = 1000f / delay;
+                        downloadZip(pixivId, String.valueOf(fps), zipUrl);
+                        showDialog("开始下载压缩包", false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showDialog("不是gif", true);
                     }
-                }, Request.Priority.IMMEDIATE);
-            }
+                }
+            }, Request.Priority.IMMEDIATE);
         }
-    }
-
-    private String parseZipUrl(String pixivId, String html) {
-        try {
-            Document doc = Jsoup.parse(html);
-            Element meta = doc.getElementById("meta-preload-data");
-            if (meta != null) {
-                String content = meta.attr("content");
-                JsonObject json = new JsonParser().parse(content).getAsJsonObject();
-                String imgUrl = json.getAsJsonObject("illust")
-                        .getAsJsonObject(pixivId)
-                        .getAsJsonObject("urls")
-                        .get("original")
-                        .getAsString();
-                String keywords = imgUrl.substring(imgUrl.indexOf("img/") + "img/".length(), imgUrl.lastIndexOf("_ugoira"));
-                return "https://i.pximg.net/img-zip-ugoira/img/" + keywords + "_ugoira1920x1080.zip";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     private void downloadZip(String pixivId, String fps, String zipUrl) {
@@ -196,7 +170,6 @@ public class PixivGifActivity extends BaseActivity {
             @Override
             public void onFailure(String message) {
                 showDialog("合成失败 " + message, true);
-                IOUtils.delFileOrFolder(outputPath);
             }
 
             @Override
@@ -207,6 +180,7 @@ public class PixivGifActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
+                IOUtils.delFileOrFolder(dirPath);
             }
         });
     }
