@@ -27,7 +27,6 @@ import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.sprylab.android.widget.TextureVideoView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,11 +35,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.microshow.rxffmpeg.player.IMediaPlayer;
+import io.microshow.rxffmpeg.player.RxFFmpegPlayerView;
 
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 
 public class MultipleMediaLayout extends FrameLayout implements RequestListener<Drawable>,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener {
+        IMediaPlayer.OnPreparedListener, IMediaPlayer.OnLoadingListener, IMediaPlayer.OnCompletionListener,
+        IMediaPlayer.OnErrorListener, IMediaPlayer.OnVideoSizeChangedListener, IMediaPlayer.OnTimeUpdateListener {
 
     public MultipleMediaLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -140,14 +142,11 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     /***********************************  Video  ***********************************/
     @BindView(R.id.video_view)
-    TextureVideoView mVideoView;
+    RxFFmpegPlayerView mVideoView;
     @BindView(R.id.layout_video_controller)
     VideoControllerLayout mLayoutVideoController;
 
-    private boolean mAutoPlay;
-    private MediaPlayer mMediaPlayer;
-
-    public TextureVideoView getVideoView() {
+    public RxFFmpegPlayerView getVideoView() {
         return mVideoView;
     }
 
@@ -164,24 +163,54 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         }
 
         mVideoView.setVisibility(VISIBLE);
-        mVideoView.setAlpha(0);
         mVideoView.setKeepScreenOn(true);
-        mVideoView.setOnPreparedListener(this);
-        mVideoView.setOnInfoListener(this);
-        mVideoView.setOnErrorListener(this);
+        mVideoView.mPlayer.setOnPreparedListener(this);
+        mVideoView.mPlayer.setOnLoadingListener(this);
+        mVideoView.mPlayer.setOnCompleteListener(this);
+        mVideoView.mPlayer.setOnErrorListener(this);
+        mVideoView.mPlayer.setOnTimeUpdateListener(this);
+        mVideoView.mPlayer.setOnVideoSizeChangedListener(this);
 
         String url = isWebPath() ? VideoCache.getInstance().getCacheUrl(OkHttp.convertSchemeToHttps(mMediaPath)) : mMediaPath;
-        mVideoView.setVideoPath(url);
+        mVideoView.play(url, true);
 
         mLayoutVideoController.setVisibility(VISIBLE);
-        mLayoutVideoController.setAlpha(0f);
+    }
+
+    @Override
+    public void onPrepared(IMediaPlayer mediaPlayer) {
+        updateVideoVolume();
+    }
+
+    @Override
+    public void onLoading(IMediaPlayer mediaPlayer, boolean isLoading) {
+
+    }
+
+    @Override
+    public void onCompletion(IMediaPlayer mediaPlayer) {
+
+    }
+
+    @Override
+    public void onError(IMediaPlayer mediaPlayer, int err, String msg) {
+
+    }
+
+    @Override
+    public void onTimeUpdate(IMediaPlayer mediaPlayer, int currentTime, int totalTime) {
+
+    }
+
+    @Override
+    public void onVideoSizeChanged(IMediaPlayer mediaPlayer, int width, int height, float dar) {
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         mMediaPlayer = mp;
         mp.setLooping(true);
-        updateVideoVolume();
+
         if (mAutoPlay) {
             mVideoView.start();
         }
@@ -209,9 +238,9 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     }
 
     public void updateVideoVolume() {
-        if (mMediaPlayer != null) {
+        if (mVideoView != null && mVideoView.mPlayer != null) {
             int volume = isVideoSilent() ? 0 : 1;
-            mMediaPlayer.setVolume(volume, volume);
+            mVideoView.mPlayer..setVolume(volume, volume);
             mVideoView.setShouldRequestAudioFocus(!isVideoSilent());
         }
     }
@@ -296,4 +325,5 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
             }
         }
     }
+
 }

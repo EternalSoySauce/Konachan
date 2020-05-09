@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.ui.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import com.android.volley.Request;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.google.gson.JsonObject;
@@ -21,6 +23,7 @@ import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.utils.IOUtils;
+import com.yanzhenjie.permission.runtime.Permission;
 
 import net.lingala.zip4j.ZipFile;
 
@@ -28,8 +31,8 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
-import nl.bravobit.ffmpeg.FFmpeg;
+import io.microshow.rxffmpeg.RxFFmpegInvoke;
+import io.microshow.rxffmpeg.RxFFmpegSubscriber;
 
 public class PixivGifActivity extends BaseActivity {
 
@@ -47,6 +50,12 @@ public class PixivGifActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
+        PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
+            @Override
+            public void onDenied() {
+                finish();
+            }
+        });
     }
 
     @OnClick(R.id.btn_download)
@@ -131,12 +140,6 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void makeGif(String pixivId, String fps, String dirPath) {
-        FFmpeg ffmpeg = FFmpeg.getInstance(this);
-        if (!ffmpeg.isSupported()) {
-            showDialog("您的设备无法合成gif", true);
-            return;
-        }
-
         File dir = new File(dirPath);
         File[] images = dir.listFiles((dir1, name) -> FileUtils.isImageType(name));
 
@@ -152,37 +155,43 @@ public class PixivGifActivity extends BaseActivity {
         String outputPath = Constants.IMAGE_DIR + "/Pixiv_" + pixivId + "_" + System.currentTimeMillis() + ".gif";
 
         String[] cmd = new String[]{
+                "ffmpeg", "-y",
                 "-r", fps, "-i", inputPath,
-                "-r", fps, "-y", "-f", "gif", outputPath,
+                "-r", fps, "-f", "gif", outputPath,
         };
 
-        ffmpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
-            @Override
-            public void onStart() {
-                showDialog("开始合成", false);
-            }
+        RxFFmpegInvoke.getInstance()
+                .runCommandRxJava(cmd)
+                .subscribe(new RxFFmpegSubscriber() {
+                    @Override
+                    protected void onStart() {
+                        super.onStart();
+                        showDialog("开始合成", false);
+                    }
 
-            @Override
-            public void onProgress(String message) {
-                showDialog("合成进度：" + message, false);
-            }
+                    @Override
+                    public void onFinish() {
+                        showDialog("合成成功 ", true);
+                        BitmapUtils.insertToMediaStore(PixivGifActivity.this, new File(outputPath));
+                        IOUtils.delFileOrFolder(dirPath);
+                    }
 
-            @Override
-            public void onFailure(String message) {
-                showDialog("合成失败 " + message, true);
-            }
+                    @Override
+                    public void onProgress(int progress, long progressTime) {
+                        showDialog("合成进度：" + progress + "   " + progressTime, false);
+                    }
 
-            @Override
-            public void onSuccess(String message) {
-                showDialog("合成成功 " + message, true);
-                BitmapUtils.insertToMediaStore(PixivGifActivity.this, new File(outputPath));
-            }
+                    @Override
+                    public void onCancel() {
+                        IOUtils.delFileOrFolder(dirPath);
+                    }
 
-            @Override
-            public void onFinish() {
-                IOUtils.delFileOrFolder(dirPath);
-            }
-        });
+                    @Override
+                    public void onError(String message) {
+                        showDialog("合成失败 " + message, true);
+                        IOUtils.delFileOrFolder(dirPath);
+                    }
+                });
     }
 
     private void showDialog(String content, boolean showButton) {
@@ -198,4 +207,16 @@ public class PixivGifActivity extends BaseActivity {
         mDialog.getActionButton(DialogAction.POSITIVE).setVisibility(showButton ? View.VISIBLE : View.GONE);
         mDialog.show();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PermissionHelper.REQ_CODE_PERMISSION) {
+            // 进入系统设置界面请求权限后的回调
+            if (!PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
+                finish();
+            }
+        }
+    }
+
 }

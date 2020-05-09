@@ -12,6 +12,7 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import androidx.multidex.MultiDex;
+import io.microshow.rxffmpeg.RxFFmpegInvoke;
 
 public class MyApp extends Application {
 
@@ -25,6 +26,7 @@ public class MyApp extends Application {
         sApplication = this;
         CrashReport.initCrashReport(this, BUGLY_APP_ID, false);
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
+        RxFFmpegInvoke.getInstance().setDebug(BuildConfig.DEBUG);
         OkHttp.initHttpConfig(this);
         WebsiteManager.getInstance().updateWebsiteConfig();
         initData();

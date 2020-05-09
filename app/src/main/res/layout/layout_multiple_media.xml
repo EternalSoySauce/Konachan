@@ -4,18 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.sprylab.android.widget.TextureVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
+
+    <io.microshow.rxffmpeg.player.RxFFmpegPlayerView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <include
         android:id="@+id/layout_video_controller"
