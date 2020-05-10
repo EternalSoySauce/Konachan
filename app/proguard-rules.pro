@@ -259,9 +259,3 @@
 #        WebsiteConfig       #
 ##############################
 -keep class com.ess.anime.wallpaper.website.parser.**
-
-##############################
-#          RxFFmpeg          #
-##############################
--dontwarn io.microshow.rxffmpeg.**
--keep class io.microshow.rxffmpeg.**{*;}

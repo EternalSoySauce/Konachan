@@ -14,6 +14,9 @@ android {
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a'
         }
+        aaptOptions {
+            ignoreAssetsPattern "!x86:!*ffprobe"
+        }
     }
     buildTypes {
         release {
@@ -130,8 +133,8 @@ dependencies {
     // zip (https://github.com/srikanth-lingala/zip4j)
     implementation 'net.lingala.zip4j:zip4j:2.5.2'
 
-    // ffmpeg (https://github.com/microshow/RxFFmpeg)
-    implementation 'com.github.microshow:RxFFmpeg:4.0.0-lite'
+    // ffmpeg (https://github.com/bravobit/FFmpeg-Android)
+    implementation 'nl.bravobit:android-ffmpeg:1.1.7'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -245,7 +245,9 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
+        if (mActionSheet != null) {
+            mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
+        }
     }
 
     @OnClick(R.id.iv_back)

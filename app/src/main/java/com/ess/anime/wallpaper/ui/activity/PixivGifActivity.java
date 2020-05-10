@@ -31,8 +31,8 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.microshow.rxffmpeg.RxFFmpegInvoke;
-import io.microshow.rxffmpeg.RxFFmpegSubscriber;
+import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
+import nl.bravobit.ffmpeg.FFmpeg;
 
 public class PixivGifActivity extends BaseActivity {
 
@@ -140,6 +140,12 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void makeGif(String pixivId, String fps, String dirPath) {
+        FFmpeg ffmpeg = FFmpeg.getInstance(this);
+        if (!ffmpeg.isSupported()) {
+            showDialog("您的设备无法合成gif", true);
+            return;
+        }
+
         File dir = new File(dirPath);
         File[] images = dir.listFiles((dir1, name) -> FileUtils.isImageType(name));
 
@@ -155,43 +161,37 @@ public class PixivGifActivity extends BaseActivity {
         String outputPath = Constants.IMAGE_DIR + "/Pixiv_" + pixivId + "_" + System.currentTimeMillis() + ".gif";
 
         String[] cmd = new String[]{
-                "ffmpeg", "-y",
                 "-r", fps, "-i", inputPath,
-                "-r", fps, "-f", "gif", outputPath,
+                "-r", fps, "-y", "-f", "gif", outputPath,
         };
 
-        RxFFmpegInvoke.getInstance()
-                .runCommandRxJava(cmd)
-                .subscribe(new RxFFmpegSubscriber() {
-                    @Override
-                    protected void onStart() {
-                        super.onStart();
-                        showDialog("开始合成", false);
-                    }
+        ffmpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
+            @Override
+            public void onStart() {
+                showDialog("开始合成", false);
+            }
 
-                    @Override
-                    public void onFinish() {
-                        showDialog("合成成功 ", true);
-                        BitmapUtils.insertToMediaStore(PixivGifActivity.this, new File(outputPath));
-                        IOUtils.delFileOrFolder(dirPath);
-                    }
+            @Override
+            public void onProgress(String message) {
+                showDialog("合成进度：" + message, false);
+            }
 
-                    @Override
-                    public void onProgress(int progress, long progressTime) {
-                        showDialog("合成进度：" + progress + "   " + progressTime, false);
-                    }
+            @Override
+            public void onFailure(String message) {
+                showDialog("合成失败 " + message, true);
+            }
 
-                    @Override
-                    public void onCancel() {
-                        IOUtils.delFileOrFolder(dirPath);
-                    }
+            @Override
+            public void onSuccess(String message) {
+                showDialog("合成成功 " + message, true);
+                BitmapUtils.insertToMediaStore(PixivGifActivity.this, new File(outputPath));
+            }
 
-                    @Override
-                    public void onError(String message) {
-                        showDialog("合成失败 " + message, true);
-                        IOUtils.delFileOrFolder(dirPath);
-                    }
-                });
+            @Override
+            public void onFinish() {
+                IOUtils.delFileOrFolder(dirPath);
+            }
+        });
     }
 
     private void showDialog(String content, boolean showButton) {
