@@ -50,6 +50,11 @@ public class PixivGifActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
+        if (!FFmpeg.getInstance(this).isSupported()) {
+            showDialog("您的设备无法合成gif", true);
+            return;
+        }
+
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.SimpleRequestListener() {
             @Override
             public void onDenied() {
@@ -140,12 +145,6 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void makeGif(String pixivId, String fps, String dirPath) {
-        FFmpeg ffmpeg = FFmpeg.getInstance(this);
-        if (!ffmpeg.isSupported()) {
-            showDialog("您的设备无法合成gif", true);
-            return;
-        }
-
         File dir = new File(dirPath);
         File[] images = dir.listFiles((dir1, name) -> FileUtils.isImageType(name));
 
@@ -165,6 +164,7 @@ public class PixivGifActivity extends BaseActivity {
                 "-r", fps, "-y", "-f", "gif", outputPath,
         };
 
+        FFmpeg ffmpeg = FFmpeg.getInstance(this);
         ffmpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
             @Override
             public void onStart() {

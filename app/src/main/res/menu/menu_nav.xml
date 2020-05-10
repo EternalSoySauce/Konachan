@@ -26,7 +26,7 @@
 
         <item
             android:id="@+id/nav_pixiv_gif"
-            android:icon="@drawable/ic_nav_menu_sauce_nao"
+            android:icon="@drawable/ic_nav_pixiv"
             android:title="@string/nav_pixiv_gif" />
 
         <item
