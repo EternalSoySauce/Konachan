@@ -12,6 +12,7 @@ import com.lzy.okgo.OkGo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -84,19 +85,27 @@ public class OkHttp {
 
     // 异步网络请求带优先级
     public static void connect(String url, Object tag, OkHttpCallback callback, Request.Priority priority) {
+        connect(url, tag, null, callback, priority);
+    }
+
+    // 异步网络请求带Header和优先级
+    public static void connect(String url, Object tag, Map<String, String> headerMap, OkHttpCallback callback, Request.Priority priority) {
         PriorityStringRequest request = new PriorityStringRequest(
                 convertSchemeToHttps(url),
                 callback::onSuccessful,
                 error -> {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                         // 404按成功处理，UI显示无搜索结果而不是访问失败
-                        callback.onSuccessful("");
+                        callback.onSuccessful(new String(error.networkResponse.data));
                     } else {
                         callback.onFailure();
                     }
                 });
         request.setTag(tag);
         request.setPriority(priority);
+        if (headerMap != null) {
+            request.addHeaders(headerMap);
+        }
         sRequestQueue.add(request);
     }
 

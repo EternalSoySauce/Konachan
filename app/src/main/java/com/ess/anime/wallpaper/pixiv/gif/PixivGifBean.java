@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.pixiv;
+package com.ess.anime.wallpaper.pixiv.gif;
 
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.global.Constants;
@@ -7,7 +7,7 @@ import java.io.File;
 
 import nl.bravobit.ffmpeg.FFtask;
 
-public class PixivBean {
+public class PixivGifBean {
 
     public String id;
 
@@ -19,7 +19,7 @@ public class PixivBean {
 
     private String gifSavedPath;
 
-    public PixivBean(String id) {
+    public PixivGifBean(String id) {
         this.id = id;
     }
 
@@ -49,5 +49,31 @@ public class PixivBean {
             gifSavedPath = Constants.IMAGE_DIR + File.separator + "Pixiv_" + id + "_" + System.currentTimeMillis() + ".gif";
         }
         return gifSavedPath;
+    }
+
+
+    /********************* 进度状态 *********************/
+    public enum PixivDlState {
+        CONNECT_PIXIV, DOWNLOAD_ZIP, EXTRACT_ZIP, MAKE_GIF, FINISH, CANCEL, NOT_GIF, NEED_LOGIN
+    }
+
+    public PixivDlState state = PixivDlState.CONNECT_PIXIV;
+    public float progress;
+    public boolean isError;
+
+
+    /***************************************************/
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PixivGifBean) {
+            PixivGifBean pixivGifBean = (PixivGifBean) obj;
+            return !(this.id == null || pixivGifBean.id == null) && this.id.equals(pixivGifBean.id);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.hashCode();
     }
 }

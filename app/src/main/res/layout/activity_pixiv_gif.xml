@@ -6,6 +6,30 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/et_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="帐号"
+        android:inputType="number"
+        android:singleLine="true"
+        android:textColor="@color/color_dialog_text" />
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="密码"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColor="@color/color_dialog_text" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="登陆" />
+
+    <EditText
         android:id="@+id/et_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,4 +42,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="开始下载" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_pixiv_gif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

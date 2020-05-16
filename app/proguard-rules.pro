@@ -30,6 +30,11 @@
 -dontnote com.google.vending.licensing.ILicensingService
 -dontnote **ILicensingService
 
+-keepclassmembers enum * {
+  public static **[] values();
+  public static ** valueOf(java.lang.String);
+}
+
 ##############################
 #            admob           #
 ##############################
