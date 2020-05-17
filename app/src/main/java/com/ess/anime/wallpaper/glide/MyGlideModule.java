@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.Target;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.glide.pool_list.PoolListModelLoaderFactory;
+import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
@@ -49,7 +50,7 @@ public class MyGlideModule extends AppGlideModule {
             imgUrl = "https://konachan.com/images/guest.png";
         }
         LazyHeaders headers = new LazyHeaders.Builder()
-                .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36")
+                .addHeader("User-Agent", OkHttp.USER_AGENT)
                 .build();
         return new GlideUrl(imgUrl, headers);
     }
@@ -57,7 +58,7 @@ public class MyGlideModule extends AppGlideModule {
     // P站等下载高清大图需要给服务器发送一个“Referer”参数，用来告诉服务器你是从哪个网址进入图片链接的
     public static GlideUrl makeGlideUrlWithReferer(String imgUrl, String webUrl) {
         LazyHeaders headers = new LazyHeaders.Builder()
-                .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36")
+                .addHeader("User-Agent", OkHttp.USER_AGENT)
                 .addHeader("Referer", webUrl)
                 .build();
         return new GlideUrl(imgUrl, headers);

@@ -1,6 +1,5 @@
 package com.ess.anime.wallpaper.http;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -45,14 +44,9 @@ public class PriorityStringRequest extends StringRequest {
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError {
-        return super.getParams();
-    }
-
-    @Override
     public Map<String, String> getHeaders() {
         Map<String, String> headers = new LinkedHashMap<>();
-        headers.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36");
+        headers.put("User-Agent", OkHttp.USER_AGENT);
         headers.putAll(mHeaderMap);
         return headers;
     }

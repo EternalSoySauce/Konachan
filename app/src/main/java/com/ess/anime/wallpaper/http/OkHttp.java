@@ -19,6 +19,8 @@ import okhttp3.OkHttpClient;
 
 public class OkHttp {
 
+    public final static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36";
+
     public interface OkHttpCallback {
         void onFailure();
 
@@ -109,7 +111,7 @@ public class OkHttp {
         sRequestQueue.add(request);
     }
 
-    // 同步网络请求
+    // Get同步网络请求
     // 这里用OkGo进行同步请求，用Volley的话cancel同步请求无效
     public static okhttp3.Response execute(String url, Object tag) throws Exception {
         return OkGo.<String>get(convertSchemeToHttps(url))

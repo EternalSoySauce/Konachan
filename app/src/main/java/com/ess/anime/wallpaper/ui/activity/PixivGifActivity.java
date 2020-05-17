@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -12,6 +13,8 @@ import com.ess.anime.wallpaper.adapter.RecyclerPixivGifDlAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
+import com.ess.anime.wallpaper.pixiv.login.IPixivLoginCallback;
+import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import java.util.Collections;
@@ -59,6 +62,33 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void initWhenPermissionGranted() {
+        if (!PixivLoginManager.getInstance().isLoggingIn()) {
+            String account = "1018717197@qq.com";
+            String password = "yu98674320";
+            PixivLoginManager.getInstance().login(account, password, new IPixivLoginCallback() {
+                @Override
+                public void onLoginSuccess() {
+                    Log.i("rrr", "onLoginSuccess");
+                }
+
+                @Override
+                public void onLoginError() {
+                    Log.i("rrr", "onLoginError");
+                }
+
+                @Override
+                public void onConnectPixivFailed() {
+                    Log.i("rrr", "onConnectPixivFailed");
+                }
+            });
+        }else {
+            Log.i("rrr", "isLoggingIn");
+        }
+
+        initRecyclerPixivGif();
+    }
+
+    private void initRecyclerPixivGif() {
         List<PixivGifBean> downloadList = PixivGifDlManager.getInstance().getDownloadList();
         Collections.reverse(downloadList);
         mRvPixivGif.setLayoutManager(new LinearLayoutManager(this));
@@ -78,6 +108,7 @@ public class PixivGifActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         if (isFinishing()) {
+            PixivLoginManager.getInstance().cancelLogin();
             mRvPixivGif.setAdapter(null);
         }
     }
@@ -85,6 +116,7 @@ public class PixivGifActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        PixivLoginManager.getInstance().cancelLogin();
         mRvPixivGif.setAdapter(null);
     }
 
