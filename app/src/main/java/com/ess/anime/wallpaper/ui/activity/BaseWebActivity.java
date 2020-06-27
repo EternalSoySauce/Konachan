@@ -13,10 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerWebviewMoreAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
@@ -33,14 +29,23 @@ import com.yanzhenjie.permission.runtime.Permission;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public abstract class BaseWebActivity extends BaseActivity {
 
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+
     AgentWeb mAgentWeb;
     private IndicatorDialog mPopup;
 
-    abstract int titleRes();
+    abstract CharSequence title();
+
+    abstract boolean showReceivedTitle();
 
     abstract String webUrl();
 
@@ -66,11 +71,10 @@ public abstract class BaseWebActivity extends BaseActivity {
     }
 
     private void initToolBarLayout() {
-        Toolbar toolbar = findViewById(R.id.tool_bar);
-        toolbar.setTitle(titleRes());
-        setSupportActionBar(toolbar);
+        mToolbar.setTitle(title());
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     void initWebView() {
@@ -91,6 +95,14 @@ public abstract class BaseWebActivity extends BaseActivity {
                             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
                         }
                         return bitmap;
+                    }
+
+                    @Override
+                    public void onReceivedTitle(WebView view, String title) {
+                        super.onReceivedTitle(view, title);
+                        if (showReceivedTitle()) {
+                            mToolbar.setTitle(title);
+                        }
                     }
                 })
                 .setWebView(webView)

@@ -1,7 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +12,8 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
+import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
+import com.ess.anime.wallpaper.utils.WebLinkMethod;
 
 public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseViewHolder> {
 
@@ -44,12 +45,12 @@ public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseVi
         TextView tvQuote = holder.getView(R.id.tv_quote);
         tvQuote.setVisibility(hasQuote ? View.VISIBLE : View.GONE);
         tvQuote.setText(commentBean.quote);
-        tvQuote.setMovementMethod(LinkMovementMethod.getInstance());
+        tvQuote.setMovementMethod(WebLinkMethod.getInstance().setOnHyperlinkListener(url -> HyperlinkActivity.launch(mContext, url)));
 
         //评论
         TextView tvComment = holder.getView(R.id.tv_comment);
         tvComment.setText(commentBean.comment);
-        tvComment.setMovementMethod(LinkMovementMethod.getInstance());
+        tvComment.setMovementMethod(WebLinkMethod.getInstance().setOnHyperlinkListener(url -> HyperlinkActivity.launch(mContext, url)));
     }
 
 }

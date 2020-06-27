@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
-
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -21,9 +18,11 @@ import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.TagBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.utils.WebLinkMethod;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,6 +30,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
 public class DetailFragment extends BaseFragment {
@@ -228,9 +228,10 @@ public class DetailFragment extends BaseFragment {
         tvValue.setText(value);
         if (hyperlinkValue) {
             tvValue.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            tvValue.setAutoLinkMask(Linkify.ALL);
+            tvValue.setAutoLinkMask(Linkify.WEB_URLS);
+            tvValue.setLinksClickable(false);
             tvValue.setLinkTextColor(getResources().getColor(R.color.color_text_unselected));
-            tvValue.setMovementMethod(LinkMovementMethod.getInstance());
+            tvValue.setMovementMethod(WebLinkMethod.getInstance().setOnHyperlinkListener(url -> HyperlinkActivity.launch(mActivity, url)));
         }
     }
 

@@ -23,6 +23,7 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 import org.jsoup.Jsoup;
 
 import java.util.List;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -33,7 +34,7 @@ import butterknife.BindView;
 
 public class CommentFragment extends BaseFragment {
 
-    public final static String TAG = CommentFragment.class.getName();
+    public final String TAG = CommentFragment.class.getName() + UUID.randomUUID().toString();
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;

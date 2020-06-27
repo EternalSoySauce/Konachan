@@ -6,8 +6,13 @@ import com.ess.anime.wallpaper.ui.view.CustomDialog;
 public class TraceMoeActivity extends BaseWebActivity {
 
     @Override
-    int titleRes() {
-        return R.string.nav_trace_moe;
+    CharSequence title() {
+        return getString(R.string.nav_trace_moe);
+    }
+
+    @Override
+    boolean showReceivedTitle() {
+        return false;
     }
 
     @Override
@@ -17,7 +22,7 @@ public class TraceMoeActivity extends BaseWebActivity {
 
     @Override
     void showHelpDialog() {
-        CustomDialog.showWebsiteHelpDialog(this, titleRes(), R.string.dialog_tracemoe_help);
+        CustomDialog.showWebsiteHelpDialog(this, title(), R.string.dialog_tracemoe_help);
     }
 
 }

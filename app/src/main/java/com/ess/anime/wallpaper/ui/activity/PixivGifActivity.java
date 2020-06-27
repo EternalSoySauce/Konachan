@@ -20,6 +20,7 @@ import com.yanzhenjie.permission.runtime.Permission;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -30,6 +31,8 @@ public class PixivGifActivity extends BaseActivity {
 
     public final static String TAG = PixivGifActivity.class.getName();
 
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
     @BindView(R.id.et_id)
     EditText mEtId;
     @BindView(R.id.rv_pixiv_gif)
@@ -42,6 +45,7 @@ public class PixivGifActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
+        initToolBarLayout();
         if (!FFmpeg.getInstance(this).isSupported()) {
             // todo 翻译
             Toast.makeText(MyApp.getInstance(), "您的设备无法合成gif", Toast.LENGTH_SHORT).show();
@@ -59,6 +63,12 @@ public class PixivGifActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    private void initToolBarLayout() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initWhenPermissionGranted() {

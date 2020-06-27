@@ -56,6 +56,11 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.activity.HyperlinkActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
+
         <service android:name=".service.DownloadImageService" />
 
         <service android:name=".service.DownloadApkService" />

@@ -243,13 +243,13 @@ public class CustomDialog extends MaterialDialog.Builder {
     /**
      * 网站功能说明
      *
-     * @param context  上下文
-     * @param titleRes title
-     * @param msgRes   msg
+     * @param context 上下文
+     * @param title   title
+     * @param msgRes  msg
      */
-    public static void showWebsiteHelpDialog(Context context, int titleRes, int msgRes) {
+    public static void showWebsiteHelpDialog(Context context, CharSequence title, int msgRes) {
         MaterialDialog dialog = new CustomDialog(context)
-                .title(titleRes)
+                .title(title)
                 .content(msgRes)
                 .positiveText(R.string.dialog_doc_sure)
                 .show();

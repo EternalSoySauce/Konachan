@@ -6,8 +6,13 @@ import com.ess.anime.wallpaper.ui.view.CustomDialog;
 public class SauceNaoActivity extends BaseWebActivity {
 
     @Override
-    int titleRes() {
-        return R.string.nav_sauce_nao;
+    CharSequence title() {
+        return getString(R.string.nav_sauce_nao);
+    }
+
+    @Override
+    boolean showReceivedTitle() {
+        return false;
     }
 
     @Override
@@ -17,7 +22,7 @@ public class SauceNaoActivity extends BaseWebActivity {
 
     @Override
     void showHelpDialog() {
-        CustomDialog.showWebsiteHelpDialog(this, titleRes(), R.string.dialog_saucenao_help);
+        CustomDialog.showWebsiteHelpDialog(this, title(), R.string.dialog_saucenao_help);
     }
 
 }

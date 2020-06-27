@@ -1,12 +1,10 @@
 package com.ess.anime.wallpaper.pixiv.gif;
 
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.google.gson.JsonObject;
@@ -23,7 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
 import nl.bravobit.ffmpeg.FFmpeg;
@@ -74,13 +71,7 @@ public class PixivGifDlManager {
             notifyDataChanged(pixivGifBean);
 
             String url = pixivGifBean.getJsonUrl();
-            Map<String, String> headerMap = null;
-            String cookie = PixivLoginManager.getInstance().getCookie();
-            if (!TextUtils.isEmpty(cookie)) {
-                headerMap = new LinkedHashMap<>();
-                headerMap.put("cookie", cookie);
-            }
-            OkHttp.connect(url, pixivGifBean.id, headerMap, new OkHttp.OkHttpCallback() {
+            OkHttp.connect(url, pixivGifBean.id, new OkHttp.OkHttpCallback() {
                 @Override
                 public void onFailure() {
                     pixivGifBean.isError = true;
