@@ -1,8 +1,13 @@
 package com.ess.anime.wallpaper.adapter;
 
+import android.text.TextUtils;
+import android.widget.ImageView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.glide.GlideApp;
+import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.pixiv.gif.IPixivDlListener;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
@@ -21,7 +26,14 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
 
     @Override
     protected void convert(@NonNull BaseViewHolder holder, PixivGifBean pixivGifBean) {
-        holder.setText(R.id.tv_id, pixivGifBean.id);
+        if (!TextUtils.isEmpty(pixivGifBean.thumbUrl)) {
+            GlideApp.with(mContext)
+                    .load(MyGlideModule.makeGlideUrlWithReferer(pixivGifBean.thumbUrl, pixivGifBean.getRefererUrl()))
+                    .into((ImageView) holder.getView(R.id.iv_thumb));
+        } else {
+            holder.setImageDrawable(R.id.iv_thumb, null);
+        }
+        holder.setText(R.id.tv_id, "#" + pixivGifBean.id);
 
         String state = null;
         switch (pixivGifBean.state) {
@@ -47,7 +59,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 state = "不是gif";
                 break;
             case NEED_LOGIN:
-                state = "作品不存在或需要登陆Pixiv帐号";
+                state = "作品不存在";
                 break;
         }
         holder.setText(R.id.tv_state, state);

@@ -15,4 +15,8 @@
     <declare-styleable name="GifView">
         <attr name="src" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="corner_radius" format="dimension" />
+    </declare-styleable>
 </resources>

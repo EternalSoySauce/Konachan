@@ -92,21 +92,21 @@ public class PixivLoginManager {
         bodyMap.put("post_key", postKey);
         bodyMap.put("return_to", "https://www.pixiv.net/");
 
-        OkHttp.post(loginUrl, this, headerMap, bodyMap, new OkHttp.OkHttpCallback() {
-            @Override
-            public void onFailure() {
-                if (mIsLoggingIn && callback != null) {
-                    callback.onConnectPixivFailed();
-                }
-            }
-
-            @Override
-            public void onSuccessful(String body) {
-                if (mIsLoggingIn && callback != null) {
-                    callback.onLoginSuccess();
-                }
-            }
-        }, Request.Priority.IMMEDIATE);
+//        OkHttp.post(loginUrl, this, headerMap, bodyMap, new OkHttp.OkHttpCallback() {
+//            @Override
+//            public void onFailure() {
+//                if (mIsLoggingIn && callback != null) {
+//                    callback.onConnectPixivFailed();
+//                }
+//            }
+//
+//            @Override
+//            public void onSuccessful(String body) {
+//                if (mIsLoggingIn && callback != null) {
+//                    callback.onLoginSuccess();
+//                }
+//            }
+//        }, Request.Priority.IMMEDIATE);
     }
 
     public void cancelLogin() {

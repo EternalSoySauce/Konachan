@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.pixiv.gif;
 
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -7,6 +8,7 @@ import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
 import nl.bravobit.ffmpeg.FFmpeg;
@@ -82,30 +85,74 @@ public class PixivGifDlManager {
                 public void onSuccessful(String json) {
                     try {
                         JsonObject result = new JsonParser().parse(json).getAsJsonObject();
-                        if (result.has("error")) {
-                            boolean isError = result.get("error").getAsBoolean();
-                            if (!isError && result.has("body")) {
-                                JsonObject body = result.getAsJsonObject("body");
-                                pixivGifBean.zipUrl = body.get("originalSrc").getAsString();
-                                float delay = body.getAsJsonArray("frames")
-                                        .get(0).getAsJsonObject()
-                                        .get("delay").getAsFloat();
-                                pixivGifBean.fps = 1000f / delay;
-                                downloadZip(pixivGifBean);
-                                return;
-                            } else if (isError && result.has("message")) {
-                                String message = result.get("message").getAsString();
-                                if (message != null && message.contains("您所指定的ID不是动图")) {
+                        // pixiv原网址解析
+//                        if (result.has("error")) {
+//                            boolean isError = result.get("error").getAsBoolean();
+//                            if (!isError && result.has("body")) {
+//                                JsonObject body = result.getAsJsonObject("body");
+//                                pixivGifBean.zipUrl = body.get("originalSrc").getAsString();
+//                                float delay = body.getAsJsonArray("frames")
+//                                        .get(0).getAsJsonObject()
+//                                        .get("delay").getAsFloat();
+//                                pixivGifBean.fps = 1000f / delay;
+//                                downloadZip(pixivGifBean);
+//                                return;
+//                            } else if (isError && result.has("message")) {
+//                                String message = result.get("message").getAsString();
+//                                if (message != null && message.contains("您所指定的ID不是动图")) {
+//                                    pixivGifBean.state = PixivGifBean.PixivDlState.NOT_GIF;
+//                                    pixivGifBean.isError = true;
+//                                    notifyDataChanged(pixivGifBean);
+//                                    return;
+//                                } else if (message != null && message.contains("该作品已被删除，或作品ID不存在")) {
+//                                    pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
+//                                    pixivGifBean.isError = true;
+//                                    notifyDataChanged(pixivGifBean);
+//                                    return;
+//                                }
+//                            }
+//                        }
+                        // 第三方api解析
+                        if (result.has("status")) {
+                            boolean isSuccess = TextUtils.equals("success", result.get("status").getAsString());
+                            if (isSuccess) {
+                                JsonObject detail = result.getAsJsonArray("response").get(0).getAsJsonObject();
+                                if (detail.has("image_urls")) {
+                                    JsonObject imageUrls = detail.getAsJsonObject("image_urls");
+                                    for (Map.Entry<String, JsonElement> entry : imageUrls.entrySet()) {
+                                        if (entry != null && entry.getValue() != null) {
+                                            String thumbUrl = entry.getValue().getAsString();
+                                            if (!TextUtils.isEmpty(thumbUrl)) {
+                                                pixivGifBean.thumbUrl = thumbUrl;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                String type = detail.get("type").getAsString();
+                                if (TextUtils.equals(type, "ugoira") && detail.get("metadata") != null) {
+                                    JsonObject metadata = detail.getAsJsonObject("metadata");
+                                    JsonObject zipUrls = metadata.getAsJsonObject("zip_urls");
+                                    for (Map.Entry<String, JsonElement> entry : zipUrls.entrySet()) {
+                                        pixivGifBean.zipUrl = entry.getValue().getAsString();
+                                    }
+                                    float delay = metadata.getAsJsonArray("frames")
+                                            .get(0).getAsJsonObject()
+                                            .get("delay_msec").getAsFloat();
+                                    pixivGifBean.fps = 1000f / delay;
+                                    downloadZip(pixivGifBean);
+                                    return;
+                                } else {
                                     pixivGifBean.state = PixivGifBean.PixivDlState.NOT_GIF;
                                     pixivGifBean.isError = true;
                                     notifyDataChanged(pixivGifBean);
                                     return;
-                                } else if (message != null && message.contains("该作品已被删除，或作品ID不存在")) {
-                                    pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
-                                    pixivGifBean.isError = true;
-                                    notifyDataChanged(pixivGifBean);
-                                    return;
                                 }
+                            } else {
+                                pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
+                                pixivGifBean.isError = true;
+                                notifyDataChanged(pixivGifBean);
+                                return;
                             }
                         }
                     } catch (Exception e) {

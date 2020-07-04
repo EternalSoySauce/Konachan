@@ -12,7 +12,6 @@ import com.lzy.okgo.OkGo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -100,24 +99,6 @@ public class OkHttp {
                 });
         request.setTag(tag);
         request.setPriority(priority);
-        sRequestQueue.add(request);
-    }
-
-    // 异步Post网络请求带Header和优先级
-    public static void post(String url, Object tag, Map<String, String> headerMap, Map<String, String> bodyMap, OkHttpCallback callback, Request.Priority priority) {
-        PriorityPostRequest request = new PriorityPostRequest(
-                convertSchemeToHttps(url),
-                callback::onSuccessful,
-                error -> callback.onFailure()
-        );
-        request.setTag(tag);
-        request.setPriority(priority);
-        if (headerMap != null) {
-            request.addHeaders(headerMap);
-        }
-        if (bodyMap != null) {
-            request.addPostBody(bodyMap);
-        }
         sRequestQueue.add(request);
     }
 

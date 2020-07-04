@@ -11,6 +11,8 @@ public class PixivGifBean {
 
     public String id;
 
+    public String thumbUrl;
+
     public String zipUrl;
 
     public float fps;
@@ -25,7 +27,10 @@ public class PixivGifBean {
 
     // 获取fps和zipUrl的网址
     public String getJsonUrl() {
-        return "https://www.pixiv.net/ajax/illust/" + id + "/ugoira_meta?lang=zh";
+        // pixiv原网址
+//        return "https://www.pixiv.net/ajax/illust/" + id + "/ugoira_meta?lang=zh";
+        // 第三方api
+        return "https://api.imjad.cn/pixiv/v1/?id=" + id;
     }
 
     // 下载P站资源时需要传入Referer请求头
