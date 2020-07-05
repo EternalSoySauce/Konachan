@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -12,7 +13,6 @@ import com.ess.anime.wallpaper.adapter.RecyclerPixivGifDlAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
-import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.yanzhenjie.permission.runtime.Permission;
@@ -95,7 +95,18 @@ public class PixivGifActivity extends BaseActivity {
             Log.i("rrr", "isLoggingIn");
         }*/
 
+        initViews();
         initRecyclerPixivGif();
+    }
+
+    private void initViews() {
+        mEtId.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                startDownload();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void initRecyclerPixivGif() {
@@ -123,7 +134,7 @@ public class PixivGifActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         if (isFinishing()) {
-            PixivLoginManager.getInstance().cancelLogin();
+//            PixivLoginManager.getInstance().cancelLogin();
             mRvPixivGif.setAdapter(null);
         }
     }
@@ -131,7 +142,7 @@ public class PixivGifActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        PixivLoginManager.getInstance().cancelLogin();
+//        PixivLoginManager.getInstance().cancelLogin();
         mRvPixivGif.setAdapter(null);
     }
 

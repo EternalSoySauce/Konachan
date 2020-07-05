@@ -26,49 +26,31 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!--<EditText
-            android:id="@+id/et_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="帐号"
-            android:inputType="number"
-            android:singleLine="true"
-            android:textColor="@color/color_dialog_text" />
-
         <EditText
-            android:id="@+id/et_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="密码"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            android:textColor="@color/color_dialog_text" />
-
-        <Button
-            android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="登陆" />-->
-
-        <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/et_id"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@drawable/logo_pixiv_gif_dl" />
-
-        <EditText
-            android:id="@+id/et_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edit_pixiv_gif_id"
+            android:gravity="center"
+            android:hint="请输入Pixiv作品Id"
+            android:imeOptions="actionGo"
             android:inputType="number"
+            android:minHeight="90dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
             android:singleLine="true"
-            android:textColor="@color/color_dialog_text" />
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/color_text_general"
+            android:textSize="14sp"
+            app:backgroundTint="@color/colorAccent" />
 
         <Button
             android:id="@+id/btn_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="开始下载" />
 
         <androidx.recyclerview.widget.RecyclerView
