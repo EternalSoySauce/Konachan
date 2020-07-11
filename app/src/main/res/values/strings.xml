@@ -130,6 +130,9 @@
     <string name="set_successfully">Set successfully</string>
     <string name="set_failed">Set failed</string>
 
+    <!-- Pixiv Gif DL -->
+    <string name="edit_pixiv_id_hint">Please enter Pixiv artwork Id</string>
+
     <!-- Web Activity -->
     <string name="spinner_copy_link">Copy Link</string>
     <string name="spinner_share_link">Share Link</string>

@@ -97,8 +97,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     protected void convertPayloads(@NonNull BaseViewHolder holder, ThumbBean thumbBean, @NonNull List<Object> payloads) {
         super.convertPayloads(holder, thumbBean, payloads);
         for (Object payload : payloads) {
-            int operate = (int) payload;
-            if (operate == REPLACE_DATA) {
+            if (payload.equals(REPLACE_DATA)) {
                 //尺寸
                 holder.setText(R.id.tv_size, thumbBean.realSize);
             }

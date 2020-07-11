@@ -113,6 +113,9 @@
     <string name="set_successfully">设置成功</string>
     <string name="set_failed">设置失败</string>
 
+    <!-- Pixiv Gif DL -->
+    <string name="edit_pixiv_id_hint">请输入Pixiv作品Id</string>
+
     <!-- Web Activity -->
     <string name="spinner_copy_link">复制链接</string>
     <string name="spinner_share_link">分享链接</string>

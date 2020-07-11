@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -112,7 +112,9 @@ public class PixivGifActivity extends BaseActivity {
     private void initRecyclerPixivGif() {
         List<PixivGifBean> downloadList = PixivGifDlManager.getInstance().getDownloadList();
         Collections.reverse(downloadList);
-        mRvPixivGif.setLayoutManager(new LinearLayoutManager(this));
+
+        int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 360, 1);
+        mRvPixivGif.setLayoutManager(new GridLayoutManager(this, span));
         new RecyclerPixivGifDlAdapter(downloadList).bindToRecyclerView(mRvPixivGif);
 
         int spaceHor = UIUtils.dp2px(this, 5);
