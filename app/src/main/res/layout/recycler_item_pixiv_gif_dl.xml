@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/colorPrimary"
-    app:cardCornerRadius="10dp"
-    app:contentPadding="8dp">
+    app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="64dp"
+        android:layout_margin="8dp"
         android:animateLayoutChanges="true">
 
         <com.ess.anime.wallpaper.ui.view.image.RoundImageView
@@ -49,11 +49,18 @@
                 android:id="@+id/progress_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                app:activating_circle_radius="5dp"
+                app:active_color="@color/pixiv_gif_dl_progress_active_color"
+                app:circle_count="5"
+                app:circle_stroke_width="2dp"
+                app:inactive_color="@color/pixiv_gif_dl_progress_inactive_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.8" />
+                app:layout_constraintWidth_percent="0.8"
+                app:line_stroke_width="2dp"
+                app:normal_circle_radius="3dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -70,12 +77,47 @@
             app:layout_constraintStart_toStartOf="@+id/tv_id"
             app:layout_constraintTop_toBottomOf="@+id/layout_progress" />
 
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/loading_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:indicatorColor="@color/color_text_general"
+            app:indicatorName="BallClipRotateMultipleIndicator"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@+id/space_end"
+            app:layout_constraintStart_toStartOf="@+id/space_end"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_restart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="Re"
+            app:autoSizeMaxTextSize="15sp"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@+id/space_end"
+            app:layout_constraintStart_toStartOf="@+id/space_end"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Space
             android:id="@+id/space_end"
             android:layout_width="48dp"
             android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:src="@drawable/qmui_icon_notify_error" />
+
 </androidx.cardview.widget.CardView>

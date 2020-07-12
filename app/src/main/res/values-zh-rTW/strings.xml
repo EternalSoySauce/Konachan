@@ -169,6 +169,7 @@
     <string name="dialog_cannot_wallpaper_lockscreen_msg">您的設備可能無法將自定義壁紙應用為鎖屏，如有此現象請使用“設為壁紙”功能。</string>
     <string name="dialog_cannot_wallpaper_lockscreen_sure">我知道了</string>
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">不再顯示</string>
+    <string name="dialog_delete_pixiv_gif_item_msg">正在下載中，確認刪除？</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

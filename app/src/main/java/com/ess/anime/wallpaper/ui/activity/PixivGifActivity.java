@@ -71,6 +71,11 @@ public class PixivGifActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(v -> finish());
     }
 
+    @OnClick(R.id.iv_goto_collection)
+    void gotoCollection() {
+        startActivity(new Intent(this, CollectionActivity.class));
+    }
+
     private void initWhenPermissionGranted() {
         /*if (!PixivLoginManager.getInstance().isLoggingIn()) {
             String account = "";

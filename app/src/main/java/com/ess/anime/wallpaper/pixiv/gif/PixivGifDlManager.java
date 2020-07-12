@@ -30,6 +30,8 @@ import nl.bravobit.ffmpeg.FFmpeg;
 
 public class PixivGifDlManager {
 
+    private final static String TAG = PixivGifDlManager.class.getSimpleName();
+
     private static class PixivGifHolder {
         private final static PixivGifDlManager instance = new PixivGifDlManager();
     }
@@ -54,7 +56,15 @@ public class PixivGifDlManager {
                 notifyDataAdded(pixivGifBean);
                 parseJson(pixivGifBean);
             } else if (pixivGifBean.isError) {
-                parseJson(pixivGifBean);
+                switch (pixivGifBean.state) {
+                    case DOWNLOAD_ZIP:
+                    case EXTRACT_ZIP:
+                    case MAKE_GIF:
+                        downloadZip(pixivGifBean);
+                        break;
+                    default:
+                        parseJson(pixivGifBean);
+                }
             } else {
                 // todo 翻译
                 Toast.makeText(MyApp.getInstance(), "任务已存在于队列中", Toast.LENGTH_SHORT).show();
@@ -74,7 +84,7 @@ public class PixivGifDlManager {
             notifyDataChanged(pixivGifBean);
 
             String url = pixivGifBean.getJsonUrl();
-            OkHttp.connect(url, pixivGifBean.id, new OkHttp.OkHttpCallback() {
+            OkHttp.connect(url, TAG + pixivGifBean.id, new OkHttp.OkHttpCallback() {
                 @Override
                 public void onFailure() {
                     pixivGifBean.isError = true;
@@ -85,34 +95,6 @@ public class PixivGifDlManager {
                 public void onSuccessful(String json) {
                     try {
                         JsonObject result = new JsonParser().parse(json).getAsJsonObject();
-                        // pixiv原网址解析
-//                        if (result.has("error")) {
-//                            boolean isError = result.get("error").getAsBoolean();
-//                            if (!isError && result.has("body")) {
-//                                JsonObject body = result.getAsJsonObject("body");
-//                                pixivGifBean.zipUrl = body.get("originalSrc").getAsString();
-//                                float delay = body.getAsJsonArray("frames")
-//                                        .get(0).getAsJsonObject()
-//                                        .get("delay").getAsFloat();
-//                                pixivGifBean.fps = 1000f / delay;
-//                                downloadZip(pixivGifBean);
-//                                return;
-//                            } else if (isError && result.has("message")) {
-//                                String message = result.get("message").getAsString();
-//                                if (message != null && message.contains("您所指定的ID不是动图")) {
-//                                    pixivGifBean.state = PixivGifBean.PixivDlState.NOT_GIF;
-//                                    pixivGifBean.isError = true;
-//                                    notifyDataChanged(pixivGifBean);
-//                                    return;
-//                                } else if (message != null && message.contains("该作品已被删除，或作品ID不存在")) {
-//                                    pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
-//                                    pixivGifBean.isError = true;
-//                                    notifyDataChanged(pixivGifBean);
-//                                    return;
-//                                }
-//                            }
-//                        }
-                        // 第三方api解析
                         if (result.has("status")) {
                             boolean isSuccess = TextUtils.equals("success", result.get("status").getAsString());
                             if (isSuccess) {
@@ -178,7 +160,7 @@ public class PixivGifDlManager {
             String dirPath = pixivGifBean.getZipCacheDirPath();
             String fileName = pixivGifBean.getZipFileName();
             OkGo.<File>get(pixivGifBean.zipUrl)
-                    .tag(pixivGifBean.id)
+                    .tag(TAG + pixivGifBean.id)
                     .headers("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36")
                     .headers("Referer", pixivGifBean.getRefererUrl())
                     .execute(new FileCallback(dirPath, fileName) {
@@ -298,6 +280,8 @@ public class PixivGifDlManager {
                 @Override
                 public void onSuccess(String message) {
                     pixivGifBean.state = PixivGifBean.PixivDlState.FINISH;
+                    pixivGifBean.progress = 0;
+                    pixivGifBean.isError = false;
                     notifyDataChanged(pixivGifBean);
                     BitmapUtils.insertToMediaStore(MyApp.getInstance(), new File(outputPath));
                 }
@@ -315,6 +299,7 @@ public class PixivGifDlManager {
             PixivGifBean pixivGifBean = mPixivMap.get(pixivId);
             if (pixivGifBean != null) {
                 pixivGifBean.state = PixivGifBean.PixivDlState.CANCEL;
+                pixivGifBean.progress = 0;
                 pixivGifBean.isError = true;
                 notifyDataChanged(pixivGifBean);
                 if (pixivGifBean.gifTask != null) {
@@ -322,7 +307,7 @@ public class PixivGifDlManager {
                 }
                 IOUtils.delFileOrFolder(pixivGifBean.getZipCacheDirPath());
             }
-            OkHttp.cancel(pixivId);
+            OkHttp.cancel(TAG + pixivId);
         }
     }
 

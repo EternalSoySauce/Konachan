@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AutoFitImageView">
-        <attr name="scaleWidth" format="boolean"/>
-        <attr name="scaleHeight" format="boolean"/>
+        <attr name="scaleWidth" format="boolean" />
+        <attr name="scaleHeight" format="boolean" />
         <attr name="relativeTo" format="enum">
-            <enum name="none" value="0"/>
-            <enum name="width" value="1"/>
-            <enum name="height" value="2"/>
+            <enum name="none" value="0" />
+            <enum name="width" value="1" />
+            <enum name="height" value="2" />
         </attr>
-        <attr name="maxRatio" format="float"/>
-        <attr name="minRatio" format="float"/>
+        <attr name="maxRatio" format="float" />
+        <attr name="minRatio" format="float" />
     </declare-styleable>
 
     <declare-styleable name="GifView">
-        <attr name="src" format="reference"/>
+        <attr name="src" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="RoundImageView">
         <attr name="corner_radius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PixivGifDlProgressView">
+        <attr name="normal_circle_radius" format="dimension" />
+        <attr name="activating_circle_radius" format="dimension" />
+        <attr name="circle_stroke_width" format="dimension" />
+        <attr name="line_stroke_width" format="dimension" />
+        <attr name="active_color" format="color" />
+        <attr name="inactive_color" format="color" />
+        <attr name="circle_count" format="integer" />
     </declare-styleable>
 </resources>

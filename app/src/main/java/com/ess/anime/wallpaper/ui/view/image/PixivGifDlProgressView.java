@@ -1,11 +1,14 @@
 package com.ess.anime.wallpaper.ui.view.image;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.ess.anime.wallpaper.R;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,21 +18,21 @@ import androidx.annotation.Nullable;
 
 public class PixivGifDlProgressView extends View {
 
-    private final int DEFAULT_CIRCLE_COUNT = 4;
-    private final float DEFAULT_NORMAL_CIRCLE_RADIUS = 9;
-    private final float DEFAULT_ACTIVATING_CIRCLE_RADIUS = 15;
-    private final float DEFAULT_STROKE_WIDTH = 6;
-    private final int DEFAULT_ACTIVE_COLOR = Color.GREEN;
-    private final int DEFAULT_INACTIVE_COLOR = Color.LTGRAY;
+    private final static int DEFAULT_CIRCLE_COUNT = 4;
+    private final static float DEFAULT_NORMAL_CIRCLE_RADIUS = 9;
+    private final static float DEFAULT_ACTIVATING_CIRCLE_RADIUS = 15;
+    private final static float DEFAULT_STROKE_WIDTH = 6;
+    private final static int DEFAULT_ACTIVE_COLOR = Color.GREEN;
+    private final static int DEFAULT_INACTIVE_COLOR = Color.LTGRAY;
 
-    private float mNormalCircleRadius = DEFAULT_NORMAL_CIRCLE_RADIUS;
-    private float mActivatingCircleRadius = DEFAULT_ACTIVATING_CIRCLE_RADIUS;
-    private float mCircleStrokeWidth = DEFAULT_STROKE_WIDTH;
-    private float mLineStrokeWidth = DEFAULT_STROKE_WIDTH;
-    private int mActiveColor = DEFAULT_ACTIVE_COLOR;
-    private int mInactiveColor = DEFAULT_INACTIVE_COLOR;
+    private float mNormalCircleRadius;
+    private float mActivatingCircleRadius;
+    private float mCircleStrokeWidth;
+    private float mLineStrokeWidth;
+    private int mActiveColor;
+    private int mInactiveColor;
 
-    private int mCircleCount = DEFAULT_CIRCLE_COUNT;
+    private int mCircleCount;
     private int mCurrentActiveIndex;
     private float mCurrentActiveProgress;
 
@@ -45,9 +48,16 @@ public class PixivGifDlProgressView extends View {
 
     public PixivGifDlProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mCircleCount = 5;
-        mCurrentActiveIndex = 4;
-        mCurrentActiveProgress = 0.8f;
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PixivGifDlProgressView);
+        mNormalCircleRadius = typedArray.getDimension(R.styleable.PixivGifDlProgressView_normal_circle_radius, DEFAULT_NORMAL_CIRCLE_RADIUS);
+        mActivatingCircleRadius = typedArray.getDimension(R.styleable.PixivGifDlProgressView_activating_circle_radius, DEFAULT_ACTIVATING_CIRCLE_RADIUS);
+        mCircleStrokeWidth = typedArray.getDimension(R.styleable.PixivGifDlProgressView_circle_stroke_width, DEFAULT_STROKE_WIDTH);
+        mLineStrokeWidth = typedArray.getDimension(R.styleable.PixivGifDlProgressView_line_stroke_width, DEFAULT_STROKE_WIDTH);
+        mActiveColor = typedArray.getColor(R.styleable.PixivGifDlProgressView_active_color, DEFAULT_ACTIVE_COLOR);
+        mInactiveColor = typedArray.getColor(R.styleable.PixivGifDlProgressView_inactive_color, DEFAULT_INACTIVE_COLOR);
+        mCircleCount = typedArray.getInt(R.styleable.PixivGifDlProgressView_circle_count, DEFAULT_CIRCLE_COUNT);
+        typedArray.recycle();
+
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
@@ -69,8 +79,38 @@ public class PixivGifDlProgressView extends View {
         // 等分圆间距
         float maxCircleRadius = Math.max(mNormalCircleRadius, mActivatingCircleRadius);
         float spaceWidth = (getWidth() - (mCircleStrokeWidth + maxCircleRadius) * 2f * mCircleCount) / (mCircleCount - 1f);
+
+        // 线在下
+        for (int i = 0; i < mCircleCount - 1; i++) {
+            float radius = (i == mCurrentActiveIndex) ? mActivatingCircleRadius : mNormalCircleRadius;
+            float cx = i * ((mCircleStrokeWidth + maxCircleRadius) * 2f + spaceWidth) + mCircleStrokeWidth + radius;
+            float cy = getHeight() / 2f;
+            boolean isBesideActivatingCircle = i == mCurrentActiveIndex || ((i + 1) == mCurrentActiveIndex && (i + 1) < mCurrentActiveIndex);
+            float lineWidth = spaceWidth + (mActivatingCircleRadius - mNormalCircleRadius) * (isBesideActivatingCircle ? 0 : 1);
+            lineWidth += mCircleStrokeWidth * (isBesideActivatingCircle ? 2 : 3); // 延长线宽避免衔接有缝隙
+            float activeWidth;
+            if (i < mCurrentActiveIndex) {
+                activeWidth = lineWidth;
+            } else if (i == mCurrentActiveIndex) {
+                activeWidth = lineWidth * mCurrentActiveProgress;
+            } else {
+                activeWidth = 0;
+            }
+            float inactiveWidth = lineWidth - activeWidth;
+            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mPaint.setColor(mActiveColor);
+            mPaint.setStrokeWidth(mLineStrokeWidth);
+            float startX = cx + radius;
+            float stopX = startX + activeWidth;
+            canvas.drawLine(startX, cy, stopX, cy, mPaint);
+            mPaint.setColor(mInactiveColor);
+            startX = stopX;
+            stopX = startX + inactiveWidth;
+            canvas.drawLine(startX, cy, stopX, cy, mPaint);
+        }
+
+        // 圆在上
         for (int i = 0; i < mCircleCount; i++) {
-            // 圆
             float radius;
             if (i < mCurrentActiveIndex) {
                 radius = mNormalCircleRadius;
@@ -94,31 +134,6 @@ public class PixivGifDlProgressView extends View {
             float cx = i * ((mCircleStrokeWidth + maxCircleRadius) * 2f + spaceWidth) + mCircleStrokeWidth + radius;
             float cy = getHeight() / 2f;
             canvas.drawCircle(cx, cy, radius, mPaint);
-
-            // 线
-            if (i < mCircleCount - 1) {
-                boolean isBesideActivatingCircle = i == mCurrentActiveIndex || ((i + 1) == mCurrentActiveIndex && (i + 1) < mCurrentActiveIndex);
-                float lineWidth = spaceWidth + (mActivatingCircleRadius - mNormalCircleRadius) * (isBesideActivatingCircle ? 0 : 1);
-                lineWidth += mLineStrokeWidth * (isBesideActivatingCircle ? 2 : 3); // 延长线宽避免衔接有缝隙
-                float activeWidth;
-                if (i < mCurrentActiveIndex) {
-                    activeWidth = lineWidth;
-                } else if (i == mCurrentActiveIndex) {
-                    activeWidth = lineWidth * mCurrentActiveProgress;
-                } else {
-                    activeWidth = 0;
-                }
-                float inactiveWidth = lineWidth - activeWidth;
-                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-                mPaint.setColor(mActiveColor);
-                float startX = cx + radius + mCircleStrokeWidth - mLineStrokeWidth; // 延长线宽避免衔接有缝隙
-                float stopX = startX + activeWidth;
-                canvas.drawLine(startX, cy, stopX, cy, mPaint);
-                mPaint.setColor(mInactiveColor);
-                startX = stopX;
-                stopX = startX + inactiveWidth;
-                canvas.drawLine(startX, cy, stopX, cy, mPaint);
-            }
         }
     }
 

@@ -12,9 +12,11 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.pixiv.gif.IPixivDlListener;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.ui.view.image.PixivGifDlProgressView;
 
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,7 +67,8 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 progressView.updateProgress(0, 0.8f);
                 break;
             case DOWNLOAD_ZIP:
-                state = pixivGifBean.isError ? "下载失败" : "正在下载压缩包: " + pixivGifBean.progress;
+                String progress = String.format(Locale.getDefault(), "%.2f%%", pixivGifBean.progress);
+                state = pixivGifBean.isError ? "下载失败" : "正在下载压缩包: " + progress;
                 progressView.updateProgress(1, pixivGifBean.progress);
                 break;
             case EXTRACT_ZIP:
@@ -73,7 +76,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 progressView.updateProgress(2, 0.8f);
                 break;
             case MAKE_GIF:
-                state = pixivGifBean.isError ? "合成GIF失败" : "正在合成GIF：" + pixivGifBean.progress;
+                state = pixivGifBean.isError ? "合成GIF失败" : "正在合成GIF";
                 progressView.updateProgress(3, pixivGifBean.progress);
                 break;
             case FINISH:
@@ -94,6 +97,31 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 break;
         }
         holder.setText(R.id.tv_state, state);
+
+        // loading图标
+        boolean isLoading = !pixivGifBean.isError && pixivGifBean.state != PixivGifBean.PixivDlState.FINISH;
+        holder.setGone(R.id.loading_view, isLoading);
+
+        // 重新下载按钮
+        holder.setGone(R.id.btn_restart, pixivGifBean.isError);
+        holder.getView(R.id.btn_restart).setOnClickListener(v -> {
+            PixivGifDlManager.getInstance().execute(pixivGifBean.id);
+        });
+
+        // 删除按钮
+        holder.getView(R.id.iv_delete).setOnClickListener(v -> {
+            if (isLoading) {
+                CustomDialog.showDeletePixivGifItemDialog(mContext, new CustomDialog.SimpleDialogActionListener() {
+                    @Override
+                    public void onPositive() {
+                        super.onPositive();
+                        PixivGifDlManager.getInstance().delete(pixivGifBean.id);
+                    }
+                });
+            } else {
+                PixivGifDlManager.getInstance().delete(pixivGifBean.id);
+            }
+        });
     }
 
     @Override

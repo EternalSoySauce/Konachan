@@ -54,7 +54,8 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(R.string.dialog_reload_msg)
                 .negativeText(R.string.dialog_reload_no)
                 .positiveText(R.string.dialog_reload_yes)
-                .onPositive((dialog1, which) -> listener.onPositive()).show();
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
     }
 
     /**
@@ -68,7 +69,23 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(msg)
                 .negativeText(R.string.dialog_delete_cancel)
                 .positiveText(R.string.dialog_delete_sure)
-                .onPositive((dialog1, which) -> listener.onPositive()).show();
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
+    }
+
+    /**
+     * 删除Pixiv Gif下载列表项
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showDeletePixivGifItemDialog(Context context, OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(R.string.dialog_delete_pixiv_gif_item_msg)
+                .negativeText(R.string.dialog_delete_cancel)
+                .positiveText(R.string.dialog_delete_sure)
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
     }
 
     /**

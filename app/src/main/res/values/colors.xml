@@ -65,4 +65,8 @@
 
     <!-- UCrop颜色 -->
     <color name="ucrop_color_widget_background" tools:override="true">@color/colorPrimary</color>
+
+    <!-- Pixiv GIF Dl 进度条颜色 -->
+    <color name="pixiv_gif_dl_progress_active_color">#EE8887</color>
+    <color name="pixiv_gif_dl_progress_inactive_color">#A9A9A9</color>
 </resources>
