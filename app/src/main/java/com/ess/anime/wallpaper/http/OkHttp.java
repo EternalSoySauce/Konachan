@@ -152,6 +152,7 @@ public class OkHttp {
         DownloadTask task = OkDownload.getInstance().getTask(tag);
         if (task != null) {
             task.unRegister(tag);
+            task.pause();
             OkDownload.getInstance().removeTask(tag);
         }
         Progress progress = DownloadManager.getInstance().get(tag);
