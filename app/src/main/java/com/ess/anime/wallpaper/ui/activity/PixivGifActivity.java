@@ -77,29 +77,6 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void initWhenPermissionGranted() {
-        /*if (!PixivLoginManager.getInstance().isLoggingIn()) {
-            String account = "";
-            String password = "";
-            PixivLoginManager.getInstance().login(account, password, new IPixivLoginCallback() {
-                @Override
-                public void onLoginSuccess() {
-                    Log.i("rrr", "onLoginSuccess");
-                }
-
-                @Override
-                public void onLoginError() {
-                    Log.i("rrr", "onLoginError");
-                }
-
-                @Override
-                public void onConnectPixivFailed() {
-                    Log.i("rrr", "onConnectPixivFailed");
-                }
-            });
-        }else {
-            Log.i("rrr", "isLoggingIn");
-        }*/
-
         initViews();
         initRecyclerPixivGif();
     }
@@ -141,7 +118,6 @@ public class PixivGifActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         if (isFinishing()) {
-//            PixivLoginManager.getInstance().cancelLogin();
             mRvPixivGif.setAdapter(null);
         }
     }
@@ -149,7 +125,6 @@ public class PixivGifActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        PixivLoginManager.getInstance().cancelLogin();
         mRvPixivGif.setAdapter(null);
     }
 

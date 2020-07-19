@@ -12,10 +12,8 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.model.Response;
+import com.lzy.okserver.download.DownloadListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,41 +80,49 @@ public class DownloadImageService extends Service {
         }
 
         // 下载
-        OkGo.<File>get(OkHttp.convertSchemeToHttps(url))
-                .execute(new FileCallback(tempFolder.getAbsolutePath(), tempName) {
-                    @Override
-                    public void onSuccess(Response<File> response) {
-                        // 下载成功，保存为图片
-                        File folder = new File(Constants.IMAGE_DIR);
-                        if (folder.exists() || folder.mkdirs()) {
-                            File file = new File(savePath);
-                            FileUtils.copyFile(tempFile, file);
-                            // 添加图片到媒体库（刷新相册）
-                            BitmapUtils.insertToMediaStore(DownloadImageService.this, file);
-                            // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
-                            listener.onFinish();
+        try {
+            OkHttp.startDownloadFile(OkHttp.convertSchemeToHttps(url), tempFolder.getAbsolutePath(), tempName, null,
+                    new DownloadListener(url) {
+                        @Override
+                        public void onStart(Progress progress) {
                         }
-                    }
 
-                    @Override
-                    public void onError(Response<File> response) {
-                        super.onError(response);
-                        listener.onError();
-                    }
+                        @Override
+                        public void onProgress(Progress progress) {
+                            listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        super.onFinish();
-                        OkHttp.removeUrlFromDownloadQueue(url);
-                        tempFile.delete();
-                    }
+                        @Override
+                        public void onError(Progress progress) {
+                            listener.onError();
+                            OkHttp.removeUrlFromDownloadQueue(url);
+                        }
 
-                    @Override
-                    public void downloadProgress(Progress progress) {
-                        super.downloadProgress(progress);
-                        listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
-                    }
-                });
+                        @Override
+                        public void onFinish(File file, Progress progress) {
+                            // 下载成功，保存为图片
+                            File folder = new File(Constants.IMAGE_DIR);
+                            if (folder.exists() || folder.mkdirs()) {
+                                File saveFile = new File(savePath);
+                                FileUtils.copyFile(tempFile, saveFile);
+                                // 添加图片到媒体库（刷新相册）
+                                BitmapUtils.insertToMediaStore(DownloadImageService.this, saveFile);
+                                // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
+                                listener.onFinish();
+                            }
+                            OkHttp.removeUrlFromDownloadQueue(url);
+                            tempFile.delete();
+                        }
+
+                        @Override
+                        public void onRemove(Progress progress) {
+                            onError(progress);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            listener.onError();
+        }
     }
 
     private void checkToStopService() {

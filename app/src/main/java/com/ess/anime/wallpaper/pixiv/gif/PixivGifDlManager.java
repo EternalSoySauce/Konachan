@@ -11,11 +11,9 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.model.Response;
 import com.lzy.okgo.utils.IOUtils;
+import com.lzy.okserver.download.DownloadListener;
 
 import net.lingala.zip4j.ZipFile;
 
@@ -157,45 +155,45 @@ public class PixivGifDlManager {
             pixivGifBean.isError = false;
             notifyDataChanged(pixivGifBean);
 
-            String dirPath = pixivGifBean.getZipCacheDirPath();
-            String fileName = pixivGifBean.getZipFileName();
-            OkGo.<File>get(pixivGifBean.zipUrl)
-                    .tag(TAG + pixivGifBean.id)
-                    .headers("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36")
-                    .headers("Referer", pixivGifBean.getRefererUrl())
-                    .execute(new FileCallback(dirPath, fileName) {
-                        @Override
-                        public void onStart(com.lzy.okgo.request.base.Request<File, ? extends com.lzy.okgo.request.base.Request> request) {
-                            super.onStart(request);
-                            IOUtils.delFileOrFolder(dirPath);
-                        }
+            try {
+                String dirPath = pixivGifBean.getZipCacheDirPath();
+                String fileName = pixivGifBean.getZipFileName();
+                Map<String, String> headerMap = new LinkedHashMap<>();
+                headerMap.put("User-Agent", OkHttp.USER_AGENT);
+                headerMap.put("Referer", pixivGifBean.getRefererUrl());
+                OkHttp.startDownloadFile(pixivGifBean.zipUrl, dirPath, fileName, headerMap,
+                        new DownloadListener(TAG + pixivGifBean.id) {
+                            @Override
+                            public void onStart(Progress progress) {
+                            }
 
-                        @Override
-                        public void onSuccess(Response<File> response) {
-                            File file = response.body();
-                            extractZip(pixivGifBean, file);
-                        }
+                            @Override
+                            public void onProgress(Progress progress) {
+                                pixivGifBean.progress = progress.fraction;
+                                notifyDataChanged(pixivGifBean);
+                            }
 
-                        @Override
-                        public void onError(Response<File> response) {
-                            super.onError(response);
-                            pixivGifBean.isError = true;
-                            notifyDataChanged(pixivGifBean);
-                            IOUtils.delFileOrFolder(dirPath);
-                        }
+                            @Override
+                            public void onError(Progress progress) {
+                                pixivGifBean.isError = true;
+                                notifyDataChanged(pixivGifBean);
+                            }
 
-                        @Override
-                        public void onFinish() {
-                            super.onFinish();
-                        }
+                            @Override
+                            public void onFinish(File file, Progress progress) {
+                                extractZip(pixivGifBean, file);
+                            }
 
-                        @Override
-                        public void downloadProgress(Progress progress) {
-                            super.downloadProgress(progress);
-                            pixivGifBean.progress = progress.fraction;
-                            notifyDataChanged(pixivGifBean);
-                        }
-                    });
+                            @Override
+                            public void onRemove(Progress progress) {
+                                onError(progress);
+                            }
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+                pixivGifBean.isError = true;
+                notifyDataChanged(pixivGifBean);
+            }
         }
     }
 
@@ -307,7 +305,7 @@ public class PixivGifDlManager {
                 }
                 IOUtils.delFileOrFolder(pixivGifBean.getZipCacheDirPath());
             }
-            OkHttp.cancel(TAG + pixivId);
+            OkHttp.cancelDownloadFile(TAG + pixivId);
         }
     }
 

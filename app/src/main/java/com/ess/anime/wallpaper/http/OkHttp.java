@@ -8,10 +8,19 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.db.DownloadManager;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.request.GetRequest;
+import com.lzy.okgo.utils.IOUtils;
+import com.lzy.okserver.OkDownload;
+import com.lzy.okserver.download.DownloadListener;
+import com.lzy.okserver.download.DownloadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -108,6 +117,48 @@ public class OkHttp {
         return OkGo.<String>get(convertSchemeToHttps(url))
                 .tag(tag)
                 .execute();
+    }
+
+    // 断点下载文件
+    public static void startDownloadFile(String url, String dirPath, String fileName, Map<String, String> headerMap, DownloadListener listener) {
+        String tag = (String) listener.tag;
+        DownloadTask task = null;
+        Progress progress = DownloadManager.getInstance().get(tag);
+        if (progress != null) {
+            if (new File(progress.filePath).exists()) {
+                task = OkDownload.restore(progress);
+            } else {
+                cancelDownloadFile(tag);
+            }
+        }
+        if (task == null) {
+            GetRequest<File> request = OkGo.get(url);
+            if (headerMap != null) {
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    request.headers(entry.getKey(), entry.getValue());
+                }
+            }
+            task = OkDownload.request(tag, request)
+                    .folder(dirPath)
+                    .fileName(fileName)
+                    .save();
+        }
+        task.register(listener);
+        task.start();
+    }
+
+    // 取消下载文件
+    public static void cancelDownloadFile(String tag) {
+        DownloadTask task = OkDownload.getInstance().getTask(tag);
+        if (task != null) {
+            task.unRegister(tag);
+            OkDownload.getInstance().removeTask(tag);
+        }
+        Progress progress = DownloadManager.getInstance().get(tag);
+        if (progress != null) {
+            IOUtils.delFileOrFolder(progress.filePath);
+        }
+        DownloadManager.getInstance().delete(tag);
     }
 
     // 检测将http协议转换为https协议
