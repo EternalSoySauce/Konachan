@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.bean;
+package com.ess.anime.wallpaper.download.apk;
 
 import android.content.Context;
 import android.os.Parcel;

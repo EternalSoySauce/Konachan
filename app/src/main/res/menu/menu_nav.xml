@@ -18,6 +18,11 @@
             android:id="@+id/nav_collection"
             android:icon="@drawable/ic_nav_menu_collection"
             android:title="@string/nav_collection" />
+
+        <item
+            android:id="@+id/nav_download_manager"
+            android:icon="@drawable/ic_nav_menu_collection"
+            android:title="@string/nav_download_manager" />
     </group>
 
     <group

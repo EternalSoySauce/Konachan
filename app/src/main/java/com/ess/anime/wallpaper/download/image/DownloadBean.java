@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.bean;
+package com.ess.anime.wallpaper.download.image;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -77,5 +77,19 @@ public class DownloadBean implements Parcelable {
     @Override
     public String toString() {
         return TextUtils.isEmpty(description) ? super.toString() : description;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DownloadBean) {
+            DownloadBean downloadBean = (DownloadBean) obj;
+            return this.type == downloadBean.type && !(this.downloadUrl == null || downloadBean.downloadUrl == null) && this.downloadUrl.equals(downloadBean.downloadUrl);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return (downloadUrl != null ? downloadUrl.hashCode() : 0) + type;
     }
 }

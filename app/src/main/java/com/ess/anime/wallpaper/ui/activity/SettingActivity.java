@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ApkBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;

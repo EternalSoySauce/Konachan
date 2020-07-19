@@ -35,6 +35,7 @@
     <string name="nav_post">图片</string>
     <string name="nav_pool">图集</string>
     <string name="nav_collection">我的收藏</string>
+    <string name="nav_download_manager">下载管理</string>
     <string name="nav_feedback">反馈建议</string>
     <string name="nav_setting">设置与帮助</string>
     <string name="nav_pixiv_gif">P站Gif下载器</string>

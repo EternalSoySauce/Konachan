@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ApkBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
@@ -129,6 +129,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.nav_collection:
                         startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                        break;
+                    case R.id.nav_download_manager:
+                        startActivity(new Intent(MainActivity.this, DownloadImageManagerActivity.class));
                         break;
                     case R.id.nav_pixiv_gif:
                         startActivity(new Intent(MainActivity.this, PixivGifActivity.class));

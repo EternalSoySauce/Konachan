@@ -6,7 +6,7 @@ import android.app.Application;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.ess.anime.wallpaper.listener.BaseDownloadProgressListener;
+import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
@@ -36,39 +36,51 @@ public class OkHttp {
     }
 
     // 需要避免重复访问的url保存在这里
-    private static List<String> sUrlInQueueList = new ArrayList<>();
+    private final static List<String> sUrlInQueueList = new ArrayList<>();
 
     // 需要避免进度监听器重复添加的url保存在这里
-    private static HashMap<String, BaseDownloadProgressListener> sUrlInListenerMap = new HashMap<>();
+    private final static HashMap<String, BaseDownloadProgressListener> sUrlInListenerMap = new HashMap<>();
 
     // 添加需要避免重复访问的url
     public static void addUrlToDownloadQueue(String url) {
-        sUrlInQueueList.add(url);
+        synchronized (sUrlInQueueList) {
+            sUrlInQueueList.add(url);
+        }
     }
 
     // url访问成功后即可从队列中移除，以便下次可以再次访问
     public static void removeUrlFromDownloadQueue(String url) {
-        sUrlInQueueList.remove(url);
+        synchronized (sUrlInQueueList) {
+            sUrlInQueueList.remove(url);
+        }
     }
 
     // 判断当前url是否正在访问中
     public static boolean isUrlInDownloadQueue(String url) {
-        return sUrlInQueueList.contains(url);
+        synchronized (sUrlInQueueList) {
+            return sUrlInQueueList.contains(url);
+        }
     }
 
     // 添加需要避免进度监听器重复添加的url
     public static void addUrlToProgressListener(String url, BaseDownloadProgressListener listener) {
-        sUrlInListenerMap.put(url, listener);
+        synchronized (sUrlInListenerMap) {
+            sUrlInListenerMap.put(url, listener);
+        }
     }
 
     // 判断当前url是否已经添加到进度监听器中
     public static boolean isUrlInProgressListener(String url) {
-        return sUrlInListenerMap.containsKey(url);
+        synchronized (sUrlInListenerMap) {
+            return sUrlInListenerMap.containsKey(url);
+        }
     }
 
     // 获取url所对应的进度监听器
     public static BaseDownloadProgressListener getProgressListener(String url) {
-        return sUrlInListenerMap.get(url);
+        synchronized (sUrlInListenerMap) {
+            return sUrlInListenerMap.get(url);
+        }
     }
 
     private static RequestQueue sRequestQueue;
@@ -151,15 +163,14 @@ public class OkHttp {
     public static void cancelDownloadFile(String tag) {
         DownloadTask task = OkDownload.getInstance().getTask(tag);
         if (task != null) {
-            task.unRegister(tag);
-            task.pause();
-            OkDownload.getInstance().removeTask(tag);
+            task.remove(true);
+        } else {
+            Progress progress = DownloadManager.getInstance().get(tag);
+            if (progress != null) {
+                IOUtils.delFileOrFolder(progress.filePath);
+            }
+            DownloadManager.getInstance().delete(tag);
         }
-        Progress progress = DownloadManager.getInstance().get(tag);
-        if (progress != null) {
-            IOUtils.delFileOrFolder(progress.filePath);
-        }
-        DownloadManager.getInstance().delete(tag);
     }
 
     // 检测将http协议转换为https协议

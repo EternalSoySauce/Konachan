@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.pixiv.gif;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -14,6 +16,9 @@ import com.google.gson.JsonParser;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.utils.IOUtils;
 import com.lzy.okserver.download.DownloadListener;
+import com.unity3d.services.core.connectivity.ConnectivityChangeReceiver;
+import com.unity3d.services.core.connectivity.ConnectivityMonitor;
+import com.unity3d.services.core.connectivity.IConnectivityListener;
 
 import net.lingala.zip4j.ZipFile;
 
@@ -26,7 +31,7 @@ import java.util.Map;
 import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
 import nl.bravobit.ffmpeg.FFmpeg;
 
-public class PixivGifDlManager {
+public class PixivGifDlManager implements IConnectivityListener {
 
     private final static String TAG = PixivGifDlManager.class.getSimpleName();
 
@@ -39,6 +44,8 @@ public class PixivGifDlManager {
     }
 
     private PixivGifDlManager() {
+        ConnectivityChangeReceiver.register();
+        ConnectivityMonitor.addListener(this);
     }
 
     /*******************************************************************/
@@ -186,7 +193,6 @@ public class PixivGifDlManager {
 
                             @Override
                             public void onRemove(Progress progress) {
-                                onError(progress);
                             }
                         });
             } catch (Exception e) {
@@ -323,6 +329,32 @@ public class PixivGifDlManager {
         synchronized (mPixivMap) {
             return new ArrayList<>(mPixivMap.values());
         }
+    }
+
+
+    /*******************************************************************/
+
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
+
+    @Override
+    public void onConnected() {
+        synchronized (mPixivMap) {
+            mMainHandler.post(() -> {
+                // 网络可用时恢复所有断点下载
+                for (Map.Entry<String, PixivGifBean> entry : mPixivMap.entrySet()) {
+                    String pixivId = entry.getKey();
+                    PixivGifBean pixivGifBean = entry.getValue();
+                    if (pixivGifBean.isError && (pixivGifBean.state == PixivGifBean.PixivDlState.CONNECT_PIXIV
+                            || pixivGifBean.state == PixivGifBean.PixivDlState.DOWNLOAD_ZIP)) {
+                        execute(pixivId);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDisconnected() {
     }
 
 

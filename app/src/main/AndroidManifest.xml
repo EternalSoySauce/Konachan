@@ -61,9 +61,9 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
-        <service android:name=".service.DownloadImageService" />
+        <service android:name=".download.image.DownloadImageService" />
 
-        <service android:name=".service.DownloadApkService" />
+        <service android:name=".download.apk.DownloadApkService" />
 
         <activity
             android:name=".ui.activity.SettingActivity"
@@ -78,6 +78,12 @@
 
         <activity
             android:name=".ui.activity.CollectionActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.activity.DownloadImageManagerActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

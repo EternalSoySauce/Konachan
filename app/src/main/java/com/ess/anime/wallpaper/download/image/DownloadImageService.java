@@ -1,15 +1,15 @@
-package com.ess.anime.wallpaper.service;
+package com.ess.anime.wallpaper.download.image;
 
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 
-import com.ess.anime.wallpaper.bean.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.listener.DownloadImageProgressListener;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.lzy.okgo.model.Progress;
@@ -27,6 +27,7 @@ public class DownloadImageService extends Service {
     }
 
     private final List<Runnable> mThreadList = new ArrayList<>();
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
@@ -81,20 +82,24 @@ public class DownloadImageService extends Service {
 
         // 下载
         try {
+            mMainHandler.post(() -> DownloadImageManager.getInstance().addOrUpdate(downloadBean));
             OkHttp.startDownloadFile(OkHttp.convertSchemeToHttps(url), tempFolder.getAbsolutePath(), tempName, null,
                     new DownloadListener(url) {
                         @Override
                         public void onStart(Progress progress) {
+                            DownloadImageManager.getInstance().addOrUpdate(downloadBean);
                         }
 
                         @Override
                         public void onProgress(Progress progress) {
                             listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
+                            DownloadImageManager.getInstance().addOrUpdate(downloadBean);
                         }
 
                         @Override
                         public void onError(Progress progress) {
                             listener.onError();
+                            DownloadImageManager.getInstance().addOrUpdate(downloadBean);
                             OkHttp.removeUrlFromDownloadQueue(url);
                         }
 
@@ -107,21 +112,26 @@ public class DownloadImageService extends Service {
                                 FileUtils.copyFile(tempFile, saveFile);
                                 // 添加图片到媒体库（刷新相册）
                                 BitmapUtils.insertToMediaStore(DownloadImageService.this, saveFile);
-                                // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
-                                listener.onFinish();
                             }
+                            // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
+                            listener.onFinish();
+                            DownloadImageManager.getInstance().addOrUpdate(downloadBean);
                             OkHttp.removeUrlFromDownloadQueue(url);
                             tempFile.delete();
                         }
 
                         @Override
                         public void onRemove(Progress progress) {
-                            onError(progress);
+                            listener.onRemove();
+                            DownloadImageManager.getInstance().remove(downloadBean);
+                            OkHttp.removeUrlFromDownloadQueue(url);
                         }
                     });
         } catch (Exception e) {
             e.printStackTrace();
             listener.onError();
+            mMainHandler.post(() -> DownloadImageManager.getInstance().addOrUpdate(downloadBean));
+            OkHttp.removeUrlFromDownloadQueue(url);
         }
     }
 

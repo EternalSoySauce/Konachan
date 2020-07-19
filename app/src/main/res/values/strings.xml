@@ -44,6 +44,7 @@
     <string name="nav_post">Image</string>
     <string name="nav_pool">Album</string>
     <string name="nav_collection">Favorites</string>
+    <string name="nav_download_manager">Download Manager</string>
     <string name="nav_feedback">Feedback</string>
     <string name="nav_setting">Setting &amp; Help</string>
     <string name="nav_pixiv_gif">Pixiv Gif DL</string>

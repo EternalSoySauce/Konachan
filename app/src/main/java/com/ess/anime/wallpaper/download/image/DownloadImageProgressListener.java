@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.listener;
+package com.ess.anime.wallpaper.download.image;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,10 +9,9 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.ess.anime.wallpaper.bean.DownloadBean;
+import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
-import com.ess.anime.wallpaper.service.DownloadImageService;
 import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -29,7 +28,7 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     }
 
     @Override
-    void setData(DownloadBean data) {
+    protected void setData(DownloadBean data) {
         mDownloadBean = data;
     }
 
@@ -40,17 +39,17 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     }
 
     @Override
-    PendingIntent prepareContentIntent() {
+    protected PendingIntent prepareContentIntent() {
         return mOperateIntent;
     }
 
     @Override
-    long getTotalFileSize() {
+    protected long getTotalFileSize() {
         return mDownloadBean.downloadSize;
     }
 
     @Override
-    String getNotifyTitle() {
+    protected String getNotifyTitle() {
         return mDownloadBean.downloadTitle;
     }
 
@@ -89,12 +88,12 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     }
 
     @Override
-    Class<?> getClassToReload() {
+    protected Class<?> getClassToReload() {
         return DownloadImageService.class;
     }
 
     @Override
-    void createOperatePendingIntent() {
+    protected void createOperatePendingIntent() {
         if (mOperateIntent == null) {
             Intent jumpIntent = new Intent(mContext, CollectionActivity.class);
             mOperateIntent = PendingIntent.getActivity(mContext, mNotifyId,

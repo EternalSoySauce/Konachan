@@ -74,6 +74,9 @@ dependencies {
     // OkGo (https://github.com/jeasonlzy/okhttp-OkGo)
     implementation 'com.lzy.net:okserver:2.0.5'
 
+    // u3d网络监听
+    implementation 'com.unity3d.ads:unity-ads:3.0.0'
+
     // Volley (https://github.com/google/volley)
     implementation 'com.android.volley:volley:1.1.1'
 

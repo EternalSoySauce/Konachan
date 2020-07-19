@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 
-import com.ess.anime.wallpaper.bean.ApkBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.UserBean;
 import com.ess.anime.wallpaper.global.Constants;

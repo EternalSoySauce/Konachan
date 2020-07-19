@@ -1,12 +1,11 @@
-package com.ess.anime.wallpaper.listener;
+package com.ess.anime.wallpaper.download.apk;
 
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ApkBean;
-import com.ess.anime.wallpaper.service.DownloadApkService;
+import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 
 import java.io.File;
@@ -20,32 +19,32 @@ public class DownloadApkProgressListener extends BaseDownloadProgressListener<Ap
     }
 
     @Override
-    void setData(ApkBean data) {
+    protected void setData(ApkBean data) {
         mApkBean = data;
     }
 
     @Override
-    PendingIntent prepareContentIntent() {
+    protected PendingIntent prepareContentIntent() {
         return null;
     }
 
     @Override
-    long getTotalFileSize() {
+    protected long getTotalFileSize() {
         return mApkBean.apkSize;
     }
 
     @Override
-    String getNotifyTitle() {
+    protected String getNotifyTitle() {
         return mContext.getString(R.string.app_name);
     }
 
     @Override
-    Class<?> getClassToReload() {
+    protected Class<?> getClassToReload() {
         return DownloadApkService.class;
     }
 
     @Override
-    void createOperatePendingIntent() {
+    protected void createOperatePendingIntent() {
         File apkFile = new File(mApkBean.localFilePath);
         if (apkFile.exists()) {
             Intent installIntent = ComponentUtils.installApk(mContext, apkFile, false);

@@ -11,11 +11,11 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.ApkBean;
-import com.ess.anime.wallpaper.bean.DownloadBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
+import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
-import com.ess.anime.wallpaper.service.DownloadApkService;
+import com.ess.anime.wallpaper.download.apk.DownloadApkService;
 import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
@@ -74,12 +74,12 @@ public class CustomDialog extends MaterialDialog.Builder {
     }
 
     /**
-     * 删除Pixiv Gif下载列表项
+     * 删除下载列表项
      *
      * @param context  上下文
      * @param listener 事件监听器
      */
-    public static void showDeletePixivGifItemDialog(Context context, OnDialogActionListener listener) {
+    public static void showDeleteWhenDownloadingItemDialog(Context context, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
                 .content(R.string.dialog_delete_pixiv_gif_item_msg)
                 .negativeText(R.string.dialog_delete_cancel)

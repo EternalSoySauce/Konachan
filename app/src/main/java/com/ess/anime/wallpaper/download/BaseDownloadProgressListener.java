@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.listener;
+package com.ess.anime.wallpaper.download;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -17,16 +17,16 @@ public abstract class BaseDownloadProgressListener<T> {
     private static final String NOTIFY_CHANNEL_ID = "notification";
     private static final String NOTIFY_CHANNEL_NAME = "notification";
 
-    Context mContext;
-    String mFileAvailable;
+    protected Context mContext;
+    protected String mFileAvailable;
 
-    NotificationManager mNotifyManager;
-    Notification.Builder mNotifyBuilder;
-    int mNotifyId;
-    PendingIntent mReloadIntent;
-    PendingIntent mOperateIntent;
+    protected NotificationManager mNotifyManager;
+    protected Notification.Builder mNotifyBuilder;
+    protected int mNotifyId;
+    protected PendingIntent mReloadIntent;
+    protected PendingIntent mOperateIntent;
 
-    BaseDownloadProgressListener(Context context, T data, Intent intent) {
+    protected BaseDownloadProgressListener(Context context, T data, Intent intent) {
         setData(data);
         mContext = context;
         createReloadPendingIntent(intent);
@@ -34,7 +34,7 @@ public abstract class BaseDownloadProgressListener<T> {
         prepareNotification();
     }
 
-    abstract void setData(T data);
+    protected abstract void setData(T data);
 
     private void createNotifyChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,11 +71,11 @@ public abstract class BaseDownloadProgressListener<T> {
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
-    abstract PendingIntent prepareContentIntent();
+    protected abstract PendingIntent prepareContentIntent();
 
-    abstract long getTotalFileSize();
+    protected abstract long getTotalFileSize();
 
-    abstract String getNotifyTitle();
+    protected abstract String getNotifyTitle();
 
     /**
      * 下载进度
@@ -86,8 +86,7 @@ public abstract class BaseDownloadProgressListener<T> {
      */
     public void onProgress(int progress, long byteCount, long speed) {
         mNotifyBuilder.setProgress(100, progress, false);
-        String content = FileUtils.computeFileSize(byteCount)
-                + " / " + mFileAvailable;
+        String content = FileUtils.computeFileSize(byteCount) + " / " + mFileAvailable;
         mNotifyBuilder.setContentText(content);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
@@ -112,6 +111,10 @@ public abstract class BaseDownloadProgressListener<T> {
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }
 
+    public void onRemove() {
+        mNotifyManager.cancel(mNotifyId);
+    }
+
     private void createReloadPendingIntent(Intent intent) {
         Intent reloadIntent = new Intent(mContext, getClassToReload());
         reloadIntent.putExtras(intent);
@@ -119,8 +122,8 @@ public abstract class BaseDownloadProgressListener<T> {
                 reloadIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    abstract Class<?> getClassToReload();
+    protected abstract Class<?> getClassToReload();
 
-    abstract void createOperatePendingIntent();
+    protected abstract void createOperatePendingIntent();
 
 }

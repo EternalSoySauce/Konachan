@@ -37,7 +37,6 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
 
     @Override
     protected void convertPayloads(@NonNull BaseViewHolder holder, PixivGifBean pixivGifBean, @NonNull List<Object> payloads) {
-        super.convertPayloads(holder, pixivGifBean, payloads);
         for (Object payload : payloads) {
             if (payload.equals(UPDATE_DL_STATE)) {
                 updateItemState(holder, pixivGifBean);
@@ -67,7 +66,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 progressView.updateProgress(0, 0.8f);
                 break;
             case DOWNLOAD_ZIP:
-                String progress = String.format(Locale.getDefault(), "%.2f%%", pixivGifBean.progress);
+                String progress = String.format(Locale.getDefault(), "%.1f%%", pixivGifBean.progress * 100f);
                 state = pixivGifBean.isError ? "下载失败" : "正在下载压缩包: " + progress;
                 progressView.updateProgress(1, pixivGifBean.progress);
                 break;
@@ -111,7 +110,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
         // 删除按钮
         holder.getView(R.id.iv_delete).setOnClickListener(v -> {
             if (isLoading) {
-                CustomDialog.showDeletePixivGifItemDialog(mContext, new CustomDialog.SimpleDialogActionListener() {
+                CustomDialog.showDeleteWhenDownloadingItemDialog(mContext, new CustomDialog.SimpleDialogActionListener() {
                     @Override
                     public void onPositive() {
                         super.onPositive();
@@ -159,6 +158,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
     public void onDataChanged(PixivGifBean pixivGifBean) {
         int pos = mData.indexOf(pixivGifBean);
         if (pos != -1) {
+            mData.set(pos, pixivGifBean);
             refreshNotifyItemChanged(pos, UPDATE_DL_STATE);
         }
     }

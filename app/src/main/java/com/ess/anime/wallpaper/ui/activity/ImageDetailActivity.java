@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.DownloadBean;
+import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
@@ -17,7 +17,7 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.OnTouchAlphaListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
-import com.ess.anime.wallpaper.service.DownloadImageService;
+import com.ess.anime.wallpaper.download.image.DownloadImageService;
 import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
@@ -234,6 +234,8 @@ public class ImageDetailActivity extends BaseActivity {
                 }
             }, i * 100);
         }
+        // TODO 翻译
+        Toast.makeText(this, "已加入下载队列", Toast.LENGTH_SHORT).show();
     }
 
     private File makeFileToSave(String postId, String fileType, String url) {

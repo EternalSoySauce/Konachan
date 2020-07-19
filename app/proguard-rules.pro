@@ -257,8 +257,8 @@
 ##############################
 #             bean           #
 ##############################
--keep class com.ess.anime.wallpaper.bean.** { *; }
--keep class com.ess.anime.wallpaper.bean.**$* { *; }
+-keep class **Bean { *; }
+-keep class **Bean$* { *; }
 
 ##############################
 #        WebsiteConfig       #

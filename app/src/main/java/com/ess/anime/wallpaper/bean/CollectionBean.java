@@ -92,10 +92,14 @@ public class CollectionBean implements Parcelable {
 
     public static CollectionBean createCollectionFromFile(File file) {
         String imagePath = file.getAbsolutePath();
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(imagePath, options);
-        return new CollectionBean(imagePath, options.outWidth, options.outHeight);
+        if (file.exists() && file.isFile()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imagePath, options);
+            return new CollectionBean(imagePath, options.outWidth, options.outHeight);
+        } else {
+            return new CollectionBean(imagePath, 0, 0);
+        }
     }
 
     static class FileOrderComparator implements Comparator<File> {
