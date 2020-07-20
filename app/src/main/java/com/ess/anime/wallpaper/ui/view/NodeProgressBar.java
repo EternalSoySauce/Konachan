@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.ui.view.image;
+package com.ess.anime.wallpaper.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
-public class PixivGifDlProgressView extends View {
+public class NodeProgressBar extends View {
 
     private final static int DEFAULT_CIRCLE_COUNT = 4;
     private final static float DEFAULT_NORMAL_CIRCLE_RADIUS = 9;
@@ -38,24 +38,24 @@ public class PixivGifDlProgressView extends View {
 
     private Paint mPaint = new Paint();
 
-    public PixivGifDlProgressView(Context context) {
+    public NodeProgressBar(Context context) {
         this(context, null);
     }
 
-    public PixivGifDlProgressView(Context context, @Nullable AttributeSet attrs) {
+    public NodeProgressBar(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PixivGifDlProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public NodeProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PixivGifDlProgressView);
-        mNormalCircleRadius = typedArray.getDimension(R.styleable.PixivGifDlProgressView_normal_circle_radius, DEFAULT_NORMAL_CIRCLE_RADIUS);
-        mActivatingCircleRadius = typedArray.getDimension(R.styleable.PixivGifDlProgressView_activating_circle_radius, DEFAULT_ACTIVATING_CIRCLE_RADIUS);
-        mCircleStrokeWidth = typedArray.getDimension(R.styleable.PixivGifDlProgressView_circle_stroke_width, DEFAULT_STROKE_WIDTH);
-        mLineStrokeWidth = typedArray.getDimension(R.styleable.PixivGifDlProgressView_line_stroke_width, DEFAULT_STROKE_WIDTH);
-        mActiveColor = typedArray.getColor(R.styleable.PixivGifDlProgressView_active_color, DEFAULT_ACTIVE_COLOR);
-        mInactiveColor = typedArray.getColor(R.styleable.PixivGifDlProgressView_inactive_color, DEFAULT_INACTIVE_COLOR);
-        mCircleCount = typedArray.getInt(R.styleable.PixivGifDlProgressView_circle_count, DEFAULT_CIRCLE_COUNT);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.NodeProgressBar);
+        mNormalCircleRadius = typedArray.getDimension(R.styleable.NodeProgressBar_normal_circle_radius, DEFAULT_NORMAL_CIRCLE_RADIUS);
+        mActivatingCircleRadius = typedArray.getDimension(R.styleable.NodeProgressBar_activating_circle_radius, DEFAULT_ACTIVATING_CIRCLE_RADIUS);
+        mCircleStrokeWidth = typedArray.getDimension(R.styleable.NodeProgressBar_circle_stroke_width, DEFAULT_STROKE_WIDTH);
+        mLineStrokeWidth = typedArray.getDimension(R.styleable.NodeProgressBar_line_stroke_width, DEFAULT_STROKE_WIDTH);
+        mActiveColor = typedArray.getColor(R.styleable.NodeProgressBar_active_color, DEFAULT_ACTIVE_COLOR);
+        mInactiveColor = typedArray.getColor(R.styleable.NodeProgressBar_inactive_color, DEFAULT_INACTIVE_COLOR);
+        mCircleCount = typedArray.getInt(R.styleable.NodeProgressBar_circle_count, DEFAULT_CIRCLE_COUNT);
         typedArray.recycle();
 
         mPaint.setAntiAlias(true);

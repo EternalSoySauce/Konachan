@@ -13,7 +13,7 @@ import com.ess.anime.wallpaper.pixiv.gif.IPixivDlListener;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
-import com.ess.anime.wallpaper.ui.view.image.PixivGifDlProgressView;
+import com.ess.anime.wallpaper.ui.view.NodeProgressBar;
 
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +58,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
         holder.setText(R.id.tv_id, "#" + pixivGifBean.id);
 
         // 下载状态
-        PixivGifDlProgressView progressView = holder.getView(R.id.progress_view);
+        NodeProgressBar progressView = holder.getView(R.id.progress_view);
         String state = null;
         switch (pixivGifBean.state) {
             case CONNECT_PIXIV:

@@ -45,7 +45,7 @@
             app:layout_constraintStart_toStartOf="@+id/tv_id"
             app:layout_constraintTop_toBottomOf="@+id/tv_id">
 
-            <com.ess.anime.wallpaper.ui.view.image.PixivGifDlProgressView
+            <com.ess.anime.wallpaper.ui.view.NodeProgressBar
                 android:id="@+id/progress_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -20,7 +20,7 @@
         <attr name="corner_radius" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="PixivGifDlProgressView">
+    <declare-styleable name="NodeProgressBar">
         <attr name="normal_circle_radius" format="dimension" />
         <attr name="activating_circle_radius" format="dimension" />
         <attr name="circle_stroke_width" format="dimension" />
