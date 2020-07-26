@@ -59,7 +59,7 @@ public class DonateFragment extends DialogFragment {
     }
 
     private void initViews() {
-        OnTouchScaleListener listener = new OnTouchScaleListener();
+        OnTouchScaleListener listener = OnTouchScaleListener.DEFAULT;
         mIvAlipay.setOnTouchListener(listener);
         mIvWechat.setOnTouchListener(listener);
 

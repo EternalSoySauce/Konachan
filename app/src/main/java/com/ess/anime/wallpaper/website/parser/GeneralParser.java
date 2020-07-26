@@ -38,8 +38,8 @@ public class GeneralParser extends HtmlParser {
             try {
                 String id = e.attr("id").replaceAll("[^0-9]", "");
                 Element img = e.getElementsByTag("img").first();
-                int thumbWidth = Integer.valueOf(img.attr("width")) * 2;
-                int thumbHeight = Integer.valueOf(img.attr("height")) * 2;
+                int thumbWidth = Integer.parseInt(img.attr("width")) * 2;
+                int thumbHeight = Integer.parseInt(img.attr("height")) * 2;
                 String thumbUrl = img.attr("src");
                 if (thumbUrl.contains("deleted-preview")) {
                     continue;

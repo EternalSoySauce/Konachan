@@ -42,6 +42,9 @@ import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 public class MultipleMediaLayout extends FrameLayout implements RequestListener<Drawable>,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener {
 
+    @BindView(R.id.loading_view)
+    CircleLoadingView mLoadingView;
+
     public MultipleMediaLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -54,6 +57,16 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
+    }
+
+    private void showLoadingView() {
+        mLoadingView.setVisibility(VISIBLE);
+        mLoadingView.startAnim();
+    }
+
+    private void hideLoadingView() {
+        mLoadingView.reset();
+        mLoadingView.setVisibility(GONE);
     }
 
 
@@ -105,13 +118,17 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         mPhotoView.setAlpha(1f);
         mPhotoView.setZoomable(false);
 
+        if (isWebPath()) {
+            showLoadingView();
+        } else {
+            hideLoadingView();
+        }
+
         Object url = isWebPath() ? MyGlideModule.makeGlideUrl(mMediaPath) : mMediaPath;
-        int placeHolder = isWebPath() ? R.drawable.ic_placeholder_detail : 0;
         Activity activity = (Activity) getContext();
         if (ComponentUtils.isActivityActive(activity)) {
             GlideApp.with(getContext())
                     .load(url)
-                    .placeholder(placeHolder)
                     .listener(this)
                     .priority(Priority.IMMEDIATE)
                     .into(mPhotoView);
@@ -134,6 +151,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
         ProgressInterceptor.removeListener(mMediaPath);
         mPhotoView.setZoomable(true);
+        hideLoadingView();
         return false;
     }
 
@@ -153,14 +171,12 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     private void showVideo() {
         mPhotoView.setZoomable(false);
+        mPhotoView.setAlpha(0f);
+
         if (isWebPath()) {
-            mPhotoView.setAlpha(1f);
-            GlideApp.with(getContext())
-                    .load(R.drawable.ic_placeholder_detail)
-                    .priority(Priority.IMMEDIATE)
-                    .into(mPhotoView);
+            showLoadingView();
         } else {
-            mPhotoView.setAlpha(0f);
+            hideLoadingView();
         }
 
         mVideoView.setVisibility(VISIBLE);
@@ -190,6 +206,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
         if (what == MEDIA_INFO_VIDEO_RENDERING_START) {
+            hideLoadingView();
             mPhotoView.setAlpha(0f);
             mVideoView.setAlpha(1);
             mLayoutVideoController.setAlpha(1);
@@ -229,6 +246,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     /***********************************  Other  ***********************************/
     public void reset() {
+        hideLoadingView();
         mPhotoView.setScale(1f);
         mVideoView.setKeepScreenOn(false);
         mVideoView.stopPlayback();

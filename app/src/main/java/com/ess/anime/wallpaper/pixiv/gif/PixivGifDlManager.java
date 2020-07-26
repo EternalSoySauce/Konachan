@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.ess.anime.wallpaper.MyApp;
+import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -33,7 +34,7 @@ import nl.bravobit.ffmpeg.FFmpeg;
 
 public class PixivGifDlManager implements IConnectivityListener {
 
-    private final static String TAG = PixivGifDlManager.class.getSimpleName();
+    public final static String TAG = PixivGifDlManager.class.getSimpleName();
 
     private static class PixivGifHolder {
         private final static PixivGifDlManager instance = new PixivGifDlManager();
@@ -71,8 +72,7 @@ public class PixivGifDlManager implements IConnectivityListener {
                         parseJson(pixivGifBean);
                 }
             } else {
-                // todo 翻译
-                Toast.makeText(MyApp.getInstance(), "任务已存在于队列中", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyApp.getInstance(), R.string.pixiv_toast_task_exist, Toast.LENGTH_SHORT).show();
             }
         }
     }

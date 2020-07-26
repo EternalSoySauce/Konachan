@@ -5,6 +5,8 @@ import android.view.View;
 
 public class OnTouchScaleListener implements View.OnTouchListener {
 
+    public final static OnTouchScaleListener DEFAULT = new OnTouchScaleListener();
+
     private float mScale = 0.96f;
 
     public OnTouchScaleListener() {

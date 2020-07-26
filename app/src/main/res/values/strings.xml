@@ -25,9 +25,9 @@
     <string name="download_started">%s Start download</string>
     <string name="download_finished">%s / Download completed</string>
     <string name="download_failed">Download failed, click to try again</string>
-    <string name="download_title_sample">#%s (Sample)</string>
-    <string name="download_title_large">#%s (Large)</string>
-    <string name="download_title_origin">#%s (Origin)</string>
+    <string name="download_title_sample">%1$s %2$s (Sample)</string>
+    <string name="download_title_large">%1$s %2$s (Large)</string>
+    <string name="download_title_origin">%1$s %2$s (Origin)</string>
 
     <!-- Drawer Layout -->
     <string name="base_konachan_s" translatable="false">Konachan(safe)</string>
@@ -131,8 +131,26 @@
     <string name="set_successfully">Set successfully</string>
     <string name="set_failed">Set failed</string>
 
+    <!-- Download Image Manager -->
+    <string name="download_waiting">Waiting...</string>
+
     <!-- Pixiv Gif DL -->
-    <string name="edit_pixiv_id_hint">Please enter Pixiv artwork Id</string>
+    <string name="pixiv_edit_hint_enter_id">Please enter Pixiv artwork Id</string>
+    <string name="pixiv_start_download">Download</string>
+    <string name="pixiv_toast_task_exist">Task already exists in the queue</string>
+    <string name="pixiv_dl_state_connect">Connecting Pixiv...</string>
+    <string name="pixiv_dl_state_connect_error">Connect Pixiv failed</string>
+    <string name="pixiv_dl_state_download_zip">Downloading zip file...</string>
+    <string name="pixiv_dl_state_download_zip_progress">Downloading zip file: %s</string>
+    <string name="pixiv_dl_state_download_zip_error">Download zip file failed</string>
+    <string name="pixiv_dl_state_unzip">Unzipping...</string>
+    <string name="pixiv_dl_state_unzip_error">Unzip failed</string>
+    <string name="pixiv_dl_state_make_gif">Synthesizing GIF</string>
+    <string name="pixiv_dl_state_make_gif_error">Synthetic GIF failed</string>
+    <string name="pixiv_dl_state_finish">GIF synthesis completed and saved to Collection</string>
+    <string name="pixiv_dl_state_cancelled">Task cancelled</string>
+    <string name="pixiv_dl_state_not_gif">The artwork is not a GIF</string>
+    <string name="pixiv_dl_state_no_artwork">The artwork does not exist or has been deleted</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">Copy Link</string>

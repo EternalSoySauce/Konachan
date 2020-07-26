@@ -134,16 +134,16 @@ public class OkHttp {
     // 断点下载文件
     public static void startDownloadFile(String url, String dirPath, String fileName, Map<String, String> headerMap, DownloadListener listener) {
         String tag = (String) listener.tag;
-        DownloadTask task = null;
-        Progress progress = DownloadManager.getInstance().get(tag);
-        if (progress != null) {
-            if (new File(progress.filePath).exists()) {
-                task = OkDownload.restore(progress);
-            } else {
+        DownloadTask task = OkDownload.getInstance().getTask(tag);
+        if (task != null) {
+            Progress progress = task.progress;
+            if (progress == null || !new File(progress.filePath).exists()) {
                 cancelDownloadFile(tag);
+                task = null;
             }
         }
         if (task == null) {
+            cancelDownloadFile(tag);
             GetRequest<File> request = OkGo.get(url);
             if (headerMap != null) {
                 for (Map.Entry<String, String> entry : headerMap.entrySet()) {

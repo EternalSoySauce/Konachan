@@ -28,8 +28,8 @@ public class SafebooruParser extends HtmlParser {
         for (Element e : elements) {
             try {
                 String id = e.id().replaceAll("[^0-9]", "");
-                int thumbWidth = Integer.valueOf(e.attr("preview_width"));
-                int thumbHeight = Integer.valueOf(e.attr("preview_height"));
+                int thumbWidth = Integer.parseInt(e.attr("preview_width"));
+                int thumbHeight = Integer.parseInt(e.attr("preview_height"));
                 String thumbUrl = e.attr("preview_url").replaceFirst(".png|.jpeg", ".jpg");
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = "https:" + thumbUrl;

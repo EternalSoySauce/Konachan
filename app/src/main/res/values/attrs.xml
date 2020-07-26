@@ -20,13 +20,9 @@
         <attr name="corner_radius" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="NodeProgressBar">
-        <attr name="normal_circle_radius" format="dimension" />
-        <attr name="activating_circle_radius" format="dimension" />
-        <attr name="circle_stroke_width" format="dimension" />
-        <attr name="line_stroke_width" format="dimension" />
-        <attr name="active_color" format="color" />
-        <attr name="inactive_color" format="color" />
-        <attr name="circle_count" format="integer" />
+    <declare-styleable name="CircleLoadingView">
+        <attr name="color1" format="reference|color"/>
+        <attr name="color2" format="reference|color"/>
+        <attr name="color3" format="reference|color"/>
     </declare-styleable>
 </resources>

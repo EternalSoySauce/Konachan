@@ -46,7 +46,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_edit_pixiv_gif_id"
             android:gravity="center"
-            android:hint="@string/edit_pixiv_id_hint"
+            android:hint="@string/pixiv_edit_hint_enter_id"
             android:imeOptions="actionGo"
             android:inputType="number"
             android:minHeight="90dp"
@@ -58,16 +58,25 @@
             android:textSize="14sp"
             app:backgroundTint="@color/colorAccent" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="开始下载" />
+            android:layout_marginTop="8dp"
+            android:background="@drawable/ic_button_download_pixiv_gif"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:minWidth="130dp"
+            android:text="@string/pixiv_start_download"
+            android:textColor="@color/colorAccent"
+            app:backgroundTint="@color/colorAccent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_pixiv_gif"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:requiresFadingEdge="vertical" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

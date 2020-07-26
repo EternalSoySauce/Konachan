@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerPixivGifDlAdapter;
+import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
@@ -82,6 +83,8 @@ public class PixivGifActivity extends BaseActivity {
     }
 
     private void initViews() {
+        findViewById(R.id.btn_download).setOnTouchListener(OnTouchScaleListener.DEFAULT);
+
         mEtId.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO) {
                 startDownload();

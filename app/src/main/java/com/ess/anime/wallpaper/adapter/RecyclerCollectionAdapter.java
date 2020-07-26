@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import com.bumptech.glide.Priority;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -25,6 +21,10 @@ import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
 
@@ -98,7 +98,7 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
                 .into(ivCollection);
 
         // 点击、全屏查看监听器
-        ivCollection.setOnTouchListener(new OnTouchScaleListener());
+        ivCollection.setOnTouchListener(OnTouchScaleListener.DEFAULT);
         ivCollection.setOnClickListener(v -> {
             if (isEditMode()) {
                 // 编辑模式下切换选中/非选中

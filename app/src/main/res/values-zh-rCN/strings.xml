@@ -25,9 +25,9 @@
     <string name="download_started">%s开始下载</string>
     <string name="download_finished">%s / 下载完成</string>
     <string name="download_failed">下载失败，点击重试</string>
-    <string name="download_title_sample">#%s (预览图)</string>
-    <string name="download_title_large">#%s (大图)</string>
-    <string name="download_title_origin">#%s (原图)</string>
+    <string name="download_title_sample">%1$s %2$s (预览图)</string>
+    <string name="download_title_large">%1$s %2$s (大图)</string>
+    <string name="download_title_origin">%1$s %2$s (原图)</string>
 
     <!-- Drawer Layout -->
     <string name="navigation_drawer_open">打开侧边栏</string>
@@ -114,8 +114,26 @@
     <string name="set_successfully">设置成功</string>
     <string name="set_failed">设置失败</string>
 
+    <!-- Download Image Manager -->
+    <string name="download_waiting">等待中...</string>
+
     <!-- Pixiv Gif DL -->
-    <string name="edit_pixiv_id_hint">请输入Pixiv作品Id</string>
+    <string name="pixiv_edit_hint_enter_id">请输入Pixiv作品Id</string>
+    <string name="pixiv_start_download">开始下载</string>
+    <string name="pixiv_toast_task_exist">任务已存在于队列中</string>
+    <string name="pixiv_dl_state_connect">正在连接P站...</string>
+    <string name="pixiv_dl_state_connect_error">P站访问失败</string>
+    <string name="pixiv_dl_state_download_zip">正在下载压缩包...</string>
+    <string name="pixiv_dl_state_download_zip_progress">正在下载压缩包: %s</string>
+    <string name="pixiv_dl_state_download_zip_error">压缩包下载失败</string>
+    <string name="pixiv_dl_state_unzip">正在解压缩...</string>
+    <string name="pixiv_dl_state_unzip_error">解压失败</string>
+    <string name="pixiv_dl_state_make_gif">正在合成GIF...</string>
+    <string name="pixiv_dl_state_make_gif_error">合成GIF失败</string>
+    <string name="pixiv_dl_state_finish">GIF合成完毕，已保存到我的收藏</string>
+    <string name="pixiv_dl_state_cancelled">任务已取消</string>
+    <string name="pixiv_dl_state_not_gif">该作品不是GIF</string>
+    <string name="pixiv_dl_state_no_artwork">该作品不存在或已被删除</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">复制链接</string>

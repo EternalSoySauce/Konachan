@@ -35,8 +35,8 @@ public class DanbooruParser extends HtmlParser {
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = mWebsiteConfig.getBaseUrl() + thumbUrl;
                 }
-                int realWidth = Integer.valueOf(e.attr("data-width"));
-                int realHeight = Integer.valueOf(e.attr("data-height"));
+                int realWidth = Integer.parseInt(e.attr("data-width"));
+                int realHeight = Integer.parseInt(e.attr("data-height"));
                 String realSize = realWidth + " x " + realHeight;
                 int thumbWidth, thumbHeight;
                 if (realWidth >= realHeight) {
@@ -75,6 +75,9 @@ public class DanbooruParser extends HtmlParser {
             for (Element li : info.getElementsByTag("li")) {
                 if (li.text().contains("Size")) {
                     String size = li.getElementsByTag("a").first().text();
+                    if (size.contains(" ") && size.indexOf(" ") != size.lastIndexOf(" ")) {
+                        size = size.substring(0, size.lastIndexOf(" "));
+                    }
                     jpegFileSize = String.valueOf(FileUtils.parseFileSize(size));
                     break;
                 }

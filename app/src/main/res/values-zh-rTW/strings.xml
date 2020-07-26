@@ -25,9 +25,9 @@
     <string name="download_started">%s開始下載</string>
     <string name="download_finished">%s / 下載完成</string>
     <string name="download_failed">下載失敗，點擊重試</string>
-    <string name="download_title_sample">#%s (預覽圖)</string>
-    <string name="download_title_large">#%s (大圖)</string>
-    <string name="download_title_origin">#%s (原圖)</string>
+    <string name="download_title_sample">%1$s %2$s (預覽圖)</string>
+    <string name="download_title_large">%1$s %2$s (大圖)</string>
+    <string name="download_title_origin">%1$s %2$s (原圖)</string>
 
     <!-- Drawer Layout -->
     <string name="navigation_drawer_open">打開側邊欄</string>
@@ -114,8 +114,26 @@
     <string name="set_successfully">設置成功</string>
     <string name="set_failed">設置失敗</string>
 
+    <!-- Download Image Manager -->
+    <string name="download_waiting">等待中...</string>
+
     <!-- Pixiv Gif DL -->
-    <string name="edit_pixiv_id_hint">請輸入Pixiv作品Id</string>
+    <string name="pixiv_edit_hint_enter_id">請輸入Pixiv作品Id</string>
+    <string name="pixiv_start_download">開始下載</string>
+    <string name="pixiv_toast_task_exist">任務已存在於隊列中</string>
+    <string name="pixiv_dl_state_connect">正在連接P站...</string>
+    <string name="pixiv_dl_state_connect_error">P站訪問失敗</string>
+    <string name="pixiv_dl_state_download_zip">正在下載壓縮包...</string>
+    <string name="pixiv_dl_state_download_zip_progress">正在下載壓縮包: %s</string>
+    <string name="pixiv_dl_state_download_zip_error">壓縮包下載失敗</string>
+    <string name="pixiv_dl_state_unzip">正在解壓縮...</string>
+    <string name="pixiv_dl_state_unzip_error">解壓失敗</string>
+    <string name="pixiv_dl_state_make_gif">正在合成GIF...</string>
+    <string name="pixiv_dl_state_make_gif_error">合成GIF失敗</string>
+    <string name="pixiv_dl_state_finish">GIF合成完畢，已保存到我的收藏</string>
+    <string name="pixiv_dl_state_cancelled">任務已取消</string>
+    <string name="pixiv_dl_state_not_gif">該作品不是GIF</string>
+    <string name="pixiv_dl_state_no_artwork">該作品不存在或已被刪除</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">複製鏈接</string>

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -80,13 +81,17 @@ public abstract class BaseDownloadProgressListener<T> {
     /**
      * 下载进度
      *
-     * @param progress  进度 [0, 100]
-     * @param byteCount 目前已经下载的byte大小
-     * @param speed     此时每秒下载的byte大小
+     * @param progress    进度 [0, 100]
+     * @param currentSize 目前已经下载的byte大小
+     * @param totalSize   文件总大小
+     * @param speed       此时每秒下载的byte大小
      */
-    public void onProgress(int progress, long byteCount, long speed) {
+    public void onProgress(int progress, long currentSize, long totalSize, long speed) {
+        if (TextUtils.equals(mFileAvailable, "-1B") || TextUtils.equals(mFileAvailable, "0B")) {
+            mFileAvailable = FileUtils.computeFileSize(totalSize);
+        }
         mNotifyBuilder.setProgress(100, progress, false);
-        String content = FileUtils.computeFileSize(byteCount) + " / " + mFileAvailable;
+        String content = FileUtils.computeFileSize(currentSize) + " / " + mFileAvailable;
         mNotifyBuilder.setContentText(content);
         mNotifyManager.notify(mNotifyId, mNotifyBuilder.build());
     }

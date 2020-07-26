@@ -30,32 +30,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="1dp"
             android:textColor="@color/color_text_light"
-            app:layout_constraintBottom_toTopOf="@+id/layout_progress"
             app:layout_constraintStart_toEndOf="@+id/iv_thumb"
             app:layout_constraintTop_toTopOf="@+id/iv_thumb"
             app:layout_constraintVertical_chainStyle="spread_inside" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_progress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_state"
-            app:layout_constraintEnd_toStartOf="@+id/space_end"
-            app:layout_constraintStart_toStartOf="@+id/tv_id"
-            app:layout_constraintTop_toBottomOf="@+id/tv_id">
-
-            <ProgressBar
-                android:id="@+id/progress_view"
-                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.8" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_state"
@@ -68,15 +45,12 @@
             android:textColor="@color/color_text_light"
             app:layout_constraintBottom_toBottomOf="@+id/iv_thumb"
             app:layout_constraintEnd_toStartOf="@+id/space_end"
-            app:layout_constraintStart_toStartOf="@+id/tv_id"
-            app:layout_constraintTop_toBottomOf="@+id/layout_progress" />
+            app:layout_constraintStart_toStartOf="@+id/tv_id" />
 
-        <com.wang.avi.AVLoadingIndicatorView
-            android:id="@+id/loading_view"
+        <at.grabner.circleprogress.CircleProgressView
+            android:id="@+id/progress_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:indicatorColor="@color/color_text_general"
-            app:indicatorName="BallClipRotateMultipleIndicator"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@+id/space_end"

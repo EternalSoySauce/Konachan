@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.adapter;
 
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -13,14 +14,16 @@ import com.ess.anime.wallpaper.pixiv.gif.IPixivDlListener;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
-import com.ess.anime.wallpaper.ui.view.NodeProgressBar;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.lzy.okserver.OkDownload;
+import com.lzy.okserver.download.DownloadTask;
 
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import at.grabner.circleprogress.CircleProgressView;
 
 public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, BaseViewHolder> implements IPixivDlListener {
 
@@ -58,56 +61,74 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
         holder.setText(R.id.tv_id, "#" + pixivGifBean.id);
 
         // 下载状态
-        NodeProgressBar progressView = holder.getView(R.id.progress_view);
+        CircleProgressView progressView = holder.getView(R.id.progress_view);
+        progressView.setVisibility((pixivGifBean.isError || pixivGifBean.state == PixivGifBean.PixivDlState.CONNECT_PIXIV) ? View.GONE : View.VISIBLE);
+        progressView.setMaxValue(104);
         String state = null;
         switch (pixivGifBean.state) {
             case CONNECT_PIXIV:
-                state = pixivGifBean.isError ? "P站访问失败" : "正在连接P站";
-                progressView.updateProgress(0, 0.8f);
+                state = pixivGifBean.isError
+                        ? mContext.getString(R.string.pixiv_dl_state_connect_error)
+                        : mContext.getString(R.string.pixiv_dl_state_connect);
                 break;
             case DOWNLOAD_ZIP:
-                String progress = String.format(Locale.getDefault(), "%.1f%%", pixivGifBean.progress * 100f);
-                state = pixivGifBean.isError ? "下载失败" : "正在下载压缩包: " + progress;
-                progressView.updateProgress(1, pixivGifBean.progress);
+                if (pixivGifBean.isError) {
+                    state = mContext.getString(R.string.pixiv_dl_state_download_zip_error);
+                } else {
+                    String tag = PixivGifDlManager.TAG + pixivGifBean.id;
+                    DownloadTask task = OkDownload.getInstance().getTask(tag);
+                    if (task == null || task.progress == null || task.progress.totalSize <= 0) {
+                        state = mContext.getString(R.string.pixiv_dl_state_download_zip);
+                    } else {
+                        state = mContext.getString(R.string.pixiv_dl_state_download_zip_progress,
+                                FileUtils.computeFileSize(task.progress.currentSize) + " / " + FileUtils.computeFileSize(task.progress.totalSize));
+                    }
+                    float progress = pixivGifBean.progress * 100f;
+                    if (Math.abs(progress - progressView.getCurrentValue()) > 10) {
+                        progressView.setValue(progress);
+                    } else {
+                        progressView.setValueAnimated(progress);
+                    }
+                }
                 break;
             case EXTRACT_ZIP:
-                state = pixivGifBean.isError ? "解压失败" : "正在解压缩";
-                progressView.updateProgress(2, 0.8f);
+                state = pixivGifBean.isError
+                        ? mContext.getString(R.string.pixiv_dl_state_unzip_error)
+                        : mContext.getString(R.string.pixiv_dl_state_unzip);
+                progressView.setValue(100);
                 break;
             case MAKE_GIF:
-                state = pixivGifBean.isError ? "合成GIF失败" : "正在合成GIF";
-                progressView.updateProgress(3, pixivGifBean.progress);
+                state = pixivGifBean.isError
+                        ? mContext.getString(R.string.pixiv_dl_state_make_gif_error)
+                        : mContext.getString(R.string.pixiv_dl_state_make_gif);
+                progressView.setValue(102);
                 break;
             case FINISH:
-                state = "合成GIF完毕，已保存到我的收藏";
-                progressView.updateProgress(4, 1);
+                state = mContext.getString(R.string.pixiv_dl_state_finish);
+                progressView.setValue(104);
                 break;
             case CANCEL:
-                state = "任务已取消";
-                progressView.updateProgress(-1, 0);
+                state = mContext.getString(R.string.pixiv_dl_state_cancelled);
                 break;
             case NOT_GIF:
-                state = "不是gif";
-                progressView.updateProgress(1, 0);
+                state = mContext.getString(R.string.pixiv_dl_state_not_gif);
                 break;
             case NEED_LOGIN:
-                state = "作品不存在";
-                progressView.updateProgress(1, 0);
+                state = mContext.getString(R.string.pixiv_dl_state_no_artwork);
                 break;
         }
         holder.setText(R.id.tv_state, state);
 
-        // loading图标
-        boolean isLoading = !pixivGifBean.isError && pixivGifBean.state != PixivGifBean.PixivDlState.FINISH;
-        holder.setGone(R.id.loading_view, isLoading);
-
         // 重新下载按钮
-        holder.setGone(R.id.btn_restart, pixivGifBean.isError);
+        holder.setGone(R.id.btn_restart, pixivGifBean.isError
+                && pixivGifBean.state != PixivGifBean.PixivDlState.NOT_GIF
+                && pixivGifBean.state != PixivGifBean.PixivDlState.NEED_LOGIN);
         holder.getView(R.id.btn_restart).setOnClickListener(v -> {
             PixivGifDlManager.getInstance().execute(pixivGifBean.id);
         });
 
         // 删除按钮
+        boolean isLoading = !pixivGifBean.isError && pixivGifBean.state != PixivGifBean.PixivDlState.FINISH;
         holder.getView(R.id.iv_delete).setOnClickListener(v -> {
             if (isLoading) {
                 CustomDialog.showDeleteWhenDownloadingItemDialog(mContext, new CustomDialog.SimpleDialogActionListener() {

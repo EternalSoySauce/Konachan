@@ -52,7 +52,13 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         //缩略图尺寸（方格/瀑布流）
         ImageView ivThumb = holder.getView(R.id.iv_post_thumb);
         ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) ivThumb.getLayoutParams();
-        layoutParams.dimensionRatio = mIsRectangular ? "165:130" : thumbBean.thumbWidth + ":" + thumbBean.thumbHeight;
+        if (mIsRectangular) {
+            layoutParams.dimensionRatio = "165:130";
+        } else if (thumbBean.thumbHeight / thumbBean.thumbWidth >= 3) {
+            layoutParams.dimensionRatio = "1:3";
+        } else {
+            layoutParams.dimensionRatio = thumbBean.thumbWidth + ":" + thumbBean.thumbHeight;
+        }
         ivThumb.setLayoutParams(layoutParams);
 
         //缩略图

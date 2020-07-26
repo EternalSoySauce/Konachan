@@ -26,6 +26,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import at.grabner.circleprogress.CircleProgressView;
 
 public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean, BaseViewHolder> implements IDownloadImageListener {
 
@@ -61,34 +62,33 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         holder.setText(R.id.tv_id, downloadBean.downloadTitle);
 
         // 下载状态
+        CircleProgressView progressView = holder.getView(R.id.progress_view);
         String tag = downloadBean.downloadUrl;
         DownloadTask task = OkDownload.getInstance().getTask(tag);
         if (task == null) {
-            holder.setText(R.id.tv_state, "等待中");
+            progressView.spin();
+            holder.setText(R.id.tv_state, R.string.download_waiting);
         } else {
             switch (task.progress.status) {
                 case Progress.NONE:
                 case Progress.WAITING:
-                    holder.setText(R.id.tv_state, "等待中");
+                    progressView.spin();
+                    holder.setText(R.id.tv_state, R.string.download_waiting);
                     break;
                 case Progress.LOADING:
                 case Progress.PAUSE:
-                    holder.setProgress(R.id.progress_view, (int) (task.progress.fraction * 100), 100);
-                    holder.setText(R.id.tv_state, FileUtils.computeFileSize(task.progress.currentSize) + " / " + FileUtils.computeFileSize(downloadBean.downloadSize));
+                    progressView.setValueAnimated((task.progress.fraction * 100));
+                    holder.setText(R.id.tv_state, FileUtils.computeFileSize(task.progress.currentSize) + " / " + FileUtils.computeFileSize(task.progress.totalSize));
                     break;
                 case Progress.ERROR:
                     holder.setText(R.id.tv_state, R.string.download_failed);
                     break;
                 case Progress.FINISH:
-                    holder.setProgress(R.id.progress_view, 100, 100);
+                    progressView.setValueAnimated(100);
                     holder.setText(R.id.tv_state, mContext.getString(R.string.download_finished, FileUtils.computeFileSize(downloadBean.downloadSize)));
                     break;
             }
         }
-
-        // loading图标
-        boolean isLoading = task == null || (task.progress.status != Progress.ERROR && task.progress.status != Progress.FINISH);
-        holder.setGone(R.id.loading_view, isLoading);
 
         // 重新下载按钮
         holder.setGone(R.id.btn_restart, task != null && task.progress.status == Progress.ERROR);
@@ -102,6 +102,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         });
 
         // 删除按钮
+        boolean isLoading = task == null || (task.progress.status != Progress.ERROR && task.progress.status != Progress.FINISH);
         holder.getView(R.id.iv_delete).setOnClickListener(v -> {
             if (isLoading) {
                 CustomDialog.showDeleteWhenDownloadingItemDialog(mContext, new CustomDialog.SimpleDialogActionListener() {

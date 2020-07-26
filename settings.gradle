@@ -1,1 +1,1 @@
-include ':app', ':actionSheetDialog', ':agentweb-filechooser'
+include ':app', 'okserver', ':actionSheetDialog', ':agentweb-filechooser'

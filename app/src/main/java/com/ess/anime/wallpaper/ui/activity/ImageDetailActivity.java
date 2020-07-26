@@ -150,6 +150,7 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     private List<DownloadBean> makeDownloadChosenList() {
+        String imgHead = WebsiteManager.getInstance().getWebsiteConfig().getSavedImageHead();
         PostBean postBean = mImageBean.posts[0];
         List<DownloadBean> downloadList = new ArrayList<>();
         File file;
@@ -167,7 +168,7 @@ public class ImageDetailActivity extends BaseActivity {
                 desc = getString(R.string.dialog_download_already, desc);
             }
             downloadList.add(new DownloadBean(0, postBean.sampleUrl, postBean.sampleFileSize,
-                    getString(R.string.download_title_sample, postBean.id), mThumbBean.thumbUrl,
+                    getString(R.string.download_title_sample, imgHead, postBean.id), mThumbBean.thumbUrl,
                     file.getAbsolutePath(), exists, desc));
         }
 
@@ -182,7 +183,7 @@ public class ImageDetailActivity extends BaseActivity {
             desc = getString(R.string.dialog_download_already, desc);
         }
         downloadList.add(new DownloadBean(1, postBean.fileUrl, postBean.fileSize,
-                getString(R.string.download_title_large, postBean.id), mThumbBean.thumbUrl,
+                getString(R.string.download_title_large, imgHead, postBean.id), mThumbBean.thumbUrl,
                 file.getAbsolutePath(), exists, desc));
 
         // 2.Origin size
@@ -197,7 +198,7 @@ public class ImageDetailActivity extends BaseActivity {
                 desc = getString(R.string.dialog_download_already, desc);
             }
             downloadList.add(new DownloadBean(2, postBean.jpegUrl, postBean.jpegFileSize,
-                    getString(R.string.download_title_origin, postBean.id), mThumbBean.thumbUrl,
+                    getString(R.string.download_title_origin, imgHead, postBean.id), mThumbBean.thumbUrl,
                     file.getAbsolutePath(), exists, desc));
         }
         return downloadList;

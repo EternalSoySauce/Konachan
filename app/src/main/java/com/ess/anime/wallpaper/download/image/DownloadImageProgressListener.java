@@ -80,8 +80,8 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     }
 
     @Override
-    public void onProgress(int progress, long byteCount, long speed) {
-        super.onProgress(progress, byteCount, speed);
+    public void onProgress(int progress, long currentSize, long totalSize, long speed) {
+        super.onProgress(progress, currentSize, totalSize, speed);
         if (mNeedToReloadThumbnail) {
             loadThumbnail();
         }

@@ -30,38 +30,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="1dp"
             android:textColor="@color/color_text_light"
-            app:layout_constraintBottom_toTopOf="@+id/layout_progress"
             app:layout_constraintStart_toEndOf="@+id/iv_thumb"
             app:layout_constraintTop_toTopOf="@+id/iv_thumb"
             app:layout_constraintVertical_chainStyle="spread_inside" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_progress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_state"
-            app:layout_constraintEnd_toStartOf="@+id/space_end"
-            app:layout_constraintStart_toStartOf="@+id/tv_id"
-            app:layout_constraintTop_toBottomOf="@+id/tv_id">
-
-            <com.ess.anime.wallpaper.ui.view.NodeProgressBar
-                android:id="@+id/progress_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:activating_circle_radius="5dp"
-                app:active_color="@color/pixiv_gif_dl_progress_active_color"
-                app:circle_count="5"
-                app:circle_stroke_width="2dp"
-                app:inactive_color="@color/pixiv_gif_dl_progress_inactive_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.8"
-                app:line_stroke_width="2dp"
-                app:normal_circle_radius="3dp" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_state"
@@ -74,29 +45,38 @@
             android:textColor="@color/color_text_light"
             app:layout_constraintBottom_toBottomOf="@+id/iv_thumb"
             app:layout_constraintEnd_toStartOf="@+id/space_end"
-            app:layout_constraintStart_toStartOf="@+id/tv_id"
-            app:layout_constraintTop_toBottomOf="@+id/layout_progress" />
+            app:layout_constraintStart_toStartOf="@+id/tv_id" />
 
-        <com.wang.avi.AVLoadingIndicatorView
-            android:id="@+id/loading_view"
+        <at.grabner.circleprogress.CircleProgressView
+            android:id="@+id/progress_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:indicatorColor="@color/color_text_general"
-            app:indicatorName="BallClipRotateMultipleIndicator"
+            app:cpv_autoTextSize="true"
+            app:cpv_barColor="@color/color_text_selected"
+            app:cpv_barStrokeCap="Round"
+            app:cpv_barWidth="4dp"
+            app:cpv_rimColor="@color/color_text_unselected"
+            app:cpv_rimWidth="4dp"
+            app:cpv_showUnit="true"
+            app:cpv_textColor="@color/colorAccent"
+            app:cpv_textMode="Percent"
+            app:cpv_textScale="0.8"
+            app:cpv_textSize="14sp"
+            app:cpv_unit="%"
+            app:cpv_unitColor="@color/colorAccent"
+            app:cpv_unitPosition="right_top"
+            app:cpv_unitSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@+id/space_end"
             app:layout_constraintStart_toStartOf="@+id/space_end"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageView
             android:id="@+id/btn_restart"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="Re"
-            app:autoSizeMaxTextSize="15sp"
-            app:autoSizeMinTextSize="8sp"
-            app:autoSizeTextType="uniform"
+            android:src="@drawable/ic_redownload"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@+id/space_end"
@@ -107,17 +87,27 @@
             android:id="@+id/space_end"
             android:layout_width="48dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
+    <View
         android:id="@+id/iv_delete"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="55dp"
+        android:layout_height="45dp"
         android:layout_gravity="end"
-        android:src="@drawable/qmui_icon_notify_error" />
+        android:layout_marginTop="-23dp"
+        android:layout_marginEnd="-23dp"
+        android:background="@drawable/bg_close_subscript" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="-2.5dp"
+        android:layout_marginEnd="1dp"
+        android:src="@drawable/ic_cancel_download" />
 
 </androidx.cardview.widget.CardView>

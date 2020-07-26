@@ -92,7 +92,7 @@ public class DownloadImageService extends Service {
 
                         @Override
                         public void onProgress(Progress progress) {
-                            listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.speed);
+                            listener.onProgress((int) (progress.fraction * 100), progress.currentSize, progress.totalSize, progress.speed);
                             DownloadImageManager.getInstance().addOrUpdate(downloadBean);
                         }
 
