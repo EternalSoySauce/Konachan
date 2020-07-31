@@ -116,6 +116,7 @@
 
     <!-- Download Image Manager -->
     <string name="download_waiting">等待中...</string>
+    <string name="download_finish">下載完成，已保存到我的收藏</string>
 
     <!-- Pixiv Gif DL -->
     <string name="pixiv_edit_hint_enter_id">請輸入Pixiv作品Id</string>

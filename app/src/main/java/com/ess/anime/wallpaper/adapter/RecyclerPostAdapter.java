@@ -56,6 +56,8 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
             layoutParams.dimensionRatio = "165:130";
         } else if (thumbBean.thumbHeight / thumbBean.thumbWidth >= 3) {
             layoutParams.dimensionRatio = "1:3";
+        } else if (thumbBean.thumbWidth / thumbBean.thumbHeight >= 2) {
+            layoutParams.dimensionRatio = "2:1";
         } else {
             layoutParams.dimensionRatio = thumbBean.thumbWidth + ":" + thumbBean.thumbHeight;
         }

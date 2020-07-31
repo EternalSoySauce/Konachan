@@ -33,7 +33,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
     private final static int UPDATE_DL_STATE = 1;
 
     public RecyclerDownloadImageAdapter(@Nullable List<DownloadBean> data) {
-        super(R.layout.recycler_item_download_image, data);
+        super(R.layout.recycler_item_download_manager, data);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         // 预览图
         GlideApp.with(mContext)
                 .load(MyGlideModule.makeGlideUrl(downloadBean.thumbUrl))
-                .placeholder(R.drawable.ic_placeholder_pixiv_gif_thumb)
+                .placeholder(R.drawable.ic_placeholder_download_thumb)
                 .priority(Priority.IMMEDIATE)
                 .into((ImageView) holder.getView(R.id.iv_thumb));
 
@@ -66,26 +66,24 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         String tag = downloadBean.downloadUrl;
         DownloadTask task = OkDownload.getInstance().getTask(tag);
         if (task == null) {
-            progressView.spin();
             holder.setText(R.id.tv_state, R.string.download_waiting);
         } else {
             switch (task.progress.status) {
                 case Progress.NONE:
                 case Progress.WAITING:
-                    progressView.spin();
                     holder.setText(R.id.tv_state, R.string.download_waiting);
                     break;
                 case Progress.LOADING:
                 case Progress.PAUSE:
-                    progressView.setValueAnimated((task.progress.fraction * 100));
+                    progressView.setValue((task.progress.fraction * 100));
                     holder.setText(R.id.tv_state, FileUtils.computeFileSize(task.progress.currentSize) + " / " + FileUtils.computeFileSize(task.progress.totalSize));
                     break;
                 case Progress.ERROR:
                     holder.setText(R.id.tv_state, R.string.download_failed);
                     break;
                 case Progress.FINISH:
-                    progressView.setValueAnimated(100);
-                    holder.setText(R.id.tv_state, mContext.getString(R.string.download_finished, FileUtils.computeFileSize(downloadBean.downloadSize)));
+                    progressView.setValue(100);
+                    holder.setText(R.id.tv_state, R.string.download_finish);
                     break;
             }
         }

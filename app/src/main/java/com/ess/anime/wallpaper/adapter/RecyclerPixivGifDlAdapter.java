@@ -30,7 +30,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
     private final static int UPDATE_DL_STATE = 1;
 
     public RecyclerPixivGifDlAdapter(@Nullable List<PixivGifBean> data) {
-        super(R.layout.recycler_item_pixiv_gif_dl, data);
+        super(R.layout.recycler_item_download_manager, data);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                 : MyGlideModule.makeGlideUrlWithReferer(pixivGifBean.thumbUrl, pixivGifBean.getRefererUrl());
         GlideApp.with(mContext)
                 .load(url)
-                .placeholder(R.drawable.ic_placeholder_pixiv_gif_thumb)
+                .placeholder(R.drawable.ic_placeholder_download_thumb)
                 .priority(Priority.IMMEDIATE)
                 .into((ImageView) holder.getView(R.id.iv_thumb));
 
@@ -83,12 +83,7 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
                         state = mContext.getString(R.string.pixiv_dl_state_download_zip_progress,
                                 FileUtils.computeFileSize(task.progress.currentSize) + " / " + FileUtils.computeFileSize(task.progress.totalSize));
                     }
-                    float progress = pixivGifBean.progress * 100f;
-                    if (Math.abs(progress - progressView.getCurrentValue()) > 10) {
-                        progressView.setValue(progress);
-                    } else {
-                        progressView.setValueAnimated(progress);
-                    }
+                    progressView.setValue(pixivGifBean.progress * 100f);
                 }
                 break;
             case EXTRACT_ZIP:

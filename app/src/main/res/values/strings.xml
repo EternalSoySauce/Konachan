@@ -133,6 +133,7 @@
 
     <!-- Download Image Manager -->
     <string name="download_waiting">Waiting...</string>
+    <string name="download_finish">Download completed and saved to Collection</string>
 
     <!-- Pixiv Gif DL -->
     <string name="pixiv_edit_hint_enter_id">Please enter Pixiv artwork Id</string>

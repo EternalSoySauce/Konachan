@@ -54,7 +54,9 @@ public class DownloadImageManagerActivity extends BaseActivity {
 
         int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 360, 1);
         mRvDownload.setLayoutManager(new GridLayoutManager(this, span));
-        new RecyclerDownloadImageAdapter(downloadList).bindToRecyclerView(mRvDownload);
+        RecyclerDownloadImageAdapter adapter = new RecyclerDownloadImageAdapter(downloadList);
+        adapter.bindToRecyclerView(mRvDownload);
+        adapter.setEmptyView(R.layout.layout_empty_download, mRvDownload);
 
         int spaceHor = UIUtils.dp2px(this, 5);
         int spaceVer = UIUtils.dp2px(this, 10);
