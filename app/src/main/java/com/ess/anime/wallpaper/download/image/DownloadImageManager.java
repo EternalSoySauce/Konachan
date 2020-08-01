@@ -16,6 +16,7 @@ import com.unity3d.services.core.connectivity.ConnectivityMonitor;
 import com.unity3d.services.core.connectivity.IConnectivityListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class DownloadImageManager implements IConnectivityListener {
@@ -54,6 +55,21 @@ public class DownloadImageManager implements IConnectivityListener {
         synchronized (mDownloadList) {
             if (mDownloadList.remove(downloadBean)) {
                 notifyDataRemoved(downloadBean);
+            }
+        }
+    }
+
+    public void clearAllFinished() {
+        synchronized (mDownloadList) {
+            Iterator<DownloadBean> iterator = mDownloadList.iterator();
+            while (iterator.hasNext()) {
+                DownloadBean downloadBean = iterator.next();
+                String tag = downloadBean.downloadUrl;
+                DownloadTask task = OkDownload.getInstance().getTask(tag);
+                if (task != null && task.progress.status == Progress.FINISH) {
+                    iterator.remove();
+                    notifyDataRemoved(downloadBean);
+                }
             }
         }
     }

@@ -2,6 +2,20 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
+        android:icon="@drawable/ic_nav_menu_pixiv"
+        android:shortcutId="nav_pixiv_gif"
+        android:shortcutLongLabel="@string/nav_pixiv_gif"
+        android:shortcutShortLabel="@string/nav_pixiv_gif">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.PixivGifActivity"
+            android:targetPackage="com.ess.anime.wallpaper" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
         android:icon="@drawable/ic_nav_menu_sauce_nao"
         android:shortcutId="nav_sauce_nao"
         android:shortcutLongLabel="@string/nav_sauce_nao"

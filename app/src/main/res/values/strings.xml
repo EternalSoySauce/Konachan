@@ -210,7 +210,10 @@
     <string name="dialog_cannot_wallpaper_lockscreen_msg">Your device may not be able to apply a custom wallpaper as a lock screen. If you have this, please use the "Set as wallpaper" function.</string>
     <string name="dialog_cannot_wallpaper_lockscreen_sure">I see</string>
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">Don\'t show again</string>
-    <string name="dialog_delete_pixiv_gif_item_msg">Downloading, confirm deletion?</string>
+    <string name="dialog_delete_downloading_item_msg">Downloading, confirm deletion?</string>
+    <string name="dialog_clear_all_download_finished_item_msg">Confirm to clear all download finished items in the list?</string>
+    <string name="dialog_clear_all_sure">Sure</string>
+    <string name="dialog_clear_all_cancel">Cancel</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

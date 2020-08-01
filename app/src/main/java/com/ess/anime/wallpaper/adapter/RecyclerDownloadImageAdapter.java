@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.adapter;
 
 import android.content.Intent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -65,12 +66,15 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         CircleProgressView progressView = holder.getView(R.id.progress_view);
         String tag = downloadBean.downloadUrl;
         DownloadTask task = OkDownload.getInstance().getTask(tag);
+        progressView.setVisibility((task == null || task.progress.status == Progress.ERROR) ? View.GONE : View.VISIBLE);
         if (task == null) {
+            progressView.setValue(0);
             holder.setText(R.id.tv_state, R.string.download_waiting);
         } else {
             switch (task.progress.status) {
                 case Progress.NONE:
                 case Progress.WAITING:
+                    progressView.setValue((task.progress.fraction * 100));
                     holder.setText(R.id.tv_state, R.string.download_waiting);
                     break;
                 case Progress.LOADING:

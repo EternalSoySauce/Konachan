@@ -21,7 +21,7 @@
 
         <item
             android:id="@+id/nav_download_manager"
-            android:icon="@drawable/ic_nav_menu_collection"
+            android:icon="@drawable/ic_nav_menu_download_manager"
             android:title="@string/nav_download_manager" />
     </group>
 
@@ -31,7 +31,7 @@
 
         <item
             android:id="@+id/nav_pixiv_gif"
-            android:icon="@drawable/ic_nav_pixiv"
+            android:icon="@drawable/ic_nav_menu_pixiv"
             android:title="@string/nav_pixiv_gif" />
 
         <item

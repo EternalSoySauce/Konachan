@@ -7,6 +7,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerDownloadImageAdapter;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.download.image.DownloadImageManager;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -41,6 +42,17 @@ public class DownloadImageManagerActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    @OnClick(R.id.iv_clear_all)
+    void clearAllFinished() {
+        CustomDialog.showClearAllDownloadFinishedDialog(this, new CustomDialog.SimpleDialogActionListener() {
+            @Override
+            public void onPositive() {
+                super.onPositive();
+                DownloadImageManager.getInstance().clearAllFinished();
+            }
+        });
     }
 
     @OnClick(R.id.iv_goto_collection)

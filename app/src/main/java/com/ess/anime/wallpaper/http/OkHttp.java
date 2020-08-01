@@ -98,6 +98,10 @@ public class OkHttp {
 
         // 异步请求用Volley
         sRequestQueue = Volley.newRequestQueue(application);
+
+        // 每次初始化都清空断点下载记录
+        OkDownload.getInstance().removeAll();
+        DownloadManager.getInstance().clear();
     }
 
     // 异步网络请求

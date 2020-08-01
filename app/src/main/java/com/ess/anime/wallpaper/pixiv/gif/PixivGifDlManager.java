@@ -25,6 +25,7 @@ import net.lingala.zip4j.ZipFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -321,6 +322,20 @@ public class PixivGifDlManager implements IConnectivityListener {
             PixivGifBean pixivGifBean = mPixivMap.remove(pixivId);
             if (pixivGifBean != null) {
                 notifyDataRemoved(pixivGifBean);
+            }
+        }
+    }
+
+    public void clearAllFinished() {
+        synchronized (mPixivMap) {
+            Iterator<Map.Entry<String, PixivGifBean>> iterator = mPixivMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, PixivGifBean> entry = iterator.next();
+                PixivGifBean pixivGifBean = entry.getValue();
+                if (pixivGifBean.state == PixivGifBean.PixivDlState.FINISH) {
+                    iterator.remove();
+                    notifyDataRemoved(pixivGifBean);
+                }
             }
         }
     }

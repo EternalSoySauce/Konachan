@@ -29,6 +29,17 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_nav_menu_collection"
                 app:tint="@color/colorAccent" />
+
+            <ImageView
+                android:id="@+id/iv_clear_all"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="7dp"
+                android:background="@drawable/background_item_selected"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_clear_all"
+                app:tint="@color/colorAccent" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 

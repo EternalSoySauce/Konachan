@@ -81,9 +81,24 @@ public class CustomDialog extends MaterialDialog.Builder {
      */
     public static void showDeleteWhenDownloadingItemDialog(Context context, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
-                .content(R.string.dialog_delete_pixiv_gif_item_msg)
+                .content(R.string.dialog_delete_downloading_item_msg)
                 .negativeText(R.string.dialog_delete_cancel)
                 .positiveText(R.string.dialog_delete_sure)
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
+    }
+
+    /**
+     * 清空全部已完成下载项
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showClearAllDownloadFinishedDialog(Context context, OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(R.string.dialog_clear_all_download_finished_item_msg)
+                .negativeText(R.string.dialog_clear_all_cancel)
+                .positiveText(R.string.dialog_clear_all_sure)
                 .onPositive((dialog1, which) -> listener.onPositive())
                 .show();
     }
