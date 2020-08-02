@@ -20,6 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+#noinspection ShrinkerUnresolvedReference
+
 -keepclassmembers class **.R$* {
     public static <fields>;
     public static final int *;
@@ -161,9 +163,7 @@
 -keep class sun.misc.Unsafe { *; }
 #-keep class com.google.gson.stream.** { *; }
 # Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.examples.android.model.** {
-    *;
-}
+-keep class com.google.gson.examples.android.model.** { *; }
 # Prevent proguard from stripping interface information from TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * implements com.google.gson.TypeAdapterFactory
@@ -246,9 +246,7 @@
 ##############################
 #          AgentWeb          #
 ##############################
--keep class com.just.agentweb.** {
-    *;
-}
+-keep class com.just.agentweb.** { *; }
 -dontwarn com.just.agentweb.**
 
 ##############################
@@ -271,7 +269,6 @@
 -keep class com.yalantis.ucrop** { *; }
 -keep interface com.yalantis.ucrop** { *; }
 
-
 ##############################
 #             bean           #
 ##############################
@@ -281,4 +278,4 @@
 ##############################
 #        WebsiteConfig       #
 ##############################
--keep class com.ess.anime.wallpaper.website.parser.**
+-keep class com.ess.anime.wallpaper.website.parser.** { *; }
