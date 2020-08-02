@@ -26,7 +26,9 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         sApplication = this;
-        CrashReport.initCrashReport(this, BUGLY_APP_ID, false);
+        if (!BuildConfig.DEBUG) {
+            CrashReport.initCrashReport(this, BUGLY_APP_ID, false);
+        }
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
         GreenDaoUtils.initGreenDao(this);

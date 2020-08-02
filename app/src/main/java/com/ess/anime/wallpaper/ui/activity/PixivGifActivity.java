@@ -50,6 +50,7 @@ public class PixivGifActivity extends BaseActivity {
         initToolBarLayout();
         if (!FFmpeg.getInstance(this).isSupported()) {
             Toast.makeText(MyApp.getInstance(), R.string.not_support_ffmpeg, Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
@@ -98,11 +99,7 @@ public class PixivGifActivity extends BaseActivity {
 
         mEtId.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO) {
-                if (FFmpeg.getInstance(this).isSupported()) {
-                    startDownload();
-                }else {
-                    Toast.makeText(MyApp.getInstance(), R.string.not_support_ffmpeg, Toast.LENGTH_SHORT).show();
-                }
+                startDownload();
                 return true;
             }
             return false;
