@@ -22,6 +22,8 @@
     <string name="alipay_not_installed">未安装支付宝</string>
     <string name="already_set_clipboard">已复制到剪贴板</string>
     <string name="already_add_to_clipboard">已追加到上次复制的标签后面</string>
+    <string name="already_in_download_queue">已加入下载队列</string>
+    <string name="not_support_ffmpeg">您的设备无法合成GIF</string>
 
     <!-- Notification -->
     <string name="download_started">%s开始下载</string>

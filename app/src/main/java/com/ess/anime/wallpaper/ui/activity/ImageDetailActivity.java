@@ -235,8 +235,7 @@ public class ImageDetailActivity extends BaseActivity {
                 }
             }, i * 100);
         }
-        // TODO 翻译
-        Toast.makeText(this, "已加入下载队列", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.already_in_download_queue, Toast.LENGTH_SHORT).show();
     }
 
     private File makeFileToSave(String postId, String fileType, String url) {

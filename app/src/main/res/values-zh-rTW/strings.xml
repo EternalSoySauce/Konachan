@@ -22,6 +22,8 @@
     <string name="alipay_not_installed">未安裝支付寶</string>
     <string name="already_set_clipboard">已復製到剪貼板</string>
     <string name="already_add_to_clipboard">已追加到上次復製的標籤後面</string>
+    <string name="already_in_download_queue">已加入下載隊列</string>
+    <string name="not_support_ffmpeg">您的設備無法合成GIF</string>
 
     <!-- Notification -->
     <string name="download_started">%s開始下載</string>

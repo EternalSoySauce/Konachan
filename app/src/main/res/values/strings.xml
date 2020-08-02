@@ -22,6 +22,8 @@
     <string name="alipay_not_installed">Alipay is not installed</string>
     <string name="already_set_clipboard">Copied to clipboard</string>
     <string name="already_add_to_clipboard">Appended to the last copied tag</string>
+    <string name="already_in_download_queue">Already in download queue</string>
+    <string name="not_support_ffmpeg">Your device cannot synthesize GIF</string>
 
     <!-- Notification -->
     <string name="download_started">%s Start download</string>
