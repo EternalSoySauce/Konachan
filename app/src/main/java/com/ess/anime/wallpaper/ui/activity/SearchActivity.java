@@ -105,9 +105,7 @@ public class SearchActivity extends BaseActivity {
             public void onPositive() {
                 super.onPositive();
                 GreenDaoUtils.deleteAllSearchTags();
-                if (mLayoutSearchHistory != null) {
-                    mLayoutSearchHistory.resetData();
-                }
+                mLayoutSearchHistory.resetData();
             }
         });
     }
@@ -331,7 +329,7 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (mLayoutSearchHistory != null && mLayoutSearchHistory.isEditing()) {
+        if (mVpSearch.getCurrentItem() == 1 && mLayoutSearchHistory.isEditing()) {
             mLayoutSearchHistory.cancelEdit();
         } else {
             super.onBackPressed();
