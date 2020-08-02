@@ -61,6 +61,9 @@
     <string name="spinner_search_advanced">高級搜索</string>
     <string name="cancel_search">取消</string>
     <string name="click_here">%s點此查看。</string>
+    <string name="search_instruction">使用說明</string>
+    <string name="search_history">歷史記錄</string>
+    <string name="clear_all_history">清空</string>
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">允許播放語音</string>
@@ -193,6 +196,7 @@
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">不再顯示</string>
     <string name="dialog_delete_downloading_item_msg">正在下載中，確認刪除？</string>
     <string name="dialog_clear_all_download_finished_item_msg">確認清空列表中全部已完成下載項？</string>
+    <string name="dialog_clear_all_search_history_msg">確認清除全部歷史記錄嗎？</string>
     <string name="dialog_clear_all_sure">確認</string>
     <string name="dialog_clear_all_cancel">取消</string>
 

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
+import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -28,6 +29,7 @@ public class MyApp extends Application {
         CrashReport.initCrashReport(this, BUGLY_APP_ID, false);
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+        GreenDaoUtils.initGreenDao(this);
         OkHttp.initHttpConfig(this);
         ClientProperties.setApplicationContext(this);
         WebsiteManager.getInstance().updateWebsiteConfig();

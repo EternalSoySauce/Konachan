@@ -72,6 +72,9 @@
     <string name="spinner_search_advanced">Advanced Search</string>
     <string name="cancel_search">Cancel</string>
     <string name="click_here">%sclick here.</string>
+    <string name="search_instruction">Instruction</string>
+    <string name="search_history">History</string>
+    <string name="clear_all_history">Clear</string>
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">Allow to play sound</string>
@@ -214,6 +217,7 @@
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">Don\'t show again</string>
     <string name="dialog_delete_downloading_item_msg">Downloading, confirm deletion?</string>
     <string name="dialog_clear_all_download_finished_item_msg">Confirm to clear all download finished items in the list?</string>
+    <string name="dialog_clear_all_search_history_msg">Confirm to clear all search history?</string>
     <string name="dialog_clear_all_sure">Sure</string>
     <string name="dialog_clear_all_cancel">Cancel</string>
 

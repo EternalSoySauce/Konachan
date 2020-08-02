@@ -19,6 +19,8 @@ import com.ess.anime.wallpaper.bean.PoolBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.TagBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.database.GreenDaoUtils;
+import com.ess.anime.wallpaper.database.SearchTagBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
@@ -249,9 +251,11 @@ public class DetailFragment extends BaseFragment {
             tvTag.setTextColor(getResources().getColor(colorId));
             view.findViewById(R.id.iv_search).setOnClickListener(v -> {
                 if (SystemUtils.isActivityActive(mActivity)) {
+                    int searchMode = Constants.SEARCH_MODE_TAGS;
+                    GreenDaoUtils.updateSearchTag(new SearchTagBean(tag, searchMode, System.currentTimeMillis()));
                     Intent intent = new Intent(mActivity, MainActivity.class);
                     intent.putExtra(Constants.SEARCH_TAG, tag);
-                    intent.putExtra(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
+                    intent.putExtra(Constants.SEARCH_MODE, searchMode);
                     startActivity(intent);
                     mActivity.finish();
                 }

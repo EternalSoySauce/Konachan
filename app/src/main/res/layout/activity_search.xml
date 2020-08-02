@@ -70,52 +70,48 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <ScrollView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:gravity="center_vertical">
+
+        <com.ogaclejapan.smarttablayout.SmartTabLayout
+            android:id="@+id/smart_tab"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            app:stl_defaultTabBackground="?android:attr/selectableItemBackground"
+            app:stl_defaultTabTextColor="@color/color_smart_tab_text"
+            app:stl_defaultTabTextSize="14sp"
+            app:stl_dividerThickness="0dp"
+            app:stl_indicatorColor="@color/color_text_selected"
+            app:stl_indicatorCornerRadius="3dp"
+            app:stl_indicatorInterpolation="linear"
+            app:stl_indicatorThickness="2.5dp"
+            app:stl_indicatorWidth="30dp"
+            app:stl_overlineThickness="0dp"
+            app:stl_underlineThickness="0dp" />
+
+        <TextView
+            android:id="@+id/tv_clear_all_search_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:drawableStart="@drawable/ic_clear_all_history"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:text="@string/clear_all_history"
+            android:textColor="@color/color_text_extra"
+            app:drawableTint="@color/color_text_extra" />
+    </LinearLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
-        android:padding="16dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbarThumbVertical="@drawable/style_scroll_bar_thumb">
-
-        <LinearLayout
-            android:id="@+id/layout_doc_search_mode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_doc_search_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/color_text_unselected"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_doc_search_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/color_text_unselected"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_doc_search_chinese"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/color_text_unselected"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_doc_search_advanced"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/color_text_unselected"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </ScrollView>
+        android:layout_marginTop="100dp"
+        android:overScrollMode="never" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_auto_complete_search"

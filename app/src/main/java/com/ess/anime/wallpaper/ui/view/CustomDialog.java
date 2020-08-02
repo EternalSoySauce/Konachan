@@ -104,6 +104,21 @@ public class CustomDialog extends MaterialDialog.Builder {
     }
 
     /**
+     * 清空全部搜索历史记录
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showClearAllSearchHistoryDialog(Context context, OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(R.string.dialog_clear_all_search_history_msg)
+                .negativeText(R.string.dialog_clear_all_cancel)
+                .positiveText(R.string.dialog_clear_all_sure)
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
+    }
+
+    /**
      * 显示标签类型说明文档
      *
      * @param context 上下文

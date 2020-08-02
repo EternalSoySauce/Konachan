@@ -6,40 +6,41 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCompleteSearchAdapter;
 import com.ess.anime.wallpaper.adapter.RecyclerSearchModePopupAdapter;
+import com.ess.anime.wallpaper.database.GreenDaoUtils;
+import com.ess.anime.wallpaper.database.SearchTagBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.model.helper.DocDataHelper;
-import com.ess.anime.wallpaper.website.search.SearchAutoCompleteManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.SearchHistoryLayout;
+import com.ess.anime.wallpaper.ui.view.SearchModeDocLayout;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.search.SearchAutoCompleteManager;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -51,10 +52,17 @@ public class SearchActivity extends BaseActivity {
 
     @BindView(R.id.et_search)
     EditText mEtSearch;
-    @BindView(R.id.layout_doc_search_mode)
-    LinearLayout mLayoutDocSearchMode;
     @BindView(R.id.rv_auto_complete_search)
     RecyclerView mRvCompleteSearch;
+    @BindView(R.id.tv_clear_all_search_history)
+    TextView mTvClearAllSearchHistory;
+    @BindView(R.id.smart_tab)
+    SmartTabLayout mSmartTab;
+    @BindView(R.id.vp_search)
+    ViewPager mVpSearch;
+
+    SearchModeDocLayout mLayoutSearchModeDoc;
+    SearchHistoryLayout mLayoutSearchHistory;
 
     private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
 
@@ -74,16 +82,95 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     void init(Bundle savedInstanceState) {
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
-        mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
-
+        initData();
+        initViewPager();
+        initSlidingTabLayout();
         initEditSearch();
-        initSearchDocumentViews();
         initCompleteSearchRecyclerView();
         initListPopupWindow();
         changeEditAttrs();
         changeDocumentColor();
+    }
+
+    private void initData() {
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
+        mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
+    }
+
+    @OnClick(R.id.tv_clear_all_search_history)
+    void clearAllSearchHistory() {
+        CustomDialog.showClearAllSearchHistoryDialog(this, new CustomDialog.SimpleDialogActionListener() {
+            @Override
+            public void onPositive() {
+                super.onPositive();
+                GreenDaoUtils.deleteAllSearchTags();
+                if (mLayoutSearchHistory != null) {
+                    mLayoutSearchHistory.resetData();
+                }
+            }
+        });
+    }
+
+    private void initViewPager() {
+        mLayoutSearchModeDoc = (SearchModeDocLayout) View.inflate(this, R.layout.layout_search_mode_doc, null);
+        mLayoutSearchHistory = (SearchHistoryLayout) View.inflate(this, R.layout.layout_search_history, null);
+        PagerAdapter pagerAdapter = new PagerAdapter() {
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                if (position == 0) {
+                    container.addView(mLayoutSearchModeDoc);
+                    return mLayoutSearchModeDoc;
+                } else if (position == 1) {
+                    container.addView(mLayoutSearchHistory);
+                    return mLayoutSearchHistory;
+                }
+                return super.instantiateItem(container, position);
+            }
+
+            @Override
+            public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+                container.removeView((View) object);
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                if (position == 0) {
+                    return getString(R.string.search_instruction);
+                } else if (position == 1) {
+                    return getString(R.string.search_history);
+                }
+                return super.getPageTitle(position);
+            }
+        };
+        ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                mTvClearAllSearchHistory.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+            }
+        };
+        mVpSearch.setAdapter(pagerAdapter);
+        mVpSearch.setOffscreenPageLimit(pagerAdapter.getCount());
+        mVpSearch.addOnPageChangeListener(onPageChangeListener);
+        mVpSearch.setCurrentItem(1);
+        onPageChangeListener.onPageSelected(mVpSearch.getCurrentItem());
+    }
+
+    private void initSlidingTabLayout() {
+        mSmartTab.setViewPager(mVpSearch);
     }
 
     // 下拉栏图标
@@ -104,6 +191,7 @@ public class SearchActivity extends BaseActivity {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String tags = mEtSearch.getText().toString().trim();
                 if (!TextUtils.isEmpty(tags)) {
+                    GreenDaoUtils.updateSearchTag(new SearchTagBean(tags, mCurrentSearchMode, System.currentTimeMillis()));
                     Intent intent = new Intent();
                     intent.putExtra(Constants.SEARCH_TAG, tags);
                     intent.putExtra(Constants.SEARCH_MODE, mCurrentSearchMode);
@@ -171,43 +259,9 @@ public class SearchActivity extends BaseActivity {
         }
     }
 
-    private void initSearchDocumentViews() {
-        List<String> docList = DocDataHelper.getSearchModeDocumentList(this);
-
-        TextView tvDocSearchTag = findViewById(R.id.tv_doc_search_tag);
-        tvDocSearchTag.setText(docList.get(0));
-
-        TextView tvDocSearchId = findViewById(R.id.tv_doc_search_id);
-        tvDocSearchId.setText(docList.get(1));
-
-        TextView tvDocSearchChinese = findViewById(R.id.tv_doc_search_chinese);
-        tvDocSearchChinese.setText(docList.get(2));
-
-        TextView tvDocSearchAdvanced = findViewById(R.id.tv_doc_search_advanced);
-        tvDocSearchAdvanced.setText(setLinkToShowTagTypeDoc(docList.get(3)));
-        tvDocSearchAdvanced.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    private SpannableString setLinkToShowTagTypeDoc(String baseText) {
-        SpannableString spanText = new SpannableString(getString(R.string.click_here, baseText));
-        spanText.setSpan(new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View widget) {
-                CustomDialog.showAdvancedSearchHelpDialog(SearchActivity.this);
-            }
-        }, baseText.length(), spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        spanText.setSpan(new UnderlineSpan(), baseText.length(),
-                spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        spanText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.color_link)),
-                baseText.length(), spanText.length() - 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return spanText;
-    }
-
     private void changeDocumentColor() {
-        for (int i = 0; i < mLayoutDocSearchMode.getChildCount(); i++) {
-            TextView tv = (TextView) mLayoutDocSearchMode.getChildAt(i);
-            int textColor = i == mSelectedPos ? R.color.color_text_selected : R.color.color_text_unselected;
-            tv.setTextColor(getResources().getColor(textColor));
+        if (mLayoutSearchModeDoc != null) {
+            mLayoutSearchModeDoc.changeDocumentColor(mSelectedPos);
         }
     }
 
@@ -273,6 +327,15 @@ public class SearchActivity extends BaseActivity {
         }
         maxWidth += tv.getPaddingStart() + tv.getPaddingEnd();
         return (int) maxWidth;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mLayoutSearchHistory != null && mLayoutSearchHistory.isEditing()) {
+            mLayoutSearchHistory.cancelEdit();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @OnClick(R.id.tv_cancel_search)
