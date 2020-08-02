@@ -12,12 +12,13 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.download.apk.ApkBean;
+import com.ess.anime.wallpaper.download.apk.DownloadApkService;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
-import com.ess.anime.wallpaper.download.apk.DownloadApkService;
-import com.ess.anime.wallpaper.utils.SystemUtils;
+import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.qmuiteam.qmui.util.QMUIDeviceHelper;
@@ -273,8 +274,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .neutralText(R.string.dialog_feedback_neutral)
                 .onNeutral((dialog12, which) -> {
                     String url = "https://github.com/EternalSoySauce/Konachan/issues";
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.browse_title)));
+                    HyperlinkActivity.launch(context, url);
                 })
                 .positiveText(R.string.dialog_feedback_sure)
                 .onPositive((dialog1, which) -> {

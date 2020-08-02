@@ -187,7 +187,7 @@
     <string name="dialog_update_ignore">忽略</string>
     <string name="dialog_update_update">更新</string>
     <string name="dialog_feedback_title">反馈建议</string>
-    <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系或者到Github主页上提。\n邮箱: %s</string>
+    <string name="dialog_feedback_msg">如果您遇到什么问题，或是有什么好的意见和建议，可以发送邮件与我们联系或者到Github主页上提Issue。\n邮箱: %s</string>
     <string name="dialog_feedback_sure">发送邮件</string>
     <string name="dialog_feedback_cancel">取消</string>
     <string name="dialog_feedback_neutral">跳转至Github</string>

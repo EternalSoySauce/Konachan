@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.ess.anime.wallpaper.MyApp;
+import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.lzy.okgo.model.Progress;
@@ -69,6 +70,10 @@ public class DownloadImageManager implements IConnectivityListener {
                 if (task != null && task.progress.status == Progress.FINISH) {
                     iterator.remove();
                     notifyDataRemoved(downloadBean);
+                    BaseDownloadProgressListener listener = OkHttp.getProgressListener(downloadBean.downloadUrl);
+                    if (listener != null) {
+                        listener.onRemove();
+                    }
                 }
             }
         }

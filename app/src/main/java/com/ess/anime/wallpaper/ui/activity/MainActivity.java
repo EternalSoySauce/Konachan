@@ -2,7 +2,6 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
@@ -165,8 +164,7 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.nav_github:
                         String url = "https://github.com/EternalSoySauce/Konachan";
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(Intent.createChooser(intent, getString(R.string.browse_title)));
+                        HyperlinkActivity.launch(MainActivity.this, url);
                         break;
                     case R.id.nav_feedback:
                         CustomDialog.showFeedbackDialog(MainActivity.this);
