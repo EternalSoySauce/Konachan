@@ -15,7 +15,7 @@ import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -103,7 +103,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     // 滑动加载更多
     @Override
     public void onLoadMoreRequested() {
-        if (!ComponentUtils.isActivityActive(getActivity())) {
+        if (!SystemUtils.isActivityActive(getActivity())) {
             return;
         }
 
@@ -134,7 +134,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
     //加载更多完成后刷新界面
     private void addMoreThumbList(final List<ThumbBean> newList) {
-        if (!ComponentUtils.isActivityActive(getActivity()) || !mPostAdapter.isLoading()) {
+        if (!SystemUtils.isActivityActive(getActivity()) || !mPostAdapter.isLoading()) {
             return;
         }
 
@@ -147,7 +147,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     private void getNewPosts(int page) {
-        if (!ComponentUtils.isActivityActive(getActivity())) {
+        if (!SystemUtils.isActivityActive(getActivity())) {
             return;
         }
 
@@ -178,7 +178,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
     // 搜索新内容或下拉刷新完成后刷新界面
     private void refreshThumbList(List<ThumbBean> newList) {
-        if (!ComponentUtils.isActivityActive(getActivity()) || !mSwipeRefresh.isRefreshing()) {
+        if (!SystemUtils.isActivityActive(getActivity()) || !mSwipeRefresh.isRefreshing()) {
             return;
         }
 
@@ -258,7 +258,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     private void checkImageBean(ThumbBean thumbBean) {
         thumbBean.checkToReplacePostData();
         String url = thumbBean.imageBean.posts[0].getMinSizeImageUrl();
-        if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(getActivity())) {
+        if (FileUtils.isImageType(url) && SystemUtils.isActivityActive(getActivity())) {
             MyGlideModule.preloadImage(getActivity(), url);
         }
     }

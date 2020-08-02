@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.download.DownloadListener;
 
@@ -60,7 +60,7 @@ public class DownloadApkService extends IntentService {
                         @Override
                         public void onFinish(File file, Progress progress) {
                             // 下载完成，自动启动安装
-                            ComponentUtils.installApk(DownloadApkService.this, file, true);
+                            SystemUtils.installApk(DownloadApkService.this, file, true);
                             // 通知监听器完成下载
                             listener.onFinish();
                             OkHttp.removeUrlFromDownloadQueue(url);

@@ -13,7 +13,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
 
@@ -58,7 +58,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
         });
 
-        String version = ComponentUtils.getVersionName(this);
+        String version = SystemUtils.getVersionName(this);
         version = getString(R.string.setting_current_version, version);
         mTvCurrentVersion.setText(version);
     }
@@ -95,7 +95,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         if (file.exists()) {
             String json = FileUtils.fileToString(file);
             ApkBean apkBean = ApkBean.getApkDetailFromJson(this, json);
-            if (apkBean.versionCode > ComponentUtils.getVersionCode(this)) {
+            if (apkBean.versionCode > SystemUtils.getVersionCode(this)) {
                 CustomDialog.showUpdateDialog(this, apkBean);
             } else {
                 showNoNewVersionToast();

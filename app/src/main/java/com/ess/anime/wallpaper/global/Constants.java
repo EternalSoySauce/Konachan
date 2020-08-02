@@ -30,12 +30,12 @@ public class Constants {
 
     // Activity Result
     public final static int SEARCH_CODE = 1000;
-    public final static int SEARCH_CODE_TAGS = 1001;
-    public final static int SEARCH_CODE_ID = 1002;
-    public final static int SEARCH_CODE_CHINESE = 1003;
-    public final static int SEARCH_CODE_ADVANCED = 1004;
-    public final static int SEARCH_CODE_HOME = 1005;
-    public final static int SEARCH_CODE_RANDOM = 1006;
+    public final static int SEARCH_MODE_TAGS = 1001;
+    public final static int SEARCH_MODE_ID = 1002;
+    public final static int SEARCH_MODE_CHINESE = 1003;
+    public final static int SEARCH_MODE_ADVANCED = 1004;
+    public final static int SEARCH_MODE_HOME = 1005;
+    public final static int SEARCH_MODE_RANDOM = 1006;
     public final static int FULLSCREEN_CODE = 2000;
 
     // EventBus

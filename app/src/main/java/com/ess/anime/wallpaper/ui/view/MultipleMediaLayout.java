@@ -23,7 +23,7 @@ import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.VideoCache;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -126,7 +126,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
         Object url = isWebPath() ? MyGlideModule.makeGlideUrl(mMediaPath) : mMediaPath;
         Activity activity = (Activity) getContext();
-        if (ComponentUtils.isActivityActive(activity)) {
+        if (SystemUtils.isActivityActive(activity)) {
             GlideApp.with(getContext())
                     .load(url)
                     .listener(this)

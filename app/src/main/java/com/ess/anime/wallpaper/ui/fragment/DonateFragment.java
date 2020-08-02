@@ -15,7 +15,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.model.helper.DonateHelper;
 import com.ess.anime.wallpaper.ui.view.image.MyImageSwitcher;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
 import java.util.Random;
@@ -124,7 +124,7 @@ public class DonateFragment extends DialogFragment {
 
     @OnClick(R.id.iv_alipay)
     void donateViaAlipay() {
-        if (ComponentUtils.isActivityActive(getActivity())) {
+        if (SystemUtils.isActivityActive(getActivity())) {
             mHasClickedDonateButton = true;
             DonateHelper.donateViaAlipay(getActivity());
         }
@@ -132,7 +132,7 @@ public class DonateFragment extends DialogFragment {
 
     @OnClick(R.id.iv_wechat)
     void donateViaWechat() {
-        if (ComponentUtils.isActivityActive(getActivity())) {
+        if (SystemUtils.isActivityActive(getActivity())) {
             mHasClickedDonateButton = true;
             DonateHelper.donateViaWechat(getActivity());
         }

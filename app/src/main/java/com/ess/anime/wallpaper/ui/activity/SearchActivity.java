@@ -75,7 +75,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     void init(Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_CODE_TAGS);
+        mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
         mSelectedPos = mCurrentSearchMode - Constants.SEARCH_CODE - 1;
 
         initEditSearch();
@@ -106,7 +106,8 @@ public class SearchActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(tags)) {
                     Intent intent = new Intent();
                     intent.putExtra(Constants.SEARCH_TAG, tags);
-                    setResult(mCurrentSearchMode, intent);
+                    intent.putExtra(Constants.SEARCH_MODE, mCurrentSearchMode);
+                    setResult(Constants.SEARCH_CODE, intent);
                     UIUtils.closeSoftInput(SearchActivity.this);
                     finish();
                 }
@@ -116,9 +117,9 @@ public class SearchActivity extends BaseActivity {
 
         mEtSearch.setFilters(new InputFilter[]{(source, start, end, dest, dstart, dend) -> {
             switch (mCurrentSearchMode) {
-                case Constants.SEARCH_CODE_TAGS:
+                case Constants.SEARCH_MODE_TAGS:
                     return source.toString().replace(" ", "_");
-                case Constants.SEARCH_CODE_CHINESE:
+                case Constants.SEARCH_MODE_CHINESE:
                     Pattern pattern = Pattern.compile("[\u4e00-\u9fa5·]+");
                     return StringUtils.filter(source.toString(), pattern);
                 default:
@@ -137,7 +138,7 @@ public class SearchActivity extends BaseActivity {
                 findViewById(R.id.iv_clear).setVisibility(visible);
 
                 SearchAutoCompleteManager.getInstance().stopTask();
-                if (mCurrentSearchMode == Constants.SEARCH_CODE_TAGS) {
+                if (mCurrentSearchMode == Constants.SEARCH_MODE_TAGS) {
                     String tag = s.toString();
                     int splitIndex = Math.max(tag.lastIndexOf(","), tag.lastIndexOf("，"));
                     tag = tag.substring(splitIndex + 1);
@@ -163,7 +164,7 @@ public class SearchActivity extends BaseActivity {
     private void changeEditAttrs() {
         mEtSearch.setText("");
         mEtSearch.setHint(mSpinnerAdapter.getItem(mSelectedPos));
-        if (mCurrentSearchMode == Constants.SEARCH_CODE_ID) {
+        if (mCurrentSearchMode == Constants.SEARCH_MODE_ID) {
             mEtSearch.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         } else {
             mEtSearch.setInputType(EditorInfo.TYPE_CLASS_TEXT);

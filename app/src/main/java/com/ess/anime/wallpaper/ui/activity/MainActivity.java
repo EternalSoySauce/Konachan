@@ -85,6 +85,24 @@ public class MainActivity extends BaseActivity {
 
         mIsForeground = true;
         EventBus.getDefault().register(this);
+
+        checkToSearchTag(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkToSearchTag(intent);
+    }
+
+    private void checkToSearchTag(Intent intent) {
+        if (intent != null && intent.hasExtra(Constants.SEARCH_MODE)) {
+            mNavigation.setCheckedItem(R.id.nav_post);
+            changeContentMainFragment(mFrgPost);
+            Intent searchIntent = new Intent();
+            searchIntent.putExtras(intent);
+            mFrgPost.onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE, searchIntent);
+        }
     }
 
     @Override
@@ -157,7 +175,10 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, SettingActivity.class));
                         break;
                     case R.id.nav_donate:
-                        new DonateFragment().show(getSupportFragmentManager(), null);
+                        FragmentManager manager = getSupportFragmentManager();
+                        if (!manager.isDestroyed() && !manager.isStateSaved()) {
+                            new DonateFragment().show(manager, null);
+                        }
                         break;
                 }
                 mCurrentNavId = 0;

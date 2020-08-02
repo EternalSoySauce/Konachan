@@ -20,6 +20,8 @@
     <string name="click_to_view"><u>Click to view</u></string>
     <string name="choose_qr_image_from_album">Please select the first QR code image from the album</string>
     <string name="alipay_not_installed">Alipay is not installed</string>
+    <string name="already_set_clipboard">Copied to clipboard</string>
+    <string name="already_add_to_clipboard">Appended to the last copied tag</string>
 
     <!-- Notification -->
     <string name="download_started">%s Start download</string>

@@ -20,7 +20,7 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.glide.pool_list.PoolListModelLoaderFactory;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 
 import androidx.annotation.NonNull;
@@ -75,7 +75,7 @@ public class MyGlideModule extends AppGlideModule {
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         if (isFirstResource
                                 && (!(context instanceof Activity)
-                                || ComponentUtils.isActivityActive((Activity) context))) {
+                                || SystemUtils.isActivityActive((Activity) context))) {
                             preloadImage(context, oriUrl);
                         }
                         return false;

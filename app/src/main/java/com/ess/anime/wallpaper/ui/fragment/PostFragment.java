@@ -30,7 +30,7 @@ import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
@@ -300,7 +300,9 @@ public class PostFragment extends BaseFragment implements
     @OnClick(R.id.fab_home)
     void searchHome() {
         mFloatingMenu.close(true);
-        onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_HOME, new Intent());
+        Intent intent = new Intent();
+        intent.putExtra(Constants.SEARCH_MODE, Constants.SEARCH_MODE_HOME);
+        onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE, intent);
     }
 
     @OnClick(R.id.fab_random)
@@ -309,7 +311,8 @@ public class PostFragment extends BaseFragment implements
         if (WebsiteManager.getInstance().getWebsiteConfig().isSupportRandomPost()) {
             Intent intent = new Intent();
             intent.putExtra(Constants.SEARCH_TAG, "order:random");
-            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE_RANDOM, intent);
+            intent.putExtra(Constants.SEARCH_MODE, Constants.SEARCH_MODE_RANDOM);
+            onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE, intent);
         } else {
             Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
         }
@@ -342,37 +345,37 @@ public class PostFragment extends BaseFragment implements
 
                 String searchTag = data.getStringExtra(Constants.SEARCH_TAG);
                 mCurrentTag = "#" + searchTag;
-                switch (resultCode) {
-                    case Constants.SEARCH_CODE_TAGS:
+                switch (data.getIntExtra(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS)) {
+                    case Constants.SEARCH_MODE_TAGS:
                         mCurrentTagList.addAll(Arrays.asList(searchTag.split("[,，]")));
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
                         changeToPage(mCurrentPage);
                         break;
-                    case Constants.SEARCH_CODE_ID:
+                    case Constants.SEARCH_MODE_ID:
                         mCurrentTag = "#id:" + searchTag;
                         mCurrentTagList.add("id:" + searchTag);
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
                         changeToPage(mCurrentPage);
                         break;
-                    case Constants.SEARCH_CODE_CHINESE:
+                    case Constants.SEARCH_MODE_CHINESE:
                         getNameFromBaidu(searchTag);
                         break;
-                    case Constants.SEARCH_CODE_ADVANCED:
+                    case Constants.SEARCH_MODE_ADVANCED:
                         String[] tags = searchTag.split(" ");
                         mCurrentTagList.addAll(Arrays.asList(tags));
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
                         changeToPage(mCurrentPage);
                         break;
-                    case Constants.SEARCH_CODE_HOME:
+                    case Constants.SEARCH_MODE_HOME:
                         mCurrentTag = "";
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
                         changeToPage(mCurrentPage);
                         break;
-                    case Constants.SEARCH_CODE_RANDOM:
+                    case Constants.SEARCH_MODE_RANDOM:
                         mCurrentTagList.add(searchTag);
                         getNewPosts(mCurrentPage);
                         changeFromPage(mCurrentPage);
@@ -497,7 +500,7 @@ public class PostFragment extends BaseFragment implements
                         thumbBean.imageBean = imageBean;
                         thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].getMinSizeImageUrl();
-                        if (FileUtils.isImageType(url) && ComponentUtils.isActivityActive(mActivity)) {
+                        if (FileUtils.isImageType(url) && SystemUtils.isActivityActive(mActivity)) {
                             MyGlideModule.preloadImage(mActivity, url);
                         }
                     }

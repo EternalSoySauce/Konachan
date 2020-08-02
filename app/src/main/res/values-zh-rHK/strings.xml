@@ -14,12 +14,14 @@
     <string name="already_last_image">已經是最後一張了</string>
     <string name="cannot_set_as_wallpaper">無法設置為壁紙</string>
     <string name="cannot_search_random">當前網站源不支持隨機看圖</string>
-    <string name="copied_link">已復制鏈接</string>
+    <string name="copied_link">已復製鏈接</string>
     <string name="save_successfully">保存成功</string>
     <string name="save_failed">保存失敗</string>
     <string name="click_to_view"><u>點擊查看</u></string>
     <string name="choose_qr_image_from_album">請從相冊中選取第一張二維碼圖片</string>
     <string name="alipay_not_installed">未安裝支付寶</string>
+    <string name="already_set_clipboard">已復製到剪貼板</string>
+    <string name="already_add_to_clipboard">已追加到上次復製的標籤後面</string>
 
     <!-- Notification -->
     <string name="download_started">%s開始下載</string>
@@ -137,7 +139,7 @@
     <string name="pixiv_dl_state_no_artwork">該作品不存在或已被刪除</string>
 
     <!-- Web Activity -->
-    <string name="spinner_copy_link">複製鏈接</string>
+    <string name="spinner_copy_link">復製鏈接</string>
     <string name="spinner_share_link">分享鏈接</string>
     <string name="spinner_browse_link">用瀏覽器打開</string>
     <string name="browse_title">打開方式</string>

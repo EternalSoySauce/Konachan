@@ -22,7 +22,7 @@ import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -174,7 +174,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
 
     private void preloadThumbnail(List<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
-            if (ComponentUtils.isActivityActive((Activity) mContext)) {
+            if (SystemUtils.isActivityActive((Activity) mContext)) {
                 MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
             }
         }

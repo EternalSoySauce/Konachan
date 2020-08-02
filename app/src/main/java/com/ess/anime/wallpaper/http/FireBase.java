@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
-
-import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.UserBean;
+import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +23,8 @@ import com.google.firebase.storage.StreamDownloadTask;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+
+import androidx.annotation.NonNull;
 
 public class FireBase {
 
@@ -97,7 +97,7 @@ public class FireBase {
             public void onSuccessful(String json) {
                 FileUtils.stringToFile(json, new File(mContext.getExternalFilesDir(null), UPDATE_FILE_NAME));
                 ApkBean apkBean = ApkBean.getApkDetailFromJson(mContext, json);
-                if (apkBean.versionCode > ComponentUtils.getVersionCode(mContext)) {
+                if (apkBean.versionCode > SystemUtils.getVersionCode(mContext)) {
                     // 发送通知到 MainActivity
                     EventBus.getDefault().postSticky(new MsgBean(Constants.CHECK_UPDATE, apkBean));
                 }

@@ -16,7 +16,7 @@ import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
 
@@ -142,7 +142,7 @@ public class CommentFragment extends BaseFragment {
 
     // 获取到评论列表后刷新界面
     private void setCommentList(final List<CommentBean> commentList) {
-        if (ComponentUtils.isActivityActive(mActivity)) {
+        if (SystemUtils.isActivityActive(mActivity)) {
             showComments(commentList);
             mSwipeRefresh.setRefreshing(false);
         }

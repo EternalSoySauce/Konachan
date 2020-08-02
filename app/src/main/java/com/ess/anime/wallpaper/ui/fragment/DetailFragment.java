@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -20,7 +22,9 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
+import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.utils.WebLinkMethod;
 
@@ -28,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,6 +48,7 @@ public class DetailFragment extends BaseFragment {
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
+    private Toast mCurrentToast;
 
     @Override
     public void onAttach(Context context) {
@@ -237,12 +243,56 @@ public class DetailFragment extends BaseFragment {
 
     private void addTagViews(ViewGroup parentLayout, List<String> tagList, int colorId) {
         for (String tag : tagList) {
-            View view = View.inflate(mActivity, R.layout.layout_detail_item, null);
-            TextView tvTag = view.findViewById(R.id.tv_key);
+            View view = View.inflate(mActivity, R.layout.layout_tag_item, null);
+            TextView tvTag = view.findViewById(R.id.tv_tag);
             tvTag.setText(tag);
             tvTag.setTextColor(getResources().getColor(colorId));
+            view.findViewById(R.id.iv_search).setOnClickListener(v -> {
+                if (SystemUtils.isActivityActive(mActivity)) {
+                    Intent intent = new Intent(mActivity, MainActivity.class);
+                    intent.putExtra(Constants.SEARCH_TAG, tag);
+                    intent.putExtra(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
+                    startActivity(intent);
+                    mActivity.finish();
+                }
+            });
+            view.findViewById(R.id.iv_copy).setOnClickListener(v -> {
+                if (SystemUtils.isActivityActive(mActivity)) {
+                    SystemUtils.setClipString(mActivity, tag);
+                    cancelCurrentToast();
+                    showNewToast(getString(R.string.already_set_clipboard));
+                }
+            });
+            view.findViewById(R.id.iv_add_to).setOnClickListener(v -> {
+                if (SystemUtils.isActivityActive(mActivity)) {
+                    String firstClipString = SystemUtils.getFirstClipString(mActivity);
+                    if (TextUtils.isEmpty(firstClipString)) {
+                        firstClipString = tag;
+                    } else {
+                        String[] tags = firstClipString.split("[,，]");
+                        if (!Arrays.asList(tags).contains(tag)) {
+                            firstClipString += "," + tag;
+                        }
+                    }
+                    SystemUtils.setClipString(mActivity, firstClipString);
+                    cancelCurrentToast();
+                    showNewToast(getString(R.string.already_add_to_clipboard));
+                }
+            });
             parentLayout.addView(view);
         }
+    }
+
+    private void cancelCurrentToast() {
+        if (mCurrentToast != null) {
+            mCurrentToast.cancel();
+            mCurrentToast = null;
+        }
+    }
+
+    private void showNewToast(String toast) {
+        mCurrentToast = Toast.makeText(mActivity, toast, Toast.LENGTH_SHORT);
+        mCurrentToast.show();
     }
 
     // konachan,yandere格式：2017-09-19T19:42:58.325Z

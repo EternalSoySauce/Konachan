@@ -15,10 +15,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
-import androidx.core.content.FileProvider;
-
 import java.io.File;
 import java.util.List;
+
+import androidx.core.content.FileProvider;
 
 /**
  * 通过ActivityManager获取当前系统中的Activity与Service的运行状态
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Zero
  */
-public class ComponentUtils {
+public class SystemUtils {
 
     /**
      * 获取当前正在运行的Activity名称，Android 4.X(API 20)及以下完美支持，
@@ -208,9 +208,27 @@ public class ComponentUtils {
     public static void setClipString(Context context, String str) {
         ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (manager != null) {
-            ClipData clip = ClipData.newPlainText("clip", str);
-            manager.setPrimaryClip(clip);
+            ClipData clipData = ClipData.newPlainText("clip", str);
+            manager.setPrimaryClip(clipData);
         }
+    }
+
+    /**
+     * 获取当前剪贴板内容
+     *
+     * @param context 上下文
+     * @return 剪贴板内容
+     */
+    public static String getFirstClipString(Context context) {
+        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (manager != null && manager.hasPrimaryClip()) {
+            ClipData clipData = manager.getPrimaryClip();
+            if (clipData != null && clipData.getItemCount() > 0) {
+                CharSequence text = clipData.getItemAt(0).getText();
+                return text == null ? "" : text.toString();
+            }
+        }
+        return "";
     }
 
     public static boolean isActivityActive(Activity activity) {

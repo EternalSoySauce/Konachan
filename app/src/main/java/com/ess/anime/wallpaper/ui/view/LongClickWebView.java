@@ -71,6 +71,7 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
         settings.setDisplayZoomControls(false);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
+        settings.setGeolocationEnabled(false);
 
         initPopupPage();
         setOnLongClickListener(this);

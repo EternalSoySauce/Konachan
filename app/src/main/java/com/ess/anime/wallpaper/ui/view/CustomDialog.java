@@ -16,7 +16,7 @@ import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.download.apk.DownloadApkService;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -235,7 +235,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .onPositive((dialog1, which) -> {
                     File apkFile = new File(apkBean.localFilePath);
                     if (apkFile.exists()) {
-                        ComponentUtils.installApk(context, apkFile, true);
+                        SystemUtils.installApk(context, apkFile, true);
                     } else {
                         Intent intent = new Intent(context, DownloadApkService.class);
                         intent.putExtra(Constants.APK_BEAN, apkBean);
@@ -266,7 +266,7 @@ public class CustomDialog extends MaterialDialog.Builder {
                     Uri uri = Uri.parse("mailto:" + email);
                     Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                     intent.putExtra(Intent.EXTRA_SUBJECT, "["
-                            + ComponentUtils.getVersionName(context)
+                            + SystemUtils.getVersionName(context)
                             + "] Feedback - K Anime Wallpaper");
                     context.startActivity(Intent.createChooser(intent, context.getString(R.string.feedback_title)));
                 }).show();

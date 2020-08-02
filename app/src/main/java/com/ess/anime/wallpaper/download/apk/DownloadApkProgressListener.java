@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ public class DownloadApkProgressListener extends BaseDownloadProgressListener<Ap
     protected void createOperatePendingIntent() {
         File apkFile = new File(mApkBean.localFilePath);
         if (apkFile.exists()) {
-            Intent installIntent = ComponentUtils.installApk(mContext, apkFile, false);
+            Intent installIntent = SystemUtils.installApk(mContext, apkFile, false);
             if (installIntent != null) {
                 mOperateIntent = PendingIntent.getActivity(mContext, mNotifyId,
                         installIntent, PendingIntent.FLAG_UPDATE_CURRENT);

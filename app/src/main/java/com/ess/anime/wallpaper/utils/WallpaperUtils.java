@@ -102,7 +102,7 @@ public class WallpaperUtils {
      * @param uri      图片Uri
      */
     public static void setWallpaperBySystemApp(Activity activity, Uri uri) {
-        if (!ComponentUtils.isActivityActive(activity) || uri == null) {
+        if (!SystemUtils.isActivityActive(activity) || uri == null) {
             return;
         }
 

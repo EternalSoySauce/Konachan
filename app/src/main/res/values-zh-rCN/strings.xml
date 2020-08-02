@@ -20,6 +20,8 @@
     <string name="click_to_view"><u>点击查看</u></string>
     <string name="choose_qr_image_from_album">请从相册中选取第一张二维码图片</string>
     <string name="alipay_not_installed">未安装支付宝</string>
+    <string name="already_set_clipboard">已复制到剪贴板</string>
+    <string name="already_add_to_clipboard">已追加到上次复制的标签后面</string>
 
     <!-- Notification -->
     <string name="download_started">%s开始下载</string>

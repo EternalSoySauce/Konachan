@@ -18,7 +18,7 @@ import com.ess.anime.wallpaper.adapter.RecyclerWebviewMoreAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.ui.view.LollipopFixedWebView;
 import com.ess.anime.wallpaper.ui.view.LongClickWebView;
-import com.ess.anime.wallpaper.utils.ComponentUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
@@ -122,7 +122,7 @@ public abstract class BaseWebActivity extends BaseActivity {
             String url = webView.getUrl();
             switch (position) {
                 case 0: // 复制链接
-                    ComponentUtils.setClipString(this, url);
+                    SystemUtils.setClipString(this, url);
                     Toast.makeText(this, R.string.copied_link, Toast.LENGTH_SHORT).show();
                     break;
 
