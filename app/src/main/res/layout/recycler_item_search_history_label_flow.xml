@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/bg_item_search_history_label_flow"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:includeFontPadding="false"
         android:paddingStart="14dp"
         android:paddingTop="4dp"

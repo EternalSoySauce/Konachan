@@ -2,8 +2,6 @@ package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerDownloadImageAdapter;
@@ -26,8 +24,6 @@ public class DownloadImageManagerActivity extends BaseActivity {
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    @BindView(R.id.layout_empty_download)
-    ViewGroup mLayoutEmpty;
     @BindView(R.id.rv_download)
     RecyclerView mRvDownload;
 
@@ -72,9 +68,7 @@ public class DownloadImageManagerActivity extends BaseActivity {
         mRvDownload.setLayoutManager(new GridLayoutManager(this, span));
         RecyclerDownloadImageAdapter adapter = new RecyclerDownloadImageAdapter(downloadList);
         adapter.bindToRecyclerView(mRvDownload);
-        adapter.setOnDataSizeChangedListener(isEmpty -> {
-            mLayoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        });
+        adapter.setEmptyView(R.layout.layout_empty_download, mRvDownload);
 
         int spaceHor = UIUtils.dp2px(this, 5);
         int spaceVer = UIUtils.dp2px(this, 10);

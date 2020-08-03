@@ -93,6 +93,7 @@ public class SearchHistoryLayout extends FrameLayout {
                     GreenDaoUtils.deleteSearchTag(searchTagBean);
                     getDatas().remove(searchTagBean);
                     notifyDataChanged();
+                    checkToShowEmptyView();
                 });
             }
         };
@@ -124,21 +125,24 @@ public class SearchHistoryLayout extends FrameLayout {
         checkToShowEmptyView();
     }
 
-    public void startEdit() {
+    public synchronized void startEdit() {
         if (!isEditing()) {
             mIsEditing = true;
             mLabelFlowAdapter.notifyDataChanged();
         }
     }
 
-    public void cancelEdit() {
+    public synchronized void cancelEdit() {
         if (isEditing()) {
             mIsEditing = false;
             mLabelFlowAdapter.notifyDataChanged();
         }
     }
 
-    public boolean isEditing() {
+    public synchronized boolean isEditing() {
+        if (mLabelFlowAdapter.getDatas().isEmpty()) {
+            mIsEditing = false;
+        }
         return mIsEditing;
     }
 
