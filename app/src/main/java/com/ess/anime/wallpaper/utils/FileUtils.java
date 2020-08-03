@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.utils;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import java.io.BufferedInputStream;
@@ -442,9 +443,16 @@ public class FileUtils {
      * @return boolean
      */
     public static boolean isImageType(String filePath) {
-        String extension = getFileExtension(filePath).toLowerCase();
-        return extension.equals("bmp") || extension.equals("jpg") || extension.equals("jpeg")
-                || extension.equals("png") || extension.equals("gif") || extension.equals("webp");
+        try {
+            if (!TextUtils.isEmpty(filePath)) {
+                String extension = getFileExtension(filePath).toLowerCase();
+                return extension.equals("bmp") || extension.equals("jpg") || extension.equals("jpeg")
+                        || extension.equals("png") || extension.equals("gif") || extension.equals("webp");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -453,10 +461,17 @@ public class FileUtils {
      * @return boolean
      */
     public static boolean isVideoType(String filePath) {
-        String extension = getFileExtension(filePath).toLowerCase();
-        return extension.equals("avi") || extension.equals("wmv") || extension.equals("mp4")
-                || extension.equals("webm") || extension.equals("mpg") || extension.equals("mpeg")
-                || extension.equals("3gp") || extension.equals("mov") || extension.equals("flv");
+        try {
+            if (!TextUtils.isEmpty(filePath)) {
+                String extension = getFileExtension(filePath).toLowerCase();
+                return extension.equals("avi") || extension.equals("wmv") || extension.equals("mp4")
+                        || extension.equals("webm") || extension.equals("mpg") || extension.equals("mpeg")
+                        || extension.equals("3gp") || extension.equals("mov") || extension.equals("flv");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -10,6 +11,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 
 import java.util.List;
 
@@ -76,12 +78,10 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
     }
 
     private void preloadThumbnail(List<PoolListBean> poolList) {
-        try {
-            for (PoolListBean poolListBean : poolList) {
+        for (PoolListBean poolListBean : poolList) {
+            if (SystemUtils.isActivityActive((Activity) mContext)) {
                 MyGlideModule.preloadImage(mContext, poolListBean.thumbUrl);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -204,13 +204,13 @@ public class GelbooruParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbListOfPool(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = doc.getElementsByClass("thumb");
+        Elements elements = doc.getElementsByClass(" id=");
         for (Element e : elements) {
             try {
-                String id = e.id().replaceAll("[^0-9]", "");
+                String id = e.attributes().asList().get(1).getKey().replaceAll("[^0-9]", "");
                 int thumbWidth = 0;
                 int thumbHeight = 0;
-                Element img = e.getElementsByClass("preview").first();
+                Element img = e.getElementsByClass("thumbnail-preview").first();
                 String thumbUrl = img.attr("src");
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = "https:" + thumbUrl;

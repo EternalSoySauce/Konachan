@@ -65,7 +65,7 @@ public class MyGlideModule extends AppGlideModule {
     }
 
     public static void preloadImage(Context context, String oriUrl) {
-        if (!FileUtils.isImageType(oriUrl)) {
+        if (TextUtils.isEmpty(oriUrl) || !FileUtils.isImageType(oriUrl)) {
             return;
         }
         GlideApp.with(context)

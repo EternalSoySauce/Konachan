@@ -33,6 +33,8 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
 
     private final static int UPDATE_DL_STATE = 1;
 
+    private OnDataSizeChangedListener mDataSizeChangedListener;
+
     public RecyclerDownloadImageAdapter(@Nullable List<DownloadBean> data) {
         super(R.layout.recycler_item_download_manager, data);
     }
@@ -140,6 +142,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
             if (recyclerView != null) {
                 recyclerView.scrollToPosition(0);
             }
+            notifyDataSizeChanged();
         }
     }
 
@@ -148,6 +151,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
         int pos = mData.indexOf(downloadBean);
         if (pos != -1) {
             remove(pos);
+            notifyDataSizeChanged();
         }
     }
 
@@ -159,4 +163,20 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
             refreshNotifyItemChanged(pos, UPDATE_DL_STATE);
         }
     }
+
+    private void notifyDataSizeChanged() {
+        if (mDataSizeChangedListener != null) {
+            mDataSizeChangedListener.onDataChanged(mData.isEmpty());
+        }
+    }
+
+    public void setOnDataSizeChangedListener(OnDataSizeChangedListener listener) {
+        mDataSizeChangedListener = listener;
+        notifyDataSizeChanged();
+    }
+
+    public interface OnDataSizeChangedListener {
+        void onDataChanged(boolean isEmpty);
+    }
+
 }
