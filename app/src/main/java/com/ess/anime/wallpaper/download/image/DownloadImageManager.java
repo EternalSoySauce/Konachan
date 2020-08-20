@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
+
 public class DownloadImageManager implements IConnectivityListener {
 
     private static class DownloadImageHolder {
@@ -103,7 +105,7 @@ public class DownloadImageManager implements IConnectivityListener {
                             Context context = MyApp.getInstance();
                             Intent downloadIntent = new Intent(context, DownloadImageService.class);
                             downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
-                            context.startService(downloadIntent);
+                            ContextCompat.startForegroundService(context, downloadIntent);
                             OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
                         }
                     }

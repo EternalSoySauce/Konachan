@@ -26,6 +26,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import at.grabner.circleprogress.CircleProgressView;
 
@@ -98,7 +99,7 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
             if (!OkHttp.isUrlInDownloadQueue(downloadBean.downloadUrl)) {
                 Intent downloadIntent = new Intent(mContext, DownloadImageService.class);
                 downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
-                mContext.startService(downloadIntent);
+                ContextCompat.startForegroundService(mContext, downloadIntent);
                 OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
             }
         });

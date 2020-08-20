@@ -26,6 +26,8 @@
     <string name="not_support_ffmpeg">Your device cannot synthesize GIF</string>
 
     <!-- Notification -->
+    <string name="foreground_notify_title">Downloading Images</string>
+    <string name="foreground_notify_msg">Click to open download manager</string>
     <string name="download_started">%s Start download</string>
     <string name="download_finished">%s / Download completed</string>
     <string name="download_failed">Download failed, click to try again</string>

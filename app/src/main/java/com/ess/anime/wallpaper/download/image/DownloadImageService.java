@@ -4,10 +4,12 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 
+import com.ess.anime.wallpaper.download.image.notification.MyNotification;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
@@ -28,6 +30,25 @@ public class DownloadImageService extends Service {
 
     private final List<Runnable> mThreadList = new ArrayList<>();
     private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private MyNotification mNotify;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotify = new MyNotification();
+            mNotify.show(this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mNotify != null) {
+            mNotify.stop();
+            mNotify = null;
+        }
+    }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {

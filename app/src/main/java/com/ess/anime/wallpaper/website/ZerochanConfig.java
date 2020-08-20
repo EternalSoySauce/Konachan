@@ -105,10 +105,14 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     @Override
     public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
         List<String> list = new ArrayList<>();
-        String[] items = promptResult.split("\n");
-        for (String item : items) {
-            String tag = item.split("\\|")[0];
-            list.add(tag);
+        try {
+            String[] items = promptResult.split("\n");
+            for (String item : items) {
+                String tag = item.split("\\|")[0];
+                list.add(tag);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return list;
     }

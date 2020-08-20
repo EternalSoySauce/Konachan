@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.ValueCallback;
@@ -62,6 +61,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import androidx.annotation.NonNull;
 
 import static com.just.agentweb.ActionActivity.KEY_ACTION;
 import static com.just.agentweb.ActionActivity.KEY_FILE_CHOOSER_INTENT;
@@ -492,29 +493,32 @@ public class FileChooser {
         if (data == null) {
             return datas;
         }
-        String target = data.getDataString();
-        if (!TextUtils.isEmpty(target)) {
-            String[] path = AgentWebUtils.uriToPath(mActivity, new Uri[]{Uri.parse(target)});
-            datas = new Uri[path.length];
-            File file;
-            for (int i = 0; i < path.length; i++) {
-                file = new File(path[i]);
-                datas[i] = Uri.fromFile(file);
+        try {
+            String target = data.getDataString();
+            if (!TextUtils.isEmpty(target)) {
+                String[] path = AgentWebUtils.uriToPath(mActivity, new Uri[]{Uri.parse(target)});
+                datas = new Uri[path.length];
+                File file;
+                for (int i = 0; i < path.length; i++) {
+                    file = new File(path[i]);
+                    datas[i] = Uri.fromFile(file);
+                }
+                return datas;
             }
-            return datas;
-        }
-        ClipData mClipData = data.getClipData();
-        if (mClipData != null && mClipData.getItemCount() > 0) {
-            datas = new Uri[mClipData.getItemCount()];
-            for (int i = 0; i < mClipData.getItemCount(); i++) {
+            ClipData mClipData = data.getClipData();
+            if (mClipData != null && mClipData.getItemCount() > 0) {
+                datas = new Uri[mClipData.getItemCount()];
+                for (int i = 0; i < mClipData.getItemCount(); i++) {
 
-                ClipData.Item mItem = mClipData.getItemAt(i);
-                datas[i] = mItem.getUri();
+                    ClipData.Item mItem = mClipData.getItemAt(i);
+                    datas[i] = mItem.getUri();
 
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return datas;
-
 
     }
 

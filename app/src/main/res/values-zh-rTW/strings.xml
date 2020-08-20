@@ -26,6 +26,8 @@
     <string name="not_support_ffmpeg">您的設備無法合成GIF</string>
 
     <!-- Notification -->
+    <string name="foreground_notify_title">正在下載圖片</string>
+    <string name="foreground_notify_msg">點擊打開下載管理列表</string>
     <string name="download_started">%s開始下載</string>
     <string name="download_finished">%s / 下載完成</string>
     <string name="download_failed">下載失敗，點擊重試</string>

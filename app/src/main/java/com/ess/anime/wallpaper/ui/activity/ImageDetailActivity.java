@@ -35,6 +35,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -230,7 +231,7 @@ public class ImageDetailActivity extends BaseActivity {
                 if (!OkHttp.isUrlInDownloadQueue(downloadBean.downloadUrl)) {
                     Intent downloadIntent = new Intent(ImageDetailActivity.this, DownloadImageService.class);
                     downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
-                    startService(downloadIntent);
+                    ContextCompat.startForegroundService(this, downloadIntent);
                     OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
                 }
             }, i * 100);

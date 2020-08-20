@@ -107,12 +107,16 @@ public class SafebooruConfig extends WebsiteConfig<SafebooruParser> {
     @Override
     public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
         List<String> list = new ArrayList<>();
-        JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
-        for (int i = 0; i < tagArray.size(); i++) {
-            JsonObject item = tagArray.get(i).getAsJsonObject();
-            if (item.has("value")) {
-                list.add(item.get("value").getAsString());
+        try {
+            JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
+            for (int i = 0; i < tagArray.size(); i++) {
+                JsonObject item = tagArray.get(i).getAsJsonObject();
+                if (item.has("value")) {
+                    list.add(item.get("value").getAsString());
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return list;
     }

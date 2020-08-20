@@ -107,9 +107,13 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     @Override
     public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
         List<String> list = new ArrayList<>();
-        JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray().get(1).getAsJsonArray();
-        for (int i = 0; i < tagArray.size(); i++) {
-            list.add(tagArray.get(i).getAsString());
+        try {
+            JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray().get(1).getAsJsonArray();
+            for (int i = 0; i < tagArray.size(); i++) {
+                list.add(tagArray.get(i).getAsString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return list;
     }
