@@ -379,27 +379,33 @@ public class BitmapUtils {
      * Gets the content:// URI from the given corresponding path to a file
      *
      * @param context   上下文
-     * @param imageFile 图片文件
+     * @param mediaFile 媒体文件
      * @return content Uri
      */
-    public static Uri getContentUriFromFile(Context context, File imageFile) {
-        String filePath = imageFile.getAbsolutePath();
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.Media._ID},
-                MediaStore.Images.Media.DATA + "=?", new String[]{filePath}, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            cursor.close();
-            return Uri.withAppendedPath(uri, "" + id);
-        } else {
-            if (imageFile.exists()) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.DATA, filePath);
-                return context.getContentResolver().insert(uri, values);
+    public static Uri getContentUriFromFile(Context context, File mediaFile) {
+        String filePath = mediaFile.getAbsolutePath();
+        boolean isImageType = FileUtils.isImageType(filePath);
+        Uri uri = isImageType ? MediaStore.Images.Media.EXTERNAL_CONTENT_URI : MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        String mediaIdField = isImageType ? MediaStore.Images.Media._ID : MediaStore.Video.Media._ID;
+        String mediaDataField = isImageType ? MediaStore.Images.Media.DATA : MediaStore.Video.Media.DATA;
+        try (Cursor cursor = context.getContentResolver().query(uri, new String[]{mediaIdField},
+                mediaDataField + "=?", new String[]{filePath}, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+                return Uri.withAppendedPath(uri, "" + id);
             } else {
-                return null;
+                if (mediaFile.exists()) {
+                    ContentValues values = new ContentValues();
+                    values.put(mediaDataField, filePath);
+                    return context.getContentResolver().insert(uri, values);
+                } else {
+                    return null;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     /**

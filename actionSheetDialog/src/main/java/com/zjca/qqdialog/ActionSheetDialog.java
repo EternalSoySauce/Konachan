@@ -213,8 +213,12 @@ public class ActionSheetDialog {
     }
 
     public void show() {
-        setSheetItems();
-        mDialog.show();
+        try {
+            setSheetItems();
+            mDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnSheetItemClickListener {
