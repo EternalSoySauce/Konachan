@@ -4,9 +4,9 @@
 
 
 ## 最新版本【v1.8.2】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1qxTND7oe4JPUz8u6NSIQEA)，提取码: 7hwu 
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.2.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.2.apk?alt=media&token=71ac9d8b-18cd-4880-b021-c3350cf42c80)
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1KqlvQvHW8tece2iQW81q3g)，提取码: 4umv 
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.3.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.3.apk?alt=media&token=4e5517a2-2782-4399-827d-1893d7f3ebf5)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -61,6 +61,11 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.3】
+	* 后台反馈上个版本崩溃率有点高，算是紧急修复版，各位视情况更新
+	* 修复详情页点击下载时崩溃
+	* 修复其他如弹窗、设置壁纸崩溃等
+	
 * 【v1.8.2】
 	* 侧拉栏新增下载列表管理页，图片支持断点下载
 	* 侧拉栏新增Pixiv Gif下载工具页
