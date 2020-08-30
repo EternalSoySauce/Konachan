@@ -3,7 +3,7 @@
 
 
 
-## 最新版本【v1.8.2】
+## 最新版本【v1.8.3】
 * 地址1：[百度云盘下载](https://pan.baidu.com/s/1KqlvQvHW8tece2iQW81q3g)，提取码: 4umv 
 * 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.3.apk)
 * 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.3.apk?alt=media&token=4e5517a2-2782-4399-827d-1893d7f3ebf5)
