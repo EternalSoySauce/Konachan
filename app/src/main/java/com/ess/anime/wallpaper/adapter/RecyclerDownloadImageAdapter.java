@@ -113,10 +113,12 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
                     public void onPositive() {
                         super.onPositive();
                         OkHttp.cancelDownloadFile(tag);
+                        DownloadImageManager.getInstance().remove(downloadBean);
                     }
                 });
             } else {
                 OkHttp.cancelDownloadFile(tag);
+                DownloadImageManager.getInstance().remove(downloadBean);
             }
         });
     }
