@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.website;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.GelbooruParser;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return getBaseUrl() + "index.php?page=autocomplete&term=" + tag;
+        return getBaseUrl() + "index.php?page=autocomplete2&term=" + tag;
     }
 
     @Override
@@ -109,7 +110,8 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
         try {
             JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
             for (int i = 0; i < tagArray.size(); i++) {
-                list.add(tagArray.get(i).getAsString());
+                JsonObject item = tagArray.get(i).getAsJsonObject();
+                list.add(item.get("name").getAsString());
             }
         } catch (Exception e) {
             e.printStackTrace();
