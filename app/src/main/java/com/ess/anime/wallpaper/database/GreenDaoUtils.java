@@ -2,36 +2,59 @@ package com.ess.anime.wallpaper.database;
 
 import android.content.Context;
 
+import com.ess.anime.wallpaper.download.image.DownloadBean;
+import com.ess.anime.wallpaper.download.image.DownloadBeanDao;
+
 import java.util.List;
 
 public class GreenDaoUtils {
 
-    private static SearchTagBeanDao sDao;
+    private static SearchTagBeanDao sSearchTagDao;
+    private static DownloadBeanDao sDownloadDao;
 
     public static void initGreenDao(Context context) {
         String name = context.getPackageName() + ".db";
         DaoMaster.DevOpenHelper helper = new MyDevOpenHelper(context, name, null);
         DaoMaster daoMaster = new DaoMaster(helper.getWritableDatabase());
         DaoSession daoSession = daoMaster.newSession();
-        sDao = daoSession.getSearchTagBeanDao();
+        sSearchTagDao = daoSession.getSearchTagBeanDao();
+        sDownloadDao = daoSession.getDownloadBeanDao();
     }
 
+    /*********************** Search Tag ***********************/
+
     public static void updateSearchTag(SearchTagBean searchTagBean) {
-        sDao.insertOrReplace(searchTagBean);
+        sSearchTagDao.insertOrReplace(searchTagBean);
     }
 
     public static void deleteSearchTag(SearchTagBean searchTagBean) {
-        sDao.delete(searchTagBean);
+        sSearchTagDao.delete(searchTagBean);
     }
 
     public static List<SearchTagBean> queryAllSearchTags() {
-        return sDao.queryBuilder()
+        return sSearchTagDao.queryBuilder()
                 .orderDesc(SearchTagBeanDao.Properties.UpdateTime)
                 .list();
     }
 
     public static void deleteAllSearchTags() {
-        sDao.deleteAll();
+        sSearchTagDao.deleteAll();
+    }
+
+    /*********************** Download Image ***********************/
+
+    public static void updateDownloadBean(DownloadBean downloadBean) {
+        sDownloadDao.insertOrReplace(downloadBean);
+    }
+
+    public static void deleteDownloadBean(DownloadBean downloadBean) {
+        sDownloadDao.delete(downloadBean);
+    }
+
+    public static List<DownloadBean> queryAllDownloadBeans() {
+        return sDownloadDao.queryBuilder()
+                .orderAsc(DownloadBeanDao.Properties.AddedTime)
+                .list();
     }
 
 }

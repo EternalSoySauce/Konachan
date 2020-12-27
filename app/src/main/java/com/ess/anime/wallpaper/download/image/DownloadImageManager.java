@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.ess.anime.wallpaper.MyApp;
+import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.download.BaseDownloadProgressListener;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
@@ -35,22 +36,46 @@ public class DownloadImageManager implements IConnectivityListener {
     private DownloadImageManager() {
         ConnectivityChangeReceiver.register();
         ConnectivityMonitor.addListener(this);
+        initDownloadList();
+        continueToDownloadAll();
+    }
+
+    private void continueToDownloadAll() {
+        mMainHandler.post(() -> {
+            for (DownloadBean downloadBean : mDownloadList) {
+                String tag = downloadBean.downloadUrl;
+                DownloadTask task = OkDownload.getInstance().getTask(tag);
+                if (task == null || task.progress.status != Progress.FINISH) {
+                    OkHttp.cancelDownloadFile(tag);
+                    checkToDownload(downloadBean);
+                }
+            }
+        });
     }
 
     /*******************************************************************/
 
     private final List<DownloadBean> mDownloadList = new ArrayList<>();
 
+    private void initDownloadList() {
+        synchronized (mDownloadList) {
+            mDownloadList.clear();
+            mDownloadList.addAll(GreenDaoUtils.queryAllDownloadBeans());
+        }
+    }
+
     public void addOrUpdate(DownloadBean downloadBean) {
         synchronized (mDownloadList) {
             int index = mDownloadList.indexOf(downloadBean);
             if (index == -1) {
+                downloadBean.addedTime = System.currentTimeMillis();
                 mDownloadList.add(downloadBean);
                 notifyDataAdded(downloadBean);
             } else {
                 mDownloadList.set(index, downloadBean);
                 notifyDataChanged(downloadBean);
             }
+            GreenDaoUtils.updateDownloadBean(downloadBean);
         }
     }
 
@@ -58,6 +83,7 @@ public class DownloadImageManager implements IConnectivityListener {
         synchronized (mDownloadList) {
             if (mDownloadList.remove(downloadBean)) {
                 notifyDataRemoved(downloadBean);
+                GreenDaoUtils.deleteDownloadBean(downloadBean);
             }
         }
     }
@@ -72,6 +98,7 @@ public class DownloadImageManager implements IConnectivityListener {
                 if (task != null && task.progress.status == Progress.FINISH) {
                     iterator.remove();
                     notifyDataRemoved(downloadBean);
+                    GreenDaoUtils.deleteDownloadBean(downloadBean);
                     BaseDownloadProgressListener listener = OkHttp.getProgressListener(downloadBean.downloadUrl);
                     if (listener != null) {
                         listener.onRemove();
@@ -101,13 +128,7 @@ public class DownloadImageManager implements IConnectivityListener {
                     String tag = downloadBean.downloadUrl;
                     DownloadTask task = OkDownload.getInstance().getTask(tag);
                     if (task != null && task.progress.status == Progress.ERROR) {
-                        if (!OkHttp.isUrlInDownloadQueue(downloadBean.downloadUrl)) {
-                            Context context = MyApp.getInstance();
-                            Intent downloadIntent = new Intent(context, DownloadImageService.class);
-                            downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
-                            ContextCompat.startForegroundService(context, downloadIntent);
-                            OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
-                        }
+                        checkToDownload(downloadBean);
                     }
                 }
             });
@@ -118,6 +139,15 @@ public class DownloadImageManager implements IConnectivityListener {
     public void onDisconnected() {
     }
 
+    private void checkToDownload(DownloadBean downloadBean) {
+        if (!OkHttp.isUrlInDownloadQueue(downloadBean.downloadUrl)) {
+            Context context = MyApp.getInstance();
+            Intent downloadIntent = new Intent(context, DownloadImageService.class);
+            downloadIntent.putExtra(Constants.DOWNLOAD_BEAN, downloadBean);
+            ContextCompat.startForegroundService(context, downloadIntent);
+            OkHttp.addUrlToDownloadQueue(downloadBean.downloadUrl);
+        }
+    }
 
     /*******************************************************************/
     private final List<IDownloadImageListener> mListenerList = new ArrayList<>();

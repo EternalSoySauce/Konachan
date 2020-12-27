@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.ess.anime.wallpaper.download.image.DownloadBeanDao;
 import com.github.yuweiguocn.library.greendao.MigrationHelper;
 
 import org.greenrobot.greendao.database.Database;
@@ -19,7 +20,7 @@ public class MyDevOpenHelper extends DaoMaster.DevOpenHelper {
 
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
-        MigrationHelper.migrate(db, SearchTagBeanDao.class);
+        MigrationHelper.migrate(db, SearchTagBeanDao.class, DownloadBeanDao.class);
     }
 
 }

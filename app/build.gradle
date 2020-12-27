@@ -7,8 +7,8 @@ android {
         applicationId "com.ess.anime.wallpaper"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 20
-        versionName "1.8.3"
+        versionCode 21
+        versionName "1.8.4"
         multiDexEnabled true
         resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
         vectorDrawables.useSupportLibrary = true
@@ -160,7 +160,7 @@ dependencies {
 }
 
 greendao {
-    schemaVersion 1
+    schemaVersion 2
 }
 
 //apply plugin: 'com.google.gms.google-services'
