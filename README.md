@@ -3,10 +3,10 @@
 
 
 
-## 最新版本【v1.8.3】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1KqlvQvHW8tece2iQW81q3g)，提取码: 4umv 
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.3.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.3.apk?alt=media&token=4e5517a2-2782-4399-827d-1893d7f3ebf5)
+## 最新版本【v1.8.4】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1NIxkOPbHqdidZ9Xup6kIpA)，提取码: 2qja 
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.4.apk)
+* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.4.apk?alt=media&token=adb8a31c-5081-45f6-82a3-b106b6d3f6a4)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -61,6 +61,11 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.4】
+	* 修复P站GIF无法下载（不过貌似P站现在没法下原尺寸的gif了，我再看看有没办法解决）
+	* 杀掉app后不清除下载管理列表记录，防止异常退出导致戴上痛苦面具
+	* 修复Gelbooru搜索联想失效（低版本会闪退）
+	
 * 【v1.8.3】
 	* 后台反馈上个版本崩溃率有点高，算是紧急修复版，各位视情况更新
 	* 修复详情页点击下载时崩溃
