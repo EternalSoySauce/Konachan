@@ -27,7 +27,7 @@ public class PixivGifBean {
 
     // 获取fps和zipUrl的网址
     public String getJsonUrl() {
-        return "https://api.imjad.cn/pixiv/v1/?id=" + id;
+        return "https://api.fczbl.vip/pixiv/v1/?id=" + id;
     }
 
     // 下载P站资源时需要传入Referer请求头

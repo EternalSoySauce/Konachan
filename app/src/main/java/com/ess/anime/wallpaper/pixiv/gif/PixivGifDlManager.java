@@ -58,6 +58,7 @@ public class PixivGifDlManager implements IConnectivityListener {
         synchronized (mPixivMap) {
             PixivGifBean pixivGifBean = mPixivMap.get(pixivId);
             if (pixivGifBean == null) {
+                OkHttp.cancelDownloadFile(TAG + pixivId);
                 pixivGifBean = new PixivGifBean(pixivId);
                 mPixivMap.put(pixivId, pixivGifBean);
                 notifyDataAdded(pixivGifBean);
