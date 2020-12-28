@@ -125,7 +125,9 @@ public class PixivGifDlManager implements IConnectivityListener {
                                     for (Map.Entry<String, JsonElement> entry : zipUrls.entrySet()) {
                                         pixivGifBean.zipUrl = entry.getValue().getAsString();
                                     }
-                                    pixivGifBean.zipUrl = pixivGifBean.zipUrl.replace("600x600", "1920x1080");
+                                    if (pixivGifBean.zipUrl != null) {
+                                        pixivGifBean.zipUrl = pixivGifBean.zipUrl.replace("600x600", "1920x1080");
+                                    }
                                     float delay = metadata.getAsJsonArray("frames")
                                             .get(0).getAsJsonObject()
                                             .get("delay_msec").getAsFloat();
