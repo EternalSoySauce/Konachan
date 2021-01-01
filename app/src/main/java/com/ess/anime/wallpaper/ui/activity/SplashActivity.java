@@ -14,6 +14,10 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 
 public class SplashActivity extends BaseActivity {
 
+    private Handler mHandler = new Handler();
+    private boolean mIsForeground;
+    private boolean mCanGotoNextPage;
+
     @Override
     int layoutRes() {
         return R.layout.activity_splash;
@@ -30,20 +34,42 @@ public class SplashActivity extends BaseActivity {
         WebsiteManager.getInstance().updateCurrentTagJson();
         DownloadImageManager.getInstance();
 
-        new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            finish();
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        mHandler.postDelayed(() -> {
+            mCanGotoNextPage = true;
+            if (mIsForeground) {
+                gotoNextPage();
+            }
         }, delayMills);
 
         Constants.sRestart = false;
+    }
+
+    private void gotoNextPage() {
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         UIUtils.hideNavigationBar(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mIsForeground = true;
+        if (mCanGotoNextPage) {
+            mHandler.post(this::gotoNextPage);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mIsForeground = false;
     }
 
     @Override
