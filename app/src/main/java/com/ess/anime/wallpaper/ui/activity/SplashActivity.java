@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.download.image.DownloadImageManager;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
@@ -27,6 +28,7 @@ public class SplashActivity extends BaseActivity {
         FireBase.getInstance().checkUpdate();
 
         WebsiteManager.getInstance().updateCurrentTagJson();
+        DownloadImageManager.getInstance();
 
         new Handler().postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
