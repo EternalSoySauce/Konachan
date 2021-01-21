@@ -91,20 +91,32 @@ public class GelbooruParser extends HtmlParser {
             // 解析基础图片信息
             for (Element li : doc.getElementsByTag("li")) {
                 if (li.text().startsWith("Id:")) {
-                    // Id
-                    builder.id(li.text().replaceAll("[^0-9]", ""));
+                    try {
+                        // Id
+                        builder.id(li.text().replaceAll("[^0-9]", ""));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else if (li.text().startsWith("Posted:")) {
-                    // 解析时间字符串，格式：2019-02-07 19:30:27
-                    // 注意PostBean.createdTime单位为second
-                    String text = li.text();
-                    String createdTime = text.substring(text.indexOf(":") + 1, text.indexOf("by")).trim();
-                    long mills = TimeFormat.timeToMills(createdTime, "yyyy-MM-dd HH:mm:ss");
-                    createdTime = String.valueOf(mills / 1000);
-                    builder.createdTime(createdTime);
+                    try {
+                        // 解析时间字符串，格式：2019-02-07 19:30:27
+                        // 注意PostBean.createdTime单位为second
+                        String text = li.text();
+                        String createdTime = text.substring(text.indexOf(":") + 1, text.indexOf("Uploader")).trim();
+                        long mills = TimeFormat.timeToMills(createdTime, "yyyy-MM-dd HH:mm:ss");
+                        createdTime = String.valueOf(mills / 1000);
+                        builder.createdTime(createdTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                    // 作者
-                    String author = li.getElementsByTag("a").first().text().trim();
-                    builder.author(author);
+                    try {
+                        // 作者
+                        String author = li.getElementsByTag("a").first().text().trim();
+                        builder.author(author);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -141,7 +153,7 @@ public class GelbooruParser extends HtmlParser {
     @Override
     public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = doc.getElementsByClass("commentBox");
+        Elements elements = doc.getElementsByClass("comment-box post-view");
         for (Element e : elements) {
             try {
                 String id = "#" + e.id();
@@ -156,7 +168,7 @@ public class GelbooruParser extends HtmlParser {
                     date = date.substring(0, index).trim();
                 }
                 String html = e.html();
-                String startTag = "Up</a>)\n<br>";
+                String startTag = "Up</a>)<br>";
                 String endTag = "<br>";
                 int startIndex = html.indexOf(startTag) + startTag.length();
                 int endIndex = html.lastIndexOf(endTag);
