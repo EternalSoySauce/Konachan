@@ -3,10 +3,9 @@
 
 
 
-## 最新版本【v1.8.5】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1Ycckmt_62ePc9Iodrx00fQ)，提取码: pgc2 
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.5.apk)
-* 地址3：[海外源地址下载](https://firebasestorage.googleapis.com/v0/b/k-anime-wallpaper.appspot.com/o/apk%2FkanimeG1.8.5.apk?alt=media&token=e739870f-5590-4ede-b0a5-07cf0f552f81)
+## 最新版本【v1.8.6】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1p8fLg5ir0eQ6Rmn3iFBuZg)，提取码: n351
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.6.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -61,6 +60,9 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.6】
+	* 修复Gelbooru详情标签、评论获取异常，不常用此网站的朋友们可以忽略更新 o_O
+
 * 【v1.8.5】
 	* 来了来了，P站GIF又可以下原尺寸了，棒！
 	* 米纳桑元旦快乐 ꉂ(ˊᗜˋ*)
