@@ -37,7 +37,7 @@ public class SafebooruConfig extends WebsiteConfig<SafebooruParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
+    public void saveTagJson(String key, String json) {
     }
 
     @Override

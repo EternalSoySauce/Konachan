@@ -36,8 +36,8 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
-       super.saveTagJson(json);
+    public void saveTagJson(String key, String json) {
+        super.saveTagJson(key, json);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
             tags.append(tag).append("+");
         }
 
-        return getBaseUrl() + "post?page=" + page + "&tags=" + tags;
+        return getBaseUrl() + "posts?page=" + page + "&tags=" + tags;
     }
 
     @Override

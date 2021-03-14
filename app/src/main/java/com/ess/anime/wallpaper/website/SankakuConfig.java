@@ -36,7 +36,7 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
+    public void saveTagJson(String key, String json) {
     }
 
     @Override

@@ -71,10 +71,10 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public abstract String getTagJsonUrl();
 
     // 存储TagJson文件
-    public void saveTagJson(String json) {
+    public void saveTagJson(String key, String json) {
         synchronized (WebsiteConfig.class) {
             String dir = MyApp.getInstance().getFilesDir().getPath();
-            String name = FileUtils.encodeMD5String(getTagJsonUrl());
+            String name = FileUtils.encodeMD5String(key);
             File file = new File(dir, name);
             FileUtils.stringToFile(json, file);
         }

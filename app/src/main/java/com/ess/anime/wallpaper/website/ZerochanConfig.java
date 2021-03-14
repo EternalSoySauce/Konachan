@@ -34,7 +34,7 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
+    public void saveTagJson(String key, String json) {
     }
 
     @Override

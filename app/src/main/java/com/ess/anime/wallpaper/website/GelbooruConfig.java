@@ -37,7 +37,7 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
+    public void saveTagJson(String key, String json) {
     }
 
     @Override

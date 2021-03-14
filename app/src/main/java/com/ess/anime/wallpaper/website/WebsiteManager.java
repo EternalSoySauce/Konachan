@@ -109,7 +109,7 @@ public class WebsiteManager {
 
                     @Override
                     public void onSuccessful(String json) {
-                        mWebsiteConfig.saveTagJson(json);
+                        mWebsiteConfig.saveTagJson(url, json);
                     }
                 });
             }

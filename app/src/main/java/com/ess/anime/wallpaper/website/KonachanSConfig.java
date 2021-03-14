@@ -37,8 +37,8 @@ public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
-    public void saveTagJson(String json) {
-        super.saveTagJson(json);
+    public void saveTagJson(String key, String json) {
+        super.saveTagJson(key, json);
     }
 
     @Override
