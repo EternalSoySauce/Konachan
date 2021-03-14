@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.8.6】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1p8fLg5ir0eQ6Rmn3iFBuZg)，提取码: n351
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.6.apk)
+## 最新版本【v1.8.7】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1UbVCVKc87goCoH4UdrsO9A)，提取码: de36
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.7.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -60,6 +60,9 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.7】
+	* 修复Danbooru图片页加载不出数据
+
 * 【v1.8.6】
 	* 修复Gelbooru详情标签、评论获取异常，不常用此网站的朋友们可以忽略更新 o_O
 
