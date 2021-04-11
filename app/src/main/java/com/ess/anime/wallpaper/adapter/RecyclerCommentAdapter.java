@@ -12,7 +12,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
-import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
+import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.WebLinkMethod;
 
 public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseViewHolder> {

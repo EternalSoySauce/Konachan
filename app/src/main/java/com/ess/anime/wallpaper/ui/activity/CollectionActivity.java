@@ -7,10 +7,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCollectionAdapter;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -35,6 +31,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -59,12 +58,12 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     private LocalCollectionsListener mFilesListener;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_collection;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
             @Override

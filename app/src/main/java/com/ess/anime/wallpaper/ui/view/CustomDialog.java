@@ -16,7 +16,7 @@ import com.ess.anime.wallpaper.download.apk.DownloadApkService;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
-import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
+import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;

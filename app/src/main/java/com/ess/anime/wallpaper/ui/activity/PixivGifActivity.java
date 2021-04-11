@@ -41,12 +41,12 @@ public class PixivGifActivity extends BaseActivity {
     RecyclerView mRvPixivGif;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_pixiv_gif;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         if (!FFmpeg.getInstance(this).isSupported()) {
             Toast.makeText(MyApp.getInstance(), R.string.not_support_ffmpeg, Toast.LENGTH_SHORT).show();

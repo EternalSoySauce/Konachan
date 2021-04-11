@@ -76,12 +76,12 @@ public class SearchActivity extends BaseActivity {
     private boolean mUserInput = true;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_search;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initData();
         initViewPager();
         initSlidingTabLayout();

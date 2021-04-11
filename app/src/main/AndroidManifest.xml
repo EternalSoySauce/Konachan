@@ -58,7 +58,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.activity.HyperlinkActivity"
+            android:name=".ui.activity.web.HyperlinkActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
@@ -107,12 +107,17 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".ui.activity.SauceNaoActivity"
+            android:name=".ui.activity.web.SauceNaoActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.activity.TraceMoeActivity"
+            android:name=".ui.activity.web.TraceMoeActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.activity.web.YandexImagesActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 

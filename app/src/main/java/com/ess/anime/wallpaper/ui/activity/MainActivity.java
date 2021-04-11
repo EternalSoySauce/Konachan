@@ -17,6 +17,10 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
+import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
+import com.ess.anime.wallpaper.ui.activity.web.SauceNaoActivity;
+import com.ess.anime.wallpaper.ui.activity.web.TraceMoeActivity;
+import com.ess.anime.wallpaper.ui.activity.web.YandexImagesActivity;
 import com.ess.anime.wallpaper.ui.fragment.DonateFragment;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
@@ -60,12 +64,12 @@ public class MainActivity extends BaseActivity {
     private boolean mIsForeground;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_main;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null) {
             restoreData(savedInstanceState);
@@ -158,6 +162,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.nav_trace_moe:
                         startActivity(new Intent(MainActivity.this, TraceMoeActivity.class));
+                        break;
+                    case R.id.nav_yandex:
+                        startActivity(new Intent(MainActivity.this, YandexImagesActivity.class));
                         break;
                     case R.id.nav_game:
                         startActivity(new Intent(MainActivity.this, GameActivity.class));

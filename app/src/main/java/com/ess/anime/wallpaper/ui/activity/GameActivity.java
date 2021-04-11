@@ -4,12 +4,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.appcompat.widget.Toolbar;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.ui.view.GameSurfaceView;
 
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -23,12 +22,12 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
     ImageView mIvGame;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_game;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initGameSurfaceView();
         initViews();

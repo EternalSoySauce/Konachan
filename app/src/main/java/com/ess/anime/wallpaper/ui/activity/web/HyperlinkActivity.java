@@ -1,11 +1,8 @@
-package com.ess.anime.wallpaper.ui.activity;
+package com.ess.anime.wallpaper.ui.activity.web;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-
-import com.ess.anime.wallpaper.R;
 
 import androidx.annotation.NonNull;
 
@@ -22,13 +19,12 @@ public class HyperlinkActivity extends BaseWebActivity {
     private String mHyperlink;
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mHyperlink = getIntent().getStringExtra(HYPERLINK);
         } else {
             mHyperlink = savedInstanceState.getString(HYPERLINK);
         }
-        findViewById(R.id.iv_help).setVisibility(View.GONE);
         super.init(savedInstanceState);
     }
 
@@ -55,6 +51,11 @@ public class HyperlinkActivity extends BaseWebActivity {
 
     @Override
     void showHelpDialog() {
+    }
+
+    @Override
+    boolean hasHelpDialog() {
+        return false;
     }
 
 }

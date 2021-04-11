@@ -35,12 +35,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private SharedPreferences mPreferences;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_setting;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         initToolBarLayout();
         initViews();

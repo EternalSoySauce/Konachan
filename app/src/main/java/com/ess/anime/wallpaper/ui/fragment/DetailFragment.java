@@ -22,7 +22,7 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.database.SearchTagBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.ui.activity.HyperlinkActivity;
+import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;

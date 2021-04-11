@@ -17,8 +17,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         init(savedInstanceState);
     }
 
-    abstract int layoutRes();
+    protected abstract int layoutRes();
 
-    abstract void init(Bundle savedInstanceState);
+    protected abstract void init(Bundle savedInstanceState);
 
 }

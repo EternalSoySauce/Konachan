@@ -1,8 +1,10 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 
 import com.ess.anime.wallpaper.R;
@@ -95,10 +97,28 @@ public class ImageFragment extends BaseFragment {
             mSwipeRefresh.setRefreshing(true);
             mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
         }
+
+        mMediaLayout.setOnLongClickListener(v -> {
+            downloadImage();
+            return true;
+        });
+
+        mMediaLayout.getPhotoView().setOnLongClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            downloadImage();
+            return true;
+        });
     }
 
     private void loadMedia() {
         mMediaLayout.setMediaPath(mImageBean.posts[0].getMinSizeImageUrl());
+    }
+
+    private void downloadImage() {
+        Activity activity = getActivity();
+        if (activity instanceof ImageDetailActivity) {
+            ((ImageDetailActivity) activity).showChooseToDownloadDialog();
+        }
     }
 
     //获取到图片详细信息后收到的通知，obj 为 Json (String)

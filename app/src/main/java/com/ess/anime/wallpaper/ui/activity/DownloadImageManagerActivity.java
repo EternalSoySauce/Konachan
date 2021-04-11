@@ -28,12 +28,12 @@ public class DownloadImageManagerActivity extends BaseActivity {
     RecyclerView mRvDownload;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_download_image_manager;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initRecyclerDownload();
     }

@@ -7,11 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
@@ -27,6 +22,10 @@ import com.zjca.qqdialog.ActionSheetDialog;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -45,12 +44,12 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
     private ActionSheetDialog mActionSheet;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_crop_wallpaper;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         Uri sourceUri = getIntent().getParcelableExtra(FILE_URI);
         if (sourceUri == null || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
             finish();

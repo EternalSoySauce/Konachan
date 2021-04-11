@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.ui.activity;
+package com.ess.anime.wallpaper.ui.activity.web;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerWebviewMoreAdapter;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
+import com.ess.anime.wallpaper.ui.activity.BaseActivity;
+import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.ui.view.LongClickWebView;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -50,13 +52,15 @@ public abstract class BaseWebActivity extends BaseActivity {
     @OnClick(R.id.iv_help)
     abstract void showHelpDialog();
 
+    abstract boolean hasHelpDialog();
+
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_web;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initWebView();
         initListPopupWindow();
@@ -66,6 +70,7 @@ public abstract class BaseWebActivity extends BaseActivity {
                 finish();
             }
         });
+        findViewById(R.id.iv_help).setVisibility(hasHelpDialog() ? View.VISIBLE : View.GONE);
     }
 
     private void initToolBarLayout() {

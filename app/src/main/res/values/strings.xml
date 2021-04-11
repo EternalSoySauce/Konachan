@@ -56,6 +56,7 @@
     <string name="nav_pixiv_gif">Pixiv Gif DL</string>
     <string name="nav_sauce_nao" translatable="false">SauceNAO</string>
     <string name="nav_trace_moe" translatable="false">Trace.moe</string>
+    <string name="nav_yandex" translatable="false">Yandex.Images</string>
     <string name="nav_game">Puzzle Game</string>
     <string name="nav_github">Github Page</string>
     <string name="nav_donate">Donate Us</string>

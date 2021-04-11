@@ -23,7 +23,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.ess.anime.wallpaper.ui.activity.SauceNaoActivity"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.SauceNaoActivity"
             android:targetPackage="com.ess.anime.wallpaper" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
@@ -37,7 +37,21 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.ess.anime.wallpaper.ui.activity.TraceMoeActivity"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.TraceMoeActivity"
+            android:targetPackage="com.ess.anime.wallpaper" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_nav_menu_yandex"
+        android:shortcutId="nav_yandex"
+        android:shortcutLongLabel="@string/nav_yandex"
+        android:shortcutShortLabel="@string/nav_yandex">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.YandexImagesActivity"
             android:targetPackage="com.ess.anime.wallpaper" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>

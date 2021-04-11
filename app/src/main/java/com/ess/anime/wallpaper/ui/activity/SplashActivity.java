@@ -19,12 +19,12 @@ public class SplashActivity extends BaseActivity {
     private boolean mCanGotoNextPage;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_splash;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         long delayMills = Constants.sRestart && Constants.sAllowPlaySound ? 3000 : 1500;
         SoundHelper.getInstance().playSplashWelcomeSound(this);
 

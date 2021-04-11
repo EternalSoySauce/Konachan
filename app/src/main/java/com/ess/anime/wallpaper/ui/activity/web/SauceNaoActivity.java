@@ -1,4 +1,4 @@
-package com.ess.anime.wallpaper.ui.activity;
+package com.ess.anime.wallpaper.ui.activity.web;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
@@ -23,6 +23,11 @@ public class SauceNaoActivity extends BaseWebActivity {
     @Override
     void showHelpDialog() {
         CustomDialog.showWebsiteHelpDialog(this, title(), R.string.dialog_saucenao_help);
+    }
+
+    @Override
+    boolean hasHelpDialog() {
+        return true;
     }
 
 }

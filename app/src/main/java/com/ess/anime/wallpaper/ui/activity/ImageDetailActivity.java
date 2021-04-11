@@ -56,12 +56,12 @@ public class ImageDetailActivity extends BaseActivity {
     private Handler mHandler = new Handler();
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_image_detail;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         initData(savedInstanceState);
         initViews();
         initToolBarLayout();
@@ -137,7 +137,7 @@ public class ImageDetailActivity extends BaseActivity {
         return mImageBean;
     }
 
-    private void showChooseToDownloadDialog() {
+    public void showChooseToDownloadDialog() {
         if (mImageBean != null) {
             CustomDialog.showChooseToDownloadDialog(this, makeDownloadChosenList(), new CustomDialog.SimpleDialogActionListener() {
                 @Override

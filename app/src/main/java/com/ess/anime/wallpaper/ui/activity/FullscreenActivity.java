@@ -59,12 +59,12 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     private boolean mForResult = true;
 
     @Override
-    int layoutRes() {
+    protected int layoutRes() {
         return R.layout.activity_fullscreen;
     }
 
     @Override
-    void init(Bundle savedInstanceState) {
+    protected void init(Bundle savedInstanceState) {
         QMUIStatusBarHelper.translucent(this);
         QMUIDisplayHelper.cancelFullScreen(this);
         mEnlarge = getIntent().getBooleanExtra(Constants.ENLARGE, false);
