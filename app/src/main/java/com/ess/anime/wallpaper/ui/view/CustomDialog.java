@@ -6,16 +6,22 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.adapter.RecyclerSingleChoiceAdapter;
+import com.ess.anime.wallpaper.database.FavoriteTagBean;
+import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.download.apk.DownloadApkService;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
+import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
@@ -29,6 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomDialog extends MaterialDialog.Builder {
 
@@ -62,12 +70,13 @@ public class CustomDialog extends MaterialDialog.Builder {
     /**
      * 删除收藏图片
      *
-     * @param context  上下文
-     * @param listener 事件监听器
+     * @param context     上下文
+     * @param deleteCount 要删除的图片数量
+     * @param listener    事件监听器
      */
-    public static void showDeleteCollectionDialog(Context context, String msg, OnDialogActionListener listener) {
+    public static void showDeleteCollectionDialog(Context context, int deleteCount, OnDialogActionListener listener) {
         MaterialDialog dialog = new CustomDialog(context)
-                .content(msg)
+                .content(context.getString(R.string.dialog_delete_collection_msg, deleteCount))
                 .negativeText(R.string.dialog_delete_cancel)
                 .positiveText(R.string.dialog_delete_sure)
                 .onPositive((dialog1, which) -> listener.onPositive())
@@ -115,6 +124,87 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .content(R.string.dialog_clear_all_search_history_msg)
                 .negativeText(R.string.dialog_clear_all_cancel)
                 .positiveText(R.string.dialog_clear_all_sure)
+                .onPositive((dialog1, which) -> listener.onPositive())
+                .show();
+    }
+
+    /**
+     * 显示/编辑标签备注
+     *
+     * @param context  上下文
+     * @param tag      标签
+     * @param listener 事件监听器
+     */
+    public static void showEditTagAnnotationDialog(Context context, String tag, OnDialogActionListener listener) {
+        ViewGroup contentView = (ViewGroup) View.inflate(context, R.layout.layout_popup_tag_annotation, null);
+        EditText editText = contentView.findViewById(R.id.et_annotation);
+        editText.setText(tag);
+        editText.setEnabled(false);
+        FavoriteTagBean tagBean = GreenDaoUtils.queryFavoriteTag(tag);
+        MaterialDialog dialog = new CustomDialog(context)
+                .input("为标签添加备注", tagBean.getAnnotation(), true, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        tagBean.setAnnotation(input.toString());
+                        GreenDaoUtils.updateFavoriteTag(tagBean);
+                        if (listener != null) {
+                            listener.onPositive();
+                        }
+                    }
+                }).show();
+    }
+
+    /**
+     * 收藏标签排序
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showSortFavoriteTagsDialog(Context context, OnDialogActionListener listener) {
+        View view = View.inflate(context, R.layout.layout_dialog_favorite_tag_sort, null);
+
+        TagOperationHelper.FavoriteTagSortBy tagSortBy = TagOperationHelper.getFavoriteTagSortBy();
+        RecyclerView rvSortBy = view.findViewById(R.id.rv_sort_by);
+        rvSortBy.setLayoutManager(new LinearLayoutManager(context));
+        RecyclerSingleChoiceAdapter<TagOperationHelper.FavoriteTagSortBy> adapterSortBy
+                = new RecyclerSingleChoiceAdapter<>(Arrays.asList(TagOperationHelper.FavoriteTagSortBy.values()));
+        adapterSortBy.setSelectPos(tagSortBy.ordinal(), false);
+        adapterSortBy.bindToRecyclerView(rvSortBy);
+
+        TagOperationHelper.FavoriteTagSortOrder tagSortOrder = TagOperationHelper.getFavoriteTagSortOrder();
+        RecyclerView rvSortOrder = view.findViewById(R.id.rv_sort_order);
+        rvSortOrder.setLayoutManager(new LinearLayoutManager(context));
+        RecyclerSingleChoiceAdapter<TagOperationHelper.FavoriteTagSortOrder> adapterSortOrder
+                = new RecyclerSingleChoiceAdapter<>(Arrays.asList(TagOperationHelper.FavoriteTagSortOrder.values()));
+        adapterSortOrder.setSelectPos(tagSortOrder.ordinal(), false);
+        adapterSortOrder.bindToRecyclerView(rvSortOrder);
+
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_favorite_tag_sort_title)
+                .customView(view, false)
+                .negativeText(R.string.dialog_favorite_tag_sort_cancel)
+                .positiveText(R.string.dialog_favorite_tag_sort_sure)
+                .onPositive((dialog1, which) -> {
+                    TagOperationHelper.FavoriteTagSortBy sortBy = adapterSortBy.getSelectData();
+                    TagOperationHelper.FavoriteTagSortOrder sortOrder = adapterSortOrder.getSelectData();
+                    if (sortBy != null && sortOrder != null) {
+                        TagOperationHelper.saveFavoriteTagSortParam(sortBy, sortOrder);
+                    }
+                    listener.onPositive();
+                }).show();
+    }
+
+    /**
+     * 删除收藏标签
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showDeleteFavoriteTagsDialog(Context context, OnDialogActionListener listener) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(context.getString(R.string.dialog_delete_favorite_tags_msg))
+                .negativeText(R.string.dialog_delete_cancel)
+                .positiveText(R.string.dialog_delete_sure)
                 .onPositive((dialog1, which) -> listener.onPositive())
                 .show();
     }

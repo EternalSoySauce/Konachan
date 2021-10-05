@@ -1,7 +1,6 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.adapter.RecyclerDetailTagMorePopupAdapter;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.PoolBean;
@@ -20,23 +19,29 @@ import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.TagBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.database.GreenDaoUtils;
-import com.ess.anime.wallpaper.database.SearchTagBean;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
+import com.ess.anime.wallpaper.model.entity.DetailTagMoreItem;
+import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
-import com.ess.anime.wallpaper.ui.activity.MainActivity;
+import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.image.ToggleImageView;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
+import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.utils.WebLinkMethod;
+import com.jiang.android.indicatordialog.IndicatorBuilder;
+import com.jiang.android.indicatordialog.IndicatorDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
@@ -50,7 +55,6 @@ public class DetailFragment extends BaseFragment {
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
-    private Toast mCurrentToast;
 
     @Override
     public void onAttach(Context context) {
@@ -246,57 +250,84 @@ public class DetailFragment extends BaseFragment {
     private void addTagViews(ViewGroup parentLayout, List<String> tagList, int colorId) {
         for (String tag : tagList) {
             View view = View.inflate(mActivity, R.layout.layout_tag_item, null);
+            // tag内容
             TextView tvTag = view.findViewById(R.id.tv_tag);
             tvTag.setText(tag);
             tvTag.setTextColor(getResources().getColor(colorId));
-            view.findViewById(R.id.iv_search).setOnClickListener(v -> {
-                if (SystemUtils.isActivityActive(mActivity)) {
-                    int searchMode = Constants.SEARCH_MODE_TAGS;
-                    GreenDaoUtils.updateSearchTag(new SearchTagBean(tag, searchMode, System.currentTimeMillis()));
-                    Intent intent = new Intent(mActivity, MainActivity.class);
-                    intent.putExtra(Constants.SEARCH_TAG, tag);
-                    intent.putExtra(Constants.SEARCH_MODE, searchMode);
-                    startActivity(intent);
-                    mActivity.finish();
-                }
+            // 收藏
+            ToggleImageView ivFavorite = view.findViewById(R.id.iv_favorite);
+            ivFavorite.setChecked(GreenDaoUtils.isFavoriteTag(tag));
+            ivFavorite.setOnClickListener(v -> {
+                TagOperationHelper.setTagFavorite(tag, ivFavorite.isChecked());
             });
-            view.findViewById(R.id.iv_copy).setOnClickListener(v -> {
-                if (SystemUtils.isActivityActive(mActivity)) {
-                    SystemUtils.setClipString(mActivity, tag);
-                    cancelCurrentToast();
-                    showNewToast(getString(R.string.already_set_clipboard));
-                }
+            // 备注
+            view.findViewById(R.id.iv_annotation).setOnClickListener(v -> {
+                showTagAnnotation(tag);
             });
-            view.findViewById(R.id.iv_add_to).setOnClickListener(v -> {
-                if (SystemUtils.isActivityActive(mActivity)) {
-                    String firstClipString = SystemUtils.getFirstClipString(mActivity);
-                    if (TextUtils.isEmpty(firstClipString)) {
-                        firstClipString = tag;
-                    } else {
-                        String[] tags = firstClipString.split("[,，]");
-                        if (!Arrays.asList(tags).contains(tag)) {
-                            firstClipString += "," + tag;
-                        }
-                    }
-                    SystemUtils.setClipString(mActivity, firstClipString);
-                    cancelCurrentToast();
-                    showNewToast(getString(R.string.already_add_to_clipboard));
-                }
+            // 更多菜单
+            view.findViewById(R.id.iv_more).setOnClickListener(v -> {
+                showMoreMenu(v, tag);
             });
             parentLayout.addView(view);
         }
     }
 
-    private void cancelCurrentToast() {
-        if (mCurrentToast != null) {
-            mCurrentToast.cancel();
-            mCurrentToast = null;
+    private void showTagAnnotation(String tag) {
+        if (SystemUtils.isActivityActive(mActivity)) {
+            CustomDialog.showEditTagAnnotationDialog(mActivity, tag, null);
         }
     }
 
-    private void showNewToast(String toast) {
-        mCurrentToast = Toast.makeText(mActivity, toast, Toast.LENGTH_SHORT);
-        mCurrentToast.show();
+    private void showMoreMenu(View anchorView, String tag) {
+        if (SystemUtils.isActivityActive(mActivity)) {
+            List<DetailTagMoreItem> items = new ArrayList<>();
+            items.add(new DetailTagMoreItem(getString(R.string.detail_tag_more_item_search), R.drawable.ic_tag_search, () -> {
+                TagOperationHelper.searchTag(mActivity, tag);
+            }));
+            items.add(new DetailTagMoreItem(getString(R.string.detail_tag_more_item_copy_clipboard), R.drawable.ic_tag_copy, () -> {
+                TagOperationHelper.copyTagToClipboard(mActivity, tag);
+            }));
+            items.add(new DetailTagMoreItem(getString(R.string.detail_tag_more_item_append_clipboard), R.drawable.ic_tag_append, () -> {
+                TagOperationHelper.appendTagToClipboard(mActivity, tag);
+            }));
+            RecyclerDetailTagMorePopupAdapter adapter = new RecyclerDetailTagMorePopupAdapter(items);
+
+            int[] layoutSize = adapter.measureItemsSize(mActivity);
+            int layoutWidth = layoutSize[0];
+            int layoutHeight = layoutSize[1];
+            int anchorViewBottomPos = UIUtils.getLocationInWindow(anchorView)[1] + anchorView.getHeight();
+            int screenHeight = UIUtils.getScreenHeight(mActivity);
+            IndicatorDialog popup = new IndicatorBuilder(mActivity)
+                    .width(layoutWidth)
+                    .height(-1)
+                    .bgColor(getResources().getColor(R.color.colorPrimary))
+                    .animator(android.R.style.Animation_Dialog)
+                    .dimEnabled(false)
+                    .gravity(IndicatorBuilder.GRAVITY_RIGHT)
+                    .arrowWidth(UIUtils.dp2px(mActivity, 10))
+                    .ArrowDirection(anchorViewBottomPos + layoutHeight > screenHeight ? IndicatorBuilder.BOTTOM : IndicatorBuilder.TOP)
+                    .ArrowRectage(0.92f)
+                    .radius(16)
+                    .layoutManager(new LinearLayoutManager(mActivity))
+                    .adapter(adapter)
+                    .create();
+
+            adapter.setOnItemClickListener((baseQuickAdapter, view, i) -> {
+                popup.dismiss();
+                DetailTagMoreItem item = adapter.getItem(i);
+                if (item != null) {
+                    Runnable callback = item.getClickCallback();
+                    if (callback != null) {
+                        callback.run();
+                    }
+                }
+            });
+
+            popup.setCanceledOnTouchOutside(true);
+            popup.getDialog().setOnShowListener(dialog -> UIUtils.setBackgroundAlpha(mActivity, 0.4f));
+            popup.getDialog().setOnDismissListener(dialog -> UIUtils.setBackgroundAlpha(mActivity, 1f));
+            popup.show(anchorView);
+        }
     }
 
     // konachan,yandere格式：2017-09-19T19:42:58.325Z

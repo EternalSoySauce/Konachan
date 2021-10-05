@@ -12,15 +12,19 @@ android {
         multiDexEnabled true
         resConfigs('zh-rCN', 'zh-rHK', 'zh-rTW')
         vectorDrawables.useSupportLibrary = true
-        ndk {
-            abiFilters 'arm64-v8a', 'armeabi-v7a'
-        }
         aaptOptions {
             ignoreAssetsPattern "!x86:!*ffprobe"
         }
     }
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
+            ndk {
+                abiFilters 'arm64-v8a', 'armeabi-v7a'
+            }
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -160,7 +164,7 @@ dependencies {
 }
 
 greendao {
-    schemaVersion 2
+    schemaVersion 3
 }
 
 //apply plugin: 'com.google.gms.google-services'

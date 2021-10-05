@@ -40,11 +40,13 @@
     <string name="navigation_drawer_close">關閉側邊欄</string>
     <string name="nav_post">圖片</string>
     <string name="nav_pool">圖集</string>
+    <string name="nav_favorite_tag">我的標籤</string>
     <string name="nav_collection">我的收藏</string>
     <string name="nav_download_manager">下載管理</string>
     <string name="nav_feedback">反饋建議</string>
     <string name="nav_setting">設置與幫助</string>
     <string name="nav_pixiv_gif">P站Gif下載器</string>
+    <string name="nav_reverse_search">逆向搜索</string>
     <string name="nav_game">拼圖遊戲</string>
     <string name="nav_github">Github主頁</string>
     <string name="nav_donate">贊助我們</string>
@@ -93,6 +95,9 @@
     <string name="detail_post_rating">評級：</string>
     <string name="detail_post_score">評分：</string>
     <string name="detail_tag_title">標籤</string>
+    <string name="detail_tag_more_item_search">搜索標籤</string>
+    <string name="detail_tag_more_item_copy_clipboard">複製到剪貼板</string>
+    <string name="detail_tag_more_item_append_clipboard">追加到剪貼板</string>
     <string name="detail_pool_title">所屬圖集</string>
     <string name="detail_pool_id">圖集Id：</string>
     <string name="detail_pool_name">名稱：</string>
@@ -101,6 +106,16 @@
     <string name="detail_pool_description">描述：</string>
     <string name="detail_pool_no_description">無</string>
     <string name="comment_no_comments">暫無評論</string>
+
+    <!-- Favorite Tag Activity -->
+    <string name="sort">排序</string>
+    <string name="sort_by_first_letter">標籤名</string>
+    <string name="sort_by_favorite_time">收藏時間</string>
+    <string name="order">順序</string>
+    <string name="sort_order_ascend">升序</string>
+    <string name="sort_order_descend">降序</string>
+    <string name="favorite_tag_annotation_empty">暫未添加任何備註</string>
+    <string name="favorite_tag_favorite_at_time">收藏於：%s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">全部</string>
@@ -152,6 +167,12 @@
     <string name="browse_title">打開方式</string>
     <string name="save_image">保存圖片</string>
 
+    <!-- Website -->
+    <string name="website_desc_sauce_nao">以圖搜圖</string>
+    <string name="website_desc_trace_moe">以圖搜番</string>
+    <string name="website_desc_ascii2d">二次元画像詳細検索</string>
+    <string name="website_desc_yandex">搜索引擎</string>
+
     <!-- Surface View -->
     <string name="game_current_step">步數：%d</string>
     <string name="game_best_step">最佳：</string>
@@ -159,7 +180,8 @@
     <string name="game_completed">恭喜！</string>
 
     <!-- Dialog -->
-    <string name="dialog_delete_msg">將刪除 %d 張圖片。</string>
+    <string name="dialog_delete_collection_msg">將刪除 %d 張圖片。</string>
+    <string name="dialog_delete_favorite_tags_msg">確認取消收藏這些標籤？\n已編輯的備註內容仍會保留</string>
     <string name="dialog_delete_cancel">取消</string>
     <string name="dialog_delete_sure">刪除</string>
     <string name="dialog_download_sample">預覽圖&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x
@@ -195,6 +217,8 @@
     <string name="dialog_feedback_neutral">跳轉至Github</string>
     <string name="dialog_saucenao_help">是一個線上圖片逆向搜索工具。名稱來源於英文Source? Now! 找來源？立刻就找到！ \n\n通過上傳本地圖片或鍵入圖片的url地址，在互聯網上的多個數據庫進行相似度匹配從而找到所求圖片、其相關信息以及相似的其他圖片，目前已經成為主流的圖片搜索工具。</string>
     <string name="dialog_tracemoe_help">是一個概念測試原型搜索引擎，可幫助用戶通過屏幕截圖追溯原始動漫。 \n\n它搜索超過22300小時的動漫並找到最佳匹配場景，顯示出這是什麼動畫，在哪個劇集和場景出現的時間。由於搜索結果可能不准確，因此它提供了幾秒的預覽驗證。</string>
+    <string name="dialog_ascii2d_help">是一種可以按圖像搜索圖像並檢查細節的服務。支持常見的JPEG PNG WEBP格式圖片最大5MB。</string>
+    <string name="dialog_yandex_help">是一款俄羅斯搜索引擎，所提供的服務包括搜索、最新新聞、地圖和百科、電子信箱、電子商務、互聯網廣告及其他服務。</string>
     <string name="dialog_cannot_wallpaper_lockscreen_msg">您的設備可能無法將自定義壁紙應用為鎖屏，如有此現象請使用“設為壁紙”功能。</string>
     <string name="dialog_cannot_wallpaper_lockscreen_sure">我知道了</string>
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">不再顯示</string>
@@ -203,6 +227,9 @@
     <string name="dialog_clear_all_search_history_msg">確認清除全部歷史記錄嗎？</string>
     <string name="dialog_clear_all_sure">確認</string>
     <string name="dialog_clear_all_cancel">取消</string>
+    <string name="dialog_favorite_tag_sort_title">排序方式</string>
+    <string name="dialog_favorite_tag_sort_sure">完成</string>
+    <string name="dialog_favorite_tag_sort_cancel">取消</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

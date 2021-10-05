@@ -20,7 +20,7 @@ public class MyDevOpenHelper extends DaoMaster.DevOpenHelper {
 
     @Override
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
-        MigrationHelper.migrate(db, SearchTagBeanDao.class, DownloadBeanDao.class);
+        MigrationHelper.migrate(db, SearchTagBeanDao.class, FavoriteTagBeanDao.class, DownloadBeanDao.class);
     }
 
 }

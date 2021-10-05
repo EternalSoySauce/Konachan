@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="true"
+    android:minHeight="@dimen/md_listitem_height"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/md_dialog_frame_margin"
+    android:paddingLeft="@dimen/md_dialog_frame_margin"
+    android:paddingEnd="@dimen/md_dialog_frame_margin"
+    android:paddingRight="@dimen/md_dialog_frame_margin"
+    tools:gravity="start|center_vertical"
+    tools:ignore="PrivateResource">
+
+    <androidx.appcompat.widget.AppCompatRadioButton
+        android:id="@+id/md_control"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        app:buttonTint="@color/dialog_widget_seletor" />
+
+    <TextView
+        android:id="@+id/md_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/md_listitem_height"
+        android:paddingStart="@dimen/md_listitem_control_margin"
+        android:paddingTop="@dimen/md_listitem_vertical_margin_choice"
+        android:paddingBottom="@dimen/md_listitem_vertical_margin_choice"
+        android:textColor="@color/color_dialog_text"
+        android:textSize="@dimen/md_listitem_textsize"
+        tools:ignore="NewApi,RtlSymmetry"
+        tools:text="Item" />
+
+</LinearLayout>

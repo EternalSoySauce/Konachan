@@ -20,6 +20,11 @@
             android:title="@string/nav_collection" />
 
         <item
+            android:id="@+id/nav_favorite_tag"
+            android:icon="@drawable/ic_nav_menu_favorite_tag"
+            android:title="@string/nav_favorite_tag" />
+
+        <item
             android:id="@+id/nav_download_manager"
             android:icon="@drawable/ic_nav_menu_download_manager"
             android:title="@string/nav_download_manager" />
@@ -35,19 +40,9 @@
             android:title="@string/nav_pixiv_gif" />
 
         <item
-            android:id="@+id/nav_sauce_nao"
-            android:icon="@drawable/ic_nav_menu_sauce_nao"
-            android:title="@string/nav_sauce_nao" />
-
-        <item
-            android:id="@+id/nav_trace_moe"
-            android:icon="@drawable/ic_nav_menu_trace_moe"
-            android:title="@string/nav_trace_moe" />
-
-        <item
-            android:id="@+id/nav_yandex"
-            android:icon="@drawable/ic_nav_menu_yandex"
-            android:title="@string/nav_yandex" />
+            android:id="@+id/nav_reverse_search"
+            android:icon="@drawable/ic_nav_menu_reverse_search"
+            android:title="@string/nav_reverse_search" />
 
         <item
             android:id="@+id/nav_game"

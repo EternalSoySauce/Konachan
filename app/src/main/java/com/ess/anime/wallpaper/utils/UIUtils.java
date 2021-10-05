@@ -355,4 +355,10 @@ public class UIUtils {
         }
         return null;
     }
+
+    public static int[] getLocationInWindow(View view) {
+        int[] location = new int[2];
+        view.getLocationInWindow(location);
+        return location;
+    }
 }

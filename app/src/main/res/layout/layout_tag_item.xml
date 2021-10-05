@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -18,30 +19,30 @@
         android:textColor="@color/color_text_unselected"
         android:textSize="16sp" />
 
-    <ImageView
-        android:id="@+id/iv_search"
+    <com.ess.anime.wallpaper.ui.view.image.ToggleImageView
+        android:id="@+id/iv_favorite"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:background="@drawable/background_item_selected"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_tag_search"
-        android:tint="@color/color_text_unselected" />
+        android:src="@drawable/ic_tag_favorite"
+        app:tint="@color/color_text_unselected" />
 
     <ImageView
-        android:id="@+id/iv_copy"
+        android:id="@+id/iv_annotation"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:background="@drawable/background_item_selected"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_tag_copy"
-        android:tint="@color/color_text_unselected" />
+        android:src="@drawable/ic_tag_annotation"
+        app:tint="@color/color_text_unselected" />
 
     <ImageView
-        android:id="@+id/iv_add_to"
+        android:id="@+id/iv_more"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:background="@drawable/background_item_selected"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_tag_add_to"
-        android:tint="@color/color_text_unselected" />
+        android:src="@drawable/ic_tag_more"
+        app:tint="@color/color_text_unselected" />
 </LinearLayout>

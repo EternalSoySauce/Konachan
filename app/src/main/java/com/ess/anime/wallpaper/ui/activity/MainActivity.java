@@ -18,9 +18,6 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
-import com.ess.anime.wallpaper.ui.activity.web.SauceNaoActivity;
-import com.ess.anime.wallpaper.ui.activity.web.TraceMoeActivity;
-import com.ess.anime.wallpaper.ui.activity.web.YandexImagesActivity;
 import com.ess.anime.wallpaper.ui.fragment.DonateFragment;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
@@ -151,20 +148,17 @@ public class MainActivity extends BaseActivity {
                     case R.id.nav_collection:
                         startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                         break;
+                    case R.id.nav_favorite_tag:
+                        startActivity(new Intent(MainActivity.this, FavoriteTagActivity.class));
+                        break;
                     case R.id.nav_download_manager:
                         startActivity(new Intent(MainActivity.this, DownloadImageManagerActivity.class));
                         break;
                     case R.id.nav_pixiv_gif:
                         startActivity(new Intent(MainActivity.this, PixivGifActivity.class));
                         break;
-                    case R.id.nav_sauce_nao:
-                        startActivity(new Intent(MainActivity.this, SauceNaoActivity.class));
-                        break;
-                    case R.id.nav_trace_moe:
-                        startActivity(new Intent(MainActivity.this, TraceMoeActivity.class));
-                        break;
-                    case R.id.nav_yandex:
-                        startActivity(new Intent(MainActivity.this, YandexImagesActivity.class));
+                    case R.id.nav_reverse_search:
+                        startActivity(new Intent(MainActivity.this, ReverseSearchActivity.class));
                         break;
                     case R.id.nav_game:
                         startActivity(new Intent(MainActivity.this, GameActivity.class));

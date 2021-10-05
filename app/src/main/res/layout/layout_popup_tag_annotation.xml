@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/colorPrimary"
+    app:cardCornerRadius="3dp"
+    app:contentPadding="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_edit_page"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_annotation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:includeFontPadding="false"
+            android:minLines="3"
+            android:textColor="@color/colorAccent"
+            android:textSize="13sp"
+            android:theme="@style/AppTheme.PageEditText"
+            tools:text="标签备注" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:textColor="@color/color_text_light"
+            android:textSize="12sp"
+            tools:text="12/30" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

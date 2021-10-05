@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ess.anime.wallpaper.R;
@@ -41,10 +41,10 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    @BindView(R.id.layout_editing)
-    RelativeLayout mLayoutEditing;
     @BindView(R.id.tv_edit)
     TextView mTvEdit;
+    @BindView(R.id.layout_editing)
+    ViewGroup mLayoutEditing;
     @BindView(R.id.tv_choose_count)
     TextView mTvChooseCount;
     @BindView(R.id.cb_choose_all)
@@ -118,8 +118,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
 
             case R.id.tv_delete:
                 List<CollectionBean> deleteList = new ArrayList<>(mCollectionAdapter.getSelectList());
-                String msg = getString(R.string.dialog_delete_msg, deleteList.size());
-                showDeleteCollectionDialog(msg, deleteList);
+                showDeleteCollectionDialog(deleteList);
                 break;
         }
     }
@@ -156,15 +155,15 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void scrollToTop() {
-        int smoothPos = 8 * mLayoutManager.getSpanCount();;
+        int smoothPos = 8 * mLayoutManager.getSpanCount();
         if (mLayoutManager.findLastVisibleItemPosition() > smoothPos) {
             mRvCollection.scrollToPosition(smoothPos);
         }
         mRvCollection.smoothScrollToPosition(0);
     }
 
-    private void showDeleteCollectionDialog(String msg, List<CollectionBean> deleteList) {
-        CustomDialog.showDeleteCollectionDialog(this, msg, new CustomDialog.SimpleDialogActionListener() {
+    private void showDeleteCollectionDialog(List<CollectionBean> deleteList) {
+        CustomDialog.showDeleteCollectionDialog(this, deleteList.size(), new CustomDialog.SimpleDialogActionListener() {
             @Override
             public void onPositive() {
                 exitEditMode(false);

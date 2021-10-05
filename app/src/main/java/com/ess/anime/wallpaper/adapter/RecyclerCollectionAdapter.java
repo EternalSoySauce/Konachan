@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.CollectionBean;
@@ -26,11 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
-
-    private boolean mEditing;
-    private List<CollectionBean> mSelectList = new ArrayList<>();
-    private OnSelectChangedListener mSelectChangedListener;
+public class RecyclerCollectionAdapter extends BaseRecyclerEditAdapter<CollectionBean> {
 
     private int mImageSlideLength = -1;
 
@@ -129,96 +124,8 @@ public class RecyclerCollectionAdapter extends BaseQuickAdapter<CollectionBean, 
     }
 
     @Override
-    public void addData(int position, @NonNull CollectionBean data) {
-        super.addData(position, data);
-        notifyItemRangeChanged(0, mData.size());
-    }
-
-    public void removeData(CollectionBean collectionBean) {
-        int position = mData.indexOf(collectionBean);
-        if (position != -1) {
-            mData.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(0, mData.size());
-        }
-    }
-
-    public void removeDatas(List<CollectionBean> deleteList) {
-        for (CollectionBean collectionBean : deleteList) {
-            int position = mData.indexOf(collectionBean);
-            if (position != -1) {
-                mData.remove(position);
-                notifyItemRemoved(position);
-            }
-        }
-        notifyItemRangeChanged(0, mData.size());
-    }
-
-    public void enterEditMode() {
-        mEditing = true;
-        notifyDataSetChanged();
-    }
-
-    public void exitEditMode(boolean notify) {
-        mEditing = false;
-        mSelectList.clear();
-        notifySelectChanged();
-        if (notify) {
-            notifyDataSetChanged();
-        }
-    }
-
-    public boolean isEditMode() {
-        return mEditing;
-    }
-
-    public void select(CollectionBean collectionBean) {
-        if (!isSelected(collectionBean)) {
-            mSelectList.add(collectionBean);
-            notifySelectChanged();
-        }
-    }
-
-    public void deselect(CollectionBean collectionBean) {
-        mSelectList.remove(collectionBean);
-        notifySelectChanged();
-    }
-
-    public boolean isSelected(CollectionBean collectionBean) {
-        return mSelectList.contains(collectionBean);
-    }
-
-    public void selectAll() {
-        mSelectList.clear();
-        mSelectList.addAll(mData);
-        notifyDataSetChanged();
-        notifySelectChanged();
-    }
-
-    public void deselectAll() {
-        mSelectList.clear();
-        notifyDataSetChanged();
-        notifySelectChanged();
-    }
-
-    public List<CollectionBean> getSelectList() {
-        return mSelectList;
-    }
-
-    public void setOnSelectChangedListener(OnSelectChangedListener listener) {
-        mSelectChangedListener = listener;
-        notifySelectChanged();
-    }
-
-    private void notifySelectChanged() {
-        if (mSelectChangedListener != null) {
-            mSelectChangedListener.onSelectChanged(mSelectList.size(),
-                    !mSelectList.isEmpty() && mSelectList.size() >= mData.size());
-        }
-    }
-
-    public interface OnSelectChangedListener {
-        void onSelectChanged(int selectCount, boolean allSelected);
+    protected boolean showEditTransitionAnimation() {
+        return false;
     }
 
 }

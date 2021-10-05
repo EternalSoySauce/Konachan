@@ -16,42 +16,14 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_nav_menu_sauce_nao"
-        android:shortcutId="nav_sauce_nao"
-        android:shortcutLongLabel="@string/nav_sauce_nao"
-        android:shortcutShortLabel="@string/nav_sauce_nao">
+        android:icon="@drawable/ic_nav_menu_reverse_search"
+        android:shortcutId="nav_reverse_search"
+        android:shortcutLongLabel="@string/nav_reverse_search"
+        android:shortcutShortLabel="@string/nav_reverse_search">
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.SauceNaoActivity"
-            android:targetPackage="com.ess.anime.wallpaper" />
-        <categories android:name="android.shortcut.conversation" />
-    </shortcut>
-
-    <shortcut
-        android:enabled="true"
-        android:icon="@drawable/ic_nav_menu_trace_moe"
-        android:shortcutId="nav_trace_moe"
-        android:shortcutLongLabel="@string/nav_trace_moe"
-        android:shortcutShortLabel="@string/nav_trace_moe">
-
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.TraceMoeActivity"
-            android:targetPackage="com.ess.anime.wallpaper" />
-        <categories android:name="android.shortcut.conversation" />
-    </shortcut>
-
-    <shortcut
-        android:enabled="true"
-        android:icon="@drawable/ic_nav_menu_yandex"
-        android:shortcutId="nav_yandex"
-        android:shortcutLongLabel="@string/nav_yandex"
-        android:shortcutShortLabel="@string/nav_yandex">
-
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="com.ess.anime.wallpaper.ui.activity.web.YandexImagesActivity"
+            android:targetClass="com.ess.anime.wallpaper.ui.activity.ReverseSearchActivity"
             android:targetPackage="com.ess.anime.wallpaper" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>

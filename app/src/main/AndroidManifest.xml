@@ -55,7 +55,8 @@
         <activity
             android:name=".ui.activity.ImageDetailActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.activity.web.HyperlinkActivity"
@@ -73,6 +74,12 @@
 
         <activity
             android:name=".ui.activity.SearchActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".ui.activity.FavoriteTagActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -107,17 +114,12 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".ui.activity.web.SauceNaoActivity"
+            android:name=".ui.activity.ReverseSearchActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.activity.web.TraceMoeActivity"
-            android:configChanges="screenSize|orientation|keyboardHidden"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.activity.web.YandexImagesActivity"
+            android:name=".ui.activity.web.ReverseSearchWebsiteActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 

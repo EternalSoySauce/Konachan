@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox
+        android:id="@+id/cb_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="12dp"
+        android:clickable="false"
+        android:tint="@color/check_box_choose_all_color" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/color_text_bg"
+        app:cardCornerRadius="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:id="@+id/tv_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_unselected"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/tv_annotation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minLines="2"
+                android:textColor="@color/favorite_tag_annotation_text_color"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/tv_tag"
+                app:layout_constraintTop_toBottomOf="@+id/tv_tag"
+                tools:maxLength="150"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/tv_favorite_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/color_text_light"
+                android:textSize="9sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_annotation"
+                tools:text="收藏于：2021年10月5日" />
+
+            <View
+                android:id="@+id/view_divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="2dp"
+                android:background="@color/color_ripple_setting_item"
+                app:layout_constraintTop_toBottomOf="@+id/tv_favorite_time" />
+
+            <ImageView
+                android:id="@+id/iv_edit"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/background_item_selected"
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_tag_edit"
+                app:layout_constraintEnd_toStartOf="@+id/iv_search"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_divider_line"
+                app:tint="@color/color_text_unselected" />
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/background_item_selected"
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_tag_search"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
+                app:layout_constraintEnd_toStartOf="@+id/iv_copy"
+                app:layout_constraintStart_toEndOf="@+id/iv_edit"
+                app:layout_constraintTop_toTopOf="@+id/iv_edit"
+                app:tint="@color/color_text_unselected" />
+
+            <ImageView
+                android:id="@+id/iv_copy"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/background_item_selected"
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_tag_copy"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
+                app:layout_constraintEnd_toStartOf="@+id/iv_append"
+                app:layout_constraintStart_toEndOf="@+id/iv_search"
+                app:layout_constraintTop_toTopOf="@+id/iv_edit"
+                app:tint="@color/color_text_unselected" />
+
+            <ImageView
+                android:id="@+id/iv_append"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/background_item_selected"
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_tag_append"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_copy"
+                app:layout_constraintTop_toTopOf="@+id/iv_edit"
+                app:tint="@color/color_text_unselected" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

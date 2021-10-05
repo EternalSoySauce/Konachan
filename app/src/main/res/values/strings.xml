@@ -49,14 +49,13 @@
     <string name="navigation_drawer_close">Close drawer layout</string>
     <string name="nav_post">Image</string>
     <string name="nav_pool">Album</string>
+    <string name="nav_favorite_tag">Tags</string>
     <string name="nav_collection">Favorites</string>
     <string name="nav_download_manager">Download Manager</string>
     <string name="nav_feedback">Feedback</string>
     <string name="nav_setting">Setting &amp; Help</string>
     <string name="nav_pixiv_gif">Pixiv Gif DL</string>
-    <string name="nav_sauce_nao" translatable="false">SauceNAO</string>
-    <string name="nav_trace_moe" translatable="false">Trace.moe</string>
-    <string name="nav_yandex" translatable="false">Yandex.Images</string>
+    <string name="nav_reverse_search">Reverse Search</string>
     <string name="nav_game">Puzzle Game</string>
     <string name="nav_github">Github Page</string>
     <string name="nav_donate">Donate Us</string>
@@ -108,6 +107,9 @@
     <string name="detail_post_rating_q" translatable="false">Questionable</string>
     <string name="detail_post_score">Score:</string>
     <string name="detail_tag_title">Tags</string>
+    <string name="detail_tag_more_item_search">Search tag</string>
+    <string name="detail_tag_more_item_copy_clipboard">Copy to clipboard</string>
+    <string name="detail_tag_more_item_append_clipboard">Append to clipboard</string>
     <string name="detail_pool_title">Album</string>
     <string name="detail_pool_id">Album id:</string>
     <string name="detail_pool_name">Album title:</string>
@@ -119,6 +121,16 @@
 
     <!-- Pool Detail -->
     <string name="pool_updated_time" translatable="false">Updated %s</string>
+
+    <!-- Favorite Tag Activity -->
+    <string name="sort">Sort</string>
+    <string name="sort_by_first_letter">Tag Name</string>
+    <string name="sort_by_favorite_time">Favorite Time</string>
+    <string name="order">Order</string>
+    <string name="sort_order_ascend">Ascending</string>
+    <string name="sort_order_descend">Descending</string>
+    <string name="favorite_tag_annotation_empty">No annotations have been added yet</string>
+    <string name="favorite_tag_favorite_at_time">Favorite at: %s</string>
 
     <!-- Collection Activity -->
     <string name="choose_all">All</string>
@@ -170,6 +182,16 @@
     <string name="browse_title">Browse via</string>
     <string name="save_image">Save Image</string>
 
+    <!-- Website -->
+    <string name="website_name_sauce_nao" translatable="false">SauceNAO</string>
+    <string name="website_name_trace_moe" translatable="false">WhatAnime</string>
+    <string name="website_name_ascii2d" translatable="false">Ascii2d</string>
+    <string name="website_name_yandex" translatable="false">Yandex</string>
+    <string name="website_desc_sauce_nao">Search original image</string>
+    <string name="website_desc_trace_moe">Search anime by image</string>
+    <string name="website_desc_ascii2d">Anime image search</string>
+    <string name="website_desc_yandex">Search engine</string>
+
     <!-- Surface View -->
     <string name="game_column_3" translatable="false">3 × 3</string>
     <string name="game_column_4" translatable="false">4 × 4</string>
@@ -180,7 +202,8 @@
     <string name="game_completed">Congratulations!</string>
 
     <!-- Dialog -->
-    <string name="dialog_delete_msg">%d image(s) will be deleted.</string>
+    <string name="dialog_delete_collection_msg">%d image(s) will be deleted.</string>
+    <string name="dialog_delete_favorite_tags_msg">Sure to unfavorite these tags?\nThe edited annotation will remain.</string>
     <string name="dialog_delete_cancel">Cancel</string>
     <string name="dialog_delete_sure">Delete</string>
     <string name="dialog_download_sample">Sample&#160;&#160;&#160;%3$s&#160;&#160;&#160;%4$s\n%1$d x %2$d</string>
@@ -217,6 +240,8 @@
     <string name="dialog_feedback_neutral">Jump to Github</string>
     <string name="dialog_saucenao_help">Is an online image reverse search tool. Name from Source? Now! Looking for a source? Find it now! \n\n By uploading a local image or typing the url address of an image, similarity matching is performed on multiple databases on the Internet to find the requested image, its related information, and other similar images, which has become a mainstream image search tool.</string>
     <string name="dialog_tracemoe_help">Is a test-of-concept prototype search engine that helps users trace back the original anime by screenshot. It searches over 22300 hours of anime and find the best matching scene. It tells you what anime it is, from which episode and the time that scene appears. Since the search result may not be accurate, it provides a few seconds of preview for verification.</string>
+    <string name="dialog_ascii2d_help">Is a service that allows you to search for images by image and examine the details. Supports common JPEG PNG WEBP format images up to 5MB.</string>
+    <string name="dialog_yandex_help">Is a Russian search engine that provides services including search, latest news, maps and encyclopedias, e-mail, e-commerce, Internet advertising and other services.</string>
     <string name="dialog_cannot_wallpaper_lockscreen_msg">Your device may not be able to apply a custom wallpaper as a lock screen. If you have this, please use the "Set as wallpaper" function.</string>
     <string name="dialog_cannot_wallpaper_lockscreen_sure">I see</string>
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">Don\'t show again</string>
@@ -225,6 +250,9 @@
     <string name="dialog_clear_all_search_history_msg">Confirm to clear all search history?</string>
     <string name="dialog_clear_all_sure">Sure</string>
     <string name="dialog_clear_all_cancel">Cancel</string>
+    <string name="dialog_favorite_tag_sort_title">Sort by</string>
+    <string name="dialog_favorite_tag_sort_sure">Done</string>
+    <string name="dialog_favorite_tag_sort_cancel">Cancel</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>
