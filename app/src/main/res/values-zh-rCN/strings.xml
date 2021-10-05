@@ -69,6 +69,7 @@
     <string name="click_here">%s点此查看。</string>
     <string name="search_instruction">使用说明</string>
     <string name="search_history">历史记录</string>
+    <string name="search_favorite_tag">我的标签</string>
     <string name="clear_all_history">清空</string>
 
     <!-- Setting Activity -->
@@ -227,6 +228,12 @@
     <string name="dialog_clear_all_search_history_msg">确认清除全部历史记录吗？</string>
     <string name="dialog_clear_all_sure">确认</string>
     <string name="dialog_clear_all_cancel">取消</string>
+    <string name="dialog_tag_annotation_title">标签备注</string>
+    <string name="dialog_tag_annotation_edit_hint">为标签添加备注</string>
+    <string name="dialog_tag_annotation_close">关闭</string>
+    <string name="dialog_tag_annotation_edit">编辑</string>
+    <string name="dialog_tag_annotation_save">保存</string>
+    <string name="dialog_tag_annotation_cancel">取消</string>
     <string name="dialog_favorite_tag_sort_title">排序方式</string>
     <string name="dialog_favorite_tag_sort_sure">完成</string>
     <string name="dialog_favorite_tag_sort_cancel">取消</string>

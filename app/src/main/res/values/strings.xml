@@ -78,6 +78,7 @@
     <string name="click_here">%sclick here.</string>
     <string name="search_instruction">Instruction</string>
     <string name="search_history">History</string>
+    <string name="search_favorite_tag">Fav Tags</string>
     <string name="clear_all_history">Clear</string>
 
     <!-- Setting Activity -->
@@ -250,6 +251,12 @@
     <string name="dialog_clear_all_search_history_msg">Confirm to clear all search history?</string>
     <string name="dialog_clear_all_sure">Sure</string>
     <string name="dialog_clear_all_cancel">Cancel</string>
+    <string name="dialog_tag_annotation_title">Tag Annotation</string>
+    <string name="dialog_tag_annotation_edit_hint">Add annotation for tag</string>
+    <string name="dialog_tag_annotation_close">Close</string>
+    <string name="dialog_tag_annotation_edit">Edit</string>
+    <string name="dialog_tag_annotation_save">Save</string>
+    <string name="dialog_tag_annotation_cancel">Cancel</string>
     <string name="dialog_favorite_tag_sort_title">Sort by</string>
     <string name="dialog_favorite_tag_sort_sure">Done</string>
     <string name="dialog_favorite_tag_sort_cancel">Cancel</string>

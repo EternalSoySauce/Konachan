@@ -133,7 +133,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
 
     // Label Flow (https://github.com/LillteZheng/FlowHelper)
-    implementation 'com.github.LillteZheng:FlowHelper:v1.23'
+    implementation 'com.github.LillteZheng:FlowHelper:v1.30'
 
     // Loading加载样式 (https://github.com/81813780/AVLoadingIndicatorView)
     implementation 'com.wang.avi:library:2.1.3'

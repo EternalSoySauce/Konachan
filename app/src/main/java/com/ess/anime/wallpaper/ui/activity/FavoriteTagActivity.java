@@ -125,6 +125,7 @@ public class FavoriteTagActivity extends BaseActivity implements View.OnClickLis
         mRvTag.setLayoutManager(mLayoutManager);
 
         mTagAdapter = new RecyclerFavoriteTagAdapter();
+        mTagAdapter.setEmptyView(R.layout.layout_empty_favorite_tag, mRvTag);
         mTagAdapter.bindToRecyclerView(mRvTag);
         int spaceHor = UIUtils.dp2px(this, 6);
         int spaceVer = UIUtils.dp2px(this, 12);

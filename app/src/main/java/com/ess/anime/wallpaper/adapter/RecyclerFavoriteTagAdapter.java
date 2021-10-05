@@ -61,7 +61,7 @@ public class RecyclerFavoriteTagAdapter extends BaseRecyclerEditAdapter<Favorite
 
         // 编辑备注
         holder.getView(R.id.iv_edit).setOnClickListener(v -> {
-            CustomDialog.showEditTagAnnotationDialog(mContext, tagBean.getTag(), new CustomDialog.SimpleDialogActionListener() {
+            CustomDialog.showEditTagAnnotationDialog(mContext, tagBean.getTag(), true, new CustomDialog.SimpleDialogActionListener() {
                 @Override
                 public void onPositive() {
                     notifyItemChanged(holder.getLayoutPosition());

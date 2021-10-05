@@ -274,7 +274,7 @@ public class DetailFragment extends BaseFragment {
 
     private void showTagAnnotation(String tag) {
         if (SystemUtils.isActivityActive(mActivity)) {
-            CustomDialog.showEditTagAnnotationDialog(mActivity, tag, null);
+            CustomDialog.showEditTagAnnotationDialog(mActivity, tag, false, null);
         }
     }
 

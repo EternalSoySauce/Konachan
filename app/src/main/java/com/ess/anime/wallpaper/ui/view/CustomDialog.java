@@ -6,10 +6,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ess.anime.wallpaper.R;
@@ -135,23 +134,54 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param tag      标签
      * @param listener 事件监听器
      */
-    public static void showEditTagAnnotationDialog(Context context, String tag, OnDialogActionListener listener) {
-        ViewGroup contentView = (ViewGroup) View.inflate(context, R.layout.layout_popup_tag_annotation, null);
-        EditText editText = contentView.findViewById(R.id.et_annotation);
-        editText.setText(tag);
-        editText.setEnabled(false);
-        FavoriteTagBean tagBean = GreenDaoUtils.queryFavoriteTag(tag);
+    public static void showEditTagAnnotationDialog(Context context, String tag, boolean edit, OnDialogActionListener listener) {
+        TagAnnotationEditLayout editLayout = (TagAnnotationEditLayout) View.inflate(context, R.layout.layout_dialog_tag_annotation, null);
         MaterialDialog dialog = new CustomDialog(context)
-                .input("为标签添加备注", tagBean.getAnnotation(), true, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        tagBean.setAnnotation(input.toString());
-                        GreenDaoUtils.updateFavoriteTag(tagBean);
-                        if (listener != null) {
-                            listener.onPositive();
-                        }
+                .title(tag)
+                .customView(editLayout, false)
+                .build();
+
+        FavoriteTagBean tagBean = GreenDaoUtils.queryFavoriteTag(tag);
+        editLayout.setAnnotation(tagBean.getAnnotation());
+        editLayout.setOnEditModeChangeListener(isEditing -> {
+            if (isEditing) {
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setActionButton(DialogAction.NEGATIVE, R.string.dialog_tag_annotation_cancel);
+                dialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(v -> {
+                    editLayout.setAnnotation(tagBean.getAnnotation());
+                    editLayout.exitEditMode();
+                });
+                dialog.setActionButton(DialogAction.POSITIVE, R.string.dialog_tag_annotation_save);
+                dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(v -> {
+                    tagBean.setAnnotation(editLayout.getAnnotation());
+                    GreenDaoUtils.updateFavoriteTag(tagBean);
+                    if (listener != null) {
+                        listener.onPositive();
                     }
-                }).show();
+                    dialog.dismiss();
+                });
+            } else {
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setActionButton(DialogAction.NEGATIVE, R.string.dialog_tag_annotation_close);
+                dialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(v -> dialog.dismiss());
+                dialog.setActionButton(DialogAction.POSITIVE, R.string.dialog_tag_annotation_edit);
+                dialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(v -> editLayout.enterEditMode());
+            }
+        });
+        if (edit) {
+            editLayout.enterEditMode();
+        } else {
+            editLayout.exitEditMode();
+        }
+
+        dialog.setOnShowListener(dialog1 -> {
+            editLayout.post(() -> {
+                if (edit && dialog.isShowing()) {
+                    editLayout.showSoftInput();
+                }
+            });
+        });
+        dialog.show();
     }
 
     /**
@@ -163,6 +193,7 @@ public class CustomDialog extends MaterialDialog.Builder {
     public static void showSortFavoriteTagsDialog(Context context, OnDialogActionListener listener) {
         View view = View.inflate(context, R.layout.layout_dialog_favorite_tag_sort, null);
 
+        // 排序方式
         TagOperationHelper.FavoriteTagSortBy tagSortBy = TagOperationHelper.getFavoriteTagSortBy();
         RecyclerView rvSortBy = view.findViewById(R.id.rv_sort_by);
         rvSortBy.setLayoutManager(new LinearLayoutManager(context));
@@ -171,6 +202,7 @@ public class CustomDialog extends MaterialDialog.Builder {
         adapterSortBy.setSelectPos(tagSortBy.ordinal(), false);
         adapterSortBy.bindToRecyclerView(rvSortBy);
 
+        // 顺序
         TagOperationHelper.FavoriteTagSortOrder tagSortOrder = TagOperationHelper.getFavoriteTagSortOrder();
         RecyclerView rvSortOrder = view.findViewById(R.id.rv_sort_order);
         rvSortOrder.setLayoutManager(new LinearLayoutManager(context));

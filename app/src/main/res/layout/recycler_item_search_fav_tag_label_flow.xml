@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="6dp"
+    android:paddingTop="5dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:id="@+id/tv_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_item_search_history_label_flow"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="4dp"
+        android:textColor="@color/color_text_general"
+        android:textSize="16sp"
+        tools:text="@tools:sample/cities" />
+
+    <ImageView
+        android:id="@+id/iv_annotation"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|center_vertical"
+        android:paddingStart="2dp"
+        android:paddingEnd="3dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_tag_annotation"
+        app:tint="@color/color_text_extra" />
+</FrameLayout>

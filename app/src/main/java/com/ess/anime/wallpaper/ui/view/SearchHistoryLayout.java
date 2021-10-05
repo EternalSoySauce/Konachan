@@ -31,8 +31,8 @@ public class SearchHistoryLayout extends FrameLayout {
 
     @BindView(R.id.layout_empty)
     ViewGroup mLayoutEmpty;
-    @BindView(R.id.label_flow_search_history)
-    LabelFlowLayout mLabelFlowSearchHistory;
+    @BindView(R.id.label_flow)
+    LabelFlowLayout mLabelFlow;
 
     private LabelFlowAdapter<SearchTagBean> mLabelFlowAdapter;
     private boolean mIsEditing;
@@ -58,11 +58,7 @@ public class SearchHistoryLayout extends FrameLayout {
     }
 
     private List<SearchTagBean> getHistoryData() {
-        List<SearchTagBean> mSearchHistoryList = GreenDaoUtils.queryAllSearchTags();
-//        for (int i = 0; i < 20; i++) {
-//            mSearchHistoryList.addAll(GreenDaoUtils.queryAllSearchTags());
-//        }
-        return mSearchHistoryList;
+        return GreenDaoUtils.queryAllSearchTags();
     }
 
     private void initLabelFlowLayout() {
@@ -97,7 +93,7 @@ public class SearchHistoryLayout extends FrameLayout {
                 });
             }
         };
-        mLabelFlowSearchHistory.setAdapter(mLabelFlowAdapter);
+        mLabelFlow.setAdapter(mLabelFlowAdapter);
     }
 
     private void search(SearchTagBean searchTagBean) {

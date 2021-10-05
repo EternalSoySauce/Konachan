@@ -96,12 +96,24 @@
         <TextView
             android:id="@+id/tv_clear_all_search_history"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:drawableStart="@drawable/ic_clear_all_history"
             android:drawablePadding="3dp"
             android:gravity="center_vertical"
             android:text="@string/clear_all_history"
+            android:textColor="@color/color_text_extra"
+            app:drawableTint="@color/color_text_extra" />
+
+        <TextView
+            android:id="@+id/tv_sort_favorite_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:drawableStart="@drawable/ic_sort_favorite_tag"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:text="@string/sort"
             android:textColor="@color/color_text_extra"
             app:drawableTint="@color/color_text_extra" />
     </LinearLayout>

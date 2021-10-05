@@ -22,6 +22,7 @@ import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.database.SearchTagBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.SearchFavoriteTagLayout;
 import com.ess.anime.wallpaper.ui.view.SearchHistoryLayout;
 import com.ess.anime.wallpaper.ui.view.SearchModeDocLayout;
 import com.ess.anime.wallpaper.utils.StringUtils;
@@ -56,6 +57,8 @@ public class SearchActivity extends BaseActivity {
     RecyclerView mRvCompleteSearch;
     @BindView(R.id.tv_clear_all_search_history)
     TextView mTvClearAllSearchHistory;
+    @BindView(R.id.tv_sort_favorite_tag)
+    TextView mTvSortFavoriteTag;
     @BindView(R.id.smart_tab)
     SmartTabLayout mSmartTab;
     @BindView(R.id.vp_search)
@@ -63,6 +66,7 @@ public class SearchActivity extends BaseActivity {
 
     SearchModeDocLayout mLayoutSearchModeDoc;
     SearchHistoryLayout mLayoutSearchHistory;
+    SearchFavoriteTagLayout mLayoutSearchFavoriteTag;
 
     private RecyclerCompleteSearchAdapter mCompleteSearchAdapter;
 
@@ -110,21 +114,38 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
+    @OnClick(R.id.tv_sort_favorite_tag)
+    void sortFavoriteTag() {
+        CustomDialog.showSortFavoriteTagsDialog(this, new CustomDialog.SimpleDialogActionListener() {
+            @Override
+            public void onPositive() {
+                super.onPositive();
+                mLayoutSearchFavoriteTag.resetData();
+            }
+        });
+    }
+
     private void initViewPager() {
         mLayoutSearchModeDoc = (SearchModeDocLayout) View.inflate(this, R.layout.layout_search_mode_doc, null);
         mLayoutSearchHistory = (SearchHistoryLayout) View.inflate(this, R.layout.layout_search_history, null);
+        mLayoutSearchFavoriteTag = (SearchFavoriteTagLayout) View.inflate(this, R.layout.layout_search_favorite_tag, null);
         PagerAdapter pagerAdapter = new PagerAdapter() {
             @NonNull
             @Override
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                if (position == 0) {
-                    container.addView(mLayoutSearchModeDoc);
-                    return mLayoutSearchModeDoc;
-                } else if (position == 1) {
-                    container.addView(mLayoutSearchHistory);
-                    return mLayoutSearchHistory;
+                switch (position) {
+                    case 0:
+                        container.addView(mLayoutSearchModeDoc);
+                        return mLayoutSearchModeDoc;
+                    case 1:
+                        container.addView(mLayoutSearchHistory);
+                        return mLayoutSearchHistory;
+                    case 2:
+                        container.addView(mLayoutSearchFavoriteTag);
+                        return mLayoutSearchFavoriteTag;
+                    default:
+                        return super.instantiateItem(container, position);
                 }
-                return super.instantiateItem(container, position);
             }
 
             @Override
@@ -134,7 +155,7 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
 
             @Override
@@ -145,12 +166,16 @@ public class SearchActivity extends BaseActivity {
             @Nullable
             @Override
             public CharSequence getPageTitle(int position) {
-                if (position == 0) {
-                    return getString(R.string.search_instruction);
-                } else if (position == 1) {
-                    return getString(R.string.search_history);
+                switch (position) {
+                    case 0:
+                        return getString(R.string.search_instruction);
+                    case 1:
+                        return getString(R.string.search_history);
+                    case 2:
+                        return getString(R.string.search_favorite_tag);
+                    default:
+                        return super.getPageTitle(position);
                 }
-                return super.getPageTitle(position);
             }
         };
         ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
@@ -158,6 +183,10 @@ public class SearchActivity extends BaseActivity {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 mTvClearAllSearchHistory.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+                mTvSortFavoriteTag.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+                if (position == 2) {
+                    mLayoutSearchFavoriteTag.initData();
+                }
             }
         };
         mVpSearch.setAdapter(pagerAdapter);

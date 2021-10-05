@@ -48,6 +48,7 @@
 
     <!-- Dialog颜色 -->
     <color name="color_dialog_text">#F1F1F1</color>
+    <color name="color_dialog_hint">#80F1F1F1</color>
     <color name="color_dialog_button">#EE8887</color>
     <color name="color_dialog_bg">#3B3B3B</color>
 
