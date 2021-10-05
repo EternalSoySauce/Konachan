@@ -84,6 +84,7 @@ public class SettingActivity extends BaseActivity {
     private List<CommonSettingItem> getSettingItems() {
         List<CommonSettingItem> items = new ArrayList<>();
         items.add(getAllowPlaySoundItem());
+        items.add(getPreloadImageOnlyWifiItem());
         items.add(getHelpTagTypeItem());
         items.add(getHelpAdvancedSearchItem());
         items.add(mClearCacheItem = getClearCacheItem());
@@ -105,6 +106,18 @@ public class SettingActivity extends BaseActivity {
                     } else {
                         SoundHelper.getInstance().playSoundDisabled();
                     }
+                });
+    }
+
+    private CommonSettingItem getPreloadImageOnlyWifiItem() {
+        boolean preloadOnlyWifi = mPreferences.getBoolean(Constants.PRELOAD_IMAGE_ONLY_WIFI, false);
+        return new CommonSettingItem()
+                .setTitle(R.string.setting_preload_image_only_wifi_title)
+                .setDesc(R.string.setting_preload_image_only_wifi_desc)
+                .setCheckboxShown(true)
+                .setCheckboxChecked(preloadOnlyWifi)
+                .setOnCheckedChangeListener((smoothCompoundButton, isChecked) -> {
+                    mPreferences.edit().putBoolean(Constants.PRELOAD_IMAGE_ONLY_WIFI, isChecked).apply();
                 });
     }
 

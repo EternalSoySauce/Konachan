@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.ui.view;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -21,8 +22,10 @@ import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
+import com.ess.anime.wallpaper.ui.activity.SettingActivity;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.NetworkUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -444,6 +447,34 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .neutralText(R.string.dialog_cannot_wallpaper_lockscreen_neutral)
                 .onNeutral((dialog1, which) -> {
                     preferences.edit().putBoolean(NOT_SHOW_WALLPAPER_PROMPT_AGAIN, true).apply();
+                }).show();
+    }
+
+    private final static String NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN = "NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN";
+
+    public static void checkToShowPromptUseMobileNetworkPreloadImage(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (preferences.getBoolean(NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN, false)) {
+            return;
+        }
+        boolean isUseMobileNetwork = NetworkUtils.getNetworkType(context) == ConnectivityManager.TYPE_MOBILE;
+        boolean preloadOnlyWifi = preferences.getBoolean(Constants.PRELOAD_IMAGE_ONLY_WIFI, false);
+        if (!isUseMobileNetwork || preloadOnlyWifi) {
+            return;
+        }
+
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_prompt_use_mobile_network_preload_image_title)
+                .content(R.string.dialog_prompt_use_mobile_network_preload_image_msg)
+                .canceledOnTouchOutside(false)
+                .negativeText(R.string.dialog_prompt_use_mobile_network_preload_image_negative)
+                .positiveText(R.string.dialog_prompt_use_mobile_network_preload_image_positive)
+                .onPositive((dialog1, which) -> {
+                    context.startActivity(new Intent(context, SettingActivity.class));
+                })
+                .neutralText(R.string.dialog_prompt_use_mobile_network_preload_image_neutral)
+                .onNeutral((dialog2, which) -> {
+                    preferences.edit().putBoolean(NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN, true).apply();
                 }).show();
     }
 

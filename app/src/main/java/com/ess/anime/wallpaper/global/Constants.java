@@ -18,6 +18,7 @@ public class Constants {
     public final static String IS_POST_IMAGE_SHOWN_RECTANGULAR = "isPostImageShownRectangular";
     public final static String FAVORITE_TAG_SORT_BY = "favoriteTagSortBy";
     public final static String FAVORITE_TAG_SORT_ORDER = "favoriteTagSortOrder";
+    public final static String PRELOAD_IMAGE_ONLY_WIFI = "preloadImageOnlyWifi";
 
     // Intent
     public final static String APK_BEAN = "APK_BEAN";

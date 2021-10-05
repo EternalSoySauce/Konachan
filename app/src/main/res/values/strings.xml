@@ -83,6 +83,8 @@
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">Allow to play sound</string>
+    <string name="setting_preload_image_only_wifi_title">Only preload original images in Wifi environment</string>
+    <string name="setting_preload_image_only_wifi_desc">If enabled, it is forbidden to use mobile network to original images of the details page</string>
     <string name="setting_help_tag_type">See all tag types and meanings</string>
     <string name="setting_help_advanced_search">See cheat sheet of advanced search</string>
     <string name="setting_clear_cache_title">Clear cache</string>
@@ -262,6 +264,11 @@
     <string name="dialog_favorite_tag_sort_title">Sort by</string>
     <string name="dialog_favorite_tag_sort_sure">Done</string>
     <string name="dialog_favorite_tag_sort_cancel">Cancel</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_title">Note</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_msg">You are using mobile network, loading images will cost lots of data, you can turn on [Only Wifi] in the settings to reduce data usage</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_positive">Go to</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_negative">Close</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_neutral">Don\'t show again</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

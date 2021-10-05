@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
@@ -16,12 +18,15 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.glide.pool_list.PoolListModelLoaderFactory;
+import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.NetworkUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,6 +70,9 @@ public class MyGlideModule extends AppGlideModule {
     }
 
     public static void preloadImage(Context context, String oriUrl) {
+        if (cannotPreloadImage()) {
+            return;
+        }
         if (TextUtils.isEmpty(oriUrl) || !FileUtils.isImageType(oriUrl)) {
             return;
         }
@@ -86,5 +94,11 @@ public class MyGlideModule extends AppGlideModule {
                         return false;
                     }
                 }).submit();
+    }
+
+    private static boolean cannotPreloadImage() {
+        boolean isUseMobileNetwork = NetworkUtils.getNetworkType(MyApp.getInstance()) == ConnectivityManager.TYPE_MOBILE;
+        boolean preloadOnlyWifi = PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance()).getBoolean(Constants.PRELOAD_IMAGE_ONLY_WIFI, false);
+        return isUseMobileNetwork && preloadOnlyWifi;
     }
 }

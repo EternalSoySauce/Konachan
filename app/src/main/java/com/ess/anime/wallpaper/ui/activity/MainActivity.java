@@ -86,7 +86,9 @@ public class MainActivity extends BaseActivity {
         mIsForeground = true;
         EventBus.getDefault().register(this);
 
-        checkToSearchTag(getIntent());
+        if (!checkToSearchTag(getIntent())) {
+            CustomDialog.checkToShowPromptUseMobileNetworkPreloadImage(this);
+        }
     }
 
     @Override
@@ -95,14 +97,16 @@ public class MainActivity extends BaseActivity {
         checkToSearchTag(intent);
     }
 
-    private void checkToSearchTag(Intent intent) {
+    private boolean checkToSearchTag(Intent intent) {
         if (intent != null && intent.hasExtra(Constants.SEARCH_MODE)) {
             mNavigation.setCheckedItem(R.id.nav_post);
             changeContentMainFragment(mFrgPost);
             Intent searchIntent = new Intent();
             searchIntent.putExtras(intent);
             mFrgPost.onActivityResult(Constants.SEARCH_CODE, Constants.SEARCH_CODE, searchIntent);
+            return true;
         }
+        return false;
     }
 
     @Override

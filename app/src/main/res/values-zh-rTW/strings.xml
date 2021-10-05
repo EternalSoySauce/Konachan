@@ -74,6 +74,8 @@
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">允許播放語音</string>
+    <string name="setting_preload_image_only_wifi_title">僅Wifi環境下預加載高清圖</string>
+    <string name="setting_preload_image_only_wifi_desc">開啟後則禁止使用移動數據預加載詳情頁高清圖</string>
     <string name="setting_help_tag_type">查看所有標籤類型及其含義</string>
     <string name="setting_help_advanced_search">查看高級搜索指令表</string>
     <string name="setting_clear_cache_title">清除緩存</string>
@@ -239,6 +241,11 @@
     <string name="dialog_favorite_tag_sort_title">排序方式</string>
     <string name="dialog_favorite_tag_sort_sure">完成</string>
     <string name="dialog_favorite_tag_sort_cancel">取消</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_title">請注意</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_msg">您正在使用移動網絡，加載圖片將會消耗大量數據，可在設置中打開【僅Wifi】來減少數據消耗</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_positive">去設置</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_negative">關閉</string>
+    <string name="dialog_prompt_use_mobile_network_preload_image_neutral">不再顯示</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>
