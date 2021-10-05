@@ -327,17 +327,30 @@ public class FileUtils {
      * @return 是否删除成功  true/false
      */
     public static boolean deleteFile(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                for (File childFile : file.listFiles()) {
-                    String tempPath = path + "/" + childFile.getName();
-                    if (!deleteFile(tempPath)) {
-                        return false;
+        return deleteFile(new File(path));
+    }
+
+    /**
+     * 删除文件或文件夹（包括其所有子文件夹和文件）
+     *
+     * @param file 要删除的文件或文件夹
+     * @return 是否删除成功  true/false
+     */
+    public static boolean deleteFile(File file) {
+        try {
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    for (File childFile : file.listFiles()) {
+                        String tempPath = file.getAbsolutePath() + "/" + childFile.getName();
+                        if (!deleteFile(tempPath)) {
+                            return false;
+                        }
                     }
                 }
+                return file.delete();
             }
-            return file.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -349,16 +362,29 @@ public class FileUtils {
      * @return 文件夹大小，单位：B
      */
     public static long getFileLength(String path) {
+        return getFileLength(new File(path));
+    }
+
+    /**
+     * 获取文件或文件夹的大小，如果文件或文件夹不存在，则返回0。附：获取文件大小可直接使用file.length();
+     *
+     * @param file 文件夹
+     * @return 文件夹大小，单位：B
+     */
+    public static long getFileLength(File file) {
         long length = 0;
-        File file = new File(path);
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                for (File f : file.listFiles()) {
-                    length += getFileLength(f.getAbsolutePath());
+        try {
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    for (File f : file.listFiles()) {
+                        length += getFileLength(f.getAbsolutePath());
+                    }
+                } else {
+                    length += file.length();
                 }
-            } else {
-                length += file.length();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return length;
     }

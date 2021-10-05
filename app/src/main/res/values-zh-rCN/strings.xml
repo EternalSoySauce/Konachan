@@ -76,6 +76,8 @@
     <string name="setting_allow_play_sound">允许播放语音</string>
     <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
     <string name="setting_help_advanced_search">查看高级搜索指令表</string>
+    <string name="setting_clear_cache_title">清除缓存</string>
+    <string name="setting_clear_cache_desc">仅删除缩率图和网络数据缓存，不影响您收藏的标签与图片</string>
     <string name="setting_check_update">检查更新</string>
     <string name="setting_current_version">当前版本：%s</string>
 

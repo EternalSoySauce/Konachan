@@ -180,7 +180,8 @@ public class DonateFragment extends DialogFragment {
 
     @OnClick(R.id.iv_close)
     @Override
-    public void dismiss() {
-        super.dismiss();
+    public void dismissAllowingStateLoss() {
+        super.dismissAllowingStateLoss();
     }
+
 }

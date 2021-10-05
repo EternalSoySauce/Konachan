@@ -68,7 +68,7 @@
                 tools:text="收藏于：2021年10月5日" />
 
             <View
-                android:id="@+id/view_divider_line"
+                android:id="@+id/view_divide_line"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginTop="2dp"
@@ -86,7 +86,7 @@
                 android:src="@drawable/ic_tag_edit"
                 app:layout_constraintEnd_toStartOf="@+id/iv_search"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_divider_line"
+                app:layout_constraintTop_toBottomOf="@+id/view_divide_line"
                 app:tint="@color/color_text_unselected" />
 
             <ImageView

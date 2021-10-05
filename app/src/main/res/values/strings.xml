@@ -85,6 +85,8 @@
     <string name="setting_allow_play_sound">Allow to play sound</string>
     <string name="setting_help_tag_type">See all tag types and meanings</string>
     <string name="setting_help_advanced_search">See cheat sheet of advanced search</string>
+    <string name="setting_clear_cache_title">Clear cache</string>
+    <string name="setting_clear_cache_desc">Only delete thumbnails and network data cache, without affecting your favorite tags and images</string>
     <string name="setting_check_update">Check update</string>
     <string name="setting_current_version">Current version: %s</string>
 
