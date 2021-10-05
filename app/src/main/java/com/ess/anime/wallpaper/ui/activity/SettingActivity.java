@@ -73,11 +73,11 @@ public class SettingActivity extends BaseActivity {
 
     private void updateUI() {
         if (SystemUtils.isActivityActive(this)) {
-            hideLoadingSafely();
             if (mClearCacheItem != null) {
                 mClearCacheItem.setTips(FileUtils.computeFileSize(mCacheSize));
             }
-            mSettingAdapter.notifyDataSetChanged();
+            mSettingAdapter.notifyDataSetChanged(true);
+            hideLoadingSafely();
         }
     }
 
@@ -114,6 +114,7 @@ public class SettingActivity extends BaseActivity {
         return new CommonSettingItem()
                 .setTitle(R.string.setting_preload_image_only_wifi_title)
                 .setDesc(R.string.setting_preload_image_only_wifi_desc)
+                .setRippleDelayClick(false)
                 .setCheckboxShown(true)
                 .setCheckboxChecked(preloadOnlyWifi)
                 .setOnCheckedChangeListener((smoothCompoundButton, isChecked) -> {

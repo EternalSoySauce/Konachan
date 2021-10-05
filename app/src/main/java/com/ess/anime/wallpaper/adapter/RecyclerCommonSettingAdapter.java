@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 
 public class RecyclerCommonSettingAdapter extends BaseQuickAdapter<CommonSettingItem, BaseViewHolder> {
 
+    private final static int UPDATE_DATA = 1;
+
     public RecyclerCommonSettingAdapter() {
         this(new ArrayList<>());
     }
@@ -27,6 +29,20 @@ public class RecyclerCommonSettingAdapter extends BaseQuickAdapter<CommonSetting
 
     @Override
     protected void convert(@NonNull BaseViewHolder holder, CommonSettingItem commonSettingItem) {
+        bindUI(holder, commonSettingItem);
+    }
+
+    @Override
+    protected void convertPayloads(@NonNull BaseViewHolder holder, CommonSettingItem commonSettingItem, @NonNull List<Object> payloads) {
+        super.convertPayloads(holder, commonSettingItem, payloads);
+        for (Object payload : payloads) {
+            if (payload.equals(UPDATE_DATA)) {
+                bindUI(holder, commonSettingItem);
+            }
+        }
+    }
+
+    private void bindUI(BaseViewHolder holder, CommonSettingItem commonSettingItem) {
         // 标题
         holder.setGone(R.id.tv_title, !TextUtils.isEmpty(commonSettingItem.getTitle()));
         holder.setText(R.id.tv_title, commonSettingItem.getTitle());
@@ -65,5 +81,13 @@ public class RecyclerCommonSettingAdapter extends BaseQuickAdapter<CommonSetting
                 commonSettingItem.getOnClickListener().onClick(v);
             }
         });
+    }
+
+    public void notifyDataSetChanged(boolean animate) {
+        if (animate) {
+            notifyItemRangeChanged(0, getItemCount(), UPDATE_DATA);
+        } else {
+            notifyDataSetChanged();
+        }
     }
 }
