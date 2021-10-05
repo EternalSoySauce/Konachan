@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.8.7】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1UbVCVKc87goCoH4UdrsO9A)，提取码: de36
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.7.apk)
+## 最新版本【v1.8.8】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1G6ENskwShGB7_-fa66YVng)，提取码: kwit
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.8.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -60,6 +60,14 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.8】
+	* 新增详情页长按图片可触发下载
+	* 新增标签收藏与备注功能
+	* 逆向搜索网站整合到独立页面
+	* 逆向搜索网站添加ascii2d和yandex
+	* 设置页添加仅wifi下预加载图片开关
+	* 设置页添加清除缓存功能
+
 * 【v1.8.7】
 	* 修复Danbooru图片页加载不出数据
 
