@@ -454,6 +454,10 @@ public class PostFragment extends BaseFragment implements
     // 根据汉语从百度百科搜索对应罗马音
     private void getNameFromBaidu(String searchTag) {
         String url = WebsiteConfig.BASE_URL_BAIDU + searchTag;
+        connectBaidu(url);
+    }
+
+    private void connectBaidu(String url) {
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
@@ -467,27 +471,32 @@ public class PostFragment extends BaseFragment implements
 
             @Override
             public void onSuccessful(String body) {
-                String name = HtmlParser.getNameFromBaidu(body);
-                if (!TextUtils.isEmpty(name)) {
-                    if (WebsiteManager.getInstance().getWebsiteConfig().isSupportAdvancedSearch()) {
-                        String tag1 = "~" + name;
-                        mCurrentTagList.add(tag1);
-
-                        String[] split = name.split("_");
-                        StringBuilder tag2 = new StringBuilder("~");
-                        for (int i = split.length - 1; i >= 0; i--) {
-                            tag2.append(split[i]).append("_");
-                        }
-                        tag2.replace(tag2.length() - 1, tag2.length(), "");
-                        mCurrentTagList.add(tag2.toString());
-                    } else {
-                        mCurrentTagList.add(name);
-                    }
-                    getNewPosts(mCurrentPage);
-                    changeFromPage(mCurrentPage);
-                    changeToPage(mCurrentPage);
+                String alternateUrl = HtmlParser.checkBaiduAlternateUrl(url, body);
+                if (!TextUtils.isEmpty(alternateUrl)) {
+                    connectBaidu(alternateUrl);
                 } else {
-                    loadNothing();
+                    String name = HtmlParser.getNameFromBaidu(body);
+                    if (!TextUtils.isEmpty(name)) {
+                        if (WebsiteManager.getInstance().getWebsiteConfig().isSupportAdvancedSearch()) {
+                            String tag1 = "~" + name;
+                            mCurrentTagList.add(tag1);
+
+                            String[] split = name.split("_");
+                            StringBuilder tag2 = new StringBuilder("~");
+                            for (int i = split.length - 1; i >= 0; i--) {
+                                tag2.append(split[i]).append("_");
+                            }
+                            tag2.replace(tag2.length() - 1, tag2.length(), "");
+                            mCurrentTagList.add(tag2.toString());
+                        } else {
+                            mCurrentTagList.add(name);
+                        }
+                        getNewPosts(mCurrentPage);
+                        changeFromPage(mCurrentPage);
+                        changeToPage(mCurrentPage);
+                    } else {
+                        loadNothing();
+                    }
                 }
             }
         }, Request.Priority.IMMEDIATE);
