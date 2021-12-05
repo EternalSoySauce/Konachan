@@ -29,12 +29,6 @@ public class OkHttp {
 
     public final static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit / 537.36(KHTML, like Gecko) Chrome  47.0.2526.106 Safari / 537.36";
 
-    public interface OkHttpCallback {
-        void onFailure();
-
-        void onSuccessful(String body);
-    }
-
     // 需要避免重复访问的url保存在这里
     private final static List<String> sUrlInQueueList = new ArrayList<>();
 
@@ -110,18 +104,22 @@ public class OkHttp {
 
     // 异步网络请求带优先级
     public static void connect(String url, Object tag, OkHttpCallback callback, Request.Priority priority) {
+        connect(url, tag, null, callback, priority);
+    }
+
+    public static void connect(String url, Object tag, Map<String, String> headerMap, OkHttpCallback callback, Request.Priority priority) {
         PriorityStringRequest request = new PriorityStringRequest(
                 convertSchemeToHttps(url),
                 callback::onSuccessful,
                 error -> {
-                    if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
-                        // 404按成功处理，UI显示无搜索结果而不是访问失败
-                        callback.onSuccessful(new String(error.networkResponse.data));
+                    if (error.networkResponse != null) {
+                        callback.onFailure(error.networkResponse.statusCode, new String(error.networkResponse.data));
                     } else {
-                        callback.onFailure();
+                        callback.onFailure(-1, "");
                     }
                 });
         request.setTag(tag);
+        request.addHeaders(headerMap);
         request.setPriority(priority);
         sRequestQueue.add(request);
     }
@@ -185,6 +183,14 @@ public class OkHttp {
     public static void cancel(Object tag) {
         sRequestQueue.cancelAll(tag);
         OkGo.getInstance().cancelTag(tag);
+    }
+
+    /***********************  callback  ***********************/
+
+    public interface OkHttpCallback {
+        void onFailure(int errorCode, String errorMessage);
+
+        void onSuccessful(String body);
     }
 
 }

@@ -119,7 +119,7 @@ public class CommentFragment extends BaseFragment {
     private void getCommentList() {
         OkHttp.connect(mThumbBean.linkToShow, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
+            public void onFailure(int errorCode, String errorMessage) {
                 getCommentList();
             }
 

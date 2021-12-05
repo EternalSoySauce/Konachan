@@ -108,16 +108,20 @@ public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, Ba
             case NOT_GIF:
                 state = mContext.getString(R.string.pixiv_dl_state_not_gif);
                 break;
-            case NEED_LOGIN:
+            case ARTWORK_NOT_EXIST:
                 state = mContext.getString(R.string.pixiv_dl_state_no_artwork);
+                break;
+            case NEED_LOGIN:
+                state = mContext.getString(R.string.pixiv_dl_state_need_login);
+                break;
+            case LOGIN_EXPIRED:
+                state = mContext.getString(R.string.pixiv_dl_state_login_expired);
                 break;
         }
         holder.setText(R.id.tv_state, state);
 
         // 重新下载按钮
-        holder.setGone(R.id.btn_restart, pixivGifBean.isError
-                && pixivGifBean.state != PixivGifBean.PixivDlState.NOT_GIF
-                && pixivGifBean.state != PixivGifBean.PixivDlState.NEED_LOGIN);
+        holder.setGone(R.id.btn_restart, pixivGifBean.isError && pixivGifBean.state != PixivGifBean.PixivDlState.NOT_GIF);
         holder.getView(R.id.btn_restart).setOnClickListener(v -> {
             PixivGifDlManager.getInstance().execute(pixivGifBean.id);
         });

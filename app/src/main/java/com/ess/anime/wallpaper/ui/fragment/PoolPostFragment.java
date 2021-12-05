@@ -111,8 +111,13 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                 .getPoolPostUrl(mLinkToShow, ++mCurrentPage);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                onLoadMoreRequested();
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    onLoadMoreRequested();
+                }
             }
 
             @Override
@@ -155,8 +160,13 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
                 .getPoolPostUrl(mLinkToShow, page);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                getNewPosts(page);
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    getNewPosts(page);
+                }
             }
 
             @Override
@@ -229,7 +239,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(1, tagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
+            public void onFailure(int errorCode, String errorMessage) {
                 OkHttp.connect(url, TAG, this, Request.Priority.HIGH);
             }
 

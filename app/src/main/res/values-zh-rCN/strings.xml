@@ -79,7 +79,7 @@
     <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
     <string name="setting_help_advanced_search">查看高级搜索指令表</string>
     <string name="setting_clear_cache_title">清除缓存</string>
-    <string name="setting_clear_cache_desc">仅删除缩率图和网络数据缓存，不影响您收藏的标签与图片</string>
+    <string name="setting_clear_cache_desc">仅删除缩略图和网络数据缓存，不影响您收藏的标签与图片</string>
     <string name="setting_check_update">检查更新</string>
     <string name="setting_current_version">当前版本：%s</string>
 
@@ -147,6 +147,14 @@
     <string name="download_waiting">等待中...</string>
     <string name="download_finish">下载完成，已保存到我的收藏</string>
 
+    <!-- Pixiv Login -->
+    <string name="pixiv_login_webview_title">Pixiv帐号登录</string>
+    <string name="pixiv_toast_login_success">登录成功</string>
+    <string name="pixiv_toast_login_failed">登录失败</string>
+    <string name="piviv_login_state_not_logged">[未登录]</string>
+    <string name="piviv_login_state_already_logged">[已登录]</string>
+    <string name="piviv_login_state_login_expired">[登录过期]</string>
+
     <!-- Pixiv Gif DL -->
     <string name="pixiv_edit_hint_enter_id">请输入Pixiv作品Id</string>
     <string name="pixiv_start_download">开始下载</string>
@@ -164,6 +172,8 @@
     <string name="pixiv_dl_state_cancelled">任务已取消</string>
     <string name="pixiv_dl_state_not_gif">该作品不是GIF</string>
     <string name="pixiv_dl_state_no_artwork">该作品不存在或已被删除</string>
+    <string name="pixiv_dl_state_need_login">该作品需要登录P站后才可访问</string>
+    <string name="pixiv_dl_state_login_expired">P站登录信息已过期，请重新登录</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">复制链接</string>
@@ -246,6 +256,11 @@
     <string name="dialog_prompt_use_mobile_network_preload_image_positive">去设置</string>
     <string name="dialog_prompt_use_mobile_network_preload_image_negative">关闭</string>
     <string name="dialog_prompt_use_mobile_network_preload_image_neutral">不再显示</string>
+    <string name="dialog_pixiv_login_state_desc_already_logged">您当前的P站帐号登录状态正常</string>
+    <string name="dialog_pixiv_login_state_desc_login_expired">您当前的P站帐号登录信息已过期，请重新登录</string>
+    <string name="dialog_pixiv_login_state_btn_close">关闭</string>
+    <string name="dialog_pixiv_login_state_btn_logout">注销帐号</string>
+    <string name="dialog_pixiv_login_state_btn_relogin">重新登录</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

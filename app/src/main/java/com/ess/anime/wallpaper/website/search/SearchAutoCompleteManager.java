@@ -49,7 +49,7 @@ public class SearchAutoCompleteManager {
         String url = websiteConfig.getSearchAutoCompleteUrl(search);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
+            public void onFailure(int errorCode, String errorMessage) {
                 startTask(search, callback);
             }
 

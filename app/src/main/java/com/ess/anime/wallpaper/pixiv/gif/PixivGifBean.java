@@ -27,7 +27,7 @@ public class PixivGifBean {
 
     // 获取fps和zipUrl的网址
     public String getJsonUrl() {
-        return "https://api.fczbl.vip/pixiv/v1/?id=" + id;
+        return "https://www.pixiv.net/ajax/illust/" + id + "/ugoira_meta?lang=zh";
     }
 
     // 下载P站资源时需要传入Referer请求头
@@ -56,7 +56,7 @@ public class PixivGifBean {
 
     /********************* 进度状态 *********************/
     public enum PixivDlState {
-        CONNECT_PIXIV, DOWNLOAD_ZIP, EXTRACT_ZIP, MAKE_GIF, FINISH, CANCEL, NOT_GIF, NEED_LOGIN
+        CONNECT_PIXIV, DOWNLOAD_ZIP, EXTRACT_ZIP, MAKE_GIF, FINISH, CANCEL, NOT_GIF, ARTWORK_NOT_EXIST, NEED_LOGIN, LOGIN_EXPIRED
     }
 
     public PixivDlState state = PixivDlState.CONNECT_PIXIV;

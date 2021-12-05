@@ -103,7 +103,7 @@ public class WebsiteManager {
                 String url = mWebsiteConfig.getTagJsonUrl();
                 OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
                     @Override
-                    public void onFailure() {
+                    public void onFailure(int errorCode, String errorMessage) {
                         updateCurrentTagJson();
                     }
 

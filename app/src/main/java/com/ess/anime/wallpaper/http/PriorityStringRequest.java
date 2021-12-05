@@ -40,7 +40,9 @@ public class PriorityStringRequest extends StringRequest {
     }
 
     public void addHeaders(Map<String, String> headerMap) {
-        mHeaderMap.putAll(headerMap);
+        if (headerMap != null) {
+            mHeaderMap.putAll(headerMap);
+        }
     }
 
     @Override

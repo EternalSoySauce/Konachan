@@ -9,9 +9,9 @@ import com.android.volley.Request;
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lzy.okgo.model.Progress;
@@ -25,6 +25,7 @@ import net.lingala.zip4j.ZipFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,9 +92,35 @@ public class PixivGifDlManager implements IConnectivityListener {
             notifyDataChanged(pixivGifBean);
 
             String url = pixivGifBean.getJsonUrl();
-            OkHttp.connect(url, TAG + pixivGifBean.id, new OkHttp.OkHttpCallback() {
+            Map<String, String> headerMap = new HashMap<String, String>() {
+                {
+                    String cookie = PixivLoginManager.getInstance().getCookie();
+                    if (!TextUtils.isEmpty(cookie)) {
+                        put("cookie", cookie);
+                    }
+                }
+            };
+            OkHttp.connect(url, TAG + pixivGifBean.id, headerMap, new OkHttp.OkHttpCallback() {
                 @Override
-                public void onFailure() {
+                public void onFailure(int errorCode, String errorMessage) {
+                    try {
+                        if (errorCode == 404) {
+                            JsonObject result = new JsonParser().parse(errorMessage).getAsJsonObject();
+                            String message = result.get("message").getAsString();
+                            if (TextUtils.equals(message, "您所指定的ID不是动图")) {
+                                pixivGifBean.state = PixivGifBean.PixivDlState.NOT_GIF;
+                            } else if (PixivLoginManager.getInstance().isLogin()) {
+                                pixivGifBean.state = PixivGifBean.PixivDlState.ARTWORK_NOT_EXIST;
+                            } else {
+                                pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
+                            }
+                        } else if (errorCode == 401) {
+                            pixivGifBean.state = PixivGifBean.PixivDlState.LOGIN_EXPIRED;
+                            PixivLoginManager.getInstance().setCookieExpired(true);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     pixivGifBean.isError = true;
                     notifyDataChanged(pixivGifBean);
                 }
@@ -102,55 +129,32 @@ public class PixivGifDlManager implements IConnectivityListener {
                 public void onSuccessful(String json) {
                     try {
                         JsonObject result = new JsonParser().parse(json).getAsJsonObject();
-                        if (result.has("status")) {
-                            boolean isSuccess = TextUtils.equals("success", result.get("status").getAsString());
+                        if (result.has("error")) {
+                            boolean isSuccess = !result.get("error").getAsBoolean();
                             if (isSuccess) {
-                                JsonObject detail = result.getAsJsonArray("response").get(0).getAsJsonObject();
-                                if (detail.has("image_urls")) {
-                                    JsonObject imageUrls = detail.getAsJsonObject("image_urls");
-                                    for (Map.Entry<String, JsonElement> entry : imageUrls.entrySet()) {
-                                        if (entry != null && entry.getValue() != null) {
-                                            String thumbUrl = entry.getValue().getAsString();
-                                            if (!TextUtils.isEmpty(thumbUrl)) {
-                                                pixivGifBean.thumbUrl = thumbUrl;
-                                                break;
-                                            }
-                                        }
-                                    }
+                                JsonObject body = result.getAsJsonObject("body");
+                                if (body.has("originalSrc")) {
+                                    pixivGifBean.zipUrl = body.get("originalSrc").getAsString();
                                 }
-                                String type = detail.get("type").getAsString();
-                                if (TextUtils.equals(type, "ugoira") && detail.get("metadata") != null) {
-                                    JsonObject metadata = detail.getAsJsonObject("metadata");
-                                    JsonObject zipUrls = metadata.getAsJsonObject("zip_urls");
-                                    for (Map.Entry<String, JsonElement> entry : zipUrls.entrySet()) {
-                                        pixivGifBean.zipUrl = entry.getValue().getAsString();
-                                    }
-                                    if (pixivGifBean.zipUrl != null) {
-                                        pixivGifBean.zipUrl = pixivGifBean.zipUrl.replace("600x600", "1920x1080");
-                                    }
-                                    float delay = metadata.getAsJsonArray("frames")
-                                            .get(0).getAsJsonObject()
-                                            .get("delay_msec").getAsFloat();
-                                    pixivGifBean.fps = 1000f / delay;
-                                    downloadZip(pixivGifBean);
-                                    return;
-                                } else {
-                                    pixivGifBean.state = PixivGifBean.PixivDlState.NOT_GIF;
-                                    pixivGifBean.isError = true;
-                                    notifyDataChanged(pixivGifBean);
-                                    return;
+                                if (pixivGifBean.zipUrl == null && body.has("src")) {
+                                    pixivGifBean.zipUrl = body.get("src").getAsString();
                                 }
-                            } else {
-                                pixivGifBean.state = PixivGifBean.PixivDlState.NEED_LOGIN;
-                                pixivGifBean.isError = true;
-                                notifyDataChanged(pixivGifBean);
+                                if (pixivGifBean.zipUrl != null) {
+                                    String date = pixivGifBean.zipUrl.substring(pixivGifBean.zipUrl.indexOf("/img/"), pixivGifBean.zipUrl.lastIndexOf("/") + 1);
+                                    pixivGifBean.thumbUrl = "https://i.pximg.net/img-master" + date + pixivGifBean.id + "_master1200.jpg";
+                                }
+                                float delay = body.getAsJsonArray("frames")
+                                        .get(0).getAsJsonObject()
+                                        .get("delay").getAsFloat();
+                                pixivGifBean.fps = 1000f / delay;
+                                downloadZip(pixivGifBean);
                                 return;
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    onFailure();
+                    onFailure(-1, "");
                 }
             }, Request.Priority.IMMEDIATE);
         }

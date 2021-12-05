@@ -238,8 +238,13 @@ public class PoolFragment extends BaseFragment implements
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(++mCurrentPage, mCurrentSearchName);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                checkNetwork();
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    checkNetwork();
+                }
             }
 
             @Override
@@ -371,8 +376,13 @@ public class PoolFragment extends BaseFragment implements
             String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(page, mCurrentSearchName);
             OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
                 @Override
-                public void onFailure() {
-                    checkNetwork();
+                public void onFailure(int errorCode, String errorMessage) {
+                    if (errorCode == 404) {
+                        // 404按成功处理，UI显示无搜索结果而不是访问失败
+                        onSuccessful(errorMessage);
+                    } else {
+                        checkNetwork();
+                    }
                 }
 
                 @Override

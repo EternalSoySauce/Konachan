@@ -162,6 +162,14 @@
     <string name="download_waiting">Waiting...</string>
     <string name="download_finish">Download completed and saved to Collection</string>
 
+    <!-- Pixiv Login -->
+    <string name="pixiv_login_webview_title">Pixiv Login</string>
+    <string name="pixiv_toast_login_success">Login successful</string>
+    <string name="pixiv_toast_login_failed">Login failed</string>
+    <string name="piviv_login_state_not_logged">[Not logged]</string>
+    <string name="piviv_login_state_already_logged">[Logged]</string>
+    <string name="piviv_login_state_login_expired">[Login expired]</string>
+
     <!-- Pixiv Gif DL -->
     <string name="pixiv_edit_hint_enter_id">Please enter Pixiv artwork Id</string>
     <string name="pixiv_start_download">Download</string>
@@ -179,6 +187,8 @@
     <string name="pixiv_dl_state_cancelled">Task cancelled</string>
     <string name="pixiv_dl_state_not_gif">The artwork is not a GIF</string>
     <string name="pixiv_dl_state_no_artwork">The artwork does not exist or has been deleted</string>
+    <string name="pixiv_dl_state_need_login">The artwork needs to log in Pixiv before it can be accessed</string>
+    <string name="pixiv_dl_state_login_expired">Pixiv login information expired, please log in again</string>
 
     <!-- Web Activity -->
     <string name="spinner_copy_link">Copy Link</string>
@@ -269,6 +279,11 @@
     <string name="dialog_prompt_use_mobile_network_preload_image_positive">Go to</string>
     <string name="dialog_prompt_use_mobile_network_preload_image_negative">Close</string>
     <string name="dialog_prompt_use_mobile_network_preload_image_neutral">Don\'t show again</string>
+    <string name="dialog_pixiv_login_state_desc_already_logged">Your current Pixiv account login status is normal</string>
+    <string name="dialog_pixiv_login_state_desc_login_expired">Your current Pixiv account login information has expired, please log in again</string>
+    <string name="dialog_pixiv_login_state_btn_close">Close</string>
+    <string name="dialog_pixiv_login_state_btn_logout">Logout</string>
+    <string name="dialog_pixiv_login_state_btn_relogin">Re-login</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

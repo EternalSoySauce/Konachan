@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.just.agentweb.MiddlewareWebClientBase;
+
 import androidx.annotation.NonNull;
 
 public class HyperlinkActivity extends BaseWebActivity {
@@ -47,6 +49,11 @@ public class HyperlinkActivity extends BaseWebActivity {
     @Override
     String webUrl() {
         return mHyperlink;
+    }
+
+    @Override
+    MiddlewareWebClientBase customWebViewClient() {
+        return null;
     }
 
     @Override

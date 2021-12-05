@@ -3,8 +3,11 @@ package com.ess.anime.wallpaper.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.MyApp;
@@ -14,6 +17,8 @@ import com.ess.anime.wallpaper.listener.OnTouchScaleListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifBean;
 import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
+import com.ess.anime.wallpaper.pixiv.login.IPixivLoginListener;
+import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -29,12 +34,16 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import nl.bravobit.ffmpeg.FFmpeg;
 
-public class PixivGifActivity extends BaseActivity {
+public class PixivGifActivity extends BaseActivity implements IPixivLoginListener {
 
     public final static String TAG = PixivGifActivity.class.getName();
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
+    @BindView(R.id.iv_login_state)
+    ImageView mIvLoginState;
+    @BindView(R.id.tv_login_state)
+    TextView mTvLoginState;
     @BindView(R.id.et_id)
     EditText mEtId;
     @BindView(R.id.rv_pixiv_gif)
@@ -92,6 +101,7 @@ public class PixivGifActivity extends BaseActivity {
     private void initWhenPermissionGranted() {
         initViews();
         initRecyclerPixivGif();
+        PixivLoginManager.getInstance().registerLoginListener(this);
     }
 
     private void initViews() {
@@ -104,6 +114,36 @@ public class PixivGifActivity extends BaseActivity {
             }
             return false;
         });
+
+        findViewById(R.id.layout_login_state).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_login_state).setOnClickListener(v -> {
+            if (PixivLoginManager.getInstance().isLogin()) {
+                CustomDialog.showPixivLoginStateDialog(this);
+            } else {
+                PixivLoginManager.getInstance().login(this);
+            }
+        });
+        updatePixivLoginState();
+    }
+
+    private void updatePixivLoginState() {
+        if (PixivLoginManager.getInstance().isLogin()) {
+            if (PixivLoginManager.getInstance().isCookieExpired()) {
+                mIvLoginState.setImageResource(R.drawable.ic_piviv_login_state_login_expired);
+                mTvLoginState.setText(R.string.piviv_login_state_login_expired);
+            } else {
+                mIvLoginState.setImageResource(R.drawable.ic_pixiv_login_state_already_logged);
+                mTvLoginState.setText(R.string.piviv_login_state_already_logged);
+            }
+        } else {
+            mIvLoginState.setImageResource(R.drawable.ic_pixiv_login_state_not_logged);
+            mTvLoginState.setText(R.string.piviv_login_state_not_logged);
+        }
+    }
+
+    @Override
+    public void onLoginStateChanged() {
+        updatePixivLoginState();
     }
 
     private void initRecyclerPixivGif() {
@@ -133,14 +173,19 @@ public class PixivGifActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         if (isFinishing()) {
-            mRvPixivGif.setAdapter(null);
+            release();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        release();
+    }
+
+    private void release() {
         mRvPixivGif.setAdapter(null);
+        PixivLoginManager.getInstance().unregisterLoginListener(this);
     }
 
     @Override

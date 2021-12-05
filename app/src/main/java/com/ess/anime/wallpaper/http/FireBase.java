@@ -79,7 +79,7 @@ public class FireBase {
 
         OkHttp.connect(UPDATE_FILE_URL, UPDATE_FILE_URL, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
+            public void onFailure(int errorCode, String errorMessage) {
                 checkUpdate();
             }
 

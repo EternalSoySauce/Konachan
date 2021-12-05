@@ -260,8 +260,13 @@ public class PostFragment extends BaseFragment implements
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(++mCurrentPage, mCurrentTagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                checkNetwork();
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    checkNetwork();
+                }
             }
 
             @Override
@@ -405,8 +410,13 @@ public class PostFragment extends BaseFragment implements
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(page, mCurrentTagList);
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                checkNetwork();
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    checkNetwork();
+                }
             }
 
             @Override
@@ -446,8 +456,13 @@ public class PostFragment extends BaseFragment implements
         String url = WebsiteConfig.BASE_URL_BAIDU + searchTag;
         OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
             @Override
-            public void onFailure() {
-                checkNetwork();
+            public void onFailure(int errorCode, String errorMessage) {
+                if (errorCode == 404) {
+                    // 404按成功处理，UI显示无搜索结果而不是访问失败
+                    onSuccessful(errorMessage);
+                } else {
+                    checkNetwork();
+                }
             }
 
             @Override

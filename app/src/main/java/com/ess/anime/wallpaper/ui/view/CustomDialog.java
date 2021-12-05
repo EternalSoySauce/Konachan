@@ -22,6 +22,7 @@ import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
+import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.ui.activity.SettingActivity;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -424,6 +425,24 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .title(title)
                 .content(msgRes)
                 .positiveText(R.string.dialog_doc_sure)
+                .show();
+    }
+
+    /**
+     * P站帐号登录提示
+     *
+     * @param context 上下文
+     */
+    public static void showPixivLoginStateDialog(Context context) {
+        MaterialDialog dialog = new CustomDialog(context)
+                .content(PixivLoginManager.getInstance().isCookieExpired()
+                        ? R.string.dialog_pixiv_login_state_desc_login_expired
+                        : R.string.dialog_pixiv_login_state_desc_already_logged)
+                .neutralText(R.string.dialog_pixiv_login_state_btn_close)
+                .negativeText(R.string.dialog_pixiv_login_state_btn_logout)
+                .onNegative((dialog1, which) -> PixivLoginManager.getInstance().setCookie(null))
+                .positiveText(R.string.dialog_pixiv_login_state_btn_relogin)
+                .onPositive((dialog2, which) -> PixivLoginManager.getInstance().login(context))
                 .show();
     }
 

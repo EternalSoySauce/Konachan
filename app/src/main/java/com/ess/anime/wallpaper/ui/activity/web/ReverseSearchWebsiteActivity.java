@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.ess.anime.wallpaper.model.entity.ReverseSearchWebsiteItem;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.just.agentweb.MiddlewareWebClientBase;
 
 import androidx.annotation.NonNull;
 
@@ -61,6 +62,11 @@ public class ReverseSearchWebsiteActivity extends BaseWebActivity {
         } else {
             return null;
         }
+    }
+
+    @Override
+    MiddlewareWebClientBase customWebViewClient() {
+        return null;
     }
 
     @Override

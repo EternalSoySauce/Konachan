@@ -148,7 +148,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
                 String url = thumbBean.linkToShow;
                 OkHttp.connect(url, mHttpTag, new OkHttp.OkHttpCallback() {
                     @Override
-                    public void onFailure() {
+                    public void onFailure(int errorCode, String errorMessage) {
                         OkHttp.connect(url, mHttpTag, this);
                     }
 

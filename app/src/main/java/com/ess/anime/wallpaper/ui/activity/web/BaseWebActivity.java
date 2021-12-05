@@ -23,6 +23,7 @@ import com.ess.anime.wallpaper.utils.UIUtils;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.MiddlewareWebClientBase;
 import com.just.agentweb.WebChromeClient;
 import com.yanzhenjie.permission.runtime.Permission;
 
@@ -48,6 +49,8 @@ public abstract class BaseWebActivity extends BaseActivity {
     abstract boolean showReceivedTitle();
 
     abstract String webUrl();
+
+    abstract MiddlewareWebClientBase customWebViewClient();
 
     @OnClick(R.id.iv_help)
     abstract void showHelpDialog();
@@ -91,6 +94,7 @@ public abstract class BaseWebActivity extends BaseActivity {
 //                .setWebView(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT ? new LollipopFixedWebView(this) : null)
                 .setMainFrameErrorView(View.inflate(this, R.layout.layout_webview_error, null))
                 .interceptUnkownUrl()
+                .useMiddlewareWebClient(customWebViewClient())
                 .setWebChromeClient(new WebChromeClient() {
                     @Override
                     public Bitmap getDefaultVideoPoster() {
