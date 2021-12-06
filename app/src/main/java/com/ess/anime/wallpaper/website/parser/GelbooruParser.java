@@ -216,23 +216,26 @@ public class GelbooruParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbListOfPool(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = doc.getElementsByClass(" id=");
-        for (Element e : elements) {
-            try {
-                String id = e.attributes().asList().get(1).getKey().replaceAll("[^0-9]", "");
-                int thumbWidth = 0;
-                int thumbHeight = 0;
-                Element img = e.getElementsByClass("thumbnail-preview").first();
-                String thumbUrl = img.attr("src");
-                if (!thumbUrl.startsWith("http")) {
-                    thumbUrl = "https:" + thumbUrl;
+        Element container = doc.getElementsByClass("thumbnail-container").first();
+        if (container!= null) {
+            Elements elements = doc.getElementsByTag("span");
+            for (Element e : elements) {
+                try {
+                    String id = e.id().replaceAll("[^0-9]", "");
+                    int thumbWidth = 0;
+                    int thumbHeight = 0;
+                    Element img = e.getElementsByClass("thumbnail-preview").first();
+                    String thumbUrl = img.attr("src");
+                    if (!thumbUrl.startsWith("http")) {
+                        thumbUrl = "https:" + thumbUrl;
+                    }
+                    String realSize = e.attr("width") + " x " + e.attr("height");
+                    String linkToShow = mWebsiteConfig.getBaseUrl() + "index.php?page=post&s=view&id=" + id;
+                    ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
+                    thumbList.add(thumbBean);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-                String realSize = e.attr("width") + " x " + e.attr("height");
-                String linkToShow = mWebsiteConfig.getBaseUrl() + "index.php?page=post&s=view&id=" + id;
-                ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
-                thumbList.add(thumbBean);
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
         }
         return thumbList;
