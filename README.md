@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.8.8】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1G6ENskwShGB7_-fa66YVng)，提取码: kwit
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.8.apk)
+## 最新版本【v1.8.9】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1LSDNSolU3bOVfMxM6Hd00Q)，提取码: fycn
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.9.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -60,6 +60,11 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.9】
+	* 修复P站GIF下载器一直解析失败。由于中转服务器失效，现改为直接访问P站地址，因此需要挂梯子才可以下载，部分受限作品需要先登录P站帐号才可访问
+	* 修复Gelbooru叕解析图集数据失败
+	* 优化中文搜索功能
+
 * 【v1.8.8】
 	* 新增详情页长按图片可触发下载
 	* 新增标签收藏与备注功能
