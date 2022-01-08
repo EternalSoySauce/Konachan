@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website.parser;
 
 import android.text.Html;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -29,14 +30,14 @@ public class GelbooruParser extends HtmlParser {
         Elements elements = doc.getElementsByTag("post");
         for (Element e : elements) {
             try {
-                String id = e.id().replaceAll("[^0-9]", "");
-                int thumbWidth = Integer.parseInt(e.attr("preview_width"));
-                int thumbHeight = Integer.parseInt(e.attr("preview_height"));
-                String thumbUrl = e.attr("preview_url");
+                String id = e.getElementsByTag("id").first().text().replaceAll("[^0-9]", "");
+                int thumbWidth = Integer.parseInt(e.getElementsByTag("preview_width").first().text());
+                int thumbHeight = Integer.parseInt(e.getElementsByTag("preview_height").first().text());
+                String thumbUrl = e.getElementsByTag("preview_url").first().text();
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = "https:" + thumbUrl;
                 }
-                String realSize = e.attr("width") + " x " + e.attr("height");
+                String realSize = e.getElementsByTag("width").first().text() + " x " + e.getElementsByTag("height").first().text();
                 String linkToShow = mWebsiteConfig.getBaseUrl() + "index.php?page=post&s=view&id=" + id;
                 ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 thumbBean.tempPost = parseTempPost(e);
@@ -51,32 +52,35 @@ public class GelbooruParser extends HtmlParser {
     private PostBean parseTempPost(Element e) {
         try {
             PostBean postBean = new PostBean();
-            postBean.id = e.attr("id");
-            postBean.tags = e.attr("tags").trim();
-            postBean.creatorId = e.attr("creator_id");
-            postBean.change = e.attr("change");
-            postBean.source = e.attr("source");
-            postBean.score = Integer.parseInt(e.attr("score"));
-            postBean.md5 = e.attr("md5");
-            postBean.fileUrl = e.attr("file_url");
+            postBean.id = e.getElementsByTag("id").first().text();
+            postBean.tags = e.getElementsByTag("tags").first().text().trim();
+            postBean.creatorId = e.getElementsByTag("creator_id").first().text();
+            postBean.change = e.getElementsByTag("change").first().text();
+            postBean.source = e.getElementsByTag("source").first().text();
+            postBean.score = Integer.parseInt(e.getElementsByTag("score").first().text());
+            postBean.md5 = e.getElementsByTag("md5").first().text();
+            postBean.fileUrl = e.getElementsByTag("file_url").first().text();
             postBean.fileSize = -1;
-            postBean.previewUrl = e.attr("preview_url");
-            postBean.previewWidth = Integer.parseInt(e.attr("preview_width"));
-            postBean.previewHeight = Integer.parseInt(e.attr("preview_height"));
-            postBean.sampleUrl = e.attr("sample_url");
-            postBean.sampleWidth = Integer.parseInt(e.attr("sample_width"));
-            postBean.sampleHeight = Integer.parseInt(e.attr("sample_height"));
+            postBean.previewUrl = e.getElementsByTag("preview_url").first().text();
+            postBean.previewWidth = Integer.parseInt(e.getElementsByTag("preview_width").first().text());
+            postBean.previewHeight = Integer.parseInt(e.getElementsByTag("preview_height").first().text());
+            postBean.sampleUrl = e.getElementsByTag("sample_url").first().text();
+            if (TextUtils.isEmpty(postBean.sampleUrl)) {
+                postBean.sampleUrl = postBean.fileUrl;
+            }
+            postBean.sampleWidth = Integer.parseInt(e.getElementsByTag("sample_width").first().text());
+            postBean.sampleHeight = Integer.parseInt(e.getElementsByTag("sample_height").first().text());
             postBean.sampleFileSize = -1;
-            postBean.jpegUrl = e.attr("file_url");
-            postBean.jpegWidth = Integer.parseInt(e.attr("width"));
-            postBean.jpegHeight = Integer.parseInt(e.attr("height"));
+            postBean.jpegUrl = e.getElementsByTag("file_url").first().text();
+            postBean.jpegWidth = Integer.parseInt(e.getElementsByTag("width").first().text());
+            postBean.jpegHeight = Integer.parseInt(e.getElementsByTag("height").first().text());
             postBean.jpegFileSize = -1;
-            postBean.rating = e.attr("rating");
-            postBean.hasChildren = Boolean.parseBoolean(e.attr("has_children"));
-            postBean.parentId = e.attr("parent_id");
-            postBean.status = e.attr("status");
-            postBean.width = Integer.parseInt(e.attr("width"));
-            postBean.height = Integer.parseInt(e.attr("height"));
+            postBean.rating = e.getElementsByTag("rating").first().text();
+            postBean.hasChildren = Boolean.parseBoolean(e.getElementsByTag("has_children").first().text());
+            postBean.parentId = e.getElementsByTag("parent_id").first().text();
+            postBean.status = e.getElementsByTag("status").first().text();
+            postBean.width = Integer.parseInt(e.getElementsByTag("width").first().text());
+            postBean.height = Integer.parseInt(e.getElementsByTag("height").first().text());
             return postBean;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -217,7 +221,7 @@ public class GelbooruParser extends HtmlParser {
     public List<ThumbBean> getThumbListOfPool(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
         Element container = doc.getElementsByClass("thumbnail-container").first();
-        if (container!= null) {
+        if (container != null) {
             Elements elements = doc.getElementsByTag("span");
             for (Element e : elements) {
                 try {
