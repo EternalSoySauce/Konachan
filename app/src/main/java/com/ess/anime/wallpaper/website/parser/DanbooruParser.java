@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website.parser;
 
 import android.text.Html;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -15,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -27,29 +29,21 @@ public class DanbooruParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = doc.getElementsByTag("article");
+        Elements elements = doc.getElementsByTag("post");
         for (Element e : elements) {
             try {
-                String id = e.attr("data-id");
-                String thumbUrl = e.getElementsByTag("img").attr("src");
+                String id = e.getElementsByTag("id").first().text();
+                Element img = e.getElementsByTag("preview-file-url").first();
+                String thumbUrl = img.text().replace("preview", "360x360");
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = mWebsiteConfig.getBaseUrl() + thumbUrl;
                 }
-                int realWidth = Integer.parseInt(e.attr("data-width"));
-                int realHeight = Integer.parseInt(e.attr("data-height"));
-                String realSize = realWidth + " x " + realHeight;
-                int thumbWidth, thumbHeight;
-                if (realWidth >= realHeight) {
-                    thumbWidth = 150;
-                    thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
-                } else {
-                    thumbHeight = 150;
-                    thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
-                }
-                String linkToShow = e.getElementsByTag("a").attr("href");
-                if (!linkToShow.startsWith("http")) {
-                    linkToShow = mWebsiteConfig.getBaseUrl() + linkToShow;
-                }
+                String imgWidth = e.getElementsByTag("image-width").first().text();
+                String imgHeight = e.getElementsByTag("image-height").first().text();
+                int thumbWidth = Integer.parseInt(imgWidth);
+                int thumbHeight = Integer.parseInt(imgHeight);
+                String realSize = imgWidth + " x " + imgHeight;
+                String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
                 thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -66,14 +60,17 @@ public class DanbooruParser extends HtmlParser {
             // 注意PostBean.createdTime单位为second
             Element time = doc.getElementsByTag("time").first();
             String createdTime = time.attr("datetime");
-            long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-4:00"));
+            long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-5:00"));
             createdTime = String.valueOf(mills / 1000);
 
             // 解析原图文件大小
             Element info = doc.getElementById("post-information");
+            String author = "";
             String jpegFileSize = "";
             for (Element li : info.getElementsByTag("li")) {
-                if (li.text().contains("Size")) {
+                if (TextUtils.equals(li.id(), "post-info-uploader")) {
+                    author = li.getElementsByTag("a").first().attr("data-user-name");
+                } else if (TextUtils.equals(li.id(), "post-info-size")) {
                     String size = li.getElementsByTag("a").first().text();
                     if (size.contains(" ") && size.indexOf(" ") != size.lastIndexOf(" ")) {
                         size = size.substring(0, size.lastIndexOf(" "));
@@ -89,43 +86,40 @@ public class DanbooruParser extends HtmlParser {
                     .tags(container.attr("data-tags"))
                     .createdTime(createdTime)
                     .creatorId(container.attr("data-uploader-id"))
-                    .author(image.attr("data-uploader"))
+                    .author(author)
                     .source(container.attr("data-normalized-source"))
                     .score(container.attr("data-score"))
                     .md5(container.attr("data-md5"))
                     .fileSize(jpegFileSize)
                     .fileUrl(container.attr("data-file-url"))
                     .previewUrl(container.attr("data-preview-file-url"))
-                    .sampleUrl(container.attr("data-large-file-url"))
+                    .sampleUrl(image.attr("src"))
                     .sampleWidth(image.attr("width"))
                     .sampleHeight(image.attr("height"))
                     .sampleFileSize("-1") // danbooru无法获得sample尺寸图片大小，又需要提供下载，因此用-1代替
                     .jpegUrl(container.attr("data-file-url"))
-                    .jpegWidth(image.attr("data-original-width"))
-                    .jpegHeight(image.attr("data-original-height"))
+                    .jpegWidth(container.attr("data-width"))
+                    .jpegHeight(container.attr("data-height"))
                     .jpegFileSize(jpegFileSize)
                     .rating(container.attr("data-rating"))
                     .hasChildren(container.attr("data-has-children"))
                     .parentId(container.attr("data-parent-id"))
-                    .width(image.attr("data-original-width"))
-                    .height(image.attr("data-original-height"))
+                    .width(container.attr("data-width"))
+                    .height(container.attr("data-height"))
                     .flagDetail(container.attr("data-flags"));
 
             // 解析图集信息
-            Element pool = doc.getElementById("pool-nav");
-            if (pool != null) {
-                Element span = pool.getElementsByClass("pool-name").first();
-                if (span != null) {
-                    Element a = span.getElementsByTag("a").first();
-                    if (a != null) {
-                        String href = a.attr("href");
-                        builder.poolId(href.substring(href.lastIndexOf("/") + 1));
-                        String name = a.text();
-                        builder.poolName(name.substring(name.indexOf(":") + 1).trim());
-                        builder.poolCreatedTime("");
-                        builder.poolUpdatedTime("");
-                        builder.poolDescription("");
-                    }
+            Element span = doc.getElementsByClass("pool-name").first();
+            if (span != null) {
+                Element a = span.getElementsByTag("a").first();
+                if (a != null) {
+                    String href = a.attr("href");
+                    builder.poolId(href.substring(href.lastIndexOf("/") + 1));
+                    String name = a.text();
+                    builder.poolName(name.substring(name.indexOf(":") + 1).trim());
+                    builder.poolCreatedTime("");
+                    builder.poolUpdatedTime("");
+                    builder.poolDescription("");
                 }
             }
 
@@ -159,10 +153,10 @@ public class DanbooruParser extends HtmlParser {
         Elements elements = doc.getElementsByClass("comment");
         for (Element e : elements) {
             try {
-                String id = "#c" + e.attr("data-comment-id");
-                String author = e.attr("data-creator");
+                String id = "#c" + e.attr("data-id");
+                String author = e.getElementsByClass("user").first().attr("data-user-name");
                 String date = e.getElementsByTag("time").first().attr("title");
-                long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-4:00"));
+                long mills = TimeFormat.timeToMillsWithZone(date, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-5:00"));
                 date = "Posted at " + TimeFormat.dateFormat(mills, "yyyy-MM-dd HH:mm:ss");
                 String avatar = "";
                 Elements body = e.getElementsByClass("body prose");
@@ -191,21 +185,27 @@ public class DanbooruParser extends HtmlParser {
     @Override
     public List<PoolListBean> getPoolListList(Document doc) {
         List<PoolListBean> poolList = new ArrayList<>();
-        for (Element pool : doc.getElementsByTag("article")) {
+        for (Element e : doc.getElementsByTag("pool")) {
             try {
                 PoolListBean poolListBean = new PoolListBean();
-                Element link = pool.getElementsByTag("a").last();
-                String href = link.attr("href");
-                poolListBean.id = href.replaceAll("[^0-9]", "");
-                poolListBean.name = link.text().trim();
-                poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + href;
-                poolListBean.thumbUrl = pool.attr("data-large-file-url");
+                poolListBean.id = e.getElementsByTag("id").first().text();
+                poolListBean.name = e.getElementsByTag("name").first().text();
+                poolListBean.linkToShow = mWebsiteConfig.getPostUrl(1, Arrays.asList("pool:" + poolListBean.id, "order:id"));
+                poolListBean.createTime = TimeFormat.dateFormat(TimeFormat.timeToMillsWithZone(e.getElementsByTag("created-at").first().text(),
+                        "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-5:00")), "yyyy-MM-dd HH:mm:ss");
+                poolListBean.updateTime = TimeFormat.dateFormat(TimeFormat.timeToMillsWithZone(e.getElementsByTag("updated-at").first().text(),
+                        "yyyy-MM-dd'T'HH:mm", TimeZone.getTimeZone("GMT-5:00")), "yyyy-MM-dd HH:mm:ss");
+                poolListBean.postCount = e.getElementsByTag("post-count").first().text();
                 poolList.add(poolListBean);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
         return poolList;
     }
 
+    @Override
+    public List<ThumbBean> getThumbListOfPool(Document doc) {
+        return getThumbList(doc);
+    }
 }

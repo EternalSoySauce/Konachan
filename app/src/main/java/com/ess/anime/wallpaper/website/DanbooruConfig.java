@@ -61,7 +61,7 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
             tags.append(tag).append("+");
         }
 
-        return getBaseUrl() + "posts?page=" + page + "&tags=" + tags;
+        return getBaseUrl() + "posts.xml?page=" + page + "&tags=" + tags;
     }
 
     @Override
@@ -72,12 +72,12 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     @Override
     public String getPoolUrl(int page, String name) {
         name = name == null ? "" : name;
-        return getBaseUrl() + "pools/gallery?commit=Search&limit=20&page=" + page + "&search[name_matches]=" + name + "&search[order]=&utf8=%E2%9C%93";
+        return getBaseUrl() + "pools/gallery.xml?commit=Search&limit=20&page=" + page + "&search[name_matches]=" + name + "&search[order]=&utf8=%E2%9C%93";
     }
 
     @Override
     public String getPoolPostUrl(String linkToShow, int page) {
-        return linkToShow + "?page=" + page;
+        return linkToShow.replaceFirst("page=\\d", "page=" + page);
     }
 
     @Override
