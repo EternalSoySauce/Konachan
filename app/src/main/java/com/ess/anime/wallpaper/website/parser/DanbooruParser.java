@@ -38,11 +38,17 @@ public class DanbooruParser extends HtmlParser {
                 if (!thumbUrl.startsWith("http")) {
                     thumbUrl = mWebsiteConfig.getBaseUrl() + thumbUrl;
                 }
-                String imgWidth = e.getElementsByTag("image-width").first().text();
-                String imgHeight = e.getElementsByTag("image-height").first().text();
-                int thumbWidth = Integer.parseInt(imgWidth);
-                int thumbHeight = Integer.parseInt(imgHeight);
-                String realSize = imgWidth + " x " + imgHeight;
+                int realWidth  = Integer.parseInt(e.getElementsByTag("image-width").first().text());
+                int realHeight = Integer.parseInt(e.getElementsByTag("image-height").first().text());
+                String realSize = realWidth + " x " + realHeight;
+                int thumbWidth, thumbHeight;
+                if (realWidth >= realHeight) {
+                    thumbWidth = 360;
+                    thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
+                } else {
+                    thumbHeight = 360;
+                    thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
+                }
                 String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
                 thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
