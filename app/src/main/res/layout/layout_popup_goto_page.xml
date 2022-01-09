@@ -78,7 +78,7 @@
                 android:singleLine="true"
                 android:textColor="@color/color_text_selected"
                 android:textSize="13sp"
-                android:theme="@style/AppTheme.PageEditText"/>
+                android:theme="@style/AppTheme.PageEditText" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

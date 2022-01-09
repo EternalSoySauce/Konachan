@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/transparent" android:state_activated="false" />
-    <item android:state_accelerated="true">
-        <shape android:shape="rectangle">
-            <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
-            <corners android:radius="3dp" />
-            <stroke android:width="1.5dp" android:color="@color/color_text_selected" />
-        </shape>
-    </item>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <padding
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp" />
+    <corners android:radius="3dp" />
+    <stroke
+        android:width="1.5dp"
+        android:color="@color/color_text_selected" />
+
+</shape>
