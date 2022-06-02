@@ -54,7 +54,7 @@ public class VideoControllerLayout extends ConstraintLayout implements Runnable 
         mMediaLayout = mediaLayout;
         mVideoView = mediaLayout.getVideoView();
         mIvPlay.setChecked(mVideoView.isPlaying());
-        mIvVolume.setChecked(mMediaLayout.isVideoSilent());
+        mIvVolume.setChecked(mMediaLayout.isVideoMute());
         mSbProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private boolean isPlayingWhenTouch;
 
@@ -118,7 +118,7 @@ public class VideoControllerLayout extends ConstraintLayout implements Runnable 
     @OnClick(R.id.iv_volume)
     void toggleVolume() {
         if (mMediaLayout != null) {
-            mMediaLayout.setVideoSilent(mIvVolume.isChecked());
+            mMediaLayout.setVideoMute(mIvVolume.isChecked());
             mMediaLayout.updateVideoVolume();
         }
     }

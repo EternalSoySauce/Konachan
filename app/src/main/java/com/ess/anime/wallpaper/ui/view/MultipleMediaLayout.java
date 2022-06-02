@@ -227,20 +227,20 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
 
     public void updateVideoVolume() {
         if (mMediaPlayer != null) {
-            int volume = isVideoSilent() ? 0 : 1;
+            int volume = isVideoMute() ? 0 : 1;
             mMediaPlayer.setVolume(volume, volume);
-            mVideoView.setShouldRequestAudioFocus(!isVideoSilent());
+            mVideoView.setShouldRequestAudioFocus(!isVideoMute());
         }
     }
 
-    public void setVideoSilent(boolean silent) {
+    public void setVideoMute(boolean mute) {
         PreferenceManager.getDefaultSharedPreferences(getContext())
-                .edit().putBoolean(Constants.VIDEO_SILENT, silent).apply();
+                .edit().putBoolean(Constants.VIDEO_MUTE, mute).apply();
     }
 
-    public boolean isVideoSilent() {
+    public boolean isVideoMute() {
         return PreferenceManager.getDefaultSharedPreferences(getContext())
-                .getBoolean(Constants.VIDEO_SILENT, false);
+                .getBoolean(Constants.VIDEO_MUTE, false);
     }
 
 
