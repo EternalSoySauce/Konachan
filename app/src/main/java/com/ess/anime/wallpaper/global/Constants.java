@@ -18,6 +18,7 @@ public class Constants {
     public final static String IS_POST_IMAGE_SHOWN_RECTANGULAR = "isPostImageShownRectangular";
     public final static String FAVORITE_TAG_SORT_BY = "favoriteTagSortBy";
     public final static String FAVORITE_TAG_SORT_ORDER = "favoriteTagSortOrder";
+    public final static String SCREEN_ORIENTATION = "screenOrientation";
     public final static String PRELOAD_IMAGE_ONLY_WIFI = "preloadImageOnlyWifi";
     public final static String PIXIV_LOGIN_COOKIE = "pixiv_login_cookie";
     public final static String PIXIV_LOGIN_COOKIE_EXPIRED = "pixiv_login_cookie_expired";
@@ -52,6 +53,7 @@ public class Constants {
     public final static String RESUME_VIDEO = "resumeVideo";  // ImageFragment和FullscreenActivity触发onResume()后通知MultipleMediaLayout恢复Video
     public final static String PAUSE_VIDEO = "pauseVideo";  // ImageFragment和FullscreenActivity触发onPause()后通知MultipleMediaLayout暂停Video
     public final static String TOGGLE_VIDEO_CONTROLLER = "toggleVideoController";  // FullscreenActivity单击页面后通知MultipleMediaLayout切换视频播放控制器显隐
+    public final static String TOGGLE_SCREEN_ORIENTATION = "toggleScreenOrientation";  // 设置页切换强制横屏开关后通知各页面旋转屏幕
 
     // Image Detail
     public final static String RATING_S = "s";

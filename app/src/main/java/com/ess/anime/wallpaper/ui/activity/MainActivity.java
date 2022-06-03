@@ -84,7 +84,6 @@ public class MainActivity extends BaseActivity {
         }
 
         mIsForeground = true;
-        EventBus.getDefault().register(this);
 
         if (!checkToSearchTag(getIntent())) {
             CustomDialog.checkToShowPromptUseMobileNetworkPreloadImage(this);
@@ -314,7 +313,6 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mIsForeground = false;
-        EventBus.getDefault().unregister(this);
         SoundHelper.getInstance().release();
         FireBase.getInstance().cancelAll();
     }

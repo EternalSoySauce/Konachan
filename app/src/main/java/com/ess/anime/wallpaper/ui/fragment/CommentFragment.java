@@ -15,6 +15,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
@@ -27,8 +28,7 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
@@ -39,10 +39,11 @@ public class CommentFragment extends BaseFragment {
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.rv_comment)
-    RecyclerView mRvComment;
+    GeneralRecyclerView mRvComment;
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
+    private StaggeredGridLayoutManager mLayoutManager;
     private RecyclerCommentAdapter mCommentAdapter;
 
     @Override
@@ -69,6 +70,12 @@ public class CommentFragment extends BaseFragment {
     }
 
     @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         // 防止软件进入后台过久被系统回收导致切换回来时产生空指针异常
@@ -87,14 +94,28 @@ public class CommentFragment extends BaseFragment {
     }
 
     private void initRecyclerView() {
-        mRvComment.setLayoutManager(new LinearLayoutManager(mActivity));
+        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mRvComment.setLayoutManager(mLayoutManager);
         mCommentAdapter = new RecyclerCommentAdapter();
         mRvComment.setAdapter(mCommentAdapter);
+    }
 
-        int spaceHor = UIUtils.dp2px(mActivity, 5);
-        int spaceVer = UIUtils.dp2px(mActivity, 10);
-        mRvComment.addItemDecoration(new GridDividerItemDecoration(
-                1, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+    private void updateRecyclerViewSpanCount() {
+        if (mActivity != null && mLayoutManager != null) {
+            int span;
+            if (UIUtils.isLandscape(mActivity)) {
+                span = Math.max(UIUtils.px2dp(mActivity, UIUtils.getScreenWidth(mActivity)) / 600, 1);
+            } else {
+                span = 1;
+            }
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(mActivity, 5);
+            int spaceVer = UIUtils.dp2px(mActivity, 10);
+            mRvComment.clearItemDecorations();
+            mRvComment.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+        }
     }
 
     // 显示评论

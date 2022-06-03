@@ -74,6 +74,10 @@
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">允许播放语音</string>
+    <string name="setting_screen_orientation_title">屏幕旋转模式</string>
+    <string name="setting_screen_orientation_item_forced_portrait">竖屏锁定</string>
+    <string name="setting_screen_orientation_item_forced_landscape">横屏锁定</string>
+    <string name="setting_screen_orientation_item_auto_rotate">自动旋转</string>
     <string name="setting_preload_image_only_wifi_title">仅Wifi环境下预加载高清图</string>
     <string name="setting_preload_image_only_wifi_desc">开启后则禁止使用移动数据预加载详情页高清图</string>
     <string name="setting_help_tag_type">查看所有标签类型及其含义</string>
@@ -261,6 +265,8 @@
     <string name="dialog_pixiv_login_state_btn_close">关闭</string>
     <string name="dialog_pixiv_login_state_btn_logout">注销帐号</string>
     <string name="dialog_pixiv_login_state_btn_relogin">重新登录</string>
+    <string name="dialog_change_screen_orientation_mode_title">切换屏幕旋转模式</string>
+    <string name="dialog_change_screen_orientation_mode_cancel">取消</string>
 
     <!-- Global -->
     <string name="unknown">未知</string>

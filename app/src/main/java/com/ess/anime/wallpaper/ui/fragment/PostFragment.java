@@ -23,22 +23,23 @@ import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
-import com.ess.anime.wallpaper.website.parser.HtmlParser;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.ess.anime.wallpaper.website.parser.HtmlParser;
 import com.github.clans.fab.FloatingActionMenu;
+import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 import com.zyyoona7.popup.EasyPopup;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jsoup.Jsoup;
@@ -70,7 +71,7 @@ public class PostFragment extends BaseFragment implements
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.rv_post)
-    RecyclerView mRvPosts;
+    GeneralRecyclerView mRvPosts;
 
     private MainActivity mActivity;
     private StaggeredGridLayoutManager mLayoutManager;
@@ -109,15 +110,19 @@ public class PostFragment extends BaseFragment implements
         getNewPosts(mCurrentPage);
         changeFromPage(mCurrentPage);
         changeToPage(mCurrentPage);
-        EventBus.getDefault().register(this);
         WebsiteManager.getInstance().registerWebsiteChangeListener(this);
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         OkHttp.cancel(TAG);
-        EventBus.getDefault().unregister(this);
         WebsiteManager.getInstance().unregisterWebsiteChangeListener(this);
     }
 
@@ -217,23 +222,16 @@ public class PostFragment extends BaseFragment implements
     }
 
     private void initRecyclerView() {
-        int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 165, 2);
-        mLayoutManager = new StaggeredGridLayoutManager(span, StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         mRvPosts.setLayoutManager(mLayoutManager);
 
         mPostAdapter = new RecyclerPostAdapter(TAG);
         mPostAdapter.bindToRecyclerView(mRvPosts);
         mPostAdapter.setOnItemClickListener(() -> mFloatingMenu.close(true));
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
-        mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
         mPostAdapter.setEmptyView(R.layout.layout_loading_cirno, mRvPosts);
         mPostAdapter.changeImageShownFormat(isPostImageShownRectangular());
-
-        int spaceHor = UIUtils.dp2px(mActivity, 5);
-        int spaceVer = UIUtils.dp2px(mActivity, 10);
-        mRvPosts.addItemDecoration(new GridDividerItemDecoration(
-                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
 
         // 滑动时隐藏fab
         mRvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -252,6 +250,26 @@ public class PostFragment extends BaseFragment implements
                 }
             }
         });
+    }
+
+    private void updateRecyclerViewSpanCount() {
+        if (mActivity != null && mLayoutManager != null) {
+            int span;
+            if (UIUtils.isLandscape(mActivity)) {
+                span = 4;
+            } else {
+                span = QMUIDeviceHelper.isTablet(mActivity) ? 3 : 2;
+            }
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(mActivity, 5);
+            int spaceVer = UIUtils.dp2px(mActivity, 10);
+            mRvPosts.clearItemDecorations();
+            mRvPosts.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+
+            mPostAdapter.setPreLoadNumber(span * 5);
+        }
     }
 
     // 滑动加载更多

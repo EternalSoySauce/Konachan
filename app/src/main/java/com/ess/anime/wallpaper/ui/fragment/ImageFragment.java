@@ -55,7 +55,6 @@ public class ImageFragment extends BaseFragment {
             mImageBean = mActivity.getImageBean();
         }
         initView();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -84,7 +83,6 @@ public class ImageFragment extends BaseFragment {
     public void onDestroyView() {
         mMediaLayout.reset();
         super.onDestroyView();
-        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -146,9 +144,9 @@ public class ImageFragment extends BaseFragment {
     }
 
     private void setImageDetail(ImageBean imageBean) {
+        mImageBean = imageBean;
         mThumbBean.imageBean = imageBean;
         mThumbBean.checkToReplacePostData();
-        mImageBean = imageBean;
         loadMedia();
         mSwipeRefresh.setRefreshing(false);
         mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);

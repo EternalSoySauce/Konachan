@@ -83,6 +83,10 @@
 
     <!-- Setting Activity -->
     <string name="setting_allow_play_sound">Allow to play sound</string>
+    <string name="setting_screen_orientation_title">Screen rotation mode</string>
+    <string name="setting_screen_orientation_item_forced_portrait">Portrait lock</string>
+    <string name="setting_screen_orientation_item_forced_landscape">Landscape lock</string>
+    <string name="setting_screen_orientation_item_auto_rotate">Auto rotate</string>
     <string name="setting_preload_image_only_wifi_title">Only preload original images in Wifi environment</string>
     <string name="setting_preload_image_only_wifi_desc">If enabled, it is forbidden to use mobile network to original images of the details page</string>
     <string name="setting_help_tag_type">See all tag types and meanings</string>
@@ -284,6 +288,8 @@
     <string name="dialog_pixiv_login_state_btn_close">Close</string>
     <string name="dialog_pixiv_login_state_btn_logout">Logout</string>
     <string name="dialog_pixiv_login_state_btn_relogin">Re-login</string>
+    <string name="dialog_change_screen_orientation_mode_title">Change screen rotation mode</string>
+    <string name="dialog_change_screen_orientation_mode_cancel">Cancel</string>
 
     <!-- Global -->
     <string name="unknown">Unknown</string>

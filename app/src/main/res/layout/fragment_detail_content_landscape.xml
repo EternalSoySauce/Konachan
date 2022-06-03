@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <include
+        android:id="@+id/cardview_detail_post"
+        layout="@layout/cardview_detail_post"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/cardview_detail_tag"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ViewStub
+        android:id="@+id/view_stub_detail_pool"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout="@layout/cardview_detail_pool"
+        app:layout_constraintEnd_toEndOf="@+id/cardview_detail_post"
+        app:layout_constraintStart_toStartOf="@+id/cardview_detail_post"
+        app:layout_constraintTop_toBottomOf="@+id/cardview_detail_post" />
+
+    <include
+        android:id="@+id/cardview_detail_tag"
+        layout="@layout/cardview_detail_tag"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardview_detail_post" />
+</androidx.constraintlayout.widget.ConstraintLayout>

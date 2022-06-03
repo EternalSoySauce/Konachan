@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,6 +22,7 @@ import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -38,7 +40,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -56,7 +57,7 @@ public class PoolFragment extends BaseFragment implements
     @BindView(R.id.fl_pool_post)
     FrameLayout mLayoutFragment;
     @BindView(R.id.rv_pool)
-    RecyclerView mRvPools;
+    GeneralRecyclerView mRvPools;
     @BindView(R.id.iv_page)
     ImageView mIvPage;
 
@@ -97,6 +98,12 @@ public class PoolFragment extends BaseFragment implements
         changeFromPage(mCurrentPage);
         changeToPage(mCurrentPage);
         WebsiteManager.getInstance().registerWebsiteChangeListener(this);
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
     }
 
     @Override
@@ -208,14 +215,12 @@ public class PoolFragment extends BaseFragment implements
     }
 
     private void initRecyclerView() {
-        int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 342, 1);
-        mLayoutManager = new GridLayoutManager(mActivity, span);
+        mLayoutManager = new GridLayoutManager(mActivity, 1);
         mRvPools.setLayoutManager(mLayoutManager);
 
         mPoolAdapter = new RecyclerPoolAdapter();
         mPoolAdapter.bindToRecyclerView(mRvPools);
         mPoolAdapter.setOnLoadMoreListener(this, mRvPools);
-        mPoolAdapter.setPreLoadNumber(5);
         mPoolAdapter.setLoadMoreView(new CustomLoadMoreView());
         mPoolAdapter.setEmptyView(R.layout.layout_loading_sakuya, mRvPools);
         mPoolAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -226,10 +231,22 @@ public class PoolFragment extends BaseFragment implements
             }
         });
 
-        int spaceHor = UIUtils.dp2px(mActivity, 6);
-        int spaceVer = UIUtils.dp2px(mActivity, 12);
-        mRvPools.addItemDecoration(new GridDividerItemDecoration(
-                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+    }
+
+    private void updateRecyclerViewSpanCount() {
+        Activity activity = getActivity();
+        if (activity != null && mLayoutManager != null) {
+            int span = UIUtils.isLandscape(mActivity) ? 2 : 1;
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(mActivity, 6);
+            int spaceVer = UIUtils.dp2px(mActivity, 12);
+            mRvPools.clearItemDecorations();
+            mRvPools.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+
+            mPoolAdapter.setPreLoadNumber(span * 5);
+        }
     }
 
     // 滑动加载更多

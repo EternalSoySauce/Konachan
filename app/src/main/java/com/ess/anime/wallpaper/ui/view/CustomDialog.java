@@ -23,6 +23,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.DocDataHelper;
 import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
 import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
+import com.ess.anime.wallpaper.ui.activity.BaseActivity;
 import com.ess.anime.wallpaper.ui.activity.SettingActivity;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -471,6 +472,11 @@ public class CustomDialog extends MaterialDialog.Builder {
 
     private final static String NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN = "NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN";
 
+    /**
+     * 提示用户正在使用移动数据预加载图片，可去设置页切换仅Wifi模式
+     *
+     * @param context 上下文
+     */
     public static void checkToShowPromptUseMobileNetworkPreloadImage(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean(NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN, false)) {
@@ -495,6 +501,33 @@ public class CustomDialog extends MaterialDialog.Builder {
                 .onNeutral((dialog2, which) -> {
                     preferences.edit().putBoolean(NOT_SHOW_MOBILE_PRELOAD_PROMPT_AGAIN, true).apply();
                 }).show();
+    }
+
+    /**
+     * 切换屏幕旋转模式
+     *
+     * @param context  上下文
+     * @param listener 事件监听器
+     */
+    public static void showChangeScreenOrientationDialog(Context context, OnDialogActionListener listener) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        List<Integer> supportList = Arrays.asList(BaseActivity.SUPPORT_SCREEN_ORIENTATIONS);
+        int curOrientation = preferences.getInt(Constants.SCREEN_ORIENTATION, supportList.get(0));
+        int curIndex = supportList.indexOf(curOrientation);
+
+        MaterialDialog dialog = new CustomDialog(context)
+                .title(R.string.dialog_change_screen_orientation_mode_title)
+                .negativeText(R.string.dialog_change_screen_orientation_mode_cancel)
+                .items(R.array.screen_orientation_list_item)
+                .itemsCallbackSingleChoice(curIndex, (dialog1, itemView, which, text) -> {
+                    if (which != curIndex) {
+                        preferences.edit().putInt(Constants.SCREEN_ORIENTATION, supportList.get(which)).apply();
+                    }
+                    listener.onPositive();
+                    return true;
+                })
+                .alwaysCallSingleChoiceCallback()
+                .show();
     }
 
     public interface OnDialogActionListener {

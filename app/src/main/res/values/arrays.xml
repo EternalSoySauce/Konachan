@@ -26,4 +26,10 @@
         <item>@string/base_sankaku</item>
         <item>@string/base_zerochan</item>
     </string-array>
+
+    <string-array name="screen_orientation_list_item">
+        <item>@string/setting_screen_orientation_item_forced_portrait</item>
+        <item>@string/setting_screen_orientation_item_forced_landscape</item>
+        <item>@string/setting_screen_orientation_item_auto_rotate</item>
+    </string-array>
 </resources>

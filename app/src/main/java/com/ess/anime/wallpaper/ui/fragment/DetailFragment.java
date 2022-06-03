@@ -33,8 +33,8 @@ import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.utils.WebLinkMethod;
 import com.jiang.android.indicatordialog.IndicatorBuilder;
 import com.jiang.android.indicatordialog.IndicatorDialog;
+import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -49,8 +49,8 @@ public class DetailFragment extends BaseFragment {
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
-    @BindView(R.id.layout_tag)
-    ViewGroup mLayoutTag;
+    @BindView(R.id.layout_detail_container)
+    ViewGroup mLayoutDetailContainer;
 
     private ImageDetailActivity mActivity;
     private ThumbBean mThumbBean;
@@ -77,7 +77,12 @@ public class DetailFragment extends BaseFragment {
             mImageBean = mActivity.getImageBean();
         }
         initView();
-        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateContentLayout();
     }
 
     @Override
@@ -88,25 +93,28 @@ public class DetailFragment extends BaseFragment {
         outState.putParcelable(Constants.IMAGE_BEAN, mImageBean);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
     private void initView() {
         mSwipeRefresh.setEnabled(false);
-
-        if (mImageBean != null) {
-            loadDetail(mImageBean);
-        } else {
+        if (mImageBean == null) {
             mSwipeRefresh.setRefreshing(true);
             mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
         }
     }
 
+    private void updateContentLayout() {
+        if (mActivity != null) {
+            mLayoutDetailContainer.removeAllViews();
+            if (UIUtils.isLandscape(mActivity) && QMUIDeviceHelper.isTablet(mActivity)) {
+                View.inflate(mActivity, R.layout.fragment_detail_content_landscape, mLayoutDetailContainer);
+            } else {
+                View.inflate(mActivity, R.layout.fragment_detail_content_portrait, mLayoutDetailContainer);
+            }
+            showImageDetail(mImageBean);
+        }
+    }
+
     // 图片详情
-    private void loadDetail(ImageBean imageBean) {
+    private void showImageDetail(ImageBean imageBean) {
         if (imageBean == null || imageBean.posts.length == 0) {
             return;
         }
@@ -182,13 +190,14 @@ public class DetailFragment extends BaseFragment {
         setText(R.id.post_score, R.string.detail_post_score, score);
 
         /****************** Tags ******************/
+        ViewGroup layoutTag = mLayoutDetailContainer.findViewById(R.id.layout_tag);
         TagBean tagBean = imageBean.tags;
-        addTagViews(mLayoutTag, tagBean.copyright, R.color.color_copyright);
-        addTagViews(mLayoutTag, tagBean.character, R.color.color_character);
-        addTagViews(mLayoutTag, tagBean.artist, R.color.color_artist);
-        addTagViews(mLayoutTag, tagBean.circle, R.color.color_circle);
-        addTagViews(mLayoutTag, tagBean.style, R.color.color_style);
-        addTagViews(mLayoutTag, tagBean.general, R.color.color_general);
+        addTagViews(layoutTag, tagBean.copyright, R.color.color_copyright);
+        addTagViews(layoutTag, tagBean.character, R.color.color_character);
+        addTagViews(layoutTag, tagBean.artist, R.color.color_artist);
+        addTagViews(layoutTag, tagBean.circle, R.color.color_circle);
+        addTagViews(layoutTag, tagBean.style, R.color.color_style);
+        addTagViews(layoutTag, tagBean.general, R.color.color_general);
 
         /****************** Pools ******************/
         if (imageBean.pools.length == 0) {
@@ -361,9 +370,10 @@ public class DetailFragment extends BaseFragment {
     }
 
     private void setImageDetail(ImageBean imageBean) {
+        mImageBean = imageBean;
         mThumbBean.imageBean = imageBean;
         mThumbBean.checkToReplacePostData();
-        loadDetail(imageBean);
+        showImageDetail(imageBean);
         mSwipeRefresh.setRefreshing(false);
         mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
     }

@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
@@ -361,4 +362,9 @@ public class UIUtils {
         view.getLocationInWindow(location);
         return location;
     }
+
+    public static boolean isLandscape(Activity context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
 }

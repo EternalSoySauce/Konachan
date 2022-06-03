@@ -1,5 +1,6 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import com.android.volley.Request;
@@ -14,11 +15,13 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
-import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
+import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,7 +33,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.RequestLoadMoreListener {
@@ -38,7 +40,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     public final static String TAG = PoolPostFragment.class.getName();
 
     private SwipeRefreshLayout mSwipeRefresh;
-    private RecyclerView mRvPosts;
+    private GeneralRecyclerView mRvPosts;
     private GridLayoutManager mLayoutManager;
     private RecyclerPostAdapter mPostAdapter;
     private String mLinkToShow;
@@ -58,7 +60,12 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         initRecyclerView();
         mCurrentPage = 1;
         getNewPosts(mCurrentPage);
-        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
     }
 
     @Override
@@ -72,7 +79,6 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         super.onDestroyView();
         OkHttp.cancel(TAG);
         mSwipeRefresh.setRefreshing(false);
-        EventBus.getDefault().unregister(this);
     }
 
     private void initSwipeRefreshLayout() {
@@ -83,21 +89,35 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
     }
 
     private void initRecyclerView() {
-        int span = Math.max(UIUtils.px2dp(getContext(), UIUtils.getScreenWidth(getContext())) / 165, 2);
         mRvPosts = mRootView.findViewById(R.id.rv_pool_post);
-        mLayoutManager = new GridLayoutManager(getActivity(), span);
+        mLayoutManager = new GridLayoutManager(getActivity(), 1);
         mRvPosts.setLayoutManager(mLayoutManager);
 
         mPostAdapter = new RecyclerPostAdapter(TAG);
         mPostAdapter.bindToRecyclerView(mRvPosts);
         mPostAdapter.setOnLoadMoreListener(this, mRvPosts);
-        mPostAdapter.setPreLoadNumber(10);
         mPostAdapter.setLoadMoreView(new CustomLoadMoreView());
+    }
 
-        int spaceHor = UIUtils.dp2px(getActivity(), 5);
-        int spaceVer = UIUtils.dp2px(getActivity(), 10);
-        mRvPosts.addItemDecoration(new GridDividerItemDecoration(
-                span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+    private void updateRecyclerViewSpanCount() {
+        Activity activity = getActivity();
+        if (activity != null && mLayoutManager != null) {
+            int span;
+            if (UIUtils.isLandscape(activity)) {
+                span = 4;
+            } else {
+                span = QMUIDeviceHelper.isTablet(activity) ? 3 : 2;
+            }
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(getActivity(), 5);
+            int spaceVer = UIUtils.dp2px(getActivity(), 10);
+            mRvPosts.clearItemDecorations();
+            mRvPosts.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+
+            mPostAdapter.setPreLoadNumber(span * 5);
+        }
     }
 
     // 滑动加载更多

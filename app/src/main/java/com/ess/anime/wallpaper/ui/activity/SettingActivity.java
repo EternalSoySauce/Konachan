@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.adapter.RecyclerCommonSettingAdapter;
+import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.download.apk.ApkBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
@@ -16,8 +17,11 @@ import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +43,7 @@ public class SettingActivity extends BaseActivity {
 
     private long mCacheSize;
     private CommonSettingItem mClearCacheItem;
+    private CommonSettingItem mScreenOrientationItem;
     private ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     @Override
@@ -52,6 +57,7 @@ public class SettingActivity extends BaseActivity {
         initToolBarLayout();
         initRecyclerSetting();
         resetData();
+        updateScreenOrientationItemUI();
     }
 
     private void initToolBarLayout() {
@@ -71,7 +77,20 @@ public class SettingActivity extends BaseActivity {
         getCacheSize();
     }
 
-    private void updateUI() {
+    private void updateScreenOrientationItemUI() {
+        if (mScreenOrientationItem != null) {
+            List<Integer> supportList = Arrays.asList(BaseActivity.SUPPORT_SCREEN_ORIENTATIONS);
+            int curOrientation = mPreferences.getInt(Constants.SCREEN_ORIENTATION, supportList.get(0));
+            int curIndex = supportList.indexOf(curOrientation);
+            String[] titleArray = getResources().getStringArray(R.array.screen_orientation_list_item);
+            if (curIndex >= 0 & curIndex < titleArray.length) {
+                mScreenOrientationItem.setTips(titleArray[curIndex]);
+                mSettingAdapter.notifyDataSetChanged(true);
+            }
+        }
+    }
+
+    private void updateCacheItemUI() {
         if (SystemUtils.isActivityActive(this)) {
             if (mClearCacheItem != null) {
                 mClearCacheItem.setTips(FileUtils.computeFileSize(mCacheSize));
@@ -87,6 +106,7 @@ public class SettingActivity extends BaseActivity {
         items.add(getPreloadImageOnlyWifiItem());
         items.add(getHelpTagTypeItem());
         items.add(getHelpAdvancedSearchItem());
+        items.add(mScreenOrientationItem = getScreenOrientationItem());
         items.add(mClearCacheItem = getClearCacheItem());
         items.add(getCheckUpdateItem());
         return items;
@@ -106,6 +126,22 @@ public class SettingActivity extends BaseActivity {
                     } else {
                         SoundHelper.getInstance().playSoundDisabled();
                     }
+                });
+    }
+
+    private CommonSettingItem getScreenOrientationItem() {
+        return new CommonSettingItem()
+                .setTitle(R.string.setting_screen_orientation_title)
+                .setOnClickListener(v -> {
+                    CustomDialog.showChangeScreenOrientationDialog(this, new CustomDialog.SimpleDialogActionListener() {
+                        @Override
+                        public void onPositive() {
+                            super.onPositive();
+                            updateScreenOrientationItemUI();
+                            // 发送通知到各个页面
+                            EventBus.getDefault().post(new MsgBean(Constants.TOGGLE_SCREEN_ORIENTATION, null));
+                        }
+                    });
                 });
     }
 
@@ -172,7 +208,7 @@ public class SettingActivity extends BaseActivity {
                 long finalCacheSize = cacheSize;
                 runOnUiThread(() -> {
                     mCacheSize = finalCacheSize;
-                    updateUI();
+                    updateCacheItemUI();
                 });
             });
         }
@@ -190,7 +226,7 @@ public class SettingActivity extends BaseActivity {
         String version = SystemUtils.getVersionName(this);
         return new CommonSettingItem()
                 .setTitle(R.string.setting_check_update)
-                .setDesc(getString(R.string.setting_current_version, version))
+                .setTips(getString(R.string.setting_current_version, version))
                 .setOnClickListener(v -> {
                     File file = new File(getExternalFilesDir(null), FireBase.UPDATE_FILE_NAME);
                     if (file.exists()) {

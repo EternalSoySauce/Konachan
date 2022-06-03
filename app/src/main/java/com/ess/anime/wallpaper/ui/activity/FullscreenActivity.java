@@ -1,7 +1,7 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager2.widget.ViewPager2;
 import butterknife.BindView;
@@ -59,6 +58,11 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     private boolean mForResult = true;
 
     @Override
+    protected int layoutOrientation() {
+        return ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+    }
+
+    @Override
     protected int layoutRes() {
         return R.layout.activity_fullscreen;
     }
@@ -76,9 +80,14 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         initFullScreenViewPager();
         initActionSheetDialog();
         initNormalViews();
-        EventBus.getDefault().register(this);
 
 //        ViewCompat.setTransitionName(mVpFullScreen, "s");
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateActionSheetWidth();
     }
 
     @Override
@@ -186,6 +195,16 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
                 .addSheetItem(getString(R.string.action_share), null, which -> shareImage());
     }
 
+    private void updateActionSheetWidth() {
+        if (mActionSheet != null) {
+            if (UIUtils.isLandscape(this)) {
+                mActionSheet.setDialogWidth(Math.min(UIUtils.getScreenWidth(this), UIUtils.dp2px(this, 500)));
+            } else {
+                mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
+            }
+        }
+    }
+
     @OnClick(R.id.iv_menu)
     void showMenu() {
         mActionSheet.show();
@@ -242,14 +261,6 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
         super.finish();
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (mActionSheet != null) {
-            mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
-        }
-    }
-
     @OnClick(R.id.iv_back)
     @Override
     public void onBackPressed() {
@@ -260,7 +271,6 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     protected void onDestroy() {
         super.onDestroy();
         ImageDataHolder.clearCollectionList();
-        EventBus.getDefault().unregister(this);
     }
 
     // 收藏夹本地文件发生变动后收到的通知，obj 为 null
