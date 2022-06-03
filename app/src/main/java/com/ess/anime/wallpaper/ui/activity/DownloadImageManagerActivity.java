@@ -8,6 +8,7 @@ import com.ess.anime.wallpaper.adapter.RecyclerDownloadImageAdapter;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.download.image.DownloadImageManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -16,7 +17,6 @@ import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -25,7 +25,9 @@ public class DownloadImageManagerActivity extends BaseActivity {
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
     @BindView(R.id.rv_download)
-    RecyclerView mRvDownload;
+    GeneralRecyclerView mRvDownload;
+
+    private GridLayoutManager mLayoutManager;
 
     @Override
     protected int layoutRes() {
@@ -36,6 +38,12 @@ public class DownloadImageManagerActivity extends BaseActivity {
     protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
         initRecyclerDownload();
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
     }
 
     private void initToolBarLayout() {
@@ -64,16 +72,24 @@ public class DownloadImageManagerActivity extends BaseActivity {
         List<DownloadBean> downloadList = DownloadImageManager.getInstance().getDownloadList();
         Collections.reverse(downloadList);
 
-        int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 360, 1);
-        mRvDownload.setLayoutManager(new GridLayoutManager(this, span));
+        mLayoutManager = new GridLayoutManager(this, 1);
+        mRvDownload.setLayoutManager(mLayoutManager);
         RecyclerDownloadImageAdapter adapter = new RecyclerDownloadImageAdapter(downloadList);
         adapter.bindToRecyclerView(mRvDownload);
         adapter.setEmptyView(R.layout.layout_empty_download, mRvDownload);
+    }
 
-        int spaceHor = UIUtils.dp2px(this, 5);
-        int spaceVer = UIUtils.dp2px(this, 10);
-        mRvDownload.addItemDecoration(new GridDividerItemDecoration(
-                1, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+    private void updateRecyclerViewSpanCount() {
+        if (mLayoutManager != null && mRvDownload != null) {
+            int span = UIUtils.isLandscape(this) ? 2 : 1;
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(this, 5);
+            int spaceVer = UIUtils.dp2px(this, 10);
+            mRvDownload.clearItemDecorations();
+            mRvDownload.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+        }
     }
 
     @Override
