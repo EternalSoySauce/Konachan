@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -363,8 +364,23 @@ public class UIUtils {
         return location;
     }
 
-    public static boolean isLandscape(Activity context) {
-        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    public static boolean isLandscape(Activity activity) {
+        return activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
+    public static boolean isLandscapeReverse(Activity activity) {
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        boolean landReverse = rotation == Surface.ROTATION_270;
+        return isLandscape(activity) && landReverse;
+    }
+
+    public static boolean isPortrait(Activity activity) {
+        return activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    public static boolean isPortraitReverse(Activity activity) {
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        boolean portraitReverse = rotation == Surface.ROTATION_180;
+        return isPortrait(activity) && portraitReverse;
+    }
 }

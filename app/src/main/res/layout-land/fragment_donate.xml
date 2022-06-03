@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:clipChildren="false">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_guide_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.ess.anime.wallpaper.ui.view.image.SwitcherImage
+        android:id="@+id/switcher_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/center_guide_line"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/center_guide_line"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.ess.anime.wallpaper.ui.view.image.SwitcherTitle
+            android:id="@+id/switcher_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp" />
+
+        <LinearLayout
+            android:id="@+id/layout_donate"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:clipChildren="false"
+            android:gravity="center"
+            android:weightSum="3">
+
+            <ImageView
+                android:id="@+id/iv_alipay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_donate_alipay" />
+
+            <ImageView
+                android:id="@+id/iv_wechat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_donate_wechat" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/ic_donate_close" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

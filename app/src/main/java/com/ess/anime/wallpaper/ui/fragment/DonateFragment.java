@@ -1,6 +1,9 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -165,8 +168,8 @@ public class DonateFragment extends DialogFragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         if (mHasClickedDonateButton) {
             mHasDonated = true;
         }
@@ -184,4 +187,48 @@ public class DonateFragment extends DialogFragment {
         super.dismissAllowingStateLoss();
     }
 
+    /*************** 保持/恢复屏幕旋转 ***************/
+
+    private int originalScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            originalScreenOrientation = ((Activity) context).getRequestedOrientation();
+        }
+        keepScreenOrientation();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        freeScreenOrientation();
+    }
+
+    private void keepScreenOrientation() {
+        Activity activity = getActivity();
+        if (activity != null) {
+            if (UIUtils.isLandscape(activity)) {
+                if (UIUtils.isLandscapeReverse(activity)) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                } else {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                }
+            } else {
+                if (UIUtils.isPortraitReverse(activity)) {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                } else {
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
+        }
+    }
+
+    private void freeScreenOrientation() {
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.setRequestedOrientation(originalScreenOrientation);
+        }
+    }
 }
