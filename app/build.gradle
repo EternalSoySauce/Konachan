@@ -145,7 +145,8 @@ dependencies {
     implementation project(path: ':actionSheetDialog')
 
     // 带尖角号popup window (https://github.com/jiang111/IndicatorDialog)
-    implementation 'com.github.jiang111:IndicatorDialog:2.1.0'
+//    implementation 'com.github.jiang111:IndicatorDialog:2.1.0'
+    implementation project(path: ':indicatorDialog')
 
     // 高度自定义的popup window (https://github.com/zyyoona7/EasyPopup)
     implementation 'com.github.zyyoona7:EasyPopup:1.1.2'
