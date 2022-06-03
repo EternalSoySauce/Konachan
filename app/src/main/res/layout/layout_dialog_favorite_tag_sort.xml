@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_sort_by"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        tools:itemCount="2"
-        tools:listitem="@layout/recycler_item_dialog_singlechoice" />
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:text="@string/order"
-            android:textColor="@color/color_text_general"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <View
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sort_by"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/dialog_favorite_tag_sort_divider_line"
-            android:layerType="software" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            tools:itemCount="2"
+            tools:listitem="@layout/recycler_item_dialog_singlechoice" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_sort_order"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:overScrollMode="never"
-        tools:itemCount="2"
-        tools:listitem="@layout/recycler_item_dialog_singlechoice" />
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@string/order"
+                android:textColor="@color/color_text_general"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/dialog_favorite_tag_sort_divider_line"
+                android:layerType="software" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sort_order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:overScrollMode="never"
+            tools:itemCount="2"
+            tools:listitem="@layout/recycler_item_dialog_singlechoice" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
