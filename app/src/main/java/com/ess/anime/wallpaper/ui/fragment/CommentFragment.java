@@ -101,7 +101,7 @@ public class CommentFragment extends BaseFragment {
     }
 
     private void updateRecyclerViewSpanCount() {
-        if (mActivity != null && mLayoutManager != null) {
+        if (mActivity != null && mLayoutManager != null && mRvComment != null) {
             int span;
             if (UIUtils.isLandscape(mActivity)) {
                 span = Math.max(UIUtils.px2dp(mActivity, UIUtils.getScreenWidth(mActivity)) / 600, 1);

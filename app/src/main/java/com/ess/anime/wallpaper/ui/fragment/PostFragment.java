@@ -253,7 +253,7 @@ public class PostFragment extends BaseFragment implements
     }
 
     private void updateRecyclerViewSpanCount() {
-        if (mActivity != null && mLayoutManager != null) {
+        if (mActivity != null && mLayoutManager != null && mRvPosts != null) {
             int span;
             if (UIUtils.isLandscape(mActivity)) {
                 span = 4;

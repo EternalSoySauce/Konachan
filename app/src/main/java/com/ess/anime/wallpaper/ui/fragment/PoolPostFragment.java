@@ -101,7 +101,7 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
 
     private void updateRecyclerViewSpanCount() {
         Activity activity = getActivity();
-        if (activity != null && mLayoutManager != null) {
+        if (activity != null && mLayoutManager != null && mRvPosts != null) {
             int span;
             if (UIUtils.isLandscape(activity)) {
                 span = 4;

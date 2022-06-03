@@ -102,7 +102,7 @@ public class DetailFragment extends BaseFragment {
     }
 
     private void updateContentLayout() {
-        if (mActivity != null) {
+        if (mActivity != null && mLayoutDetailContainer != null) {
             mLayoutDetailContainer.removeAllViews();
             if (UIUtils.isLandscape(mActivity) && QMUIDeviceHelper.isTablet(mActivity)) {
                 View.inflate(mActivity, R.layout.fragment_detail_content_landscape, mLayoutDetailContainer);

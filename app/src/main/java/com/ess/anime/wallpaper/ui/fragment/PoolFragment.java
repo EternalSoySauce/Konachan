@@ -235,7 +235,7 @@ public class PoolFragment extends BaseFragment implements
 
     private void updateRecyclerViewSpanCount() {
         Activity activity = getActivity();
-        if (activity != null && mLayoutManager != null) {
+        if (activity != null && mLayoutManager != null && mRvPools != null) {
             int span = UIUtils.isLandscape(mActivity) ? 2 : 1;
             mLayoutManager.setSpanCount(span);
 

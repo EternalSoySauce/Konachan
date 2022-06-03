@@ -77,7 +77,7 @@
     <string name="setting_screen_orientation_title">屏幕旋轉模式</string>
     <string name="setting_screen_orientation_item_forced_portrait">豎屏鎖定</string>
     <string name="setting_screen_orientation_item_forced_landscape">橫屏鎖定</string>
-    <string name="setting_screen_orientation_item_auto_rotate">自動旋轉</string>
+    <string name="setting_screen_orientation_item_auto_rotate">自由旋轉</string>
     <string name="setting_preload_image_only_wifi_title">僅Wifi環境下預加載高清圖</string>
     <string name="setting_preload_image_only_wifi_desc">開啟後則禁止使用移動數據預加載詳情頁高清圖</string>
     <string name="setting_help_tag_type">查看所有標籤類型及其含義</string>

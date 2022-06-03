@@ -29,6 +29,10 @@ public class RecyclerCollectionAdapter extends BaseRecyclerEditAdapter<Collectio
 
     private int mImageSlideLength = -1;
 
+    public RecyclerCollectionAdapter() {
+        this(new ArrayList<>());
+    }
+
     public RecyclerCollectionAdapter(@NonNull List<CollectionBean> collectionList) {
         super(R.layout.recyclerview_item_collection, collectionList);
     }
@@ -126,6 +130,11 @@ public class RecyclerCollectionAdapter extends BaseRecyclerEditAdapter<Collectio
     @Override
     protected boolean showEditTransitionAnimation() {
         return false;
+    }
+
+    public void updateItemSize() {
+        mImageSlideLength = -1;
+        notifyDataSetChanged();
     }
 
 }

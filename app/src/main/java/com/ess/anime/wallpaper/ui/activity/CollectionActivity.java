@@ -17,12 +17,14 @@ import com.ess.anime.wallpaper.listener.LocalCollectionsListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.utils.VibratorUtils;
 import com.mixiaoxiao.smoothcompoundbutton.SmoothCheckBox;
+import com.qmuiteam.qmui.util.QMUIDeviceHelper;
 import com.yanzhenjie.permission.runtime.Permission;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,7 +35,6 @@ import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -50,7 +51,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     @BindView(R.id.cb_choose_all)
     SmoothCheckBox mCbChooseAll;
     @BindView(R.id.rv_collection)
-    RecyclerView mRvCollection;
+    GeneralRecyclerView mRvCollection;
 
     private GridLayoutManager mLayoutManager;
     private RecyclerCollectionAdapter mCollectionAdapter;
@@ -65,6 +66,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
+        initRecyclerView();
         PermissionHelper.checkStoragePermissions(this, new PermissionHelper.RequestListener() {
             @Override
             public void onGranted() {
@@ -78,8 +80,14 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
         });
     }
 
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
+    }
+
     private void initWhenPermissionGranted() {
-        initRecyclerView();
+        mCollectionAdapter.setNewData(CollectionBean.getCollectionImages());
         mFilesListener = new LocalCollectionsListener(this);
         mFilesListener.startWatching();
     }
@@ -124,16 +132,10 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void initRecyclerView() {
-        int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 120, 3);
-        mLayoutManager = new GridLayoutManager(this, span);
+        mLayoutManager = new GridLayoutManager(this, 1);
         mRvCollection.setLayoutManager(mLayoutManager);
-        mCollectionAdapter = new RecyclerCollectionAdapter(CollectionBean.getCollectionImages());
+        mCollectionAdapter = new RecyclerCollectionAdapter();
         mCollectionAdapter.bindToRecyclerView(mRvCollection);
-        int spanHor = UIUtils.dp2px(this, 0.75f);
-        int spanVer = UIUtils.dp2px(this, 1.5f);
-        GridDividerItemDecoration itemDecoration = new GridDividerItemDecoration(
-                span, GridDividerItemDecoration.VERTICAL, spanHor, spanVer, true);
-        mRvCollection.addItemDecoration(itemDecoration);
 
         // 长按进入编辑模式监听器
         mCollectionAdapter.setOnItemChildLongClickListener((adapter, view, position) -> {
@@ -152,6 +154,26 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
             mTvChooseCount.setText(String.valueOf(selectCount));
             mCbChooseAll.setChecked(allSelected);
         });
+    }
+
+    private void updateRecyclerViewSpanCount() {
+        if (mLayoutManager != null && mRvCollection != null) {
+            int span;
+            if (UIUtils.isLandscape(this)) {
+                span = QMUIDeviceHelper.isTablet(this) ? 5 : 4;
+            } else {
+                span = QMUIDeviceHelper.isTablet(this) ? 4 : 3;
+            }
+            mLayoutManager.setSpanCount(span);
+
+            int spanHor = UIUtils.dp2px(this, 0.75f);
+            int spanVer = UIUtils.dp2px(this, 1.5f);
+            mRvCollection.clearItemDecorations();
+            mRvCollection.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spanHor, spanVer, true));
+
+            mCollectionAdapter.updateItemSize();
+        }
     }
 
     private void scrollToTop() {
