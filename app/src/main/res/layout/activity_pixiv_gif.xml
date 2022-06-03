@@ -116,7 +116,7 @@
                 tools:text="@string/piviv_login_state_not_logged" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.ess.anime.wallpaper.ui.view.GeneralRecyclerView
             android:id="@+id/rv_pixiv_gif"
             android:layout_width="match_parent"
             android:layout_height="0dp"

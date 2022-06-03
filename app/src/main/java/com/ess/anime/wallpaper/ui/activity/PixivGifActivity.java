@@ -20,6 +20,7 @@ import com.ess.anime.wallpaper.pixiv.gif.PixivGifDlManager;
 import com.ess.anime.wallpaper.pixiv.login.IPixivLoginListener;
 import com.ess.anime.wallpaper.pixiv.login.PixivLoginManager;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.yanzhenjie.permission.runtime.Permission;
@@ -29,7 +30,6 @@ import java.util.List;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import nl.bravobit.ffmpeg.FFmpeg;
@@ -47,7 +47,10 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
     @BindView(R.id.et_id)
     EditText mEtId;
     @BindView(R.id.rv_pixiv_gif)
-    RecyclerView mRvPixivGif;
+    GeneralRecyclerView mRvPixivGif;
+
+    private GridLayoutManager mLayoutManager;
+    private RecyclerPixivGifDlAdapter mAdapter;
 
     @Override
     protected int layoutRes() {
@@ -57,6 +60,7 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
     @Override
     protected void init(Bundle savedInstanceState) {
         initToolBarLayout();
+        initRecyclerPixivGif();
         if (!FFmpeg.getInstance(this).isSupported()) {
             Toast.makeText(MyApp.getInstance(), R.string.not_support_ffmpeg, Toast.LENGTH_SHORT).show();
             finish();
@@ -74,6 +78,12 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
                 finish();
             }
         });
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateRecyclerViewSpanCount();
     }
 
     private void initToolBarLayout() {
@@ -100,7 +110,7 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
 
     private void initWhenPermissionGranted() {
         initViews();
-        initRecyclerPixivGif();
+        resetDownloadData();
         PixivLoginManager.getInstance().registerLoginListener(this);
     }
 
@@ -147,17 +157,30 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
     }
 
     private void initRecyclerPixivGif() {
+        mLayoutManager = new GridLayoutManager(this, 1);
+        mRvPixivGif.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RecyclerPixivGifDlAdapter();
+        mAdapter.bindToRecyclerView(mRvPixivGif);
+    }
+
+    private void updateRecyclerViewSpanCount() {
+        if (mLayoutManager != null && mRvPixivGif != null) {
+            int span = UIUtils.isLandscape(this) ? 2 : 1;
+            mLayoutManager.setSpanCount(span);
+
+            int spaceHor = UIUtils.dp2px(this, 5);
+            int spaceVer = UIUtils.dp2px(this, 10);
+            mRvPixivGif.clearItemDecorations();
+            mRvPixivGif.addItemDecoration(new GridDividerItemDecoration(
+                    span, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+        }
+    }
+
+    private void resetDownloadData() {
         List<PixivGifBean> downloadList = PixivGifDlManager.getInstance().getDownloadList();
         Collections.reverse(downloadList);
-
-        int span = Math.max(UIUtils.px2dp(this, UIUtils.getScreenWidth(this)) / 360, 1);
-        mRvPixivGif.setLayoutManager(new GridLayoutManager(this, span));
-        new RecyclerPixivGifDlAdapter(downloadList).bindToRecyclerView(mRvPixivGif);
-
-        int spaceHor = UIUtils.dp2px(this, 5);
-        int spaceVer = UIUtils.dp2px(this, 10);
-        mRvPixivGif.addItemDecoration(new GridDividerItemDecoration(
-                1, GridDividerItemDecoration.VERTICAL, spaceHor, spaceVer, true));
+        mAdapter.setNewData(downloadList);
     }
 
     @OnClick(R.id.btn_download)

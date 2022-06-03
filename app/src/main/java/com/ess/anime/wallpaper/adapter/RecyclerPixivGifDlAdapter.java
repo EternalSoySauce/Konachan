@@ -18,6 +18,7 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,10 @@ import at.grabner.circleprogress.CircleProgressView;
 public class RecyclerPixivGifDlAdapter extends BaseQuickAdapter<PixivGifBean, BaseViewHolder> implements IPixivDlListener {
 
     private final static int UPDATE_DL_STATE = 1;
+
+    public RecyclerPixivGifDlAdapter() {
+        this(new ArrayList<>());
+    }
 
     public RecyclerPixivGifDlAdapter(@Nullable List<PixivGifBean> data) {
         super(R.layout.recycler_item_download_manager, data);
