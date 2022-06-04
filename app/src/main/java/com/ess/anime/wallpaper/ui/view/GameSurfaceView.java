@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -24,6 +25,8 @@ import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
 
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -60,6 +63,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public GameSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return super.onSaveInstanceState();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
     }
 
     private void init() {
@@ -107,10 +121,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
         }
 
+        RectF firstRect = mRectList.get(0);
+        RectF lastRect = mRectList.get(mRectList.size() - 1);
+
         // 记录当前步数
         String step = getContext().getString(R.string.game_current_step, mCurrentStep);
-        float x = mRectList.get(0).left / 2f + getWidth() / 4f;
-        float y = mRectList.get(0).top * 0.7f;
+        float x = firstRect.left / 2f + getWidth() / 4f;
+        float y = firstRect.top * 0.7f;
         mPaint.setColor(getResources().getColor(R.color.color_text_unselected));
         mPaint.setTextSize(UIUtils.sp2px(getContext(), 18));
         canvas.drawText(step, x, y, mPaint);
@@ -118,13 +135,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         // 显示最佳记录
         String best = getContext().getString(R.string.game_best_step);
         best += mBestStep == -1 ? getContext().getString(R.string.game_none_best_step) : mBestStep;
-        x = mRectList.get(mRectList.size() - 1).right / 2f + getWidth() / 4f;
+        x = lastRect.right / 2f + getWidth() / 4f;
         canvas.drawText(best, x, y, mPaint);
 
         // 判断是否完成拼图
         if (mCompleted) {
             x = getWidth() / 2f;
-            y = getHeight() * 0.8f + mRectList.get(mRectList.size() - 1).bottom * 0.2f;
+            y = lastRect.bottom + (getHeight() - lastRect.bottom) * 0.65f;
             mPaint.setColor(getResources().getColor(R.color.colorAccent));
             mPaint.setTextSize(UIUtils.sp2px(getContext(), 24));
             canvas.drawText(getContext().getString(R.string.game_completed), x, y, mPaint);
@@ -152,9 +169,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             mRectList.clear();
         }
 
-        float startX = getWidth() / 6f - SPACE * (mColumn - 1);
-        float startY = getHeight() / 1.9f - getWidth() / 3f - SPACE * (mColumn - 1);
-        float drawLength = getWidth() / 3f * 2f / mColumn;
+        float drawLength = Math.min(getWidth(), getHeight()) / 3f * 2f / mColumn;
+        float startX = getWidth() / 2f - mColumn / 2f * drawLength - SPACE * (mColumn / 2f - 0.5f);
+        float startY = getHeight() / 2f - mColumn / 2f * drawLength - SPACE * (mColumn / 2f - 0.5f);
         for (int row = 0; row < mColumn; row++) {
             for (int col = 0; col < mColumn; col++) {
                 float drawX = col * (drawLength + SPACE) + startX;

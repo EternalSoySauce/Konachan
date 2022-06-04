@@ -131,7 +131,6 @@
 
         <activity
             android:name=".ui.activity.GameActivity"
-            android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="behind" />
 
         <provider
