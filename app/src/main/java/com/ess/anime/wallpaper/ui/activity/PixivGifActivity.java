@@ -81,7 +81,7 @@ public class PixivGifActivity extends BaseActivity implements IPixivLoginListene
     }
 
     @Override
-    void updateUI() {
+    protected void updateUI() {
         super.updateUI();
         updateRecyclerViewSpanCount();
     }

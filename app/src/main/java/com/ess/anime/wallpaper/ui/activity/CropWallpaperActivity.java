@@ -78,7 +78,7 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
     }
 
     @Override
-    void updateUI() {
+    protected void updateUI() {
         super.updateUI();
         updateActionSheetWidth();
     }

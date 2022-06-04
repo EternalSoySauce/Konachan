@@ -42,6 +42,7 @@ public abstract class BaseWebActivity extends BaseActivity {
     Toolbar mToolbar;
 
     AgentWeb mAgentWeb;
+    private LongClickWebView mWebView;
     private IndicatorDialog mPopup;
 
     abstract CharSequence title();
@@ -76,6 +77,13 @@ public abstract class BaseWebActivity extends BaseActivity {
         findViewById(R.id.iv_help).setVisibility(hasHelpDialog() ? View.VISIBLE : View.GONE);
     }
 
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+        mWebView.dismissPopup();
+        dismissListPopupWindow();
+    }
+
     private void initToolBarLayout() {
         mToolbar.setTitle(title());
         setSupportActionBar(mToolbar);
@@ -84,7 +92,7 @@ public abstract class BaseWebActivity extends BaseActivity {
     }
 
     void initWebView() {
-        LongClickWebView webView = new LongClickWebView(this);
+        mWebView = new LongClickWebView(this);
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(findViewById(R.id.layout_web_view),
                         new FrameLayout.LayoutParams(-1, -1))
@@ -113,12 +121,12 @@ public abstract class BaseWebActivity extends BaseActivity {
                         }
                     }
                 })
-                .setWebView(webView)
+                .setWebView(mWebView)
                 .createAgentWeb()
                 .ready()
                 .go(webUrl());
 
-        webView.init();
+        mWebView.init();
     }
 
     private void initListPopupWindow() {
@@ -186,6 +194,12 @@ public abstract class BaseWebActivity extends BaseActivity {
         }
         maxWidth += tv.getPaddingStart() + tv.getPaddingEnd();
         return (int) maxWidth;
+    }
+
+    private void dismissListPopupWindow() {
+        if (mPopup != null) {
+            mPopup.dismiss();
+        }
     }
 
     @OnClick(R.id.iv_more)

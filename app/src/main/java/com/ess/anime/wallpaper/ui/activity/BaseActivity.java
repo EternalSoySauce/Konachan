@@ -63,7 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract void init(Bundle savedInstanceState);
 
-    void updateUI() {
+    protected void updateUI() {
     }
 
     @Override

@@ -81,7 +81,7 @@ public class CollectionActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    void updateUI() {
+    protected void updateUI() {
         super.updateUI();
         updateRecyclerViewSpanCount();
     }

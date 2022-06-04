@@ -85,7 +85,7 @@ public class FullscreenActivity extends BaseActivity implements OnPhotoTapListen
     }
 
     @Override
-    void updateUI() {
+    protected void updateUI() {
         super.updateUI();
         updateActionSheetWidth();
     }

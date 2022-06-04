@@ -110,6 +110,12 @@ public class LongClickWebView extends WebView implements View.OnLongClickListene
         });
     }
 
+    public void dismissPopup() {
+        if (mPopupPage != null) {
+            mPopupPage.dismiss();
+        }
+    }
+
     private void saveImage(String imgUrl, String webUrl) {
         Object objToLoad = null;
         String fileName = "";

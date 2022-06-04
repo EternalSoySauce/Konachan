@@ -96,6 +96,12 @@ public class SearchActivity extends BaseActivity {
         changeDocumentColor();
     }
 
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+        dismissListPopupWindow();
+    }
+
     private void initData() {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mCurrentSearchMode = mPreferences.getInt(Constants.SEARCH_MODE, Constants.SEARCH_MODE_TAGS);
@@ -354,6 +360,12 @@ public class SearchActivity extends BaseActivity {
         }
         maxWidth += tv.getPaddingStart() + tv.getPaddingEnd();
         return (int) maxWidth;
+    }
+
+    private void dismissListPopupWindow() {
+        if (mPopup != null) {
+            mPopup.dismiss();
+        }
     }
 
     @Override

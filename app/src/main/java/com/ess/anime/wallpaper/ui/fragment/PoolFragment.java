@@ -103,6 +103,7 @@ public class PoolFragment extends BaseFragment implements
     @Override
     void updateUI() {
         super.updateUI();
+        dismissPopupPage();
         updateRecyclerViewSpanCount();
     }
 
@@ -201,6 +202,12 @@ public class PoolFragment extends BaseFragment implements
             }
             return false;
         });
+    }
+
+    private void dismissPopupPage() {
+        if (mPopupPage != null) {
+            mPopupPage.dismiss();
+        }
     }
 
     private void initSwipeRefreshLayout() {

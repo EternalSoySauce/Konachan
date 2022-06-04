@@ -41,7 +41,7 @@ public class DownloadImageManagerActivity extends BaseActivity {
     }
 
     @Override
-    void updateUI() {
+    protected void updateUI() {
         super.updateUI();
         updateRecyclerViewSpanCount();
     }
