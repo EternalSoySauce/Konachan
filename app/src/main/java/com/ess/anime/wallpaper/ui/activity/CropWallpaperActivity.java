@@ -1,7 +1,7 @@
 package com.ess.anime.wallpaper.ui.activity;
 
 import android.annotation.TargetApi;
-import android.content.res.Configuration;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +22,6 @@ import com.zjca.qqdialog.ActionSheetDialog;
 
 import java.io.File;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
@@ -49,6 +48,23 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
     }
 
     @Override
+    protected int layoutOrientation() {
+        if (UIUtils.isLandscape(this)) {
+            if (UIUtils.isLandscapeReverse(this)) {
+                return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+            } else {
+                return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            }
+        } else {
+            if (UIUtils.isPortraitReverse(this)) {
+                return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+            } else {
+                return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            }
+        }
+    }
+
+    @Override
     protected void init(Bundle savedInstanceState) {
         Uri sourceUri = getIntent().getParcelableExtra(FILE_URI);
         if (sourceUri == null || !PermissionHelper.hasPermissions(this, Permission.Group.STORAGE)) {
@@ -59,6 +75,12 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
         initToolBarLayout();
         initCropFragment(sourceUri);
         CustomDialog.checkToShowCannotCustomLockscreenWallpaperDialog(this);
+    }
+
+    @Override
+    void updateUI() {
+        super.updateUI();
+        updateActionSheetWidth();
     }
 
     private void initToolBarLayout() {
@@ -135,6 +157,7 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
                     .addSheetItem(getString(R.string.action_wallpaper_flag_both), null, which -> {
                         setWallpaperDirectly(imagePath, WallpaperUtils.FLAG_BOTH);
                     });
+            updateActionSheetWidth();
         }
         mActionSheet.show();
     }
@@ -147,10 +170,14 @@ public class CropWallpaperActivity extends BaseActivity implements UCropFragment
         finish();
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
+    private void updateActionSheetWidth() {
+        if (mActionSheet != null) {
+            if (UIUtils.isLandscape(this)) {
+                mActionSheet.setDialogWidth(Math.min(UIUtils.getScreenWidth(this), UIUtils.dp2px(this, 500)));
+            } else {
+                mActionSheet.setDialogWidth(UIUtils.getScreenWidth(this));
+            }
+        }
     }
 
 }
