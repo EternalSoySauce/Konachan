@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -17,10 +18,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.ess.anime.wallpaper.model.helper.XPuzzleHelper;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
+import com.ess.anime.wallpaper.model.helper.XPuzzleHelper;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 
@@ -65,17 +66,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         init();
     }
 
-    @Nullable
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        return super.onSaveInstanceState();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(state);
-    }
-
     private void init() {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -91,11 +81,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mColumn = mPreferences.getInt(Constants.GAME_COLUMN, DEFAULT_COLUMN);
         mBestStep = mPreferences.getInt(String.valueOf(mColumn), -1);
-        mPuzzle = new XPuzzleHelper();
-        rebuildPuzzle();
-
         mGameBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_game);
-        splitBitmaps();
     }
 
     private void draw() {
@@ -218,7 +204,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        if (mPuzzle == null) {
+            mPuzzle = new XPuzzleHelper();
+            rebuildPuzzle();
+        }
         if (mRectList == null) {
+            splitBitmaps();
             resetBitmapRects();
         }
     }
@@ -269,5 +260,100 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void setOnActionListener(OnActionListener actionListener) {
         mActionListener = actionListener;
+    }
+
+
+    /******************  InstanceState  ******************/
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.column = mColumn;
+        ss.currentState = mCurrentState;
+        ss.currentStep = mCurrentStep;
+        ss.bestStep = mBestStep;
+        ss.completed = mCompleted;
+        ss.hasPlayedSound = mHasPlayedSound;
+        ss.puzzle = mPuzzle;
+        return ss;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(ss.getSuperState());
+
+        mColumn = ss.column;
+        mCurrentState = ss.currentState;
+        mCurrentStep = ss.currentStep;
+        mBestStep = ss.bestStep;
+        mCompleted = ss.completed;
+        mHasPlayedSound = ss.hasPlayedSound;
+        mPuzzle = ss.puzzle;
+    }
+
+    private static class SavedState extends BaseSavedState {
+        int column;
+        int[][] currentState;
+        int currentStep;
+        int bestStep;
+        boolean completed;
+        boolean hasPlayedSound;
+        XPuzzleHelper puzzle;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(column);
+            out.writeSerializable(currentState);
+            out.writeInt(currentStep);
+            out.writeInt(bestStep);
+            out.writeInt(completed ? 1 : 0);
+            out.writeInt(hasPlayedSound ? 1 : 0);
+            out.writeParcelable(puzzle, flags);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            column = in.readInt();
+            currentState = (int[][]) in.readSerializable();
+            currentStep = in.readInt();
+            bestStep = in.readInt();
+            completed = (in.readInt() != 0);
+            hasPlayedSound = (in.readInt() != 0);
+            puzzle = in.readParcelable(XPuzzleHelper.class.getClassLoader());
+        }
+
+        @Override
+        public String toString() {
+            return "GameSurfaceView.SavedState{"
+                    + Integer.toHexString(System.identityHashCode(this))
+                    + " column=" + column + " currentState=" + currentState.length
+                    + " currentStep=" + currentStep + " bestStep=" + bestStep
+                    + " completed=" + completed + " hasPlayedSound=" + hasPlayedSound
+                    + "}";
+        }
+
+        @SuppressWarnings("hiding")
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 }
