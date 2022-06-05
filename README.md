@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.8.10】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1YwpIzuvyJcZ9dadUoHTlbw)，提取码: 8r8g
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.10.apk)
+## 最新版本【v1.8.11】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1D6QEt9YLWrQS1G-mAMGZpA?pwd=8r2p)，提取码: 8r2p
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.11.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -60,6 +60,10 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.11】
+	* 新增支持横屏功能，可在设置中选择开启
+	* 逆向搜索网站中添加\"搜图bot酱\"，且改为服务器动态配置网站列表
+
 * 【v1.8.10】
 	* 修复Gelbooru数据解析失败，并兼容mp4/gif等类型素材
 	* 修复Danbooru数据解析失败，并优化缩略图清晰度及图集信息
