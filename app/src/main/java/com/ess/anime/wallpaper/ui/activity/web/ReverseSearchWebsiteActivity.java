@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.ui.activity.web;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.model.entity.ReverseSearchWebsiteItem;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
@@ -44,7 +45,7 @@ public class ReverseSearchWebsiteActivity extends BaseWebActivity {
     @Override
     CharSequence title() {
         if (mWebsiteItem != null) {
-            return getString(mWebsiteItem.websiteNameRes);
+            return mWebsiteItem.websiteName;
         } else {
             return "";
         }
@@ -72,14 +73,14 @@ public class ReverseSearchWebsiteActivity extends BaseWebActivity {
     @Override
     void showHelpDialog() {
         if (mWebsiteItem != null && hasHelpDialog()) {
-            CustomDialog.showWebsiteHelpDialog(this, title(), mWebsiteItem.websiteHelpRes);
+            CustomDialog.showWebsiteHelpDialog(this, title(), mWebsiteItem.websiteHelp);
         }
     }
 
     @Override
     boolean hasHelpDialog() {
         if (mWebsiteItem != null) {
-            return mWebsiteItem.websiteHelpRes != 0;
+            return !TextUtils.isEmpty(mWebsiteItem.websiteHelp);
         } else {
             return false;
         }

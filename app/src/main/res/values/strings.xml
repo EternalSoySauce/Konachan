@@ -201,16 +201,6 @@
     <string name="browse_title">Browse via</string>
     <string name="save_image">Save Image</string>
 
-    <!-- Website -->
-    <string name="website_name_sauce_nao" translatable="false">SauceNAO</string>
-    <string name="website_name_trace_moe" translatable="false">WhatAnime</string>
-    <string name="website_name_ascii2d" translatable="false">Ascii2d</string>
-    <string name="website_name_yandex" translatable="false">Yandex</string>
-    <string name="website_desc_sauce_nao">Search original image</string>
-    <string name="website_desc_trace_moe">Search anime by image</string>
-    <string name="website_desc_ascii2d">Anime image search</string>
-    <string name="website_desc_yandex">Search engine</string>
-
     <!-- Surface View -->
     <string name="game_column_3" translatable="false">3 × 3</string>
     <string name="game_column_4" translatable="false">4 × 4</string>
@@ -257,10 +247,6 @@
     <string name="dialog_feedback_sure">Send Email</string>
     <string name="dialog_feedback_cancel">Cancel</string>
     <string name="dialog_feedback_neutral">Jump to Github</string>
-    <string name="dialog_saucenao_help">Is an online image reverse search tool. Name from Source? Now! Looking for a source? Find it now! \n\n By uploading a local image or typing the url address of an image, similarity matching is performed on multiple databases on the Internet to find the requested image, its related information, and other similar images, which has become a mainstream image search tool.</string>
-    <string name="dialog_tracemoe_help">Is a test-of-concept prototype search engine that helps users trace back the original anime by screenshot. It searches over 22300 hours of anime and find the best matching scene. It tells you what anime it is, from which episode and the time that scene appears. Since the search result may not be accurate, it provides a few seconds of preview for verification.</string>
-    <string name="dialog_ascii2d_help">Is a service that allows you to search for images by image and examine the details. Supports common JPEG PNG WEBP format images up to 5MB.</string>
-    <string name="dialog_yandex_help">Is a Russian search engine that provides services including search, latest news, maps and encyclopedias, e-mail, e-commerce, Internet advertising and other services.</string>
     <string name="dialog_cannot_wallpaper_lockscreen_msg">Your device may not be able to apply a custom wallpaper as a lock screen. If you have this, please use the "Set as wallpaper" function.</string>
     <string name="dialog_cannot_wallpaper_lockscreen_sure">I see</string>
     <string name="dialog_cannot_wallpaper_lockscreen_neutral">Don\'t show again</string>

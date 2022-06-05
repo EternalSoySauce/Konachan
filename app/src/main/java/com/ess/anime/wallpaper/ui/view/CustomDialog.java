@@ -421,7 +421,7 @@ public class CustomDialog extends MaterialDialog.Builder {
      * @param title   title
      * @param msgRes  msg
      */
-    public static void showWebsiteHelpDialog(Context context, CharSequence title, int msgRes) {
+    public static void showWebsiteHelpDialog(Context context, CharSequence title, String msgRes) {
         MaterialDialog dialog = new CustomDialog(context)
                 .title(title)
                 .content(msgRes)

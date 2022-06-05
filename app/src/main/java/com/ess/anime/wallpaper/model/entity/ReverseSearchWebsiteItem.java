@@ -5,38 +5,33 @@ import android.os.Parcelable;
 
 public class ReverseSearchWebsiteItem implements Parcelable {
 
-    public int iconRes;
+    public String websiteName;
 
-    public int websiteNameRes;
+    public String websiteDesc;
 
-    public int websiteDescRes;
-
-    public int websiteHelpRes;
+    public String websiteHelp;
 
     public String websiteUrl;
 
-    public ReverseSearchWebsiteItem(int iconRes, int websiteNameRes, int websiteDescRes, int websiteHelpRes, String websiteUrl) {
-        this.iconRes = iconRes;
-        this.websiteNameRes = websiteNameRes;
-        this.websiteDescRes = websiteDescRes;
-        this.websiteHelpRes = websiteHelpRes;
+    public ReverseSearchWebsiteItem(String websiteName, String websiteDesc, String websiteHelp, String websiteUrl) {
+        this.websiteName = websiteName;
+        this.websiteDesc = websiteDesc;
+        this.websiteHelp = websiteHelp;
         this.websiteUrl = websiteUrl;
     }
 
     protected ReverseSearchWebsiteItem(Parcel in) {
-        iconRes = in.readInt();
-        websiteNameRes = in.readInt();
-        websiteDescRes = in.readInt();
-        websiteHelpRes = in.readInt();
+        websiteName = in.readString();
+        websiteDesc = in.readString();
+        websiteHelp = in.readString();
         websiteUrl = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(iconRes);
-        dest.writeInt(websiteNameRes);
-        dest.writeInt(websiteDescRes);
-        dest.writeInt(websiteHelpRes);
+        dest.writeString(websiteName);
+        dest.writeString(websiteDesc);
+        dest.writeString(websiteHelp);
         dest.writeString(websiteUrl);
     }
 
@@ -56,5 +51,4 @@ public class ReverseSearchWebsiteItem implements Parcelable {
             return new ReverseSearchWebsiteItem[size];
         }
     };
-
 }

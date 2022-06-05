@@ -8,6 +8,7 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.download.image.DownloadImageManager;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.FireBase;
+import com.ess.anime.wallpaper.model.helper.ReverseSearchWebsiteDataHelper;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ess.anime.wallpaper.website.WebsiteManager;
@@ -30,6 +31,7 @@ public class SplashActivity extends BaseActivity {
 
         FireBase.getInstance().checkToAddUser();
         FireBase.getInstance().checkUpdate();
+        ReverseSearchWebsiteDataHelper.loadNewJsonFromServer(this);
 
         WebsiteManager.getInstance().updateCurrentTagJson();
         DownloadImageManager.getInstance();

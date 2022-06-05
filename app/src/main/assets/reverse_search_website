@@ -1,0 +1,58 @@
+[
+    {
+        "name":"SauceNAO",
+        "desc":{
+            "en_us":"Search original image",
+            "zh_cn":"以图搜图",
+            "zh_hk":"以圖搜圖"
+        },
+        "help":{
+            "en_us":"Is an online image reverse search tool. Name from Source? Now! Looking for a source? Find it now! \n\n By uploading a local image or typing the url address of an image, similarity matching is performed on multiple databases on the Internet to find the requested image, its related information, and other similar images, which has become a mainstream image search tool.",
+            "zh_cn":"是一个线上图片逆向搜索工具。名称来源于英文Source? Now! 找来源？立刻就找到！\n\n通过上传本地图片或键入图片的url地址，在互联网上的多个数据库进行相似度匹配从而找到所求图片、其相关信息以及相似的其他图片，目前已经成为主流的图片搜索工具。",
+            "zh_hk":"是一個線上圖片逆向搜索工具。名稱來源於英文Source? Now! 找來源？立刻就找到！\n\n通過上傳本地圖片或鍵入圖片的url地址，在互聯網上的多個數據庫進行相似度匹配從而找到所求圖片、其相關信息以及相似的其他圖片，目前已經成為主流的圖片搜索工具。"
+        },
+        "url":"https://saucenao.com/"
+    },
+    {
+        "name":"WhatAnime",
+        "desc":{
+            "en_us":"Search anime by image",
+            "zh_cn":"以图搜番",
+            "zh_hk":"以圖搜番"
+        },
+        "help":{
+            "en_us":"Is a test-of-concept prototype search engine that helps users trace back the original anime by screenshot. It searches over 22300 hours of anime and find the best matching scene. It tells you what anime it is, from which episode and the time that scene appears. Since the search result may not be accurate, it provides a few seconds of preview for verification.",
+            "zh_cn":"是一个概念测试原型搜索引擎，可帮助用户通过屏幕截图追溯原始动漫。\n\n它搜索超过22300小时的动漫并找到最佳匹配场景，显示出这是什么动画，在哪个剧集和场景出现的时间。由于搜索结果可能不准确，因此它提供了几秒的预览验证。",
+            "zh_hk":"是一個概念測試原型搜索引擎，可幫助用戶通過屏幕截圖追溯原始動漫。\n\n它搜索超過22300小時的動漫並找到最佳匹配場景，顯示出這是什麼動畫，在哪個劇集和場景出現的時間。由於搜索結果可能不准確，因此它提供了幾秒的預覽驗證。"
+        },
+        "url":"https://trace.moe/"
+    },
+    {
+        "name":"Ascii2d",
+        "desc":{
+            "en_us":"Anime image search",
+            "zh_cn":"二次元画像詳細検索",
+            "zh_hk":"二次元画像詳細検索"
+        },
+        "help":{
+            "en_us":"Is a service that allows you to search for images by image and examine the details. Supports common JPEG PNG WEBP format images up to 5MB.",
+            "zh_cn":"是一种可以按图像搜索图像并检查细节的服务。支持常见的JPEG PNG WEBP格式图片最大5MB。",
+            "zh_hk":"是一種可以按圖像搜索圖像並檢查細節的服務。支持常見的JPEG PNG WEBP格式圖片最大5MB。"
+        },
+        "url":"https://ascii2d.net/"
+    },
+    {
+        "name":"Yandex",
+        "desc":{
+            "en_us":"Search engine",
+            "zh_cn":"搜索引擎",
+            "zh_hk":"搜索引擎"
+        },
+        "help":{
+            "en_us":"Is a Russian search engine that provides services including search, latest news, maps and encyclopedias, e-mail, e-commerce, Internet advertising and other services.",
+            "zh_cn":"是一款俄罗斯搜索引擎，所提供的服务包括搜索、最新新闻、地图和百科、电子信箱、电子商务、互联网广告及其他服务。",
+            "zh_hk":"是一款俄羅斯搜索引擎，所提供的服務包括搜索、最新新聞、地圖和百科、電子信箱、電子商務、互聯網廣告及其他服務。"
+        },
+        "url":"https://yandex.com/"
+    }
+]
