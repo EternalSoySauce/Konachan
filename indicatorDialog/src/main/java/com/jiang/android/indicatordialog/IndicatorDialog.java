@@ -275,8 +275,8 @@ public class IndicatorDialog {
         mShowView = view;
         int[] location = new int[2];
         view.getLocationInWindow(location);
-        int height = Utils.getLocationInWindow(mContext)[1];
-        int width = Utils.getLocationInWindow(mContext)[0];
+        int width = Utils.getRealScreenSize(mContext).x;
+        int height = Utils.getRealScreenSize(mContext).y;
 
         int x;
         int y;
@@ -290,7 +290,7 @@ public class IndicatorDialog {
         x += xOffset;
         if (x < 0) x = 0;
         if (mBuilder.arrowdirection == IndicatorBuilder.BOTTOM) {
-            y = height - location[1] + Utils.getNavigationBarHeight(mContext) - mArrowWidth / 2;
+            y = height - location[1] - mArrowWidth / 2;
         } else if (mBuilder.arrowdirection == TOP) {
             y = location[1] + view.getHeight() - mArrowWidth / 2;
         } else {

@@ -56,6 +56,8 @@ public class DetailFragment extends BaseFragment {
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
 
+    private IndicatorDialog mPopup;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -82,6 +84,7 @@ public class DetailFragment extends BaseFragment {
     @Override
     void updateUI() {
         super.updateUI();
+        dismissMoreMenu();
         updateContentLayout();
     }
 
@@ -334,8 +337,18 @@ public class DetailFragment extends BaseFragment {
 
             popup.setCanceledOnTouchOutside(true);
             popup.getDialog().setOnShowListener(dialog -> UIUtils.setBackgroundAlpha(mActivity, 0.4f));
-            popup.getDialog().setOnDismissListener(dialog -> UIUtils.setBackgroundAlpha(mActivity, 1f));
+            popup.getDialog().setOnDismissListener(dialog -> {
+                UIUtils.setBackgroundAlpha(mActivity, 1f);
+                mPopup = null;
+            });
             popup.show(anchorView);
+            mPopup = popup;
+        }
+    }
+
+    private void dismissMoreMenu() {
+        if (mPopup != null) {
+            mPopup.dismiss();
         }
     }
 
