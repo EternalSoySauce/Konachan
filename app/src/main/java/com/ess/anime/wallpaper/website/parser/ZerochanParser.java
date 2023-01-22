@@ -65,10 +65,10 @@ public class ZerochanParser extends HtmlParser {
                     String realSize = realWidth + " x " + realHeight;
                     int thumbWidth, thumbHeight;
                     if (realWidth >= realHeight) {
-                        thumbWidth = 240;
+                        thumbWidth = 720;
                         thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
                     } else {
-                        thumbHeight = 240;
+                        thumbHeight = 720;
                         thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                     }
                     String linkToShow = mWebsiteConfig.getBaseUrl() + id;

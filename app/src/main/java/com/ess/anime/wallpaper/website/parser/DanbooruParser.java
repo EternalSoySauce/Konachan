@@ -43,10 +43,10 @@ public class DanbooruParser extends HtmlParser {
                 String realSize = realWidth + " x " + realHeight;
                 int thumbWidth, thumbHeight;
                 if (realWidth >= realHeight) {
-                    thumbWidth = 360;
+                    thumbWidth = 720;
                     thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
                 } else {
-                    thumbHeight = 360;
+                    thumbHeight = 720;
                     thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                 }
                 String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
