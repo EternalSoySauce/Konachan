@@ -54,12 +54,19 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
         }
 
         StringBuilder tags = new StringBuilder();
-        for (String tag : tagList) {
-            tag = tag.replaceAll("_", " ");
-            tags.append(tag).append("+");
+        for (int i = 0; i < tagList.size(); i++) {
+            String tag = tagList.get(i);
+            if (tag.startsWith("id:")) {
+                tag = tag.replaceFirst("id:", "");
+            }
+            tag = tag.replaceAll("_", "+");
+            tags.append(tag);
+            if (i < tagList.size() - 1) {
+                tags.append(",");
+            }
         }
 
-        return getBaseUrl() + tags + "?s=id&p=" + page;
+        return getBaseUrl() + tags + "?p=" + page + "&l=50&s=id&json";
     }
 
     @Override

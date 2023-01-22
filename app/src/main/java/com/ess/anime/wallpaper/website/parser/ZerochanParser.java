@@ -10,6 +10,7 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -30,24 +31,54 @@ public class ZerochanParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        Elements elements = doc.getElementsByTag("li");
-        for (Element e : elements) {
-            try {
-                Element img = e.getElementsByTag("img").first();
-                if (img != null) {
-                    String id = e.getElementsByTag("a").first().attr("href").replaceAll("[^0-9]", "");
-                    String thumbUrl = img.attr("src");
-                    String title = img.attr("title");
-                    String realSize = title.substring(0, title.indexOf(" ")).trim().replace("x", " x ");
-                    String style = img.attr("style");
-                    int thumbWidth = Integer.parseInt(style.substring(0, style.indexOf(";")).replaceAll("[^0-9]", ""));
-                    int thumbHeight = Integer.parseInt(style.substring(style.indexOf(";")).replaceAll("[^0-9]", ""));
+        try {
+            String json = doc.text();
+            String endPoint = "</div>";
+            if (json.contains(endPoint)) {
+                json = json.replace(json.substring(1, json.lastIndexOf(endPoint) + endPoint.length()), "");
+            }
+            json = json.replaceAll("\\\\", "");
+
+            JsonArray items = new JsonArray();
+            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+            if (jsonObject.has("items")) {
+                items.addAll(jsonObject.getAsJsonArray("items"));
+            } else {
+                items.add(jsonObject);
+            }
+            for (int i = 0; i < items.size(); i++) {
+                try {
+                    JsonObject item = items.get(i).getAsJsonObject();
+                    String id = item.get("id").getAsString();
+                    String thumbUrl = "";
+                    if (item.has("thumbnail")) {
+                        thumbUrl = item.get("thumbnail").getAsString();
+                    } else if (item.has("medium")) {
+                        thumbUrl = item.get("medium").getAsString();
+                    } else if (item.has("large")) {
+                        thumbUrl = item.get("large").getAsString();
+                    } else if (item.has("full")) {
+                        thumbUrl = item.get("full").getAsString();
+                    }
+                    int realWidth = item.get("width").getAsInt();
+                    int realHeight = item.get("height").getAsInt();
+                    String realSize = realWidth + " x " + realHeight;
+                    int thumbWidth, thumbHeight;
+                    if (realWidth >= realHeight) {
+                        thumbWidth = 240;
+                        thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
+                    } else {
+                        thumbHeight = 240;
+                        thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
+                    }
                     String linkToShow = mWebsiteConfig.getBaseUrl() + id;
                     thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return thumbList;
     }
