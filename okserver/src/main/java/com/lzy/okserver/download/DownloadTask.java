@@ -247,7 +247,7 @@ public class DownloadTask implements Runnable {
             Request<?, ? extends Request> request = progress.request;
             request.headers(HttpHeaders.HEAD_KEY_RANGE, "bytes=" + startPosition + "-");
             response = request.execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
             postOnError(progress, e);
             return;
         }
@@ -334,7 +334,7 @@ public class DownloadTask implements Runnable {
             } else {
                 download(new ByteArrayInputStream(bodyBytes), randomAccessFile, progress);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             postOnError(progress, e);
             return;
         }
@@ -436,6 +436,7 @@ public class DownloadTask implements Runnable {
     }
 
     private void postOnError(final Progress progress, final Throwable throwable) {
+        throwable.printStackTrace();
         progress.speed = 0;
         progress.status = Progress.ERROR;
         progress.exception = throwable;

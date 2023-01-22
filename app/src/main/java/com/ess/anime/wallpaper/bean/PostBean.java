@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.ess.anime.wallpaper.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 public class PostBean implements Parcelable {
@@ -272,12 +273,18 @@ public class PostBean implements Parcelable {
      */
     public String getMinSizeImageUrl() {
         String url = fileUrl;
-        if (sampleFileSize != 0 && !TextUtils.equals(sampleUrl, fileUrl) && sampleFileSize <= fileSize) {
+        if (!StringUtils.isURL(url)) {
             url = sampleUrl;
-            if (jpegFileSize != 0 && !TextUtils.equals(jpegUrl, sampleUrl) && jpegFileSize < sampleFileSize) {
+        }
+        if (!StringUtils.isURL(url)) {
+            url = jpegUrl;
+        }
+        if (sampleFileSize != 0 && StringUtils.isURL(sampleUrl) && !TextUtils.equals(sampleUrl, url) && sampleFileSize <= fileSize) {
+            url = sampleUrl;
+            if (jpegFileSize != 0 && StringUtils.isURL(jpegUrl) && !TextUtils.equals(jpegUrl, url) && jpegFileSize < sampleFileSize) {
                 url = jpegUrl;
             }
-        } else if (jpegFileSize != 0 && !TextUtils.equals(jpegUrl, fileUrl) && jpegFileSize < fileSize) {
+        } else if (jpegFileSize != 0 && StringUtils.isURL(jpegUrl)  && !TextUtils.equals(jpegUrl, url) && jpegFileSize < fileSize) {
             url = jpegUrl;
         }
         return url;

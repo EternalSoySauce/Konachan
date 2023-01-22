@@ -15,7 +15,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 public class SankakuParser extends HtmlParser {
 
@@ -77,90 +76,104 @@ public class SankakuParser extends HtmlParser {
                     .creatorId("")
                     .author("");
 
-            Elements lis = doc.getElementsByTag("li");
-            for (Element li : lis) {
-                String text = li.text();
-                if (text.contains("Posted:")) {
-                    // 解析时间字符串，格式：2018-06-04 08:10（该站时区为-06:00）
-                    // 注意PostBean.createdTime单位为second
-                    Elements created = li.getElementsByTag("a");
+            // 解析时间字符串，格式：2018-06-04 08:10
+            // 注意PostBean.createdTime单位为second
+            Elements elements = doc.getElementsByAttributeValueContaining("href", "tags=date");
+            for (Element created:elements) {
+                Element post = created.previousElementSibling();
+                if (post != null && "ul--identifier".equalsIgnoreCase(post.className())) {
                     String createdTime = created.attr("title");
-                    long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT-5:00"));
+                    long mills = TimeFormat.timeToMills(createdTime, "yyyy-MM-dd HH:mm");
                     builder.createdTime(String.valueOf(mills / 1000));
 
                     // 上传用户
-                    if (created.size() > 1) {
-                        Element author = created.get(1);
-                        builder.creatorId(author.attr("href").replaceAll("[^0-9]", ""));
+                    Element author = created.nextElementSibling();
+                    if (author != null && author.className().startsWith("user-level-")) {
                         builder.author(author.text());
-                    }
-                } else if (text.contains("Vote Average:")) {
-                    // 评分
-                    builder.score(li.child(0).text());
-                } else if (text.contains("Resized:")) {
-                    // 预览图
-                    Element sample = li.child(0);
-                    String sampleUrl = sample.attr("href");
-                    if (!sampleUrl.startsWith("http")) {
-                        sampleUrl = "https:" + sampleUrl;
-                    }
-                    String[] resolution = sample.text().split("x");
-                    builder.sampleUrl(sampleUrl)
-                            .sampleWidth(resolution[0])
-                            .sampleHeight(resolution[1])
-                            .sampleFileSize("-1");
-                } else if (text.contains("Original:")) {
-                    // 大图，原图
-                    Element original = li.child(0);
-                    String originalUrl = original.attr("href");
-                    if (!originalUrl.startsWith("http")) {
-                        originalUrl = "https:" + originalUrl;
-                    }
-                    String originalSize = original.attr("title").replaceAll("[^0-9]", "");
-                    String[] resolution = original.text().replaceAll("\\([^)]*?\\)", "").trim().split("x");
-                    builder.fileSize(originalSize)
-                            .fileUrl(originalUrl)
-                            .jpegUrl(originalUrl)
-                            .jpegWidth(resolution[0])
-                            .jpegHeight(resolution[1])
-                            .jpegFileSize(originalSize)
-                            .width(resolution[0])
-                            .height(resolution[1]);
-                } else if (text.contains("Rating:")) {
-                    // 评级
-                    if (li.children().isEmpty()) {
-                        String rating = li.text();
-                        if (rating.contains("Safe")) {
-                            builder.rating("s");
-                        } else if (rating.contains("Explicit")) {
-                            builder.rating("e");
-                        } else if (rating.contains("Questionable")) {
-                            builder.rating("q");
+                        Element creatorId = author.getElementsByTag("a").first();
+                        if (creatorId != null) {
+                            builder.creatorId(creatorId.attr("href").replaceAll("[^0-9]", ""));
                         }
                     }
+                    break;
                 }
+            }
 
-                // tags
-                Element tag = doc.getElementById("tag-sidebar");
-                if (tag != null) {
-                    for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
-                        builder.addCopyrightTags(copyright.child(0).text().replace(" ", "_"));
-                    }
-                    for (Element character : tag.getElementsByClass("tag-type-character")) {
-                        builder.addCharacterTags(character.child(0).text().replace(" ", "_"));
-                    }
-                    for (Element artist : tag.getElementsByClass("tag-type-artist")) {
-                        builder.addArtistTags(artist.child(0).text().replace(" ", "_"));
-                    }
-                    for (Element style : tag.getElementsByClass("tag-type-medium")) {
-                        builder.addStyleTags(style.child(0).text().replace(" ", "_"));
-                    }
-                    for (Element general : tag.getElementsByClass("tag-type-meta")) {
-                        builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
-                    }
-                    for (Element general : tag.getElementsByClass("tag-type-general")) {
-                        builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
-                    }
+            // 预览图
+            Element sample = doc.getElementById("lowres");
+            if (sample != null) {
+                String sampleUrl = sample.attr("href");
+                if (!sampleUrl.startsWith("http")) {
+                    sampleUrl = "https:" + sampleUrl;
+                }
+                String[] resolution = sample.text().split("x");
+                builder.sampleUrl(sampleUrl)
+                        .sampleWidth(resolution[0])
+                        .sampleHeight(resolution[1])
+                        .sampleFileSize("-1");
+            }
+
+            // 大图，原图
+            Element original = doc.getElementById("highres");
+            if (original != null) {
+                String originalUrl = original.attr("href");
+                if (!originalUrl.startsWith("http")) {
+                    originalUrl = "https:" + originalUrl;
+                }
+                String originalSize = original.attr("title").replaceAll("[^0-9]", "");
+                String[] resolution = original.text().replaceAll("\\([^)]*?\\)", "").trim().split("x");
+                builder.fileSize(originalSize)
+                        .fileUrl(originalUrl)
+                        .jpegUrl(originalUrl)
+                        .jpegWidth(resolution[0])
+                        .jpegHeight(resolution[1])
+                        .jpegFileSize(originalSize)
+                        .width(resolution[0])
+                        .height(resolution[1]);
+            }
+
+            // 评分
+            Element score = doc.getElementsByAttributeValue("itemprop", "ratingValue").first();
+            if (score != null) {
+                builder.score(score.text());
+            }
+
+            // 评级
+            Element rating = doc.getElementsByAttributeValueStarting("class", "rating-").first();
+            if (rating != null) {
+                switch (rating.className()) {
+                    case "rating-s":
+                        builder.rating("s");
+                        break;
+                    case "rating-e":
+                        builder.rating("e");
+                        break;
+                    case "rating-q":
+                        builder.rating("q");
+                        break;
+                }
+            }
+
+            // tags
+            Element tag = doc.getElementById("tag-sidebar");
+            if (tag != null) {
+                for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
+                    builder.addCopyrightTags(copyright.child(0).text().replace(" ", "_"));
+                }
+                for (Element character : tag.getElementsByClass("tag-type-character")) {
+                    builder.addCharacterTags(character.child(0).text().replace(" ", "_"));
+                }
+                for (Element artist : tag.getElementsByClass("tag-type-artist")) {
+                    builder.addArtistTags(artist.child(0).text().replace(" ", "_"));
+                }
+                for (Element style : tag.getElementsByClass("tag-type-medium")) {
+                    builder.addStyleTags(style.child(0).text().replace(" ", "_"));
+                }
+                for (Element general : tag.getElementsByClass("tag-type-meta")) {
+                    builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
+                }
+                for (Element general : tag.getElementsByClass("tag-type-general")) {
+                    builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
                 }
             }
         } catch (Exception e) {
