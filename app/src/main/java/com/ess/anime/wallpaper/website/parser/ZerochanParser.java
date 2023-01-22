@@ -19,7 +19,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 public class ZerochanParser extends HtmlParser {
@@ -60,11 +59,10 @@ public class ZerochanParser extends HtmlParser {
             Element scriptJson = doc.getElementsByAttributeValue("type", "application/ld+json").first();
             JsonObject json = new JsonParser().parse(scriptJson.data()).getAsJsonObject();
 
-            // 解析时间字符串，格式：Sun Mar 8 15:05:41 2020
+            // 解析时间字符串，格式：2023-01-22T03:42:27+00:00
             // 注意PostBean.createdTime单位为second
             String createdTime = json.get("datePublished").getAsString();
-            long mills = TimeFormat.timeToMillsWithLocaleAndZone(createdTime,
-                    "EEE MMM d HH:mm:ss yyyy", Locale.ENGLISH, TimeZone.getDefault());
+            long mills = TimeFormat.timeToMillsWithZone(createdTime, "yyyy-MM-dd'T'HH:mm:ss", TimeZone.getTimeZone("GMT-1:00"));
             createdTime = String.valueOf(mills / 1000);
             builder.createdTime(createdTime);
 
@@ -75,7 +73,8 @@ public class ZerochanParser extends HtmlParser {
             }
 
             // 解析图片信息
-            String author = json.get("author").getAsString();
+            Element user = doc.getElementsByClass("user").first();
+            String author = user != null ? user.text() : "";
             String fileSize = String.valueOf(FileUtils.parseFileSize(json.get("contentSize").getAsString()));
             String fileUrl = json.get("contentUrl").getAsString();
             String sampleUrl = json.get("thumbnail").getAsString();
@@ -89,8 +88,7 @@ public class ZerochanParser extends HtmlParser {
                     .jpegFileSize(fileSize)
                     .rating(Constants.RATING_S);
 
-
-            Elements scripts = doc.getElementsByAttributeValue("type", "text/javascript");
+            Elements scripts = doc.getElementsByTag("script");
             for (Element scriptData : scripts) {
                 String text = scriptData.data();
                 if (text.contains("<![CDATA[")) {
@@ -99,9 +97,9 @@ public class ZerochanParser extends HtmlParser {
                         item = item.trim();
                         if (item.startsWith("id =")) {
                             builder.id(item.replaceAll("[^0-9]", ""));
-                        } else if (item.startsWith("tx =")) {
+                        } else if (item.startsWith("thumbX =")) {
                             builder.sampleWidth(item.replaceAll("[^0-9]", ""));
-                        } else if (item.startsWith("ty =")) {
+                        } else if (item.startsWith("thumbY =")) {
                             builder.sampleHeight(item.replaceAll("[^0-9]", ""));
                         } else if (item.startsWith("x =")) {
                             String width = item.replaceAll("[^0-9]", "");
@@ -114,24 +112,38 @@ public class ZerochanParser extends HtmlParser {
                 }
             }
 
+            // 解析来源
+            builder.source("");
+            Elements elements = doc.getElementsByTag("h2");
+            for (Element h2 : elements) {
+                if (h2.text().trim().equalsIgnoreCase("Source")) {
+                    Element source = h2.nextElementSibling();
+                    if (source != null) {
+                        builder.source(source.text().trim());
+                    }
+                }
+            }
+
             // 防止为null的参数
-            builder.source("").md5("").parentId("");
+            builder.md5("").parentId("");
 
             // 解析tags
             Element preview = doc.getElementsByAttributeValueStarting("alt", "Tags:").first();
-            builder.tags(preview.nextElementSibling().text().trim().replaceAll(",", ""));
+            builder.tags(preview.attr("alt").replace("Tags:", "").trim().replaceAll(",", ""));
 
             Element ul = doc.getElementById("tags");
             if (ul != null) {
                 for (Element li : ul.getElementsByTag("li")) {
-                    String tag = li.getElementsByTag("a").first().ownText().trim();
-                    String type = li.text().replace(tag, "").split(",")[0].trim();
+                    Element img = li.getElementsByTag("img").first();
+                    String type = img != null ? img.attr("alt") : "";
+                    String tag = li.text().trim();
                     switch (type) {
                         case "Series":
                         case "Game":
                         case "Visual Novel":
                         case "OVA":
                         case "Artbook":
+                        case "Movie":
                             builder.addCopyrightTags(tag);
                             break;
                         case "Character":
@@ -145,6 +157,7 @@ public class ZerochanParser extends HtmlParser {
                             builder.addCircleTags(tag);
                             break;
                         case "Theme":
+                        case "VTuber":
                             builder.addStyleTags(tag);
                             break;
                         default:
