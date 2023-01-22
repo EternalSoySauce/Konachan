@@ -11,6 +11,7 @@ import android.os.Looper;
 
 import com.ess.anime.wallpaper.download.image.notification.MyNotification;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.utils.BitmapUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
@@ -126,19 +127,24 @@ public class DownloadImageService extends Service {
 
                         @Override
                         public void onFinish(File file, Progress progress) {
-                            // 下载成功，保存为图片
-                            File folder = new File(Constants.IMAGE_DIR);
-                            if (folder.exists() || folder.mkdirs()) {
-                                File saveFile = new File(savePath);
-                                FileUtils.copyFile(tempFile, saveFile);
-                                // 添加图片到媒体库（刷新相册）
-                                BitmapUtils.insertToMediaStore(DownloadImageService.this, saveFile);
-                            }
-                            // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
-                            listener.onFinish();
-                            DownloadImageManager.getInstance().addOrUpdate(downloadBean);
-                            OkHttp.removeUrlFromDownloadQueue(url);
-                            tempFile.delete();
+                            HandlerFuture.ofWork(tempFile)
+                                    .applyThen(tempFile -> {
+                                        // 下载成功，保存为图片
+                                        File saveFile = new File(savePath);
+                                        boolean success = FileUtils.moveFile(tempFile, saveFile);
+                                        return success ? saveFile : null;
+                                    })
+                                    .runOn(HandlerFuture.IO.UI)
+                                    .applyThen(saveFile -> {
+                                        // 添加图片到媒体库（刷新相册）
+                                        if (saveFile != null) {
+                                            BitmapUtils.insertToMediaStore(DownloadImageService.this, saveFile);
+                                        }
+                                        // 通知监听器完成下载 （由于lolibooru监听不到下载进度，所以在这里进行弥补）
+                                        listener.onFinish();
+                                        DownloadImageManager.getInstance().addOrUpdate(downloadBean);
+                                        OkHttp.removeUrlFromDownloadQueue(url);
+                                    });
                         }
 
                         @Override

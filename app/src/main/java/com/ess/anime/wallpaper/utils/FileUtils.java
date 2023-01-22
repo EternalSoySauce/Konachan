@@ -254,6 +254,47 @@ public class FileUtils {
     }
 
     /**
+     * 移动文件，eg. 把路径为 a/img.jpg 的文件移动为路径为 b/img.jpg 的文件
+     *
+     * @param fromFile 要移动的文件
+     * @param toFile   要保存到的目标文件
+     * @return 是否移动成功  true/false
+     */
+    public static boolean moveFile(File fromFile, File toFile) {
+        if (!fromFile.exists() || !fromFile.isFile()) {
+            return false;
+        }
+
+        try {
+            if (toFile.exists()) {
+                toFile.delete();
+            }
+
+            File parentFile = toFile.getParentFile();
+            if (parentFile != null && !parentFile.exists()) {
+                parentFile.mkdirs();
+            }
+
+            boolean renameToSuccess = false;
+            try {
+                renameToSuccess = fromFile.renameTo(toFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (!renameToSuccess) {
+                //在文件系统不同的情况下，renameTo会失败，此时使用copy，然后删除原文件
+                copyFile(fromFile, toFile);
+                fromFile.delete();
+            }
+            return toFile.exists();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * 复制文件，eg. 把路径为 a/img.jpg 的文件复制为路径为 b/img.jpg 的文件
      *
      * @param fromFile 要复制的文件
