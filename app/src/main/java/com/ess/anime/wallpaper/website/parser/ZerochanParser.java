@@ -207,17 +207,17 @@ public class ZerochanParser extends HtmlParser {
         List<CommentBean> commentList = new ArrayList<>();
         Element post = doc.getElementById("posts");
         if (post != null) {
-            Elements elements = post.getElementsByTag("li");
+            Elements elements = post.getElementsByAttributeValueStarting("id", "post-");
             for (Element e : elements) {
                 try {
                     Element person = e.getElementsByAttributeValueContaining("href", "comments").first();
                     String author = person.text().trim();
                     String id = "#" + author;
-                    Element img = e.getElementsByAttributeValue("alt", "avatar").first();
+                    Element img = e.getElementsByTag("img").first();
                     String avatar = img != null ? img.attr("src") : "";
                     String date = e.getElementsByTag("span").first().text().trim();
                     CharSequence quote = "";
-                    CharSequence comment = Html.fromHtml(e.getElementsByTag("p").last().html());
+                    CharSequence comment = Html.fromHtml(e.getElementsByClass("bb").first().html());
                     commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
                 } catch (Exception ex) {
                     ex.printStackTrace();
