@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.8.11】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1D6QEt9YLWrQS1G-mAMGZpA?pwd=8r2p)，提取码: 8r2p
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.11.apk)
+## 最新版本【v1.8.12】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1sSNWwskOb5rniLsZ9M-VxQ?pwd=ijhf)，提取码: ijhf
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.8.12.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -60,6 +60,11 @@
 * 其他
 
 ## 历史更新
+* 【v1.8.12】
+    * 修复zerochan图片详情解析异常，且现在支持多标签及id搜索
+    * 修复sankaku解析、下载图片异常。该站现在限制了同个IP的访问速度，如遇到加载不出来的情况请稍等两三分钟后再试
+    * 优化下载大文件成功后，移动文件耗时卡顿问题
+
 * 【v1.8.11】
 	* 新增支持横屏功能，可在设置中选择开启
 	* 逆向搜索网站中添加\"搜图bot酱\"，且改为服务器动态配置网站列表
