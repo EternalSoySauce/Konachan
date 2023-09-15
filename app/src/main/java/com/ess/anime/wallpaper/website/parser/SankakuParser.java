@@ -25,6 +25,7 @@ public class SankakuParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
+        doc.getElementById("has-mail-notice").remove();  // 移除最上方广告区AI图片推荐
         //        doc.select("#popular-preview").remove();  // 移除最上方的四张popular
         Elements elements = doc.getElementsByClass("thumb blacklisted");
         for (Element e : elements) {
@@ -65,21 +66,24 @@ public class SankakuParser extends HtmlParser {
     public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
+            builder.id(doc.getElementById("hidden_post_id").text());
+
             Element image = doc.getElementById("image");
-            builder.id(doc.getElementById("hidden_post_id").text())
-                    .tags(image.attr("alt"))
-                    .md5(image.attr("pagespeed_url_hash"));
+            if (image != null) {
+                builder.tags(image.attr("alt"))
+                        .md5(image.attr("pagespeed_url_hash"))
+                        .sampleUrl("https:" + image.attr("src"));
+            }
 
             // 下列li不存在某属性时的备用值
-            builder.sampleUrl("https:" + image.attr("src"))
-                    .source("")
+            builder.source("")
                     .creatorId("")
                     .author("");
 
             // 解析时间字符串，格式：2018-06-04 08:10
             // 注意PostBean.createdTime单位为second
             Elements elements = doc.getElementsByAttributeValueContaining("href", "tags=date");
-            for (Element created:elements) {
+            for (Element created : elements) {
                 Element post = created.previousElementSibling();
                 if (post != null && "ul--identifier".equalsIgnoreCase(post.className())) {
                     String createdTime = created.attr("title");
@@ -157,23 +161,27 @@ public class SankakuParser extends HtmlParser {
             // tags
             Element tag = doc.getElementById("tag-sidebar");
             if (tag != null) {
-                for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
-                    builder.addCopyrightTags(copyright.child(0).text().replace(" ", "_"));
-                }
-                for (Element character : tag.getElementsByClass("tag-type-character")) {
-                    builder.addCharacterTags(character.child(0).text().replace(" ", "_"));
-                }
-                for (Element artist : tag.getElementsByClass("tag-type-artist")) {
-                    builder.addArtistTags(artist.child(0).text().replace(" ", "_"));
-                }
-                for (Element style : tag.getElementsByClass("tag-type-medium")) {
-                    builder.addStyleTags(style.child(0).text().replace(" ", "_"));
-                }
-                for (Element general : tag.getElementsByClass("tag-type-meta")) {
-                    builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
-                }
-                for (Element general : tag.getElementsByClass("tag-type-general")) {
-                    builder.addGeneralTags(general.child(0).text().replace(" ", "_"));
+                try {
+                    for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
+                        builder.addCopyrightTags(copyright.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                    for (Element character : tag.getElementsByClass("tag-type-character")) {
+                        builder.addCharacterTags(character.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                    for (Element artist : tag.getElementsByClass("tag-type-artist")) {
+                        builder.addArtistTags(artist.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                    for (Element style : tag.getElementsByClass("tag-type-medium")) {
+                        builder.addStyleTags(style.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                    for (Element general : tag.getElementsByClass("tag-type-meta")) {
+                        builder.addGeneralTags(general.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                    for (Element general : tag.getElementsByClass("tag-type-general")) {
+                        builder.addGeneralTags(general.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         } catch (Exception e) {

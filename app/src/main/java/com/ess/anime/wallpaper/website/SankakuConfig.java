@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
+import android.text.TextUtils;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.SankakuParser;
 import com.google.gson.JsonArray;
@@ -60,7 +62,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
             tags.append(tag).append("+");
         }
 
-        return getBaseUrl() + "post?page=" + page + "&tags=" + tags;
+        String url = getBaseUrl() + "post?page=" + page;
+        if (tags.length() > 0) {
+            url += "&tags=" + tags;
+        }
+        return url;
     }
 
     @Override
@@ -71,7 +77,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     @Override
     public String getPoolUrl(int page, String name) {
         name = name == null ? "" : name;
-        return getBaseUrl() + "pool/index?page=" + page + "&query=" + name;
+        String url = getBaseUrl() + "pool/index?page=" + page;
+        if (!TextUtils.isEmpty(name)) {
+            url += "&query=" + name;
+        }
+        return url;
     }
 
     @Override
