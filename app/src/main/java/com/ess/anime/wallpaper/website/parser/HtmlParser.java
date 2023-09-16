@@ -71,12 +71,14 @@ public abstract class HtmlParser {
     public static String checkBaiduAlternateUrl(String originalUrl, String html) {
         try {
             Document doc = Jsoup.parse(html);
-            Element alternate = doc.getElementsByClass("list-dot list-dot-paddingleft").first();
-            if (alternate != null) {
-                Element a = alternate.getElementsByTag("a").first();
-                if (a != null && a.hasAttr("data-lemmaid")) {
-                    String childPageId = a.attr("data-lemmaid");
-                    return originalUrl + "/" + childPageId;
+            if (!doc.getElementsByClass("lemmaWgt-subLemmaListTitle").isEmpty()) {
+                Element alternate = doc.getElementsByClass("list-dot list-dot-paddingleft").first();
+                if (alternate != null) {
+                    Element a = alternate.getElementsByTag("a").first();
+                    if (a != null && a.hasAttr("data-lemmaid")) {
+                        String childPageId = a.attr("data-lemmaid");
+                        return originalUrl + "/" + childPageId;
+                    }
                 }
             }
         } catch (Exception e) {
