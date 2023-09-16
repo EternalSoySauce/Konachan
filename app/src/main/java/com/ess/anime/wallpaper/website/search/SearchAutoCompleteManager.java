@@ -6,7 +6,9 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.ess.anime.wallpaper.website.WebsiteManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.arch.core.util.Function;
 
@@ -46,8 +48,12 @@ public class SearchAutoCompleteManager {
     }
 
     private void startNetworkTask(WebsiteConfig websiteConfig, String search, ISearchAutoCompleteCallback callback) {
+        // 不加该 header 则默认格式为 text/html，Sankaku 解析 response 报错 406
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Accept", "application/json; charset=utf-8");
+
         String url = websiteConfig.getSearchAutoCompleteUrl(search);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 startTask(search, callback);

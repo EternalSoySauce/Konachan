@@ -111,7 +111,7 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
             JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
             for (int i = 0; i < tagArray.size(); i++) {
                 JsonObject item = tagArray.get(i).getAsJsonObject();
-                list.add(item.get("name").getAsString());
+                list.add(item.get("value").getAsString());
             }
         } catch (Exception e) {
             e.printStackTrace();
