@@ -85,6 +85,9 @@ public class WebsiteManager {
                 case WebsiteConfig.BASE_URL_ZEROCHAN:
                     websiteConfig = new ZerochanConfig();
                     break;
+                case WebsiteConfig.BASE_URL_WALLHAVEN:
+                    websiteConfig = new WallhavenConfig();
+                    break;
             }
 
             if (mWebsiteConfig != websiteConfig) {

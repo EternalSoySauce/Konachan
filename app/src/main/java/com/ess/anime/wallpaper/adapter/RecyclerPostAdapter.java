@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Priority;
@@ -13,20 +14,13 @@ import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.global.Constants;
-import com.ess.anime.wallpaper.http.HandlerFuture;
-import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.SystemUtils;
-import com.ess.anime.wallpaper.website.WebsiteManager;
-
-import org.greenrobot.eventbus.EventBus;
-import org.jsoup.Jsoup;
 
 import java.util.List;
 
@@ -134,7 +128,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
             thumbList.removeAll(mData);
             if (!thumbList.isEmpty()) {
                 addData(position, thumbList);
-                getImageDetail(thumbList);
+                preloadImageDetail(thumbList);
                 preloadThumbnail(thumbList);
                 return true;
             }
@@ -142,32 +136,10 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         }
     }
 
-    private void getImageDetail(List<ThumbBean> thumbList) {
+    private void preloadImageDetail(List<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
-            if (thumbBean.imageBean == null) {
-                String url = thumbBean.linkToShow;
-                OkHttp.connect(url, mHttpTag, new OkHttp.OkHttpCallback() {
-                    @Override
-                    public void onFailure(int errorCode, String errorMessage) {
-                        OkHttp.connect(url, mHttpTag, this);
-                    }
-
-                    @Override
-                    public void onSuccessful(String body) {
-                        HandlerFuture.ofWork(body)
-                                .applyThen(body1 -> {
-                                    return WebsiteManager.getInstance()
-                                            .getWebsiteConfig()
-                                            .getHtmlParser()
-                                            .getImageDetailJson(Jsoup.parse(body1));
-                                })
-                                .runOn(HandlerFuture.IO.UI)
-                                .applyThen(json -> {
-                                    // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
-                                    EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
-                                });
-                    }
-                });
+            if (thumbBean.needPreloadImageDetail) {
+                thumbBean.getImageDetailIfNeed(mHttpTag);
             }
         }
     }
@@ -176,6 +148,15 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         for (ThumbBean thumbBean : thumbList) {
             if (SystemUtils.isActivityActive((Activity) mContext)) {
                 MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
+                // 不预加载图片详情但已有预览图信息的，预加载预览图
+                if (!thumbBean.needPreloadImageDetail) {
+                    if (thumbBean.tempPost != null) {
+                        String imageUrl = thumbBean.tempPost.getMinSizeImageUrl();
+                        if (!TextUtils.isEmpty(imageUrl)) {
+                            MyGlideModule.preloadImage(mContext, imageUrl);
+                        }
+                    }
+                }
             }
         }
     }

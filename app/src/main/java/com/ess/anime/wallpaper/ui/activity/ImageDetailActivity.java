@@ -8,16 +8,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.download.image.DownloadBean;
+import com.ess.anime.wallpaper.download.image.DownloadImageService;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.OnTouchAlphaListener;
 import com.ess.anime.wallpaper.model.helper.PermissionHelper;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
-import com.ess.anime.wallpaper.download.image.DownloadImageService;
 import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
@@ -41,6 +41,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class ImageDetailActivity extends BaseActivity {
+
+    public final String TAG = ImageDetailActivity.class.getName() + "_" + hashCode();
 
     @BindView(R.id.tv_id)
     TextView mTvId;
@@ -78,6 +80,12 @@ public class ImageDetailActivity extends BaseActivity {
         outState.putInt(Constants.CURRENT_PAGE, mCurrentPage);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OkHttp.cancel(TAG);
+    }
+
     private void initData(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mCurrentPage = getIntent().getIntExtra(Constants.CURRENT_PAGE, 0);
@@ -87,6 +95,9 @@ public class ImageDetailActivity extends BaseActivity {
             mThumbBean = savedInstanceState.getParcelable(Constants.THUMB_BEAN);
             setImageBean(savedInstanceState.getParcelable(Constants.IMAGE_BEAN));
             mCurrentPage = savedInstanceState.getInt(Constants.CURRENT_PAGE, 0);
+        }
+        if (!mThumbBean.needPreloadImageDetail) {
+            mThumbBean.getImageDetailIfNeed(TAG);
         }
     }
 

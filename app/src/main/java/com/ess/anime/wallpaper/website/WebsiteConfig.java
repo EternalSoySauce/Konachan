@@ -23,6 +23,7 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
     public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
     public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
+    public final static String BASE_URL_WALLHAVEN = "https://wallhaven.cc/";
 
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
     public final static String TAG_JSON_URL_KONACHAN_E = "https://konachan.com/tag/summary.json";
@@ -32,7 +33,7 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String[] BASE_URLS = {
             BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_DANBOORU,
             BASE_URL_SAFEBOORU, BASE_URL_GELBOORU, BASE_URL_LOLIBOORU, BASE_URL_SANKAKU,
-            BASE_URL_ZEROCHAN
+            BASE_URL_ZEROCHAN, BASE_URL_WALLHAVEN
     };
 
     protected String mTagJson;

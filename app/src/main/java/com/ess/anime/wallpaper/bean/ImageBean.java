@@ -8,7 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.Collator;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
 
 public class ImageBean implements Parcelable {
 
@@ -469,6 +472,13 @@ public class ImageBean implements Parcelable {
             json.append("],")
                     .append("\"pool_posts\":[],")
                     .append("\"tags\":{");
+            Collator collator = Collator.getInstance(Locale.ENGLISH);
+            Collections.sort(tagBean.copyright, collator);
+            Collections.sort(tagBean.character, collator);
+            Collections.sort(tagBean.artist, collator);
+            Collections.sort(tagBean.circle, collator);
+            Collections.sort(tagBean.style, collator);
+            Collections.sort(tagBean.general, collator);
             for (String copyright : tagBean.copyright) {
                 copyright = copyright.replace("\"", "\\\"");
                 json.append("\"").append(copyright).append("\":\"copyright\",");

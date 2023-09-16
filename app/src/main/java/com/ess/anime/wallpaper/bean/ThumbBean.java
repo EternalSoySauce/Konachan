@@ -4,6 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.http.HandlerFuture;
+import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.website.WebsiteManager;
+
+import org.greenrobot.eventbus.EventBus;
+import org.jsoup.Jsoup;
+
 public class ThumbBean implements Parcelable {
 
     public String id;
@@ -13,6 +21,7 @@ public class ThumbBean implements Parcelable {
     public String realSize;
     public String linkToShow;
     public ImageBean imageBean;
+    public boolean needPreloadImageDetail = true; // 部分网站（如Wallhaven）会限制API请求频率，就不要预加载图片详情
 
     //临时存储部分图片信息
     //部分网站（如Gelbooru）在获取ThumbBean时即可解析出一部分图片信息
@@ -53,6 +62,35 @@ public class ThumbBean implements Parcelable {
         }
     }
 
+    // 获取图片详情
+    public void getImageDetailIfNeed(String httpTag) {
+        if (imageBean == null) {
+            String url = linkToShow;
+            OkHttp.connect(url, httpTag, new OkHttp.OkHttpCallback() {
+                @Override
+                public void onFailure(int errorCode, String errorMessage) {
+                    OkHttp.connect(url, httpTag, this);
+                }
+
+                @Override
+                public void onSuccessful(String body) {
+                    HandlerFuture.ofWork(body)
+                            .applyThen(body1 -> {
+                                return WebsiteManager.getInstance()
+                                        .getWebsiteConfig()
+                                        .getHtmlParser()
+                                        .getImageDetailJson(Jsoup.parse(body1));
+                            })
+                            .runOn(HandlerFuture.IO.UI)
+                            .applyThen(json -> {
+                                // 发送通知到PostFragment, PoolFragment, ImageFragment, DetailFragment
+                                EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
+                            });
+                }
+            });
+        }
+    }
+
     protected ThumbBean(Parcel in) {
         id = in.readString();
         thumbWidth = in.readInt();
@@ -61,6 +99,7 @@ public class ThumbBean implements Parcelable {
         realSize = in.readString();
         linkToShow = in.readString();
         imageBean = in.readParcelable(ImageBean.class.getClassLoader());
+        needPreloadImageDetail = in.readByte() != 0;
         tempPost = in.readParcelable(PostBean.class.getClassLoader());
     }
 
@@ -73,6 +112,7 @@ public class ThumbBean implements Parcelable {
         dest.writeString(realSize);
         dest.writeString(linkToShow);
         dest.writeParcelable(imageBean, flags);
+        dest.writeByte((byte) (needPreloadImageDetail ? 1 : 0));
         dest.writeParcelable(tempPost, flags);
     }
 

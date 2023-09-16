@@ -45,6 +45,7 @@
     <string name="base_lolibooru" translatable="false">Lolibooru</string>
     <string name="base_sankaku" translatable="false">Sankaku</string>
     <string name="base_zerochan" translatable="false">Zerochan</string>
+    <string name="base_wallhaven" translatable="false">Wallhaven</string>
     <string name="navigation_drawer_open">Open drawer layout</string>
     <string name="navigation_drawer_close">Close drawer layout</string>
     <string name="nav_post">Image</string>
