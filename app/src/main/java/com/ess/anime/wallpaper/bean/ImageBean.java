@@ -90,9 +90,9 @@ public class ImageBean implements Parcelable {
 
     public static class ImageJsonBuilder {
 
-        private PostBean postBean = new PostBean();
-        private PoolBean poolBean = new PoolBean();
-        private TagBean tagBean = new TagBean();
+        private final PostBean postBean = new PostBean();
+        private final PoolBean poolBean = new PoolBean();
+        private final TagBean tagBean = new TagBean();
 
         public ImageJsonBuilder id(String id) {
             postBean.id = id;

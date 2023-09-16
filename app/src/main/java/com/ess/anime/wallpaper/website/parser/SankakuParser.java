@@ -1,18 +1,24 @@
 package com.ess.anime.wallpaper.website.parser;
 
 import android.text.Html;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
-import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,165 +31,124 @@ public class SankakuParser extends HtmlParser {
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
-        doc.getElementById("has-mail-notice").remove();  // 移除最上方广告区AI图片推荐
-        //        doc.select("#popular-preview").remove();  // 移除最上方的四张popular
-        Elements elements = doc.getElementsByClass("thumb blacklisted");
-        for (Element e : elements) {
-            try {
-                String id = e.attr("id").replaceAll("[^0-9]", "");
-                Element img = e.getElementsByTag("img").first();
-                int thumbWidth = Integer.parseInt(img.attr("width")) * 2;
-                int thumbHeight = Integer.parseInt(img.attr("height")) * 2;
-                String thumbUrl = img.attr("src");
-                if (thumbUrl.contains("download-preview.png")) {
-                    // 封面为这张图片就是flash，不解析，无意义
-                    continue;
-                }
-                if (!thumbUrl.startsWith("http")) {
-                    thumbUrl = "https:" + thumbUrl;
-                }
-                String title = img.attr("title");
-                int startIndex = title.indexOf("Size:") + "Size:".length();
-                int endIndex = title.indexOf("User:");
-                String realSize = title.substring(startIndex, endIndex).trim().replace("x", " x ");
-                String linkToShow = e.getElementsByTag("a").attr("href");
-                if (!linkToShow.startsWith("http")) {
-                    linkToShow = mWebsiteConfig.getBaseUrl() + linkToShow;
-                }
-                // 最上方的四张有可能和普通列表中的图片重复，需要排除
-                ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
-                if (!thumbList.contains(thumbBean)) {
+        try {
+            String json = doc.text();
+            JsonArray items = new JsonParser().parse(json).getAsJsonArray();
+            for (int i = 0; i < items.size(); i++) {
+                try {
+                    JsonObject item = items.get(i).getAsJsonObject();
+                    boolean needSignUp = item.get("redirect_to_signup").getAsBoolean();
+                    if (needSignUp) {
+                        // 暂未支持帐号登录，先忽略需要登录才能显示的图片
+                        continue;
+                    }
+                    String id = item.get("id").getAsString();
+                    int thumbWidth = item.get("preview_width").getAsInt() * 2;
+                    int thumbHeight = item.get("preview_height").getAsInt() * 2;
+                    String thumbUrl = item.get("preview_url").getAsString();
+                    if (thumbUrl.contains("download-preview.png")) {
+                        // 封面为这张图片就是flash，不解析，无意义
+                        continue;
+                    }
+                    int realWidth = item.get("width").getAsInt();
+                    int realHeight = item.get("height").getAsInt();
+                    String realSize = realWidth + " x " + realHeight;
+                    String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
+                    ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
+                    thumbBean.imageBean = parseImageBean(item);
                     thumbList.add(thumbBean);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return thumbList;
+    }
+
+    private ImageBean parseImageBean(JsonObject item) {
+        try {
+            Document doc = Jsoup.parse(item.toString());
+            String json = getImageDetailJson(doc);
+            return ImageBean.getImageDetailFromJson(json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public String getImageDetailJson(Document doc) {
         ImageBean.ImageJsonBuilder builder = new ImageBean.ImageJsonBuilder();
         try {
-            builder.id(doc.getElementById("hidden_post_id").text());
+            String json = doc.text();
+            JsonObject item = new JsonParser().parse(json).getAsJsonObject();
 
-            Element image = doc.getElementById("image");
-            if (image != null) {
-                builder.tags(image.attr("alt"))
-                        .md5(image.attr("pagespeed_url_hash"))
-                        .sampleUrl("https:" + image.attr("src"));
-            }
+            // 解析图片信息
+            builder.id(item.get("id").getAsString())
+                    .createdTime(item.getAsJsonObject("created_at").get("s").getAsString())
+                    .creatorId(item.getAsJsonObject("author").get("id").getAsString())
+                    .author(item.getAsJsonObject("author").get("name").getAsString())
+                    .source(!item.get("source").isJsonNull() ? item.get("source").getAsString() : "")
+                    .score(item.get("total_score").getAsString())
+                    .md5(item.get("md5").getAsString())
+                    .fileUrl(item.get("file_url").getAsString())
+                    .width(item.get("width").getAsString())
+                    .height(item.get("height").getAsString())
+                    .fileSize(item.get("file_size").getAsString())
+                    .previewUrl(item.get("preview_url").getAsString())
+                    .previewWidth(item.get("preview_width").getAsString())
+                    .previewHeight(item.get("preview_height").getAsString())
+                    .sampleUrl(item.get("sample_url").getAsString())
+                    .sampleWidth(item.get("sample_width").getAsString())
+                    .sampleHeight(item.get("sample_height").getAsString())
+                    .sampleFileSize("-1")
+                    .jpegUrl(item.get("file_url").getAsString())
+                    .jpegWidth(item.get("width").getAsString())
+                    .jpegHeight(item.get("height").getAsString())
+                    .jpegFileSize(item.get("file_size").getAsString())
+                    .rating(item.get("rating").getAsString())
+                    .hasChildren(item.get("has_children").getAsString())
+                    .parentId(!item.get("parent_id").isJsonNull() ? item.get("parent_id").getAsString() : "");
 
-            // 下列li不存在某属性时的备用值
-            builder.source("")
-                    .creatorId("")
-                    .author("");
-
-            // 解析时间字符串，格式：2018-06-04 08:10
-            // 注意PostBean.createdTime单位为second
-            Elements elements = doc.getElementsByAttributeValueContaining("href", "tags=date");
-            for (Element created : elements) {
-                Element post = created.previousElementSibling();
-                if (post != null && "ul--identifier".equalsIgnoreCase(post.className())) {
-                    String createdTime = created.attr("title");
-                    long mills = TimeFormat.timeToMills(createdTime, "yyyy-MM-dd HH:mm");
-                    builder.createdTime(String.valueOf(mills / 1000));
-
-                    // 上传用户
-                    Element author = created.nextElementSibling();
-                    if (author != null && author.className().startsWith("user-level-")) {
-                        builder.author(author.text());
-                        Element creatorId = author.getElementsByTag("a").first();
-                        if (creatorId != null) {
-                            builder.creatorId(creatorId.attr("href").replaceAll("[^0-9]", ""));
-                        }
-                    }
-                    break;
-                }
-            }
-
-            // 预览图
-            Element sample = doc.getElementById("lowres");
-            if (sample != null) {
-                String sampleUrl = sample.attr("href");
-                if (!sampleUrl.startsWith("http")) {
-                    sampleUrl = "https:" + sampleUrl;
-                }
-                String[] resolution = sample.text().split("x");
-                builder.sampleUrl(sampleUrl)
-                        .sampleWidth(resolution[0])
-                        .sampleHeight(resolution[1])
-                        .sampleFileSize("-1");
-            }
-
-            // 大图，原图
-            Element original = doc.getElementById("highres");
-            if (original != null) {
-                String originalUrl = original.attr("href");
-                if (!originalUrl.startsWith("http")) {
-                    originalUrl = "https:" + originalUrl;
-                }
-                String originalSize = original.attr("title").replaceAll("[^0-9]", "");
-                String[] resolution = original.text().replaceAll("\\([^)]*?\\)", "").trim().split("x");
-                builder.fileSize(originalSize)
-                        .fileUrl(originalUrl)
-                        .jpegUrl(originalUrl)
-                        .jpegWidth(resolution[0])
-                        .jpegHeight(resolution[1])
-                        .jpegFileSize(originalSize)
-                        .width(resolution[0])
-                        .height(resolution[1]);
-            }
-
-            // 评分
-            Element score = doc.getElementsByAttributeValue("itemprop", "ratingValue").first();
-            if (score != null) {
-                builder.score(score.text());
-            }
-
-            // 评级
-            Element rating = doc.getElementsByAttributeValueStarting("class", "rating-").first();
-            if (rating != null) {
-                switch (rating.className()) {
-                    case "rating-s":
-                        builder.rating("s");
-                        break;
-                    case "rating-e":
-                        builder.rating("e");
-                        break;
-                    case "rating-q":
-                        builder.rating("q");
-                        break;
-                }
-            }
-
-            // tags
-            Element tag = doc.getElementById("tag-sidebar");
-            if (tag != null) {
+            // 解析tags
+            StringBuilder tags = new StringBuilder();
+            JsonArray tagArray = item.getAsJsonArray("tags");
+            for (int i = 0; i < tagArray.size(); i++) {
                 try {
-                    for (Element copyright : tag.getElementsByClass("tag-type-copyright")) {
-                        builder.addCopyrightTags(copyright.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
-                    }
-                    for (Element character : tag.getElementsByClass("tag-type-character")) {
-                        builder.addCharacterTags(character.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
-                    }
-                    for (Element artist : tag.getElementsByClass("tag-type-artist")) {
-                        builder.addArtistTags(artist.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
-                    }
-                    for (Element style : tag.getElementsByClass("tag-type-medium")) {
-                        builder.addStyleTags(style.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
-                    }
-                    for (Element general : tag.getElementsByClass("tag-type-meta")) {
-                        builder.addGeneralTags(general.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
-                    }
-                    for (Element general : tag.getElementsByClass("tag-type-general")) {
-                        builder.addGeneralTags(general.getElementsByAttributeValue("itemprop", "keywords").first().text().replace(" ", "_"));
+                    JsonObject tagItem = tagArray.get(i).getAsJsonObject();
+                    String tagName = tagItem.get("tagName").getAsString();
+                    tags.append(tagName).append(" ");
+                    int tagType = tagItem.get("type").getAsInt();
+                    switch (tagType) {
+                        default:
+                        case 0:  // tag-type-general
+                        case 9:  // tag-type-meta
+                            builder.addGeneralTags(tagName);
+                            break;
+                        case 1:  // tag-type-artist
+                            builder.addArtistTags(tagName);
+                            break;
+                        case 2:  // tag-type-studio
+                            builder.addCircleTags(tagName);
+                            break;
+                        case 3:  // tag-type-copyright
+                            builder.addCopyrightTags(tagName);
+                            break;
+                        case 4:  // tag-type-character
+                            builder.addCharacterTags(tagName);
+                            break;
+                        case 5:  // tag-type-genre
+                        case 8:  // tag-type-medium
+                            builder.addStyleTags(tagName);
+                            break;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
+            builder.tags(tags.toString().trim());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,19 +196,51 @@ public class SankakuParser extends HtmlParser {
     @Override
     public List<PoolListBean> getPoolListList(Document doc) {
         List<PoolListBean> poolList = new ArrayList<>();
-        Element body = doc.getElementsByTag("tbody").first();
-        if (body != null) {
-            for (Element pool : body.getElementsByTag("tr")) {
+        try {
+            String json = doc.text();
+            JsonArray items = new JsonParser().parse(json).getAsJsonArray();
+            for (int i = 0; i < items.size(); i++) {
                 try {
+                    JsonObject item = items.get(i).getAsJsonObject();
+                    boolean needSignUp = item.get("redirect_to_signup").getAsBoolean();
+                    if (needSignUp) {
+                        // 暂未支持帐号登录，先忽略需要登录才能显示的图片
+                        continue;
+                    }
+                    boolean isDeleted = item.get("is_deleted").getAsBoolean();
+                    if (isDeleted) {
+                        continue;
+                    }
+                    String id = item.get("id").getAsString();
                     PoolListBean poolListBean = new PoolListBean();
-                    Elements tds = pool.getElementsByTag("td");
-                    Element link = tds.first().getElementsByTag("a").first();
-                    String href = link.attr("href");
-                    poolListBean.id = href.substring(href.lastIndexOf("/") + 1);
-                    poolListBean.name = link.text();
-                    poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + href;
-                    poolListBean.creator = tds.get(1).text();
-                    poolListBean.postCount = tds.get(2).text();
+                    poolListBean.id = id;
+                    poolListBean.name = item.get("name").getAsString();
+                    poolListBean.creator = !item.get("author").isJsonNull() ? item.getAsJsonObject("author").get("name").getAsString() : "";
+                    poolListBean.postCount = item.get("post_count").getAsString();
+                    poolListBean.createTime = item.get("created_at").getAsString();
+                    poolListBean.updateTime = item.get("updated_at").getAsString();
+                    poolListBean.linkToShow = mWebsiteConfig.getBaseUrl() + "pools/" + id;
+
+                    String thumbUrl = "";
+                    if (TextUtils.isEmpty(thumbUrl)) {
+                        String sampleUrlKey = "sample_url";
+                        if (item.has(sampleUrlKey) && !item.get(sampleUrlKey).isJsonNull()) {
+                            thumbUrl = item.get(sampleUrlKey).getAsString();
+                        }
+                    }
+                    if (TextUtils.isEmpty(thumbUrl) || new URL(thumbUrl).getPath().endsWith(".webp")) {
+                        String previewUrlKey = "preview_url";
+                        if (item.has(previewUrlKey) && !item.get(previewUrlKey).isJsonNull()) {
+                            thumbUrl = item.get(previewUrlKey).getAsString();
+                        }
+                    }
+                    if (TextUtils.isEmpty(thumbUrl) || new URL(thumbUrl).getPath().endsWith(".webp")) {
+                        String fileUrlKey = "file_url";
+                        if (item.has(fileUrlKey) && !item.get(fileUrlKey).isJsonNull()) {
+                            thumbUrl = item.get(fileUrlKey).getAsString();
+                        }
+                    }
+                    poolListBean.thumbUrl = thumbUrl;
                     if (Integer.parseInt(poolListBean.postCount) > 0) {
                         poolList.add(poolListBean);
                     }
@@ -251,7 +248,23 @@ public class SankakuParser extends HtmlParser {
                     e.printStackTrace();
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return poolList;
+    }
+
+    @Override
+    public List<ThumbBean> getThumbListOfPool(Document doc) {
+        try {
+            String json = doc.text();
+            JsonObject item = new JsonParser().parse(json).getAsJsonObject();
+            JsonElement posts = item.get("posts");
+            Document doc2 = Jsoup.parse(posts.toString());
+            return getThumbList(doc2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 }

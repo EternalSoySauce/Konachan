@@ -1,7 +1,5 @@
 package com.ess.anime.wallpaper.website;
 
-import android.text.TextUtils;
-
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.SankakuParser;
 import com.google.gson.JsonArray;
@@ -62,11 +60,7 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
             tags.append(tag).append("+");
         }
 
-        String url = getBaseUrl() + "post?page=" + page;
-        if (tags.length() > 0) {
-            url += "&tags=" + tags;
-        }
-        return url;
+        return getBaseUrl() + "posts?page=" + page + "&tags=" + tags;
     }
 
     @Override
@@ -77,11 +71,8 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     @Override
     public String getPoolUrl(int page, String name) {
         name = name == null ? "" : name;
-        String url = getBaseUrl() + "pool/index?page=" + page;
-        if (!TextUtils.isEmpty(name)) {
-            url += "&query=" + name;
-        }
-        return url;
+        // todo 暂不知道Api如何搜索
+        return getBaseUrl() + "pools?page=" + page;
     }
 
     @Override
@@ -111,7 +102,7 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return getBaseUrl() + "tag/autosuggest?tag=" + tag;
+        return "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag;
     }
 
     @Override

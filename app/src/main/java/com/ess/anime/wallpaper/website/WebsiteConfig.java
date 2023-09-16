@@ -21,7 +21,7 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String BASE_URL_SAFEBOORU = "https://safebooru.org/";
     public final static String BASE_URL_GELBOORU = "https://gelbooru.com/";
     public final static String BASE_URL_LOLIBOORU = "https://lolibooru.moe/";
-    public final static String BASE_URL_SANKAKU = "https://chan.sankakucomplex.com/";
+    public final static String BASE_URL_SANKAKU = "https://capi-v2.sankakucomplex.com/";  // https://chan.sankakucomplex.com/
     public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
     public final static String BASE_URL_WALLHAVEN = "https://wallhaven.cc/";
 

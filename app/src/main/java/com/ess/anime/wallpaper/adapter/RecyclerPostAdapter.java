@@ -129,6 +129,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
             if (!thumbList.isEmpty()) {
                 addData(position, thumbList);
                 preloadImageDetail(thumbList);
+                preloadSampleImage(thumbList);
                 preloadThumbnail(thumbList);
                 return true;
             }
@@ -144,10 +145,17 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         }
     }
 
-    private void preloadThumbnail(List<ThumbBean> thumbList) {
+    private void preloadSampleImage(List<ThumbBean> thumbList) {
         for (ThumbBean thumbBean : thumbList) {
             if (SystemUtils.isActivityActive((Activity) mContext)) {
-                MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
+                // 已有图片详情的，预加载预览图
+                if (thumbBean.imageBean != null) {
+                    String imageUrl = thumbBean.imageBean.posts[0].getMinSizeImageUrl();
+                    if (!TextUtils.isEmpty(imageUrl)) {
+                        MyGlideModule.preloadImage(mContext, imageUrl);
+                    }
+                }
+
                 // 不预加载图片详情但已有预览图信息的，预加载预览图
                 if (!thumbBean.needPreloadImageDetail) {
                     if (thumbBean.tempPost != null) {
@@ -157,6 +165,14 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void preloadThumbnail(List<ThumbBean> thumbList) {
+        for (ThumbBean thumbBean : thumbList) {
+            if (SystemUtils.isActivityActive((Activity) mContext)) {
+                MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
             }
         }
     }
