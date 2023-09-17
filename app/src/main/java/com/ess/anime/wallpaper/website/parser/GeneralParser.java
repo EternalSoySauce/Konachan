@@ -51,8 +51,7 @@ public class GeneralParser extends HtmlParser {
                 if (!directLink.isEmpty()) {
                     realSize = directLink.first().ownText();
                 }
-                String linkToShow = e.getElementsByClass("plid").first().ownText();
-                linkToShow = linkToShow.substring(linkToShow.indexOf("http"));
+                String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                 thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
                 ex.printStackTrace();

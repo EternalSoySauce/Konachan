@@ -11,7 +11,7 @@ import java.util.List;
 
 public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
 
-    public static final String API_KEY = "JdpvgaGnr7rysgPdkuKUdpzSX0quGdRW";
+    private static final String API_KEY = "JdpvgaGnr7rysgPdkuKUdpzSX0quGdRW";
 
     @Override
     public String getWebsiteName() {
@@ -79,6 +79,11 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
 
         return getBaseUrl() + "api/v1/search?q=" + tags + "&sorting=" + sorting + "&page=" + page
                 + "&categories=110&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+    }
+
+    @Override
+    public String getPostDetailUrl(String id) {
+        return getBaseUrl() + "api/v1/w/" + id + "?apikey=" + WallhavenConfig.API_KEY;
     }
 
     @Override

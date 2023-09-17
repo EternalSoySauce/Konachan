@@ -35,7 +35,7 @@ public class SafebooruParser extends HtmlParser {
                     thumbUrl = "https:" + thumbUrl;
                 }
                 String realSize = e.attr("width") + " x " + e.attr("height");
-                String linkToShow = mWebsiteConfig.getBaseUrl() + "index.php?page=post&s=view&id=" + id;
+                String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                 ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 thumbBean.tempPost = parseTempPost(e);
                 thumbList.add(thumbBean);

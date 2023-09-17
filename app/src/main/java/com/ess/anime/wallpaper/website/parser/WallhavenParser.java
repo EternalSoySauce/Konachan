@@ -7,7 +7,6 @@ import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.utils.TimeFormat;
-import com.ess.anime.wallpaper.website.WallhavenConfig;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -47,7 +46,7 @@ public class WallhavenParser extends HtmlParser {
                         thumbHeight = 720;
                         thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                     }
-                    String linkToShow = mWebsiteConfig.getBaseUrl() + "api/v1/w/" + id + "?apikey=" + WallhavenConfig.API_KEY;
+                    String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                     ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                     thumbBean.needPreloadImageDetail = false; // Wallhaven API 限制每分钟最多访问45次，故不进行图片详情预加载
                     thumbBean.tempPost = parseTempPost(item);

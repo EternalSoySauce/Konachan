@@ -49,7 +49,7 @@ public class DanbooruParser extends HtmlParser {
                     thumbHeight = 720;
                     thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                 }
-                String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
+                String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                 thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             } catch (Exception ex) {
                 ex.printStackTrace();

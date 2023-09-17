@@ -38,7 +38,7 @@ public class GelbooruParser extends HtmlParser {
                     thumbUrl = "https:" + thumbUrl;
                 }
                 String realSize = e.getElementsByTag("width").first().text() + " x " + e.getElementsByTag("height").first().text();
-                String linkToShow = mWebsiteConfig.getBaseUrl() + "index.php?page=post&s=view&id=" + id;
+                String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                 ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                 thumbBean.tempPost = parseTempPost(e);
                 thumbList.add(thumbBean);

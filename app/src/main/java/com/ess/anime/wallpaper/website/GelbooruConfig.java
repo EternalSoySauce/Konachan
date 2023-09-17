@@ -65,6 +65,11 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     }
 
     @Override
+    public String getPostDetailUrl(String id) {
+        return getBaseUrl() + "index.php?page=post&s=view&id=" + id;
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

@@ -66,6 +66,11 @@ public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public String getPostDetailUrl(String id) {
+        return getBaseUrl() + "/post/show/" + id;
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

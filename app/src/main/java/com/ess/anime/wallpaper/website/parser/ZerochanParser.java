@@ -71,7 +71,7 @@ public class ZerochanParser extends HtmlParser {
                         thumbHeight = 720;
                         thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                     }
-                    String linkToShow = mWebsiteConfig.getBaseUrl() + id;
+                    String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                     thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
                 } catch (Exception e) {
                     e.printStackTrace();

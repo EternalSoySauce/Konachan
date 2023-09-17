@@ -65,6 +65,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     }
 
     @Override
+    public String getPostDetailUrl(String id) {
+        return getBaseUrl() + "posts/" + id;
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

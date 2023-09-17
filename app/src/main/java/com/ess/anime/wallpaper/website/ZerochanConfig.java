@@ -70,6 +70,11 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     }
 
     @Override
+    public String getPostDetailUrl(String id) {
+        return getBaseUrl() + id;
+    }
+
+    @Override
     public boolean hasPool() {
         return false;
     }

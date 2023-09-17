@@ -53,7 +53,7 @@ public class SankakuParser extends HtmlParser {
                     int realWidth = item.get("width").getAsInt();
                     int realHeight = item.get("height").getAsInt();
                     String realSize = realWidth + " x " + realHeight;
-                    String linkToShow = mWebsiteConfig.getBaseUrl() + "posts/" + id;
+                    String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
                     ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
                     thumbBean.imageBean = parseImageBean(item);
                     thumbList.add(thumbBean);
