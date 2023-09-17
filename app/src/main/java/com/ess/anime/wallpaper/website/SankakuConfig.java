@@ -61,7 +61,7 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
             tags.append(tag).append("+");
         }
 
-        return getBaseUrl() + "posts?page=" + page + "&tags=" + tags;
+        return getBaseUrl() + "posts?page=" + page + "&tags=" + tags + "&limit=60";
     }
 
     @Override

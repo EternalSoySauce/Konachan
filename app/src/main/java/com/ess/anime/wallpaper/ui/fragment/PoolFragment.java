@@ -32,6 +32,7 @@ import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -260,7 +261,8 @@ public class PoolFragment extends BaseFragment implements
     @Override
     public void onLoadMoreRequested() {
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(++mCurrentPage, mCurrentSearchName);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 if (errorCode == 404) {
@@ -398,7 +400,8 @@ public class PoolFragment extends BaseFragment implements
     private void getNewPools(int page) {
         if (WebsiteManager.getInstance().getWebsiteConfig().hasPool()) {
             String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolUrl(page, mCurrentSearchName);
-            OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+            Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+            OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
                 @Override
                 public void onFailure(int errorCode, String errorMessage) {
                     if (errorCode == 404) {

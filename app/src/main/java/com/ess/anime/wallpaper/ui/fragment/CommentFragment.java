@@ -24,6 +24,7 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 import org.jsoup.Jsoup;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
@@ -138,7 +139,8 @@ public class CommentFragment extends BaseFragment {
 
     // 获取评论列表
     private void getCommentList() {
-        OkHttp.connect(mThumbBean.linkToShow, TAG, new OkHttp.OkHttpCallback() {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(mThumbBean.linkToShow, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 getCommentList();

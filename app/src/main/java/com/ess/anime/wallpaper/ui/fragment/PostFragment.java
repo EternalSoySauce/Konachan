@@ -47,6 +47,7 @@ import org.jsoup.Jsoup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -283,7 +284,8 @@ public class PostFragment extends BaseFragment implements
     @Override
     public void onLoadMoreRequested() {
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(++mCurrentPage, mCurrentTagList);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 if (errorCode == 404) {
@@ -433,7 +435,8 @@ public class PostFragment extends BaseFragment implements
 
     private void getNewPosts(int page) {
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(page, mCurrentTagList);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 if (errorCode == 404) {

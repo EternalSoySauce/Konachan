@@ -30,6 +30,7 @@ import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -127,9 +128,9 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             return;
         }
 
-        String url = WebsiteManager.getInstance().getWebsiteConfig()
-                .getPoolPostUrl(mLinkToShow, ++mCurrentPage);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolPostUrl(mLinkToShow, ++mCurrentPage);
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 if (errorCode == 404) {
@@ -176,9 +177,9 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
             return;
         }
 
-        String url = WebsiteManager.getInstance().getWebsiteConfig()
-                .getPoolPostUrl(mLinkToShow, page);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getPoolPostUrl(mLinkToShow, page);
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
                 if (errorCode == 404) {
@@ -257,10 +258,11 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         List<String> tagList = new ArrayList<>();
         tagList.add("id:" + thumbBean.id);
         String url = WebsiteManager.getInstance().getWebsiteConfig().getPostUrl(1, tagList);
-        OkHttp.connect(url, TAG, new OkHttp.OkHttpCallback() {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+        OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
             @Override
             public void onFailure(int errorCode, String errorMessage) {
-                OkHttp.connect(url, TAG, this, Request.Priority.HIGH);
+                OkHttp.connect(url, TAG, headerMap, this, Request.Priority.HIGH);
             }
 
             @Override

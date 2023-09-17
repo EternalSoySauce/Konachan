@@ -33,6 +33,7 @@ public class SplashActivity extends BaseActivity {
         FireBase.getInstance().checkUpdate();
         ReverseSearchWebsiteDataHelper.loadNewJsonFromServer(this);
 
+        WebsiteManager.getInstance().loadNewRequestHeadersJsonFromServer();
         WebsiteManager.getInstance().updateCurrentTagJson();
         DownloadImageManager.getInstance();
 

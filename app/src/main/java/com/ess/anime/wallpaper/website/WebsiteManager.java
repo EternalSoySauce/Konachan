@@ -2,14 +2,21 @@ package com.ess.anime.wallpaper.website;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.utils.FileUtils;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WebsiteManager {
 
@@ -117,6 +124,70 @@ public class WebsiteManager {
                 });
             }
         }
+    }
+
+    /********************** Request Headers **********************/
+
+    private final static String SERVER_HEADER_FILE_URL = "https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/website_request_headers";
+    private final static String LOCAL_HEADER_FILE_NAME = "website_request_headers";
+
+    private String mRequestHeadersJson;
+
+    public void loadNewRequestHeadersJsonFromServer() {
+        OkHttp.connect(SERVER_HEADER_FILE_URL, SERVER_HEADER_FILE_URL, new OkHttp.OkHttpCallback() {
+            @Override
+            public void onFailure(int errorCode, String errorMessage) {
+                loadNewRequestHeadersJsonFromServer();
+            }
+
+            @Override
+            public void onSuccessful(String json) {
+                saveRequestHeadersJson(json);
+            }
+        });
+    }
+
+    private void saveRequestHeadersJson(String json) {
+        synchronized (WebsiteManager.class) {
+            String dir = MyApp.getInstance().getFilesDir().getPath();
+            File file = new File(dir, LOCAL_HEADER_FILE_NAME);
+            FileUtils.stringToFile(json, file);
+            mRequestHeadersJson = json;
+        }
+    }
+
+    private String getRequestHeadersJson() {
+        synchronized (WebsiteManager.class) {
+            if (TextUtils.isEmpty(mRequestHeadersJson)) {
+                String dir = MyApp.getInstance().getFilesDir().getPath();
+                File file = new File(dir, LOCAL_HEADER_FILE_NAME);
+                if (file.exists() && file.isFile()) {
+                    mRequestHeadersJson = FileUtils.fileToString(file);
+                }
+            }
+            return mRequestHeadersJson == null ? "" : mRequestHeadersJson;
+        }
+    }
+
+    // 需要填充的Header信息，如AccessToken
+    public Map<String, String> getRequestHeaders() {
+        Map<String, String> headerMap = new HashMap<>();
+        try {
+            String json = getRequestHeadersJson();
+            if (!TextUtils.isEmpty(json)) {
+                String websiteName = mWebsiteConfig.getWebsiteName();
+                JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+                JsonObject website = jsonObject.getAsJsonObject(websiteName);
+                if (website != null) {
+                    for (String key : website.keySet()) {
+                        headerMap.put(key, website.get(key).getAsString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return headerMap;
     }
 
     /********************** Observer **********************/

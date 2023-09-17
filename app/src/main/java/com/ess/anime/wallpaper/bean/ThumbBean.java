@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.android.volley.Request;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
@@ -11,6 +12,8 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jsoup.Jsoup;
+
+import java.util.Map;
 
 public class ThumbBean implements Parcelable {
 
@@ -66,10 +69,11 @@ public class ThumbBean implements Parcelable {
     public void getImageDetailIfNeed(String httpTag) {
         if (imageBean == null) {
             String url = linkToShow;
-            OkHttp.connect(url, httpTag, new OkHttp.OkHttpCallback() {
+            Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+            OkHttp.connect(url, httpTag, headerMap, new OkHttp.OkHttpCallback() {
                 @Override
                 public void onFailure(int errorCode, String errorMessage) {
-                    OkHttp.connect(url, httpTag, this);
+                    OkHttp.connect(url, httpTag, headerMap, this, Request.Priority.NORMAL);
                 }
 
                 @Override
@@ -87,7 +91,7 @@ public class ThumbBean implements Parcelable {
                                 EventBus.getDefault().post(new MsgBean(Constants.GET_IMAGE_DETAIL, json));
                             });
                 }
-            });
+            }, Request.Priority.NORMAL);
         }
     }
 

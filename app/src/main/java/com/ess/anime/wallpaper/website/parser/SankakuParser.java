@@ -39,7 +39,7 @@ public class SankakuParser extends HtmlParser {
                     JsonObject item = items.get(i).getAsJsonObject();
                     boolean needSignUp = item.get("redirect_to_signup").getAsBoolean();
                     if (needSignUp) {
-                        // 暂未支持帐号登录，先忽略需要登录才能显示的图片
+                        // 忽略需要登录才能显示的图片
                         continue;
                     }
                     String id = item.get("id").getAsString();
@@ -204,7 +204,7 @@ public class SankakuParser extends HtmlParser {
                     JsonObject item = items.get(i).getAsJsonObject();
                     boolean needSignUp = item.get("redirect_to_signup").getAsBoolean();
                     if (needSignUp) {
-                        // 暂未支持帐号登录，先忽略需要登录才能显示的图片
+                        // 忽略需要登录才能显示的图片
                         continue;
                     }
                     boolean isDeleted = item.get("is_deleted").getAsBoolean();
