@@ -98,10 +98,8 @@ public class ZerochanParser extends HtmlParser {
             builder.createdTime(createdTime);
 
             // 解析收藏数
-            Element favorite = doc.getElementsContainingOwnText("favorites.").first();
-            if (favorite != null) {
-                builder.score(favorite.ownText().replaceAll("[^0-9]", ""));
-            }
+            String favorite = json.getAsJsonObject("interactionStatistic").get("userInteractionCount").getAsString();
+            builder.score(favorite);
 
             // 解析图片信息
             Element user = doc.getElementsByClass("user").first();
@@ -122,7 +120,7 @@ public class ZerochanParser extends HtmlParser {
             Elements scripts = doc.getElementsByTag("script");
             for (Element scriptData : scripts) {
                 String text = scriptData.data();
-                if (text.contains("<![CDATA[")) {
+                if (text.contains("thumbX = ") && text.contains("thumbY = ")) {
                     String[] items = text.split(";");
                     for (String item : items) {
                         item = item.trim();
@@ -145,14 +143,9 @@ public class ZerochanParser extends HtmlParser {
 
             // 解析来源
             builder.source("");
-            Elements elements = doc.getElementsByTag("h2");
-            for (Element h2 : elements) {
-                if (h2.text().trim().equalsIgnoreCase("Source")) {
-                    Element source = h2.nextElementSibling();
-                    if (source != null) {
-                        builder.source(source.text().trim());
-                    }
-                }
+            Element source = doc.getElementById("source-url");
+            if (source != null) {
+                builder.source(source.text().trim());
             }
 
             // 防止为null的参数
@@ -165,30 +158,29 @@ public class ZerochanParser extends HtmlParser {
             Element ul = doc.getElementById("tags");
             if (ul != null) {
                 for (Element li : ul.getElementsByTag("li")) {
-                    Element img = li.getElementsByTag("img").first();
-                    String type = img != null ? img.attr("alt") : "";
+                    Element img = li.getElementsByTag("s").first();
+                    String type = img != null ? img.className() : "";
                     String tag = li.text().trim();
                     switch (type) {
-                        case "Series":
-                        case "Game":
-                        case "Visual Novel":
-                        case "OVA":
-                        case "Artbook":
-                        case "Movie":
+                        case "medium series":
+                        case "medium game":
+                        case "medium visual novel":
+                        case "medium ova":
+                        case "medium artbook":
+                        case "medium movie":
                             builder.addCopyrightTags(tag);
                             break;
-                        case "Character":
+                        case "medium character":
                             builder.addCharacterTags(tag);
                             break;
-                        case "Mangaka":
+                        case "medium mangaka":
                             builder.addArtistTags(tag);
                             break;
-                        case "Studio":
-                        case "Character Group":
+                        case "medium studio":
+                        case "medium character Group":
                             builder.addCircleTags(tag);
                             break;
-                        case "Theme":
-                        case "VTuber":
+                        case "medium vtuber":
                             builder.addStyleTags(tag);
                             break;
                         default:
