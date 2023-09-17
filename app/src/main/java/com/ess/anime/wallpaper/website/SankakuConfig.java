@@ -3,6 +3,7 @@ package com.ess.anime.wallpaper.website;
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.SankakuParser;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
@@ -102,16 +103,17 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
 
     @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        return "https://chan.sankakucomplex.com/tag/autosuggest?tag=" + tag;
+        return getBaseUrl() + "tags/autosuggest/v2?tag=" + tag;
     }
 
     @Override
     public List<String> parseSearchAutoCompleteListFromNetwork(String promptResult, String search) {
         List<String> list = new ArrayList<>();
         try {
-            JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray().get(1).getAsJsonArray();
+            JsonArray tagArray = new JsonParser().parse(promptResult).getAsJsonArray();
             for (int i = 0; i < tagArray.size(); i++) {
-                list.add(tagArray.get(i).getAsString());
+                JsonObject item = tagArray.get(i).getAsJsonObject();
+                list.add(item.get("tagName").getAsString());
             }
         } catch (Exception e) {
             e.printStackTrace();
