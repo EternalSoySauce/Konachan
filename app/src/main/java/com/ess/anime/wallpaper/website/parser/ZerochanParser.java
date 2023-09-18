@@ -98,8 +98,11 @@ public class ZerochanParser extends HtmlParser {
             builder.createdTime(createdTime);
 
             // 解析收藏数
-            String favorite = json.getAsJsonObject("interactionStatistic").get("userInteractionCount").getAsString();
-            builder.score(favorite);
+            JsonObject interactionStatistic = json.getAsJsonObject("interactionStatistic");
+            if (interactionStatistic != null) {
+                String favorite = interactionStatistic.get("userInteractionCount").getAsString();
+                builder.score(favorite);
+            }
 
             // 解析图片信息
             Element user = doc.getElementsByClass("user").first();
