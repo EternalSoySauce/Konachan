@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
+import android.text.TextUtils;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.GelbooruParser;
 import com.google.gson.JsonArray;
@@ -58,6 +60,9 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
 
         StringBuilder tags = new StringBuilder();
         for (String tag : tagList) {
+            if (TextUtils.equals(tag, "order:random")) {
+                tag = "sort:random";
+            }
             tags.append(tag).append("+");
         }
 
@@ -101,7 +106,7 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
 
     @Override
     public boolean isSupportRandomPost() {
-        return false;
+        return true;
     }
 
     @Override

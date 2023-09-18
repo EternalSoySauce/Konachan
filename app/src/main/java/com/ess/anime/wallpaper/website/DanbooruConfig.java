@@ -1,5 +1,7 @@
 package com.ess.anime.wallpaper.website;
 
+import android.text.TextUtils;
+
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.website.parser.DanbooruParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
@@ -58,7 +60,14 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
 
         StringBuilder tags = new StringBuilder();
         for (String tag : tagList) {
-            tags.append(tag).append("+");
+            if (TextUtils.equals(tag, "order:random")) {
+                tags.setLength(0);
+                tags.append("random:20");
+                page = 1;
+                break;
+            } else {
+                tags.append(tag).append("+");
+            }
         }
 
         return getBaseUrl() + "posts.xml?page=" + page + "&tags=" + tags;
