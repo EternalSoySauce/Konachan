@@ -70,6 +70,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getBaseUrl() + "posts/" + id + "/comments";
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

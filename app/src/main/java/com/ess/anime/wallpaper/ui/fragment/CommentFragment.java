@@ -2,6 +2,7 @@ package com.ess.anime.wallpaper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import org.jsoup.Jsoup;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -139,28 +141,33 @@ public class CommentFragment extends BaseFragment {
 
     // 获取评论列表
     private void getCommentList() {
-        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
-        OkHttp.connect(mThumbBean.linkToShow, TAG, headerMap, new OkHttp.OkHttpCallback() {
-            @Override
-            public void onFailure(int errorCode, String errorMessage) {
-                getCommentList();
-            }
+        String url = WebsiteManager.getInstance().getWebsiteConfig().getCommentUrl(mThumbBean.id);
+        if (!TextUtils.isEmpty(url)) {
+            Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+            OkHttp.connect(url, TAG, headerMap, new OkHttp.OkHttpCallback() {
+                @Override
+                public void onFailure(int errorCode, String errorMessage) {
+                    getCommentList();
+                }
 
-            @Override
-            public void onSuccessful(String body) {
-                HandlerFuture.ofWork(body)
-                        .applyThen(body1 -> {
-                            return WebsiteManager.getInstance()
-                                    .getWebsiteConfig()
-                                    .getHtmlParser()
-                                    .getCommentList(Jsoup.parse(body1));
-                        })
-                        .runOn(HandlerFuture.IO.UI)
-                        .applyThen(commentList -> {
-                            setCommentList(commentList);
-                        });
-            }
-        }, Request.Priority.IMMEDIATE);
+                @Override
+                public void onSuccessful(String body) {
+                    HandlerFuture.ofWork(body)
+                            .applyThen(body1 -> {
+                                return WebsiteManager.getInstance()
+                                        .getWebsiteConfig()
+                                        .getHtmlParser()
+                                        .getCommentList(Jsoup.parse(body1));
+                            })
+                            .runOn(HandlerFuture.IO.UI)
+                            .applyThen(commentList -> {
+                                setCommentList(commentList);
+                            });
+                }
+            }, Request.Priority.IMMEDIATE);
+        } else {
+            setCommentList(Collections.emptyList());
+        }
     }
 
     // 获取到评论列表后刷新界面

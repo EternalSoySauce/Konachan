@@ -87,6 +87,11 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return null;
+    }
+
+    @Override
     public boolean hasPool() {
         return false;
     }

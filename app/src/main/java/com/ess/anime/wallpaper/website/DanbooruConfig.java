@@ -70,6 +70,11 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getPostDetailUrl(id);
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

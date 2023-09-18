@@ -105,6 +105,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     // 通过id搜索图片详情
     public abstract String getPostDetailUrl(String id);
 
+    // 通过id搜索图片评论
+    public abstract String getCommentUrl(String id);
+
     // 是否有图集列表
     public abstract boolean hasPool();
 

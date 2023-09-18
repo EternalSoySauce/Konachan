@@ -69,6 +69,11 @@ public class YandeConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getPostDetailUrl(id);
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

@@ -70,6 +70,11 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getPostDetailUrl(id);
+    }
+
+    @Override
     public boolean hasPool() {
         return true;
     }

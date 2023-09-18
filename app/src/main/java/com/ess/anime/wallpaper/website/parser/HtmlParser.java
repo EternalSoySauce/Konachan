@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class HtmlParser {
@@ -131,6 +132,24 @@ public abstract class HtmlParser {
 
         name = name.replaceAll(" ", "_");
         return name;
+    }
+
+    protected String fitLineBreaksToHtml(String input) {
+        return input.replaceAll("\r\n|\n\r|\n|\r", "<br>");
+    }
+
+    protected String fitHyperlinkToHtml(String input) {
+        String regex = "\\b(https?|ftp)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        StringBuffer htmlFormatted = new StringBuffer();
+        while (matcher.find()) {
+            String url = matcher.group();
+            String linkHtml = "<a href='" + url + "'>" + url + "</a>";
+            matcher.appendReplacement(htmlFormatted, linkHtml);
+        }
+        matcher.appendTail(htmlFormatted);
+        return htmlFormatted.toString();
     }
 
 }

@@ -75,6 +75,11 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getPostDetailUrl(id);
+    }
+
+    @Override
     public boolean hasPool() {
         return false;
     }

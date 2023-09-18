@@ -64,6 +64,11 @@ public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public String getCommentUrl(String id) {
+        return getPostDetailUrl(id);
+    }
+
+    @Override
     public String getPostDetailUrl(String id) {
         return getBaseUrl() + "/post/show/" + id;
     }

@@ -7,6 +7,7 @@ import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,12 +16,13 @@ import com.google.gson.JsonParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SankakuParser extends HtmlParser {
 
@@ -158,37 +160,48 @@ public class SankakuParser extends HtmlParser {
     @Override
     public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = doc.getElementsByClass("comment");
-        for (Element e : elements) {
-            try {
-                Element a = e.getElementsByClass("avatar-medium").first();
-                String href = a.attr("href");
-                String id = "#c" + href.substring(href.lastIndexOf("/") + 1);
-                Element img = a.getElementsByTag("img").first();
-                String author = img.attr("title");
-                String headUrl = img.attr("src");
-                if (!headUrl.startsWith("http")) {
-                    headUrl = "https:" + headUrl;
+        try {
+            String json = doc.text();
+            JsonArray items = new JsonParser().parse(json).getAsJsonArray();
+            for (int i = 0; i < items.size(); i++) {
+                try {
+                    JsonObject item = items.get(i).getAsJsonObject();
+                    boolean isDeleted = item.get("deleted").getAsBoolean();
+                    if (isDeleted) {
+                        continue;
+                    }
+                    String id = "#c" + item.get("id").getAsString();
+                    String author = item.getAsJsonObject("author").get("name").getAsString();
+                    String headUrl = item.getAsJsonObject("author").get("avatar").getAsString();
+                    String date = TimeFormat.dateFormat(TimeFormat.timeToMillsWithZone(item.get("created_at").getAsString(),
+                            "yyyy-MM-dd'T'HH:mm:ss", TimeZone.getTimeZone("GMT+12:00")), "'Posted at' yyyy-MM-dd HH:mm:ss");
+                    String body = item.get("body").getAsString();
+                    String matchQuote = "";
+                    String matchComment = body;
+                    Pattern pattern = Pattern.compile(".*\\[quote](.*?)\\[/quote](.*)", Pattern.DOTALL);
+                    Matcher matcher = pattern.matcher(body);
+                    if (matcher.find()) {
+                        matchQuote = matcher.group(1).trim();
+
+                        matchComment = matcher.group(2);
+                        if (matchComment.contains("[/quote]")) {
+                            matchComment = matchComment.substring(matchComment.lastIndexOf("[/quote]") + "[/quote]".length());
+                        }
+                        matchComment = matchComment.trim();
+                    }
+                    matchQuote = fitLineBreaksToHtml(matchQuote);
+                    matchQuote = fitHyperlinkToHtml(matchQuote);
+                    matchComment = fitLineBreaksToHtml(matchComment);
+                    matchComment = fitHyperlinkToHtml(matchComment);
+                    CharSequence quote = Html.fromHtml(matchQuote);
+                    CharSequence comment = Html.fromHtml(matchComment);
+                    commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                Element span = e.getElementsByClass("date").first();
-                String date = span.attr("title").replace("  ", " ");
-                Elements body = e.getElementsByClass("body");
-                body.select("p").append("<br/><br/>");
-                body.select("p").unwrap();
-                Elements blockquote = body.select("blockquote");
-                if (!blockquote.isEmpty()) {
-                    blockquote.select("br").last().remove();
-                    blockquote.select("br").last().remove();
-                }
-                CharSequence quote = Html.fromHtml(blockquote.html());
-                blockquote.remove();
-                body.select("br").last().remove();
-                body.select("br").last().remove();
-                CharSequence comment = Html.fromHtml(body.html());
-                commentList.add(new CommentBean(id, author, date, headUrl, quote, comment));
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return commentList;
     }
