@@ -202,14 +202,32 @@ public class ZerochanParser extends HtmlParser {
             Elements elements = post.getElementsByAttributeValueStarting("id", "post-");
             for (Element e : elements) {
                 try {
-                    Element person = e.getElementsByAttributeValueContaining("href", "comments").first();
-                    String author = person.text().trim();
-                    String id = "#" + author;
+                    String id = "#" + e.attr("data-id");
+                    String author = e.attr("data-author");
                     Element img = e.getElementsByTag("img").first();
                     String avatar = img != null ? img.attr("src") : "";
-                    String date = e.getElementsByTag("span").first().text().trim();
-                    CharSequence quote = "";
-                    CharSequence comment = Html.fromHtml(e.getElementsByClass("bb").first().html());
+                    String date = "Posted at " + e.getElementsByTag("span").first().attr("title").trim();
+                    String matchQuote;
+                    String matchComment;
+                    Element bb = e.getElementsByClass("bb").first();
+                    Element blockquote = bb.getElementsByTag("blockquote").first();
+                    if (blockquote != null) {
+                        Element cite = blockquote.getElementsByTag("cite").first();
+                        String quoteAuthor = cite.text();
+                        cite.remove();
+                        matchQuote = quoteAuthor + " said:<br>" + blockquote.html();
+                        blockquote.remove();
+                        Element br = bb.select("br").last();
+                        if (br != null) {
+                            br.remove();
+                        }
+                        matchComment = bb.html();
+                    } else {
+                        matchQuote = "";
+                        matchComment = bb.html();
+                    }
+                    CharSequence quote = Html.fromHtml(matchQuote.trim());
+                    CharSequence comment = Html.fromHtml(matchComment.trim());
                     commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
                 } catch (Exception ex) {
                     ex.printStackTrace();

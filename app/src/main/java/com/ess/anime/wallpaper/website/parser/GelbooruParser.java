@@ -182,7 +182,7 @@ public class GelbooruParser extends HtmlParser {
 
                     String author = commentBody.getElementsByTag("a").first().text().trim();
                     String body = commentBody.ownText().trim();
-                    Pattern pattern = Pattern.compile("(.*)»*(#\\d*)(.*)", Pattern.DOTALL);
+                    Pattern pattern = Pattern.compile("(.*)».*(#\\d*)(.*)", Pattern.DOTALL);
                     Matcher matcher = pattern.matcher(body);
                     if (!matcher.find()) {
                         continue;

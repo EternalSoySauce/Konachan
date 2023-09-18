@@ -181,16 +181,16 @@ public class SankakuParser extends HtmlParser {
                     Pattern pattern = Pattern.compile(".*\\[quote](.*?)\\[/quote](.*)", Pattern.DOTALL);
                     Matcher matcher = pattern.matcher(body);
                     if (matcher.find()) {
-                        matchQuote = matcher.group(1).trim();
-
+                        matchQuote = matcher.group(1);
                         matchComment = matcher.group(2);
                         if (matchComment.contains("[/quote]")) {
                             matchComment = matchComment.substring(matchComment.lastIndexOf("[/quote]") + "[/quote]".length());
                         }
-                        matchComment = matchComment.trim();
                     }
+                    matchQuote = matchQuote.trim();
                     matchQuote = fitLineBreaksToHtml(matchQuote);
                     matchQuote = fitHyperlinkToHtml(matchQuote);
+                    matchComment = matchComment.trim();
                     matchComment = fitLineBreaksToHtml(matchComment);
                     matchComment = fitHyperlinkToHtml(matchComment);
                     CharSequence quote = Html.fromHtml(matchQuote);
