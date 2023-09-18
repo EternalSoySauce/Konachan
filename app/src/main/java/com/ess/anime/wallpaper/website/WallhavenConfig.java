@@ -78,7 +78,7 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
         String sorting = isRandom ? "random" : "date_added";
 
         return getBaseUrl() + "api/v1/search?q=" + tags + "&sorting=" + sorting + "&page=" + page
-                + "&categories=110&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
     }
 
     @Override
