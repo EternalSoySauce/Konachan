@@ -8,6 +8,7 @@ import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.bean.PostBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.website.WebsiteConfig;
 
@@ -17,6 +18,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GelbooruParser extends HtmlParser {
 
@@ -157,29 +160,39 @@ public class GelbooruParser extends HtmlParser {
     @Override
     public List<CommentBean> getCommentList(Document doc) {
         List<CommentBean> commentList = new ArrayList<>();
-        Elements elements = doc.getElementsByClass("comment-box post-view");
+        Elements elements = doc.getElementsByTag("div");
         for (Element e : elements) {
             try {
-                String id = "#" + e.id();
-                Element img = e.getElementsByTag("img").first();
-                String avatar = img == null
-                        ? mWebsiteConfig.getBaseUrl() + "user_avatars/avatar_anonymous.jpg"
-                        : mWebsiteConfig.getBaseUrl() + img.attr("src");
-                String author = e.getElementsByTag("a").first().text().trim();
-                String date = e.getElementsByTag("b").first().text().trim();
-                int index = date.indexOf("(");
-                if (index != -1) {
-                    date = date.substring(0, index).trim();
+                Element commentAvatar = e.getElementsByClass("commentAvatar").first();
+                Element commentBody = e.getElementsByClass("commentBody").first();
+                if (commentAvatar != null && commentAvatar.parent() == e && commentBody != null && commentBody.parent() == e) {
+                    String avatar = mWebsiteConfig.getBaseUrl() + "user_avatars/avatar_anonymous.jpg";
+                    Element profileAvatar = commentAvatar.getElementsByClass("profileAvatar").first();
+                    if (profileAvatar != null) {
+                        String style = profileAvatar.attr("style");
+                        Pattern pattern = Pattern.compile("url\\(['\"]([^'\"]+)['\"]\\)");
+                        Matcher matcher = pattern.matcher(style);
+                        if (matcher.find()) {
+                            avatar = matcher.group(1);
+                            if (!StringUtils.isURL(avatar)) {
+                                avatar = mWebsiteConfig.getBaseUrl() + avatar;
+                            }
+                        }
+                    }
+
+                    String author = commentBody.getElementsByTag("a").first().text().trim();
+                    String body = commentBody.ownText().trim();
+                    Pattern pattern = Pattern.compile("(.*)»*(#\\d*)(.*)", Pattern.DOTALL);
+                    Matcher matcher = pattern.matcher(body);
+                    if (!matcher.find()) {
+                        continue;
+                    }
+                    String id = matcher.group(2).trim();
+                    String date = matcher.group(1).trim();
+                    CharSequence quote = "";
+                    CharSequence comment = Html.fromHtml(matcher.group(3).trim());
+                    commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
                 }
-                String html = e.html();
-                String startTag = "Up</a>)<br>";
-                String endTag = "<br>";
-                int startIndex = html.indexOf(startTag) + startTag.length();
-                int endIndex = html.lastIndexOf(endTag);
-                html = html.substring(startIndex, endIndex);
-                CharSequence quote = "";
-                CharSequence comment = Html.fromHtml(html);
-                commentList.add(new CommentBean(id, author, date, avatar, quote, comment));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
