@@ -48,7 +48,7 @@ public class ZerochanParser extends HtmlParser {
             if (json.contains(endPoint)) {
                 json = json.replace(json.substring(1, json.lastIndexOf(endPoint) + endPoint.length()), "");
             }
-            json = json.replaceAll("\\\\", "");
+//            json = json.replaceAll("\\\\", "");
 
             JsonArray items = new JsonArray();
             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
@@ -104,7 +104,10 @@ public class ZerochanParser extends HtmlParser {
                 }
                 String id = element.getElementsByClass("fav").attr("data-id");
                 Element img = element.getElementsByTag("img").first();
-                String thumbUrl = img.attr("src");
+                String thumbUrl = img.attr("src");  // 未登录时网站代码
+                if (TextUtils.isEmpty(thumbUrl)) {
+                    thumbUrl = img.attr("data-src");  // 登录后网站代码
+                }
                 int thumbWidth = Integer.parseInt(img.attr("width"));
                 int thumbHeight = Integer.parseInt(img.attr("height"));
                 String realSize = img.attr("title");
@@ -229,6 +232,9 @@ public class ZerochanParser extends HtmlParser {
                             break;
                         default:
                             builder.addGeneralTags(tag);
+                    }
+                    if (TextUtils.equals(type, "medium unsafe-rating")) {
+                        builder.rating(Constants.RATING_E);
                     }
                 }
             }
