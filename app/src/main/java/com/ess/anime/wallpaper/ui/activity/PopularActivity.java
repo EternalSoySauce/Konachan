@@ -1,9 +1,8 @@
 package com.ess.anime.wallpaper.ui.activity;
 
-import android.app.DatePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 
 import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
@@ -13,10 +12,12 @@ import com.ess.anime.wallpaper.ui.fragment.PopularDailyFragment;
 import com.ess.anime.wallpaper.ui.fragment.PopularMonthlyFragment;
 import com.ess.anime.wallpaper.ui.fragment.PopularOverallFragment;
 import com.ess.anime.wallpaper.ui.fragment.PopularWeeklyFragment;
+import com.ess.anime.wallpaper.utils.DateUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -106,15 +107,18 @@ public class PopularActivity extends BaseActivity {
         int month = mViewModel.getCalenderMonth();
         int day = mViewModel.getCalenderDay();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int dayOfMonth) {
                         mViewModel.setCalenderData(year, month, dayOfMonth);
                     }
                 }, year, month, day);
 
-        datePickerDialog.show();
+        datePickerDialog.setMinDate(DateUtils.getCalendarByData(2008, 1, 1));
+        datePickerDialog.setMaxDate(Calendar.getInstance());
+        datePickerDialog.setAccentColor(Color.parseColor("#3A4045"));
+        datePickerDialog.show(getSupportFragmentManager(), "DatePickerDialog");
     }
 
     @OnClick(R.id.iv_back)

@@ -81,6 +81,9 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
+    // MaterialDateTimePicker (https://github.com/wdullaer/MaterialDateTimePicker)
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
+
     // BRVAH (RecyclerView Adapter) (https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50'
 
