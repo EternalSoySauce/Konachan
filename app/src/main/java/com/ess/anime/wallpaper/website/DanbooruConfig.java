@@ -7,7 +7,9 @@ import com.ess.anime.wallpaper.website.parser.DanbooruParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
 
@@ -71,6 +73,29 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
         }
 
         return getBaseUrl() + "posts.xml?page=" + page + "&tags=" + tags;
+    }
+
+    @Override
+    public String getPopularDailyUrl(int year, int month, int day, int page) {
+        String date = String.format(Locale.ENGLISH, "%d-%d-%d", year, month, day);
+        return getBaseUrl() + "explore/posts/popular.xml?date=" + date + "&page=" + page + "&scale=day";
+    }
+
+    @Override
+    public String getPopularWeeklyUrl(int year, int month, int day, int page) {
+        String date = String.format(Locale.ENGLISH, "%d-%d-%d", year, month, day);
+        return getBaseUrl() + "explore/posts/popular.xml?date=" + date + "&page=" + page + "&scale=week";
+    }
+
+    @Override
+    public String getPopularMonthlyUrl(int year, int month, int day, int page) {
+        String date = String.format(Locale.ENGLISH, "%d-%d-%d", year, month, day);
+        return getBaseUrl() + "explore/posts/popular.xml?date=" + date + "&page=" + page + "&scale=month";
+    }
+
+    @Override
+    public String getPopularOverallUrl(int year, int month, int day, int page) {
+        return getPostUrl(page, Collections.singletonList("order:rank"));
     }
 
     @Override

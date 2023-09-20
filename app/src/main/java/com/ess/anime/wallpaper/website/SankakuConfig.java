@@ -1,12 +1,15 @@
 package com.ess.anime.wallpaper.website;
 
 import com.ess.anime.wallpaper.R;
+import com.ess.anime.wallpaper.utils.DateUtils;
+import com.ess.anime.wallpaper.utils.TimeFormat;
 import com.ess.anime.wallpaper.website.parser.SankakuParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SankakuConfig extends WebsiteConfig<SankakuParser> {
@@ -62,6 +65,47 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
         }
 
         return getBaseUrl() + "posts?page=" + page + "&tags=" + tags + "&limit=60";
+    }
+
+    @Override
+    public String getPopularDailyUrl(int year, int month, int day, int page) {
+        String format = "yyyy-MM-dd";
+        String dateStart = TimeFormat.dateFormat(DateUtils.getToday(year, month, day).getTime(), format);
+        String dateEnd = TimeFormat.dateFormat(DateUtils.getNextDay(year, month, day).getTime(), format);
+        String dateTag = "date:" + dateStart + ".." + dateEnd;
+        List<String> tagList = new ArrayList<>();
+        tagList.add(dateTag);
+        tagList.add("order:quality");
+        return getPostUrl(page, tagList);
+    }
+
+    @Override
+    public String getPopularWeeklyUrl(int year, int month, int day, int page) {
+        String format = "yyyy-MM-dd";
+        String dateStart = TimeFormat.dateFormat(DateUtils.getMondayOfWeek(year, month, day).getTime(), format);
+        String dateEnd = TimeFormat.dateFormat(DateUtils.getNextDay(DateUtils.getSundayOfWeek(year, month, day)).getTime(), format);
+        String dateTag = "date:" + dateStart + ".." + dateEnd;
+        List<String> tagList = new ArrayList<>();
+        tagList.add(dateTag);
+        tagList.add("order:quality");
+        return getPostUrl(page, tagList);
+    }
+
+    @Override
+    public String getPopularMonthlyUrl(int year, int month, int day, int page) {
+        String format = "yyyy-MM-dd";
+        String dateStart = TimeFormat.dateFormat(DateUtils.getFirstDayOfMonth(year, month, day).getTime(), format);
+        String dateEnd = TimeFormat.dateFormat(DateUtils.getNextDay(DateUtils.getLastDayOfMonth(year, month, day)).getTime(), format);
+        String dateTag = "date:" + dateStart + ".." + dateEnd;
+        List<String> tagList = new ArrayList<>();
+        tagList.add(dateTag);
+        tagList.add("order:quality");
+        return getPostUrl(page, tagList);
+    }
+
+    @Override
+    public String getPopularOverallUrl(int year, int month, int day, int page) {
+        return getPostUrl(page, Collections.singletonList("order:quality"));
     }
 
     @Override

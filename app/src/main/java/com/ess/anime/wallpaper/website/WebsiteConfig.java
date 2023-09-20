@@ -102,6 +102,18 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     // 通过tags搜索图片
     public abstract String getPostUrl(int page, List<String> tagList);
 
+    // 搜索日榜图片
+    public abstract String getPopularDailyUrl(int year, int month, int day, int page);
+
+    // 搜索周榜图片
+    public abstract String getPopularWeeklyUrl(int year, int month, int day, int page);
+
+    // 搜索月榜图片
+    public abstract String getPopularMonthlyUrl(int year, int month, int day, int page);
+
+    // 搜索总榜图片
+    public abstract String getPopularOverallUrl(int year, int month, int day, int page);
+
     // 通过id搜索图片详情
     public abstract String getPostDetailUrl(String id);
 

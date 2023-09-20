@@ -32,6 +32,7 @@ import com.yanzhenjie.permission.runtime.Permission;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +43,7 @@ import butterknife.OnClick;
 
 public class ImageDetailActivity extends BaseActivity {
 
-    public final String TAG = ImageDetailActivity.class.getName() + "_" + hashCode();
+    public final String TAG = ImageDetailActivity.class.getName() + UUID.randomUUID().toString();
 
     @BindView(R.id.tv_id)
     TextView mTvId;

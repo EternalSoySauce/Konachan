@@ -56,6 +56,7 @@
     <string name="save">保存</string>
     <string name="fab_home">回到首页</string>
     <string name="fab_random">随机看图</string>
+    <string name="fab_popular">热门排行</string>
     <string name="currently_loaded">当前加载页码:&#160;</string>
     <string name="goto_page">跳转至</string>
     <string name="load_failed">加载失败，点击重试</string>
@@ -86,6 +87,16 @@
     <string name="setting_clear_cache_desc">仅删除缩略图和网络数据缓存，不影响您收藏的标签与图片</string>
     <string name="setting_check_update">检查更新</string>
     <string name="setting_current_version">当前版本：%s</string>
+
+    <!-- Popular Activity -->
+    <string name="popular_title_daily">每日</string>
+    <string name="popular_title_weekly">每周</string>
+    <string name="popular_title_monthly">每月</string>
+    <string name="popular_title_overall">总榜</string>
+    <string name="popular_not_support_tips_daily">该网站暂不支持查询日榜</string>
+    <string name="popular_not_support_tips_weekly">该网站暂不支持查询周榜</string>
+    <string name="popular_not_support_tips_monthly">该网站暂不支持查询月榜</string>
+    <string name="popular_not_support_tips_overall">该网站暂不支持查询总榜</string>
 
     <!-- Image Detail -->
     <string name="image_detail_image">图片</string>

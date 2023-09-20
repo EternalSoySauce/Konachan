@@ -3,7 +3,6 @@ package com.ess.anime.wallpaper.website;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.global.Constants;
@@ -182,7 +181,6 @@ public class WebsiteManager {
                 if (website != null) {
                     for (String key : website.keySet()) {
                         headerMap.put(key, website.get(key).getAsString());
-                        Log.i("rrr", "getRequestHeaders,  key = " + key + ", value = " + website.get(key).getAsString());
                     }
                 }
             }

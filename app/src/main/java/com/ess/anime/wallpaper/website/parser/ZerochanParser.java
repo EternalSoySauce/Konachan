@@ -1,6 +1,7 @@
 package com.ess.anime.wallpaper.website.parser;
 
 import android.text.Html;
+import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.bean.CommentBean;
 import com.ess.anime.wallpaper.bean.ImageBean;
@@ -21,6 +22,8 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ZerochanParser extends HtmlParser {
 
@@ -30,6 +33,14 @@ public class ZerochanParser extends HtmlParser {
 
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
+        List<ThumbBean> thumbList = parseThumbListByGeneralJson(doc);
+        if (thumbList.isEmpty()) {
+            thumbList = parseThumbListByPopularDailyJson(doc);
+        }
+        return thumbList;
+    }
+
+    private List<ThumbBean> parseThumbListByGeneralJson(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
         try {
             String json = doc.text();
@@ -76,6 +87,36 @@ public class ZerochanParser extends HtmlParser {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return thumbList;
+    }
+
+    private List<ThumbBean> parseThumbListByPopularDailyJson(Document doc) {
+        List<ThumbBean> thumbList = new ArrayList<>();
+        try {
+            Elements elements = doc.getElementsByClass(" ");
+            for (Element element : elements) {
+                if (!TextUtils.equals("li", element.tag().getName())) {
+                    continue;
+                }
+                String id = element.getElementsByClass("fav").attr("data-id");
+                Element img = element.getElementsByTag("img").first();
+                String thumbUrl = img.attr("src");
+                int thumbWidth = Integer.parseInt(img.attr("width"));
+                int thumbHeight = Integer.parseInt(img.attr("height"));
+                String realSize = img.attr("title");
+                Pattern pattern = Pattern.compile("(\\d+)x(\\d+)");
+                Matcher matcher = pattern.matcher(realSize);
+                if (matcher.find()) {
+                    int realWidth = Integer.parseInt(matcher.group(1));
+                    int realHeight = Integer.parseInt(matcher.group(2));
+                    realSize = realWidth + " x " + realHeight;
+                }
+                String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
+                thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
             }
         } catch (Exception e) {
             e.printStackTrace();

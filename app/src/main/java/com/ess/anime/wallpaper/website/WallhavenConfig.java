@@ -82,6 +82,30 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
     }
 
     @Override
+    public String getPopularDailyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1d&page=" + page
+                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+    }
+
+    @Override
+    public String getPopularWeeklyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1w&page=" + page
+                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+    }
+
+    @Override
+    public String getPopularMonthlyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1M&page=" + page
+                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+    }
+
+    @Override
+    public String getPopularOverallUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "api/v1/search?&sorting=hot&page=" + page
+                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+    }
+
+    @Override
     public String getPostDetailUrl(String id) {
         return getBaseUrl() + "api/v1/w/" + id + "?apikey=" + WallhavenConfig.API_KEY;
     }

@@ -5,6 +5,7 @@ import com.ess.anime.wallpaper.website.parser.GeneralParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
@@ -61,6 +62,26 @@ public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
         }
 
         return getBaseUrl() + "post?page=" + page + "&tags=" + tags;
+    }
+
+    @Override
+    public String getPopularDailyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "post/popular_by_day?day=" + day + "&month=" + month + "&year=" + year;
+    }
+
+    @Override
+    public String getPopularWeeklyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "post/popular_by_week?day=" + day + "&month=" + month + "&year=" + year;
+    }
+
+    @Override
+    public String getPopularMonthlyUrl(int year, int month, int day, int page) {
+        return getBaseUrl() + "post/popular_by_month?month=" + month + "&year=" + year;
+    }
+
+    @Override
+    public String getPopularOverallUrl(int year, int month, int day, int page) {
+        return getPostUrl(page, Collections.singletonList("order:score"));
     }
 
     @Override

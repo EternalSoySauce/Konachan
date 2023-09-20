@@ -56,6 +56,7 @@
     <string name="save">保存</string>
     <string name="fab_home">回到首頁</string>
     <string name="fab_random">隨機看圖</string>
+    <string name="fab_popular">熱門排行</string>
     <string name="currently_loaded">當前加載頁碼:&#160;</string>
     <string name="goto_page">跳轉至</string>
     <string name="load_failed">加載失敗，點擊重試</string>
@@ -86,6 +87,16 @@
     <string name="setting_clear_cache_desc">僅刪除縮略圖和網絡數據緩存，不影響您收藏的標籤與圖片</string>
     <string name="setting_check_update">檢查更新</string>
     <string name="setting_current_version">當前版本：%s</string>
+
+    <!-- Popular Activity -->
+    <string name="popular_title_daily">每日</string>
+    <string name="popular_title_weekly">每週</string>
+    <string name="popular_title_monthly">每月</string>
+    <string name="popular_title_overall">總榜</string>
+    <string name="popular_not_support_tips_daily">該網站暫不支援查詢日榜</string>
+    <string name="popular_not_support_tips_weekly">該網站暫不支援查詢週榜</string>
+    <string name="popular_not_support_tips_monthly">該網站暫不支援查詢月榜</string>
+    <string name="popular_not_support_tips_overall">該網站暫不支援查詢總榜</string>
 
     <!-- Image Detail -->
     <string name="image_detail_image">圖片</string>

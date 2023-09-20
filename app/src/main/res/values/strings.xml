@@ -66,6 +66,7 @@
     <string name="save">Save</string>
     <string name="fab_home">Homepage</string>
     <string name="fab_random">Random</string>
+    <string name="fab_popular">Popular</string>
     <string name="currently_loaded">Currently Loaded Page:&#160;</string>
     <string name="goto_page">Go to</string>
     <string name="load_failed">Failed to load, click to try again</string>
@@ -96,6 +97,17 @@
     <string name="setting_clear_cache_desc">Only delete thumbnails and network data cache, without affecting your favorite tags and images</string>
     <string name="setting_check_update">Check update</string>
     <string name="setting_current_version">Current version: %s</string>
+
+    <!-- Popular Activity -->
+    <string name="popular_title_daily">Daily</string>
+    <string name="popular_title_weekly">Weekly</string>
+    <string name="popular_title_monthly">Monthly</string>
+    <string name="popular_title_overall">Overall</string>
+    <string name="popular_not_support_tips_daily">This website currently does not support \n daily rankings.</string>
+    <string name="popular_not_support_tips_weekly">This website currently does not support \n weekly rankings.</string>
+    <string name="popular_not_support_tips_monthly">This website currently does not support \n monthly rankings.</string>
+    <string name="popular_not_support_tips_overall">This website currently does not support \n overall rankings.</string>
+
 
     <!-- Image Detail -->
     <string name="image_detail_image">Image</string>

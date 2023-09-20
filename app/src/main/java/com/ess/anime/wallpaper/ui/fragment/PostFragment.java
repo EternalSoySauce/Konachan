@@ -26,6 +26,7 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
+import com.ess.anime.wallpaper.ui.activity.PopularActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
@@ -348,6 +349,13 @@ public class PostFragment extends BaseFragment implements
         } else {
             Toast.makeText(mActivity, R.string.cannot_search_random, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @OnClick(R.id.fab_popular)
+    void searchPopular() {
+        mFloatingMenu.close(true);
+        Intent intent = new Intent(mActivity, PopularActivity.class);
+        startActivity(intent);
     }
 
     private void changeFromPage(int page) {

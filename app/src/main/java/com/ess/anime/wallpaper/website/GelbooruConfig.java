@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
@@ -67,6 +68,26 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
         }
 
         return getBaseUrl() + "index.php?page=dapi&s=post&q=index&pid=" + (page - 1) + "&tags=" + tags + "&limit=42";
+    }
+
+    @Override
+    public String getPopularDailyUrl(int year, int month, int day, int page) {
+        return null;
+    }
+
+    @Override
+    public String getPopularWeeklyUrl(int year, int month, int day, int page) {
+        return null;
+    }
+
+    @Override
+    public String getPopularMonthlyUrl(int year, int month, int day, int page) {
+        return null;
+    }
+
+    @Override
+    public String getPopularOverallUrl(int year, int month, int day, int page) {
+        return getPostUrl(page, Collections.singletonList("sort:score"));
     }
 
     @Override
