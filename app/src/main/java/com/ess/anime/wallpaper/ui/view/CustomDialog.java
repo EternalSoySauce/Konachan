@@ -329,7 +329,9 @@ public class CustomDialog extends MaterialDialog.Builder {
                     if (which != baseIndex) {
                         WebsiteManager.getInstance().changeWebsite(baseList.get(which));
                     }
-                    listener.onPositive();
+                    if (listener != null) {
+                        listener.onPositive();
+                    }
                     return true;
                 })
                 .alwaysCallSingleChoiceCallback()

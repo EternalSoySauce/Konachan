@@ -28,6 +28,7 @@ import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
 import com.ess.anime.wallpaper.ui.activity.PopularActivity;
 import com.ess.anime.wallpaper.ui.activity.SearchActivity;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
@@ -45,6 +46,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jsoup.Jsoup;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -147,6 +149,19 @@ public class PostFragment extends BaseFragment implements
             scrollToTop();
             mFloatingMenu.close(true);
         });
+
+        // 长按图标弹出网站源选择弹窗
+        try {
+            Field mNavButtonViewField = mToolbar.getClass().getDeclaredField("mNavButtonView");
+            mNavButtonViewField.setAccessible(true);
+            View mNavButtonView = (View) mNavButtonViewField.get(mToolbar);
+            mNavButtonView.setOnLongClickListener(v -> {
+                CustomDialog.showChangeBaseUrlDialog(mActivity, null);
+                return true;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 切换图片显示方式（方格/瀑布流）
