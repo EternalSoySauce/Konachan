@@ -66,7 +66,7 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
             }
         }
 
-        return getBaseUrl() + tags + "?p=" + page + "&l=50&s=id&json";
+        return getBaseUrl() + tags + "?p=" + page + "&l=50&s=id&xml";
     }
 
     @Override
@@ -76,17 +76,17 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
 
     @Override
     public String getPopularWeeklyUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "?p=" + page + "&l=50&json&s=fav&t=1";
+        return getBaseUrl() + "?p=" + page + "&l=50&xml&s=fav&t=1";
     }
 
     @Override
     public String getPopularMonthlyUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "?p=" + page + "&l=50&json&s=fav&t=2";
+        return getBaseUrl() + "?p=" + page + "&l=50&xml&s=fav&t=2";
     }
 
     @Override
     public String getPopularOverallUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "?p=" + page + "&l=50&json&s=fav&t=0";
+        return getBaseUrl() + "?p=" + page + "&l=50&xml&s=fav&t=0";
     }
 
     @Override

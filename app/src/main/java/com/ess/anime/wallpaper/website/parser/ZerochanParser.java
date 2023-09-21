@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -33,13 +34,62 @@ public class ZerochanParser extends HtmlParser {
 
     @Override
     public List<ThumbBean> getThumbList(Document doc) {
-        List<ThumbBean> thumbList = parseThumbListByGeneralJson(doc);
+        List<ThumbBean> thumbList = parseThumbListByGeneralXml(doc);
         if (thumbList.isEmpty()) {
             thumbList = parseThumbListByPopularDailyJson(doc);
         }
         return thumbList;
     }
 
+    private List<ThumbBean> parseThumbListByGeneralXml(Document doc) {
+        List<ThumbBean> thumbList = new ArrayList<>();
+        try {
+            Elements items = doc.getElementsByTag("item");
+            for (Element item : items) {
+                try {
+                    String link = item.getElementsByTag("link").first().text();
+                    if (TextUtils.isEmpty(link)) {
+                        // Jsoup 解析后把 <link></link> 变成了 <link>，导致无法正确获取 Element，最新1.16.1版本仍未修复
+                        String[] lines = item.html().split("\n");
+                        for (String line : lines) {
+                            if (line.startsWith("<link>")) {
+                                link = line.replace("<link>", "").replace("</link>", "").trim();
+                                break;
+                            }
+                        }
+                    }
+                    String id = new URL(link).getPath().replaceAll("[^0-9]", "");
+                    Element content = item.getElementsByTag("media:content").first();
+                    int realWidth = Integer.parseInt(content.attr("width"));
+                    int realHeight = Integer.parseInt(content.attr("height"));
+                    String realSize = realWidth + " x " + realHeight;
+                    String thumbUrl = content.attr("url");
+                    String expression = content.attr("expression");
+                    if (TextUtils.isEmpty(thumbUrl) || !TextUtils.equals(expression, "sample")) {
+                        thumbUrl = item.getElementsByTag("media:thumbnail").attr("url");
+                    }
+                    int thumbWidth, thumbHeight;
+                    if (realWidth >= realHeight) {
+                        thumbWidth = 600;
+                        thumbHeight = (int) (realHeight / 1f / realWidth * thumbWidth);
+                    } else {
+                        thumbHeight = 600;
+                        thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
+                    }
+                    String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
+                    thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return thumbList;
+    }
+
+    // 存在tag有带双引号的，但没加转义字符，Json解析报错，弃用
+    // 例如：https://www.zerochan.net/4021426?p=1&l=50&s=id&json
     private List<ThumbBean> parseThumbListByGeneralJson(Document doc) {
         List<ThumbBean> thumbList = new ArrayList<>();
         try {
