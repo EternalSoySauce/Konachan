@@ -145,6 +145,11 @@ public class DanbooruConfig extends WebsiteConfig<DanbooruParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return false;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return null;
     }

@@ -131,6 +131,11 @@ public class LolibooruConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return false;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return null;
     }

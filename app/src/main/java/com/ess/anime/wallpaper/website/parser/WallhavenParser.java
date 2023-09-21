@@ -146,7 +146,7 @@ public class WallhavenParser extends HtmlParser {
             for (int i = 0; i < tagArray.size(); i++) {
                 try {
                     JsonObject tagItem = tagArray.get(i).getAsJsonObject();
-                    String tagName = tagItem.get("name").getAsString();
+                    String tagName = tagItem.get("name").getAsString().trim().replace(" ", "_");
                     int categoryId = tagItem.get("category_id").getAsInt();
                     tags.append(tagName).append(" ");
                     switch (categoryId) {

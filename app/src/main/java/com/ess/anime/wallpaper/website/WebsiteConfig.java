@@ -24,6 +24,7 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String BASE_URL_SANKAKU = "https://capi-v2.sankakucomplex.com/";  // https://chan.sankakucomplex.com/
     public final static String BASE_URL_ZEROCHAN = "https://www.zerochan.net/";
     public final static String BASE_URL_WALLHAVEN = "https://wallhaven.cc/";
+    public final static String BASE_URL_WALLHALLA = "https://wallhalla.com/";
 
     public final static String TAG_JSON_URL_KONACHAN_S = "https://konachan.net/tag/summary.json";
     public final static String TAG_JSON_URL_KONACHAN_E = "https://konachan.com/tag/summary.json";
@@ -33,7 +34,7 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
     public final static String[] BASE_URLS = {
             BASE_URL_KONACHAN_S, BASE_URL_KONACHAN_E, BASE_URL_YANDE, BASE_URL_DANBOORU,
             BASE_URL_SAFEBOORU, BASE_URL_GELBOORU, BASE_URL_LOLIBOORU, BASE_URL_SANKAKU,
-            BASE_URL_ZEROCHAN, BASE_URL_WALLHAVEN
+            BASE_URL_ZEROCHAN, BASE_URL_WALLHAVEN, BASE_URL_WALLHALLA
     };
 
     protected String mTagJson;
@@ -140,6 +141,9 @@ public abstract class WebsiteConfig<T extends HtmlParser> {
 
     // 是否支持高级搜索
     public abstract boolean isSupportAdvancedSearch();
+
+    // 是否支持网络解析搜索提示
+    public abstract boolean isSupportSearchAutoCompleteFromNetwork();
 
     // 动态请求搜索提示的网址
     public abstract String getSearchAutoCompleteUrl(String tag);

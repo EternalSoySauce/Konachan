@@ -26,6 +26,7 @@
         <item>@string/base_sankaku</item>
         <item>@string/base_zerochan</item>
         <item>@string/base_wallhaven</item>
+        <item>@string/base_wallhalla</item>
     </string-array>
 
     <string-array name="screen_orientation_list_item">

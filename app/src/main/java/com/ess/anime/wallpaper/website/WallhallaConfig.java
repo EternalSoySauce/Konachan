@@ -3,55 +3,50 @@ package com.ess.anime.wallpaper.website;
 import android.text.TextUtils;
 
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.website.parser.WallhavenParser;
-import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
+import com.ess.anime.wallpaper.website.parser.WallhallaParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
-
-    private static final String API_KEY = "JdpvgaGnr7rysgPdkuKUdpzSX0quGdRW";
+public class WallhallaConfig extends WebsiteConfig<WallhallaParser> {
 
     @Override
     public String getWebsiteName() {
-        return "Wallhaven";
+        return "Wallhalla";
     }
 
     @Override
     public int getWebsiteLogoRes() {
-        return R.drawable.ic_website_wallhaven;
+        return R.drawable.ic_website_wallhalla;
     }
 
     @Override
     public String getBaseUrl() {
-        return BASE_URL_WALLHAVEN;
+        return BASE_URL_WALLHALLA;
     }
 
     @Override
     public boolean hasTagJson() {
-        return true;
+        return false;
     }
 
     @Override
     public String getTagJsonUrl() {
-        // Wallhaven没有搜索提示，借用Konachan(r18)的
-        return TAG_JSON_URL_KONACHAN_E;
+        return null;
     }
 
     @Override
     public void saveTagJson(String key, String json) {
-        super.saveTagJson(key, json);
     }
 
     @Override
     public String getTagJson() {
-        return super.getTagJson();
+        return null;
     }
 
     @Override
     public List<String> parseSearchAutoCompleteListFromTagJson(String search) {
-        return GeneralAutoCompleteParser.getSearchAutoCompleteListFromDB(getTagJson(), search);
+        return null;
     }
 
     @Override
@@ -60,54 +55,56 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
             tagList = new ArrayList<>();
         }
 
-        boolean isRandom = false;
-        StringBuilder tags = new StringBuilder();
-        for (int i = 0; i < tagList.size(); i++) {
-            String tag = tagList.get(i);
-            if (TextUtils.equals(tag, "order:random")) {
-                isRandom = true;
-            } else {
-                tag = tag.replaceAll("_", "+");
-                tags.append(tag);
+        if (tagList.isEmpty()) {
+            return getBaseUrl() + "new?page=" + page;
+        } else {
+            boolean isRandom = false;
+            StringBuilder tags = new StringBuilder();
+            for (int i = 0; i < tagList.size(); i++) {
+                String tag = tagList.get(i);
+                if (TextUtils.equals(tag, "order:random")) {
+                    isRandom = true;
+                    break;
+                } else {
+                    tag = tag.replaceAll("_", " ");
+                    tags.append("\"").append(tag).append("\"");
+                }
+                if (i < tagList.size() - 1) {
+                    tags.append("+");
+                }
             }
-            if (i < tagList.size() - 1) {
-                tags.append(",");
+
+            if (isRandom) {
+                return getBaseUrl() + "random";
+            } else {
+                return getBaseUrl() + "search?q=" + tags + "&page=" + page;
             }
         }
-
-        String sorting = isRandom ? "random" : "date_added";
-
-        return getBaseUrl() + "api/v1/search?q=" + tags + "&sorting=" + sorting + "&page=" + page
-                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
     }
 
     @Override
     public String getPopularDailyUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1d&page=" + page
-                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+        return null;
     }
 
     @Override
     public String getPopularWeeklyUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1w&page=" + page
-                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+        return null;
     }
 
     @Override
     public String getPopularMonthlyUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "api/v1/search?&sorting=toplist&topRange=1M&page=" + page
-                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+        return null;
     }
 
     @Override
     public String getPopularOverallUrl(int year, int month, int day, int page) {
-        return getBaseUrl() + "api/v1/search?&sorting=hot&page=" + page
-                + "&categories=010&purity=111&ai_art_filter=0&apikey=" + API_KEY;
+        return getBaseUrl() + "toplist?page=" + page;
     }
 
     @Override
     public String getPostDetailUrl(String id) {
-        return getBaseUrl() + "api/v1/w/" + id + "?apikey=" + WallhavenConfig.API_KEY;
+        return getBaseUrl() + "wallpaper/" + id;
     }
 
     @Override
@@ -137,7 +134,7 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
 
     @Override
     public String getSavedImageHead() {
-        return "Wallhaven-";
+        return "Wallhalla-";
     }
 
     @Override
@@ -147,7 +144,7 @@ public class WallhavenConfig extends WebsiteConfig<WallhavenParser> {
 
     @Override
     public boolean isSupportAdvancedSearch() {
-        return true;
+        return false;
     }
 
     @Override

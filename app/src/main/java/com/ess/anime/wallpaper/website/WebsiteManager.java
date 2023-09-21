@@ -95,6 +95,9 @@ public class WebsiteManager {
                 case WebsiteConfig.BASE_URL_WALLHAVEN:
                     websiteConfig = new WallhavenConfig();
                     break;
+                case WebsiteConfig.BASE_URL_WALLHALLA:
+                    websiteConfig = new WallhallaConfig();
+                    break;
             }
 
             if (mWebsiteConfig != websiteConfig) {

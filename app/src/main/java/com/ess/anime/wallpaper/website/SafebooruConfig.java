@@ -131,6 +131,11 @@ public class SafebooruConfig extends WebsiteConfig<SafebooruParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return true;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return getBaseUrl() + "autocomplete.php?q=" + tag;
     }

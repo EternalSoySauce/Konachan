@@ -135,6 +135,11 @@ public class ZerochanConfig extends WebsiteConfig<ZerochanParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return true;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return getBaseUrl() + "suggest?q=" + tag;
     }

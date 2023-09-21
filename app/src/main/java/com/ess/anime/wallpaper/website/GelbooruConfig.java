@@ -136,6 +136,11 @@ public class GelbooruConfig extends WebsiteConfig<GelbooruParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return true;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return getBaseUrl() + "index.php?page=autocomplete2&term=" + tag;
     }

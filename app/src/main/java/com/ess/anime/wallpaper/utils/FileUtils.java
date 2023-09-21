@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 整合了一些常用的IO流与File类的功能操作 <br/><br/>
@@ -490,8 +492,13 @@ public class FileUtils {
      * @return 文件后缀
      */
     public static String getFileExtension(String path) {
-        String extension = path.substring(path.lastIndexOf(".") + 1);
-        return extension.replaceAll("[^0-9a-zA-Z].*", "");
+        Pattern pattern = Pattern.compile("\\.(\\w+)(\\?|$)");
+        Matcher matcher = pattern.matcher(path);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -501,7 +508,12 @@ public class FileUtils {
      * @return 文件后缀
      */
     public static String getFileExtensionWithDot(String path) {
-        return "." + getFileExtension(path);
+        String extension = getFileExtension(path);
+        if (TextUtils.isEmpty(extension)) {
+            return "";
+        } else {
+            return "." + extension;
+        }
     }
 
     /**

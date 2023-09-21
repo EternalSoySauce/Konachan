@@ -1,8 +1,6 @@
 package com.ess.anime.wallpaper.website;
 
-import com.ess.anime.wallpaper.MyApp;
 import com.ess.anime.wallpaper.R;
-import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.website.parser.GeneralParser;
 import com.ess.anime.wallpaper.website.search.GeneralAutoCompleteParser;
 
@@ -138,10 +136,13 @@ public class KonachanSConfig extends WebsiteConfig<GeneralParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return false;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
-        String dirPath = MyApp.getInstance().getFilesDir().getPath();
-        String fileName = FileUtils.encodeMD5String(TAG_JSON_URL_KONACHAN_S);
-        return dirPath + "/" + fileName;
+        return null;
     }
 
     @Override

@@ -174,7 +174,7 @@ public class ImageDetailActivity extends BaseActivity {
             desc = getString(R.string.dialog_download_sample,
                     postBean.sampleWidth, postBean.sampleHeight,
                     FileUtils.computeFileSize(postBean.sampleFileSize),
-                    FileUtils.getFileExtension(postBean.sampleUrl).toUpperCase());
+                    getFileExtension(postBean.sampleUrl).toUpperCase());
             file = makeFileToSave(postBean.id, "-Sample", postBean.sampleUrl);
             exists = file.exists();
             if (exists) {
@@ -189,7 +189,7 @@ public class ImageDetailActivity extends BaseActivity {
         desc = getString(R.string.dialog_download_large,
                 postBean.jpegWidth, postBean.jpegHeight,
                 FileUtils.computeFileSize(postBean.fileSize),
-                FileUtils.getFileExtension(postBean.fileUrl).toUpperCase());
+                getFileExtension(postBean.fileUrl).toUpperCase());
         file = makeFileToSave(postBean.id, "-Large", postBean.fileUrl);
         exists = file.exists();
         if (exists) {
@@ -204,7 +204,7 @@ public class ImageDetailActivity extends BaseActivity {
             desc = getString(R.string.dialog_download_origin,
                     postBean.jpegWidth, postBean.jpegHeight,
                     FileUtils.computeFileSize(postBean.jpegFileSize),
-                    FileUtils.getFileExtension(postBean.jpegUrl).toUpperCase());
+                    getFileExtension(postBean.jpegUrl).toUpperCase());
             file = makeFileToSave(postBean.id, "-Origin", postBean.jpegUrl);
             exists = file.exists();
             if (exists) {
@@ -252,7 +252,7 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     private File makeFileToSave(String postId, String fileType, String url) {
-        String extension = FileUtils.getFileExtensionWithDot(url);
+        String extension = "." + getFileExtension(url);
 //        url = url.substring(0, url.lastIndexOf(extension) + extension.length()).replaceAll(".com|.net", "");
 //        String bitmapName = getImageHead() + FileUtils.encodeMD5String(url) + extension;
         // 图片命名方式改为"网站名-图片id-图片尺寸"样式，eg. Konachan-123456-Sample.jpg
@@ -260,6 +260,14 @@ public class ImageDetailActivity extends BaseActivity {
         String imgHead = WebsiteManager.getInstance().getWebsiteConfig().getSavedImageHead();
         String bitmapName = imgHead + postId + fileType + extension;
         return new File(Constants.IMAGE_DIR, bitmapName);
+    }
+
+    private String getFileExtension(String url) {
+        String extension = FileUtils.getFileExtension(url);
+        if (TextUtils.isEmpty(extension)) {
+            extension = "jpg";
+        }
+        return extension;
     }
 
     // 下载图片点击事件

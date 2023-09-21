@@ -257,7 +257,7 @@ public class ZerochanParser extends HtmlParser {
                 for (Element li : ul.getElementsByTag("li")) {
                     Element img = li.getElementsByTag("s").first();
                     String type = img != null ? img.className() : "";
-                    String tag = li.text().trim();
+                    String tag = li.text().trim().replace(" ", "_");
                     switch (type) {
                         case "medium series":
                         case "medium game":

@@ -156,6 +156,11 @@ public class SankakuConfig extends WebsiteConfig<SankakuParser> {
     }
 
     @Override
+    public boolean isSupportSearchAutoCompleteFromNetwork() {
+        return true;
+    }
+
+    @Override
     public String getSearchAutoCompleteUrl(String tag) {
         return getBaseUrl() + "tags/autosuggest/v2?tag=" + tag;
     }

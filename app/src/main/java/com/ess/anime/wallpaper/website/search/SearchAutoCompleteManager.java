@@ -34,7 +34,7 @@ public class SearchAutoCompleteManager {
         WebsiteConfig websiteConfig = WebsiteManager.getInstance().getWebsiteConfig();
         if (websiteConfig.hasTagJson()) {
             startLocalTask(websiteConfig, search, callback);
-        } else {
+        } else if (websiteConfig.isSupportSearchAutoCompleteFromNetwork()) {
             startNetworkTask(websiteConfig, search, callback);
         }
     }

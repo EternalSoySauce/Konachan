@@ -23,9 +23,9 @@ import com.ess.anime.wallpaper.glide.glide_url.ProgressInterceptor;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.http.VideoCache;
-import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.sprylab.android.widget.TextureVideoView;
 
@@ -95,6 +95,8 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
             showImage();
         } else if (FileUtils.isVideoType(path)) {
             showVideo();
+        } else if (TextUtils.isEmpty(FileUtils.getFileExtension(path))) {
+            showImage();
         }
         setBackgroundColor(isWebPath() ? Color.TRANSPARENT : Color.BLACK);
     }
