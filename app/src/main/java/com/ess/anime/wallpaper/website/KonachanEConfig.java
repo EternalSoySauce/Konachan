@@ -91,7 +91,7 @@ public class KonachanEConfig extends WebsiteConfig<GeneralParser> {
 
     @Override
     public String getPostDetailUrl(String id) {
-        return getBaseUrl() + "/post/show/" + id;
+        return getBaseUrl() + "post/show/" + id;
     }
 
     @Override
