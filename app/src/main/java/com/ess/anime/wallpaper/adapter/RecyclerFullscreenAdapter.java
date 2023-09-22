@@ -1,7 +1,6 @@
 package com.ess.anime.wallpaper.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.graphics.Color;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -13,6 +12,9 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class RecyclerFullscreenAdapter extends BaseQuickAdapter<CollectionBean, BaseViewHolder> {
 
     public RecyclerFullscreenAdapter(@Nullable List<CollectionBean> data) {
@@ -23,6 +25,7 @@ public class RecyclerFullscreenAdapter extends BaseQuickAdapter<CollectionBean, 
     protected void convert(@NonNull BaseViewHolder holder, CollectionBean collectionBean) {
         MultipleMediaLayout mediaLayout = holder.getView(R.id.layout_multiple_media);
         mediaLayout.setMediaPath(collectionBean.url, false);
+        mediaLayout.setBackgroundColor(Color.BLACK);
 
         if (mContext instanceof FullscreenActivity) {
             FullscreenActivity activity = (FullscreenActivity) mContext;

@@ -2,7 +2,6 @@ package com.ess.anime.wallpaper.ui.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
@@ -98,7 +97,6 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
         } else if (TextUtils.isEmpty(FileUtils.getFileExtension(path))) {
             showImage();
         }
-        setBackgroundColor(isWebPath() ? Color.TRANSPARENT : Color.BLACK);
     }
 
     private boolean isWebPath() {

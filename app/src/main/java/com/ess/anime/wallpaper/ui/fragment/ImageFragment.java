@@ -1,7 +1,7 @@
 package com.ess.anime.wallpaper.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.HapticFeedbackConstants;
@@ -11,13 +11,19 @@ import com.ess.anime.wallpaper.R;
 import com.ess.anime.wallpaper.bean.ImageBean;
 import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
+import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.model.helper.ImageDataHelper;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Iterator;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -106,16 +112,32 @@ public class ImageFragment extends BaseFragment {
             downloadImage();
             return true;
         });
+
+        mMediaLayout.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private void loadMedia() {
-        mMediaLayout.setMediaPath(mImageBean.posts[0].getMinSizeImageUrl());
+        if (SystemUtils.isActivityActive(mActivity)) {
+            List<DownloadBean> chosenList = ImageDataHelper.makeDownloadChosenList(mActivity, mThumbBean, mImageBean);
+            Iterator<DownloadBean> iterator = chosenList.iterator();
+            while (iterator.hasNext()) {
+                DownloadBean downloadBean = iterator.next();
+                if (!downloadBean.fileExists) {
+                    iterator.remove();
+                }
+            }
+            if (chosenList.isEmpty()) {
+                mMediaLayout.setMediaPath(mImageBean.posts[0].getMinSizeImageUrl());
+            } else {
+                DownloadBean downloadBean = chosenList.get(chosenList.size() - 1);
+                mMediaLayout.setMediaPath(downloadBean.savePath);
+            }
+        }
     }
 
     private void downloadImage() {
-        Activity activity = getActivity();
-        if (activity instanceof ImageDetailActivity) {
-            ((ImageDetailActivity) activity).showChooseToDownloadDialog();
+        if (SystemUtils.isActivityActive(mActivity)) {
+            mActivity.showChooseToDownloadDialog();
         }
     }
 
