@@ -77,7 +77,9 @@ public class ZerochanParser extends HtmlParser {
                         thumbWidth = (int) (realWidth / 1f / realHeight * thumbHeight);
                     }
                     String linkToShow = mWebsiteConfig.getPostDetailUrl(id);
-                    thumbList.add(new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow));
+                    ThumbBean thumbBean = new ThumbBean(id, thumbWidth, thumbHeight, thumbUrl, realSize, linkToShow);
+                    thumbBean.needPreloadImageDetail = false; // Zerochan 服务器负载太拉，频繁访问大概率503，故不进行图片详情预加载
+                    thumbList.add(thumbBean);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
