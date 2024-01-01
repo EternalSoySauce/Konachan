@@ -291,7 +291,8 @@ public class PoolPostFragment extends BaseFragment implements BaseQuickAdapter.R
         thumbBean.checkToReplacePostData();
         String url = thumbBean.imageBean.posts[0].getMinSizeImageUrl();
         if (FileUtils.isImageType(url) && SystemUtils.isActivityActive(getActivity())) {
-            MyGlideModule.preloadImage(getActivity(), url);
+            Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
+            MyGlideModule.preloadImage(getActivity(), url, headerMap);
         }
     }
 

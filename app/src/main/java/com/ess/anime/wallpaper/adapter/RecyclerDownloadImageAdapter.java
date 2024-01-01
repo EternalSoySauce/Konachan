@@ -18,11 +18,13 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.utils.FileUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadTask;
 
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,8 +56,9 @@ public class RecyclerDownloadImageAdapter extends BaseQuickAdapter<DownloadBean,
 
     private void updateItemState(@NonNull BaseViewHolder holder, DownloadBean downloadBean) {
         // 预览图
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         GlideApp.with(mContext)
-                .load(MyGlideModule.makeGlideUrl(downloadBean.thumbUrl))
+                .load(MyGlideModule.makeGlideUrl(downloadBean.thumbUrl, headerMap))
                 .placeholder(R.drawable.ic_placeholder_download_thumb)
                 .priority(Priority.IMMEDIATE)
                 .into((ImageView) holder.getView(R.id.iv_thumb));

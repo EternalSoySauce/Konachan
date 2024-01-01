@@ -14,6 +14,9 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.CollectionActivity;
 import com.ess.anime.wallpaper.utils.UIUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
+
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 
@@ -56,9 +59,10 @@ public class DownloadImageProgressListener extends BaseDownloadProgressListener<
     private void loadThumbnail() {
         mNeedToReloadThumbnail = false;
         int size = UIUtils.dp2px(mContext, 64);
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         GlideApp.with(mContext)
                 .asBitmap()
-                .load(MyGlideModule.makeGlideUrl(mDownloadBean.thumbUrl))
+                .load(MyGlideModule.makeGlideUrl(mDownloadBean.thumbUrl, headerMap))
                 .listener(this)
                 .override(size)
                 .centerCrop()

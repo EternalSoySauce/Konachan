@@ -12,8 +12,10 @@ import com.ess.anime.wallpaper.bean.PoolListBean;
 import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.utils.SystemUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import java.util.List;
+import java.util.Map;
 
 public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseViewHolder> {
 
@@ -24,9 +26,10 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
     @Override
     protected void convert(BaseViewHolder holder, PoolListBean poolListBean) {
         //缩略图
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         Object imgUrl = TextUtils.isEmpty(poolListBean.thumbUrl)
                 ? poolListBean
-                : MyGlideModule.makeGlideUrl(poolListBean.thumbUrl);
+                : MyGlideModule.makeGlideUrl(poolListBean.thumbUrl, headerMap);
         GlideApp.with(mContext)
                 .load(imgUrl)
                 .placeholder(R.drawable.ic_placeholder_pool)
@@ -78,9 +81,10 @@ public class RecyclerPoolAdapter extends BaseQuickAdapter<PoolListBean, BaseView
     }
 
     private void preloadThumbnail(List<PoolListBean> poolList) {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         for (PoolListBean poolListBean : poolList) {
             if (SystemUtils.isActivityActive((Activity) mContext)) {
-                MyGlideModule.preloadImage(mContext, poolListBean.thumbUrl);
+                MyGlideModule.preloadImage(mContext, poolListBean.thumbUrl, headerMap);
             }
         }
     }

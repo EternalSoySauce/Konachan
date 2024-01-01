@@ -21,8 +21,10 @@ import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.model.holder.ImageDataHolder;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.utils.SystemUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,9 +60,10 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
         ivThumb.setLayoutParams(layoutParams);
 
         //缩略图
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         ivThumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
         GlideApp.with(mContext)
-                .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl))
+                .load(MyGlideModule.makeGlideUrl(thumbBean.thumbUrl, headerMap))
                 .placeholder(R.drawable.ic_placeholder_post)
                 .priority(Priority.HIGH)
                 .override(thumbBean.thumbWidth, thumbBean.thumbHeight)
@@ -146,13 +149,14 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     private void preloadSampleImage(List<ThumbBean> thumbList) {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         for (ThumbBean thumbBean : thumbList) {
             if (SystemUtils.isActivityActive((Activity) mContext)) {
                 // 已有图片详情的，预加载预览图
                 if (thumbBean.imageBean != null) {
                     String imageUrl = thumbBean.imageBean.posts[0].getMinSizeImageUrl();
                     if (!TextUtils.isEmpty(imageUrl)) {
-                        MyGlideModule.preloadImage(mContext, imageUrl);
+                        MyGlideModule.preloadImage(mContext, imageUrl, headerMap);
                     }
                 }
 
@@ -161,7 +165,7 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
                     if (thumbBean.tempPost != null) {
                         String imageUrl = thumbBean.tempPost.getMinSizeImageUrl();
                         if (!TextUtils.isEmpty(imageUrl)) {
-                            MyGlideModule.preloadImage(mContext, imageUrl);
+                            MyGlideModule.preloadImage(mContext, imageUrl, headerMap);
                         }
                     }
                 }
@@ -170,9 +174,10 @@ public class RecyclerPostAdapter extends BaseQuickAdapter<ThumbBean, BaseViewHol
     }
 
     private void preloadThumbnail(List<ThumbBean> thumbList) {
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         for (ThumbBean thumbBean : thumbList) {
             if (SystemUtils.isActivityActive((Activity) mContext)) {
-                MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl);
+                MyGlideModule.preloadImage(mContext, thumbBean.thumbUrl, headerMap);
             }
         }
     }

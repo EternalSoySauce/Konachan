@@ -14,6 +14,9 @@ import com.ess.anime.wallpaper.glide.GlideApp;
 import com.ess.anime.wallpaper.glide.MyGlideModule;
 import com.ess.anime.wallpaper.ui.activity.web.HyperlinkActivity;
 import com.ess.anime.wallpaper.utils.WebLinkMethod;
+import com.ess.anime.wallpaper.website.WebsiteManager;
+
+import java.util.Map;
 
 public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseViewHolder> {
 
@@ -24,8 +27,9 @@ public class RecyclerCommentAdapter extends BaseQuickAdapter<CommentBean, BaseVi
     @Override
     protected void convert(BaseViewHolder holder, CommentBean commentBean) {
         //头像
+        Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
         GlideApp.with(mContext)
-                .load(MyGlideModule.makeGlideUrl(commentBean.avatar))
+                .load(MyGlideModule.makeGlideUrl(commentBean.avatar, headerMap))
                 .placeholder(R.drawable.ic_placeholder_comment)
                 .circleCrop()
                 .priority(Priority.NORMAL)

@@ -25,6 +25,7 @@ import com.ess.anime.wallpaper.http.VideoCache;
 import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.StringUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
+import com.ess.anime.wallpaper.website.WebsiteManager;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.sprylab.android.widget.TextureVideoView;
 
@@ -124,7 +125,7 @@ public class MultipleMediaLayout extends FrameLayout implements RequestListener<
             hideLoadingView();
         }
 
-        Object url = isWebPath() ? MyGlideModule.makeGlideUrl(mMediaPath) : mMediaPath;
+        Object url = isWebPath() ? MyGlideModule.makeGlideUrl(mMediaPath, WebsiteManager.getInstance().getRequestHeaders()) : mMediaPath;
         Activity activity = (Activity) getContext();
         if (SystemUtils.isActivityActive(activity)) {
             GlideApp.with(getContext())

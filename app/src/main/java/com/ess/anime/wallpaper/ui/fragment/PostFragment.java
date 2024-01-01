@@ -569,6 +569,7 @@ public class PostFragment extends BaseFragment implements
             String json = (String) msgBean.obj;
             ImageBean imageBean = ImageBean.getImageDetailFromJson(json);
             List<ThumbBean> thumbList = mPostAdapter.getData();
+            Map<String, String> headerMap = WebsiteManager.getInstance().getRequestHeaders();
             for (ThumbBean thumbBean : thumbList) {
                 if (thumbBean.checkImageBelongs(imageBean)) {
                     if (thumbBean.imageBean == null) {
@@ -576,7 +577,7 @@ public class PostFragment extends BaseFragment implements
                         thumbBean.checkToReplacePostData();
                         String url = imageBean.posts[0].getMinSizeImageUrl();
                         if (FileUtils.isImageType(url) && SystemUtils.isActivityActive(mActivity)) {
-                            MyGlideModule.preloadImage(mActivity, url);
+                            MyGlideModule.preloadImage(mActivity, url, headerMap);
                         }
                     }
                     break;

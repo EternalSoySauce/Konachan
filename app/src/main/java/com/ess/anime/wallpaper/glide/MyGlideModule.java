@@ -28,6 +28,10 @@ import com.ess.anime.wallpaper.utils.FileUtils;
 import com.ess.anime.wallpaper.utils.NetworkUtils;
 import com.ess.anime.wallpaper.utils.SystemUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import okhttp3.OkHttpClient;
@@ -49,27 +53,46 @@ public class MyGlideModule extends AppGlideModule {
 //        registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(okHttpClient));
     }
 
+    private static LazyHeaders.Builder makeDefaultHeaderBuilder(Map<String, String> customHeaderMap) {
+        if (customHeaderMap == null) {
+            customHeaderMap = new HashMap<>();
+        }
+        String userAgentKey = "User-Agent";
+        String userAgent = customHeaderMap.remove(userAgentKey);
+        LazyHeaders.Builder builder = new LazyHeaders.Builder();
+        if (TextUtils.isEmpty(userAgent)) {
+            builder.addHeader(userAgentKey, OkHttp.USER_AGENT);
+        } else {
+            builder.addHeader(userAgentKey, userAgent);
+        }
+        for (String key : customHeaderMap.keySet()) {
+            builder.addHeader(key, Objects.requireNonNull(customHeaderMap.get(key)));
+        }
+        return builder;
+    }
 
-    public static GlideUrl makeGlideUrl(String imgUrl) {
+    public static GlideUrl makeGlideUrl(String imgUrl, Map<String, String> headerMap) {
         if (TextUtils.isEmpty(imgUrl)) {
             imgUrl = "https://konachan.com/images/guest.png";
         }
-        LazyHeaders headers = new LazyHeaders.Builder()
-                .addHeader("User-Agent", OkHttp.USER_AGENT)
-                .build();
+        LazyHeaders.Builder builder = makeDefaultHeaderBuilder(headerMap);
+        LazyHeaders headers = builder.build();
         return new GlideUrl(imgUrl, headers);
     }
 
     // P站等下载高清大图需要给服务器发送一个“Referer”参数，用来告诉服务器你是从哪个网址进入图片链接的
     public static GlideUrl makeGlideUrlWithReferer(String imgUrl, String webUrl) {
-        LazyHeaders headers = new LazyHeaders.Builder()
-                .addHeader("User-Agent", OkHttp.USER_AGENT)
-                .addHeader("Referer", webUrl)
-                .build();
+        return makeGlideUrlWithReferer(imgUrl, webUrl, null);
+    }
+
+    public static GlideUrl makeGlideUrlWithReferer(String imgUrl, String webUrl, Map<String, String> headerMap) {
+        LazyHeaders.Builder builder = makeDefaultHeaderBuilder(headerMap);
+        builder.addHeader("Referer", webUrl);
+        LazyHeaders headers = builder.build();
         return new GlideUrl(imgUrl, headers);
     }
 
-    public static void preloadImage(Context context, String oriUrl) {
+    public static void preloadImage(Context context, String oriUrl, Map<String, String> headerMap) {
         if (cannotPreloadImage()) {
             return;
         }
@@ -77,14 +100,14 @@ public class MyGlideModule extends AppGlideModule {
             return;
         }
         GlideApp.with(context)
-                .load(MyGlideModule.makeGlideUrl(oriUrl))
+                .load(MyGlideModule.makeGlideUrl(oriUrl, headerMap))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         if (isFirstResource
                                 && (!(context instanceof Activity)
                                 || SystemUtils.isActivityActive((Activity) context))) {
-                            preloadImage(context, oriUrl);
+                            preloadImage(context, oriUrl, headerMap);
                         }
                         return false;
                     }
