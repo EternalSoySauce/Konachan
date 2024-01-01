@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.9.1】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/1iT56sp_otI1TPD9lnp1huw?pwd=3rkh)，提取码: 3rkh
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.9.1.apk)
+## 最新版本【v1.9.2】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/12boHS7mBQlOCbDo5HnD1xw?pwd=3s6s)，提取码: 3s6s
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.9.2.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -62,6 +62,9 @@
 * 其他
 
 ## 历史更新
+* 【v1.9.2】
+  * 修复 Danbooru 无法显示图片内容。
+
 * 【v1.9.1】
     * 集成 Wallhaven 图源（无需翻墙），仅展示该站动漫和AI图片。
     * 集成 Wallhalla 图源（无需翻墙），4K高清壁纸，新生图站目前图片素材有限。
