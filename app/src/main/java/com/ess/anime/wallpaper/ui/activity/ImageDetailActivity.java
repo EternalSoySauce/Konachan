@@ -238,6 +238,22 @@ public class ImageDetailActivity extends BaseActivity {
         }
     }
 
+    // 快速滑动查看上/下一张图片
+    public void flingToQuickSwitch(float velocityX, float velocityY) {
+        if (Math.abs(velocityX) >= 4000) {
+            double hypotenuse = Math.hypot(velocityX, velocityY);
+            double sinRadius = Math.acos(Math.abs(velocityX) / hypotenuse);
+            double sinAngle = Math.toDegrees(sinRadius);
+            if (sinAngle <= 20) {
+                if (velocityX < 0) {
+                    nextImage();
+                } else {
+                    previousImage();
+                }
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

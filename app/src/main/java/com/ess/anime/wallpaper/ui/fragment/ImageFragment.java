@@ -13,6 +13,7 @@ import com.ess.anime.wallpaper.bean.MsgBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.download.image.DownloadBean;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.listener.FlingEffector;
 import com.ess.anime.wallpaper.model.helper.ImageDataHelper;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.MultipleMediaLayout;
@@ -31,6 +32,8 @@ import butterknife.BindView;
 
 public class ImageFragment extends BaseFragment {
 
+    @BindView(R.id.view_touch)
+    View mTouchView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.layout_multiple_media)
@@ -92,14 +95,22 @@ public class ImageFragment extends BaseFragment {
     }
 
     private void initView() {
+        FlingEffector.addFlingEffect(mTouchView, (e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
+        });
+
         mSwipeRefresh.setEnabled(false);
         mSwipeRefresh.setOnRefreshListener(this::loadMedia);
 
         if (mImageBean != null) {
             loadMedia();
+            mTouchView.setVisibility(View.GONE);
         } else {
             mSwipeRefresh.setRefreshing(true);
             mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
+            mTouchView.setVisibility(View.VISIBLE);
         }
 
         mMediaLayout.setOnLongClickListener(v -> {
@@ -111,6 +122,18 @@ public class ImageFragment extends BaseFragment {
             v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             downloadImage();
             return true;
+        });
+        mMediaLayout.getPhotoView().setOnSingleFlingListener((e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
+            return false;
+        });
+
+        FlingEffector.addFlingEffect(mMediaLayout, (e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
         });
 
         mMediaLayout.setBackgroundColor(Color.TRANSPARENT);
@@ -172,6 +195,7 @@ public class ImageFragment extends BaseFragment {
         loadMedia();
         mSwipeRefresh.setRefreshing(false);
         mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
+        mTouchView.setVisibility(View.GONE);
         mActivity.setId(imageBean);
         mActivity.setImageBean(imageBean);
     }

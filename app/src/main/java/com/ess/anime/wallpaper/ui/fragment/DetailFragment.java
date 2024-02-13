@@ -20,6 +20,7 @@ import com.ess.anime.wallpaper.bean.TagBean;
 import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.database.GreenDaoUtils;
 import com.ess.anime.wallpaper.global.Constants;
+import com.ess.anime.wallpaper.listener.FlingEffector;
 import com.ess.anime.wallpaper.model.entity.DetailTagMoreItem;
 import com.ess.anime.wallpaper.model.helper.TagOperationHelper;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
@@ -47,6 +48,8 @@ import butterknife.BindView;
 
 public class DetailFragment extends BaseFragment {
 
+    @BindView(R.id.view_touch)
+    View mTouchView;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.layout_detail_container)
@@ -101,7 +104,22 @@ public class DetailFragment extends BaseFragment {
         if (mImageBean == null) {
             mSwipeRefresh.setRefreshing(true);
             mSwipeRefresh.getChildAt(0).setVisibility(View.GONE);
+            mTouchView.setVisibility(View.VISIBLE);
+        } else {
+            mTouchView.setVisibility(View.GONE);
         }
+
+        FlingEffector.addFlingEffect(mTouchView, (e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
+        });
+
+        FlingEffector.addFlingEffect(mLayoutDetailContainer, (e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
+        });
     }
 
     private void updateContentLayout() {
@@ -389,6 +407,7 @@ public class DetailFragment extends BaseFragment {
         showImageDetail(imageBean);
         mSwipeRefresh.setRefreshing(false);
         mSwipeRefresh.getChildAt(0).setVisibility(View.VISIBLE);
+        mTouchView.setVisibility(View.GONE);
     }
 
 }

@@ -15,6 +15,7 @@ import com.ess.anime.wallpaper.bean.ThumbBean;
 import com.ess.anime.wallpaper.global.Constants;
 import com.ess.anime.wallpaper.http.HandlerFuture;
 import com.ess.anime.wallpaper.http.OkHttp;
+import com.ess.anime.wallpaper.listener.FlingEffector;
 import com.ess.anime.wallpaper.ui.activity.ImageDetailActivity;
 import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
@@ -101,6 +102,12 @@ public class CommentFragment extends BaseFragment {
         mRvComment.setLayoutManager(mLayoutManager);
         mCommentAdapter = new RecyclerCommentAdapter();
         mRvComment.setAdapter(mCommentAdapter);
+
+        FlingEffector.addFlingEffect(mRvComment, (e1, e2, velocityX, velocityY) -> {
+            if (SystemUtils.isActivityActive(mActivity)) {
+                mActivity.flingToQuickSwitch(velocityX, velocityY);
+            }
+        });
     }
 
     private void updateRecyclerViewSpanCount() {

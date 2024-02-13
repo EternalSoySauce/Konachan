@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ess.anime.wallpaper.ui.view.MySwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipe_refresh_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/layout_multiple_media"/>
-</com.ess.anime.wallpaper.ui.view.MySwipeRefreshLayout>
+    <com.ess.anime.wallpaper.ui.view.MySwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/layout_multiple_media" />
+    </com.ess.anime.wallpaper.ui.view.MySwipeRefreshLayout>
+
+    <View
+        android:id="@+id/view_touch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true" />
+</FrameLayout>
