@@ -1,8 +1,15 @@
 package com.ess.anime.wallpaper.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +28,7 @@ import com.ess.anime.wallpaper.ui.fragment.CommentFragment;
 import com.ess.anime.wallpaper.ui.fragment.DetailFragment;
 import com.ess.anime.wallpaper.ui.fragment.ImageFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.utils.UIUtils;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
@@ -46,12 +54,17 @@ public class ImageDetailActivity extends BaseActivity {
     SmartTabLayout mSmartTab;
     @BindView(R.id.vp_image_detail)
     ViewPager mVpImageDetail;
+    @BindView(R.id.iv_previous)
+    ImageView mIvPrevious;
+    @BindView(R.id.iv_next)
+    ImageView mIvNext;
 
     private ThumbBean mThumbBean;
     private ImageBean mImageBean;
     private int mCurrentPage;
 
     private Handler mHandler = new Handler();
+    private SharedPreferences mPreferences;
 
     @Override
     protected int layoutRes() {
@@ -60,11 +73,18 @@ public class ImageDetailActivity extends BaseActivity {
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         initData(savedInstanceState);
         initViews();
         initToolBarLayout();
         initViewPager();
         initSlidingTabLayout();
+    }
+
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+        restoreSwitchButtonPosition();
     }
 
     @Override
@@ -97,10 +117,105 @@ public class ImageDetailActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initViews() {
-        OnTouchAlphaListener listener = new OnTouchAlphaListener(1f, 0.7f);
-        findViewById(R.id.iv_previous).setOnTouchListener(listener);
-        findViewById(R.id.iv_next).setOnTouchListener(listener);
+        OnTouchAlphaListener touchAlphaListener = new OnTouchAlphaListener(1f, 0.7f);
+        View.OnTouchListener touchMoveListener = new View.OnTouchListener() {
+            private int touchSlop;
+            private boolean isAlwaysInTapRegion;
+            private long downTime;
+            private int downX;
+            private int downY;
+            private int lastTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                touchAlphaListener.onTouch(v, event);
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        touchSlop = ViewConfiguration.get(ImageDetailActivity.this).getScaledTouchSlop();
+                        isAlwaysInTapRegion = true;
+                        downTime = System.currentTimeMillis();
+                        downX = (int) event.getRawX();
+                        downY = (int) event.getRawY();
+                        lastTouchY = downY;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int focusX = (int) event.getRawX();
+                        int focusY = (int) event.getRawY();
+                        if (isAlwaysInTapRegion) {
+                            int deltaX = focusX - downX;
+                            int deltaY = focusY - downY;
+                            int distance = (deltaX * deltaX) + (deltaY * deltaY);
+                            int slopSquare = touchSlop * touchSlop;
+                            if (distance > slopSquare) {
+                                isAlwaysInTapRegion = false;
+                            }
+                        }
+                        if (!isAlwaysInTapRegion) {
+                            int scrollY = focusY - lastTouchY;
+                            callOnMove(v, scrollY);
+                            lastTouchY = focusY;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (isAlwaysInTapRegion && System.currentTimeMillis() - downTime < ViewConfiguration.getLongPressTimeout()) {
+                            callOnClick(v);
+                        }
+                    case MotionEvent.ACTION_CANCEL:
+                        saveSwitchButtonPosition();
+                        break;
+                }
+                return true;
+            }
+
+            void callOnMove(View view, int dy) {
+                View parent = (View) view.getParent();
+                int finalTop = view.getTop() + dy;
+                if (finalTop < 0) {
+                    dy -= finalTop;
+                }
+                int finalBottom = view.getBottom() + dy;
+                if (finalBottom > parent.getHeight()) {
+                    dy -= finalBottom - parent.getHeight();
+                }
+                mIvPrevious.offsetTopAndBottom(dy);
+                mIvNext.offsetTopAndBottom(dy);
+            }
+
+            void callOnClick(View view) {
+                if (view == mIvPrevious) {
+                    previousImage();
+                } else if (view == mIvNext) {
+                    nextImage();
+                }
+            }
+        };
+        mIvPrevious.setOnTouchListener(touchMoveListener);
+        mIvNext.setOnTouchListener(touchMoveListener);
+    }
+
+    private void saveSwitchButtonPosition() {
+        String key = getSwitchButtonPositionSpKey();
+        mPreferences.edit().putInt(key, mIvPrevious.getTop()).apply();
+    }
+
+    private void restoreSwitchButtonPosition() {
+        String key = getSwitchButtonPositionSpKey();
+        if (mPreferences.contains(key)) {
+            int top = mPreferences.getInt(key, 0);
+            mIvPrevious.post(() -> {
+                int offset = top - mIvPrevious.getTop();
+                mIvPrevious.offsetTopAndBottom(offset);
+                mIvNext.offsetTopAndBottom(offset);
+            });
+        }
+    }
+
+    private String getSwitchButtonPositionSpKey() {
+        boolean isPortrait = UIUtils.isPortrait(ImageDetailActivity.this);
+        return Constants.IMAGE_DETAIL_SWITCH_BUTTON_TOP_POSITION + (isPortrait ? "_portrait" : "_landscape");
     }
 
     private void initToolBarLayout() {
@@ -205,8 +320,7 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     // 查看上一张图片点击事件
-    @OnClick(R.id.iv_previous)
-    void previousImage() {
+    private void previousImage() {
         ThumbBean thumbBean = ImageDataHolder.previousThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);
@@ -222,8 +336,7 @@ public class ImageDetailActivity extends BaseActivity {
     }
 
     // 查看下一张图片点击事件
-    @OnClick(R.id.iv_next)
-    void nextImage() {
+    private void nextImage() {
         ThumbBean thumbBean = ImageDataHolder.nextThumb();
         if (thumbBean != null) {
             Intent intent = new Intent(this, ImageDetailActivity.class);

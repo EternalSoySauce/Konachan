@@ -16,6 +16,7 @@ public class Constants {
     public final static String ALREADY_ADD_USER = "alreadyAddUser";
     public final static String VIDEO_MUTE = "videoSilent";
     public final static String IS_POST_IMAGE_SHOWN_RECTANGULAR = "isPostImageShownRectangular";
+    public final static String IMAGE_DETAIL_SWITCH_BUTTON_TOP_POSITION = "image_detail_switch_button_top_position";
     public final static String FAVORITE_TAG_SORT_BY = "favoriteTagSortBy";
     public final static String FAVORITE_TAG_SORT_ORDER = "favoriteTagSortOrder";
     public final static String SCREEN_ORIENTATION = "screenOrientation";
