@@ -21,6 +21,7 @@ import com.ess.anime.wallpaper.http.OkHttp;
 import com.ess.anime.wallpaper.listener.DoubleTapEffector;
 import com.ess.anime.wallpaper.model.helper.SoundHelper;
 import com.ess.anime.wallpaper.ui.activity.MainActivity;
+import com.ess.anime.wallpaper.ui.view.CustomDialog;
 import com.ess.anime.wallpaper.ui.view.CustomLoadMoreView;
 import com.ess.anime.wallpaper.ui.view.GeneralRecyclerView;
 import com.ess.anime.wallpaper.ui.view.GridDividerItemDecoration;
@@ -30,6 +31,7 @@ import com.zyyoona7.popup.EasyPopup;
 
 import org.jsoup.Jsoup;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -156,6 +158,19 @@ public class PoolFragment extends BaseFragment implements
                 scrollToTop();
             }
         });
+
+        // 长按图标弹出网站源选择弹窗
+        try {
+            Field mNavButtonViewField = mToolbar.getClass().getDeclaredField("mNavButtonView");
+            mNavButtonViewField.setAccessible(true);
+            View mNavButtonView = (View) mNavButtonViewField.get(mToolbar);
+            mNavButtonView.setOnLongClickListener(v -> {
+                CustomDialog.showChangeBaseUrlDialog(mActivity, null);
+                return true;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 弹出跳转页弹窗
