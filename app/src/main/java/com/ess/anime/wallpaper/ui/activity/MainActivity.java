@@ -22,6 +22,7 @@ import com.ess.anime.wallpaper.ui.fragment.DonateFragment;
 import com.ess.anime.wallpaper.ui.fragment.PoolFragment;
 import com.ess.anime.wallpaper.ui.fragment.PostFragment;
 import com.ess.anime.wallpaper.ui.view.CustomDialog;
+import com.ess.anime.wallpaper.utils.SystemUtils;
 import com.ess.anime.wallpaper.utils.UIUtils;
 import com.google.android.material.internal.NavigationMenuView;
 import com.google.android.material.navigation.NavigationView;
@@ -58,8 +59,6 @@ public class MainActivity extends BaseActivity {
     private int mCurrentNavId;
     private Fragment mCurrentFragment;
 
-    private boolean mIsForeground;
-
     @Override
     protected int layoutRes() {
         return R.layout.activity_main;
@@ -82,8 +81,6 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState == null) {
             changeContentMainFragment(mFrgPost);
         }
-
-        mIsForeground = true;
 
         if (!checkToSearchTag(getIntent())) {
             CustomDialog.checkToShowPromptUseMobileNetworkPreloadImage(this);
@@ -302,17 +299,8 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (isFinishing()) {
-            mIsForeground = false;
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        mIsForeground = false;
         SoundHelper.getInstance().release();
         FireBase.getInstance().cancelAll();
     }
@@ -320,7 +308,7 @@ public class MainActivity extends BaseActivity {
     // 检查到新版本后收到的通知, obj 为 ApkBean
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void showUpdateDialog(MsgBean msgBean) {
-        if (msgBean.msg.equals(Constants.CHECK_UPDATE) && mIsForeground) {
+        if (msgBean.msg.equals(Constants.CHECK_UPDATE) && SystemUtils.isActivityActive(this)) {
             EventBus.getDefault().removeAllStickyEvents();
             ApkBean apkBean = (ApkBean) msgBean.obj;
             CustomDialog.showUpdateDialog(this, apkBean);
