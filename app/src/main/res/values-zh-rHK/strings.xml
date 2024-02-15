@@ -126,6 +126,10 @@
     <string name="detail_pool_description">描述：</string>
     <string name="detail_pool_no_description">無</string>
     <string name="comment_no_comments">暫無評論</string>
+    <string name="guide_desc_tip_1">快速左右滑動可切換查看圖片</string>
+    <string name="guide_desc_tip_2">點擊按鈕可切換查看圖片</string>
+    <string name="guide_desc_tip_3">上下拖曳按鈕可改變位置</string>
+    <string name="guide_button_i_see">我知道了</string>
 
     <!-- Favorite Tag Activity -->
     <string name="sort">排序</string>

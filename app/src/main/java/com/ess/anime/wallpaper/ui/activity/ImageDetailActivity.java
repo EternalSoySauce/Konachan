@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -79,6 +81,7 @@ public class ImageDetailActivity extends BaseActivity {
         initToolBarLayout();
         initViewPager();
         initSlidingTabLayout();
+        showGestureGuideIfNeed();
     }
 
     @Override
@@ -382,5 +385,40 @@ public class ImageDetailActivity extends BaseActivity {
     @Override
     public void finish() {
         super.finish();
+    }
+
+    private void showGestureGuideIfNeed() {
+        boolean hasShownGuide = mPreferences.getBoolean(Constants.IMAGE_DETAIL_GESTURE_GUIDE_SHOWED, false);
+        if (hasShownGuide) {
+            findViewById(R.id.layout_gesture_guide).setVisibility(View.GONE);
+        } else {
+            ViewGroup layoutGestureGuide = findViewById(R.id.layout_gesture_guide);
+            Group group1 = findViewById(R.id.group_guide_tip_1);
+            Group group2 = findViewById(R.id.group_guide_tip_2);
+            Group group3 = findViewById(R.id.group_guide_tip_3);
+            Group groupButton = findViewById(R.id.group_guide_switch_button);
+            layoutGestureGuide.setVisibility(View.VISIBLE);
+            group1.setVisibility(View.VISIBLE);
+            group2.setVisibility(View.GONE);
+            group3.setVisibility(View.GONE);
+            groupButton.setVisibility(View.GONE);
+
+            findViewById(R.id.guide_tip_1_btn).setOnClickListener(v -> {
+                group1.setVisibility(View.GONE);
+                group2.setVisibility(View.VISIBLE);
+                group3.setVisibility(View.GONE);
+                groupButton.setVisibility(View.VISIBLE);
+            });
+            findViewById(R.id.guide_tip_2_btn).setOnClickListener(v -> {
+                group1.setVisibility(View.GONE);
+                group2.setVisibility(View.GONE);
+                group3.setVisibility(View.VISIBLE);
+                groupButton.setVisibility(View.VISIBLE);
+            });
+            findViewById(R.id.guide_tip_3_btn).setOnClickListener(v -> {
+                layoutGestureGuide.setVisibility(View.GONE);
+                mPreferences.edit().putBoolean(Constants.IMAGE_DETAIL_GESTURE_GUIDE_SHOWED, true).apply();
+            });
+        }
     }
 }

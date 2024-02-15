@@ -141,6 +141,10 @@
     <string name="detail_pool_description">Description:</string>
     <string name="detail_pool_no_description">None</string>
     <string name="comment_no_comments">No comment</string>
+    <string name="guide_desc_tip_1">Fling left or right to switch between viewing images</string>
+    <string name="guide_desc_tip_2">Click the buttons to switch to view images</string>
+    <string name="guide_desc_tip_3">Drag the buttons up or down to change the position</string>
+    <string name="guide_button_i_see">I See</string>
 
     <!-- Pool Detail -->
     <string name="pool_updated_time" translatable="false">Updated %s</string>

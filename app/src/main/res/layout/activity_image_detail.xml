@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
@@ -105,5 +106,208 @@
             android:alpha="0.7"
             android:src="@drawable/ic_image_next" />
     </FrameLayout>
+
+    <!-- 手势功能引导 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_gesture_guide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:background="#BB000000"
+        android:clickable="true"
+        android:translationZ="100dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <!-- 提示左右滑动切换 -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_guide_tip_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="guide_tip_1_image, guide_tip_1_desc, guide_tip_1_btn"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/guide_tip_1_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_guide_tip_fling_left_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45" />
+
+        <TextView
+            android:id="@+id/guide_tip_1_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:shadowColor="#888"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="3"
+            android:text="@string/guide_desc_tip_1"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/guide_tip_1_image"
+            app:layout_constraintStart_toStartOf="@id/guide_tip_1_image"
+            app:layout_constraintTop_toBottomOf="@id/guide_tip_1_image" />
+
+        <Button
+            android:id="@+id/guide_tip_1_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/guide_button_i_see"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/guide_tip_1_desc"
+            app:layout_constraintStart_toStartOf="@id/guide_tip_1_desc"
+            app:layout_constraintTop_toBottomOf="@+id/guide_tip_1_desc" />
+
+        <!-- 提示点击按钮切换 -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_guide_tip_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="guide_tip_2_image_left, guide_tip_2_image_right, guide_tip_2_desc, guide_tip_2_btn"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/guide_tip_2_image_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_guide_tip_click_button_left"
+            app:layout_constraintBottom_toBottomOf="@+id/guide_button_previous"
+            app:layout_constraintStart_toEndOf="@+id/guide_button_previous"
+            app:layout_constraintTop_toTopOf="@+id/guide_button_previous" />
+
+
+        <ImageView
+            android:id="@+id/guide_tip_2_image_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_guide_tip_click_button_right"
+            app:layout_constraintBottom_toBottomOf="@+id/guide_button_next"
+            app:layout_constraintEnd_toStartOf="@+id/guide_button_next"
+            app:layout_constraintTop_toTopOf="@+id/guide_button_next" />
+
+        <TextView
+            android:id="@+id/guide_tip_2_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:shadowColor="#888"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="3"
+            android:text="@string/guide_desc_tip_2"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/guide_tip_2_btn"
+            app:layout_constraintEnd_toEndOf="@+id/guide_tip_2_btn"
+            app:layout_constraintStart_toStartOf="@+id/guide_tip_2_btn" />
+
+        <Button
+            android:id="@+id/guide_tip_2_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/guide_button_i_see"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/guide_button_previous"
+            app:layout_constraintEnd_toStartOf="@+id/guide_button_next"
+            app:layout_constraintStart_toEndOf="@+id/guide_button_previous" />
+
+        <!-- 提示按钮可以拖动 -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_guide_tip_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="guide_tip_3_image_left, guide_tip_3_image_right, guide_tip_3_desc, guide_tip_3_btn"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/guide_tip_3_image_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_guide_tip_drag_button_left"
+            app:layout_constraintBottom_toBottomOf="@+id/guide_button_previous"
+            app:layout_constraintStart_toEndOf="@+id/guide_button_previous"
+            app:layout_constraintTop_toTopOf="@+id/guide_button_previous" />
+
+
+        <ImageView
+            android:id="@+id/guide_tip_3_image_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_guide_tip_drag_button_right"
+            app:layout_constraintBottom_toBottomOf="@+id/guide_button_next"
+            app:layout_constraintEnd_toStartOf="@+id/guide_button_next"
+            app:layout_constraintTop_toTopOf="@+id/guide_button_next" />
+
+        <TextView
+            android:id="@+id/guide_tip_3_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:shadowColor="#888"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="3"
+            android:text="@string/guide_desc_tip_3"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/guide_tip_3_btn"
+            app:layout_constraintEnd_toEndOf="@+id/guide_tip_3_btn"
+            app:layout_constraintStart_toStartOf="@+id/guide_tip_3_btn" />
+
+        <Button
+            android:id="@+id/guide_tip_3_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/guide_button_i_see"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/guide_button_previous"
+            app:layout_constraintEnd_toStartOf="@+id/guide_button_next"
+            app:layout_constraintStart_toEndOf="@+id/guide_button_previous" />
+
+        <!-- 按钮View -->
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_guide_switch_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="guide_button_previous, guide_button_next" />
+
+        <ImageView
+            android:id="@+id/guide_button_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/ic_image_previous"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/guide_button_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_next"
+            app:layout_constraintBottom_toBottomOf="@+id/guide_button_previous"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
