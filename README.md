@@ -3,9 +3,9 @@
 
 
 
-## 最新版本【v1.9.2】
-* 地址1：[百度云盘下载](https://pan.baidu.com/s/12boHS7mBQlOCbDo5HnD1xw?pwd=3s6s)，提取码: 3s6s
-* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.9.2.apk)
+## 最新版本【v1.9.3】
+* 地址1：[百度云盘下载](https://pan.baidu.com/s/1KjQwggPNt5itRxstjHTHTg?pwd=patb)，提取码: patb
+* 地址2：[国内源地址下载](https://opentext.oss-cn-shenzhen.aliyuncs.com/apk/kanimeG1.9.3.apk)
 
 ## 应用展示
 <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_1.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_2.jpg" width="30%"/></a> <a href="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg"><img src="https://github.com/EternalSoySauce/images/blob/master/k_pre_3.jpg" width="30%"/></a>
@@ -62,6 +62,10 @@
 * 其他
 
 ## 历史更新
+* 【v1.9.3】
+  * 图片详情页支持快速滑动查看上/下一张图片。
+  * 图片详情页支持移动切换按钮位置。
+
 * 【v1.9.2】
   * 修复 Danbooru 无法显示图片内容。
 
